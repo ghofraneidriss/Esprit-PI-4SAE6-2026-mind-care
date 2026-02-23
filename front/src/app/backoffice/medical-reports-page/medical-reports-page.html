@@ -1,0 +1,216 @@
+﻿<div class="page-layout medical-reports-layout">
+  <main class="medical-main w-100">
+    <div class="container-fluid px-0">
+      <div class="row g-0">
+        <div class="col-12 col-xl-5 border-end">
+          <section class="p-4 border-bottom">
+            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
+              <h2 class="mb-0">Medical Reports</h2>
+              <button type="button" class="btn btn-primary create-report-btn" (click)="openCreateModal()">
+                <i class="fi fi-rr-plus me-2"></i>Create New Report
+              </button>
+            </div>
+
+            <div class="d-grid gap-3">
+              <div class="position-relative">
+                <i class="fi fi-rr-search text-muted position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                <input
+                  type="text"
+                  class="form-control ps-5"
+                  placeholder="Search reports..."
+                  [(ngModel)]="filters.query"
+                  (ngModelChange)="applyFilters()"
+                />
+              </div>
+              <div class="row g-2">
+                <div class="col-sm-12">
+                  <select class="form-select" [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
+                    <option value="">All</option>
+                    <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="reports-list">
+            <button
+              type="button"
+              class="report-item text-start"
+              *ngFor="let report of filteredReports; trackBy: trackByReportId"
+              [class.active]="selectedReport?.reportid === report.reportid"
+              (click)="selectReport(report)"
+            >
+              <div class="d-flex align-items-start justify-content-between gap-3 mb-2">
+                <h5 class="mb-0 text-truncate">{{ report.title || ('Report #' + report.reportid) }}</h5>
+                <span class="badge badge-lg" [ngClass]="getStatusClass(report.status)">{{ getStatusLabel(report.status) }}</span>
+              </div>
+              <div class="text-body mb-2"><i class="fi fi-rr-user me-2"></i>Patient: {{ getPatientName(report) }}</div>
+              <div class="text-body mb-2"><i class="fi fi-rr-user me-2"></i>Doctor: {{ getDoctorName(report) }}</div>
+              <div class="text-body text-truncate"><i class="fi fi-rr-document me-2"></i>{{ report.description || '-' }}</div>
+            </button>
+          </section>
+        </div>
+
+        <div class="col-12 col-xl-7">
+          <section class="p-4" *ngIf="selectedReport as report">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+              <h2 class="mb-0">Report Details</h2>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-light detail-action-btn" type="button" (click)="openEditModal()">
+                  <i class="fi fi-rr-edit me-2"></i>Edit
+                </button>
+                <button class="btn btn-light detail-action-btn" type="button">
+                  <i class="fi fi-rr-download me-2"></i>Export PDF
+                </button>
+                <button class="btn btn-light detail-action-btn" type="button" (click)="deleteReport(report)">
+                  <i class="fi fi-rr-trash me-2"></i>Delete
+                </button>
+              </div>
+            </div>
+
+            <div class="card mb-4">
+              <div class="card-body">
+                <h4 class="mb-4">Report Status</h4>
+                <div class="status-steps">
+                  <div class="step" [class.done]="getStepState(1) === 'done'">
+                    <div class="dot"><i class="fi fi-rr-check"></i></div>
+                    <span>Draft</span>
+                  </div>
+                  <div class="line" [class.done]="getStepState(2) === 'done'"></div>
+                  <div class="step" [class.done]="getStepState(2) === 'done'">
+                    <div class="dot"><i class="fi fi-rr-check"></i></div>
+                    <span>Reviewed</span>
+                  </div>
+                  <div class="line" [class.done]="getStepState(3) === 'done'"></div>
+                  <div class="step" [class.done]="getStepState(3) === 'done'">
+                    <div class="dot">3</div>
+                    <span>Approved</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-4">
+              <div class="card-body">
+                <h4 class="mb-4">Medical Report Data</h4>
+                <div class="row g-4">
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Report ID</div>
+                    <h4 class="mb-0">{{ report.reportid }}</h4>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Title</div>
+                    <h4 class="mb-0">{{ report.title || '-' }}</h4>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Status</div>
+                    <h4 class="mb-0">{{ report.status }}</h4>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Patient</div>
+                    <h4 class="mb-0">{{ getPatientName(report) }}</h4>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Doctor</div>
+                    <h4 class="mb-0">{{ getDoctorName(report) }}</h4>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Created At</div>
+                    <h4 class="mb-0">{{ report.createdAt || '-' }}</h4>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-body mb-1">Approved At</div>
+                    <h4 class="mb-0">{{ report.approvedAt || '-' }}</h4>
+                  </div>
+                  <div class="col-12">
+                    <div class="text-body mb-1">Description</div>
+                    <h4 class="mb-0">{{ report.description || '-' }}</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="medical-modal-backdrop" *ngIf="isFormOpen">
+  <section class="medical-modal card">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0">{{ formMode === 'create' ? 'Create New Report' : 'Edit Report' }}</h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="closeFormModal()">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="validateAndSave()">
+      <div class="card-body modal-body-scroll">
+        <div *ngIf="formError" class="alert alert-danger mb-3">
+          {{ formError }}
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Report Title</label>
+            <input type="text" class="form-control" formControlName="title" placeholder="Enter report title" />
+            <small class="text-danger" *ngIf="controlHasError('title')">Title is required.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Patient</label>
+            <select class="form-select" formControlName="patientid">
+              <option [ngValue]="null">Select patient</option>
+              <option *ngFor="let patient of patients" [ngValue]="patient.userId">
+                {{ patient.firstName }} {{ patient.lastName }}
+              </option>
+            </select>
+            <small class="text-danger" *ngIf="controlHasError('patientid')">Patient is required.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Doctor</label>
+            <select class="form-select" formControlName="doctorid">
+              <option [ngValue]="null">Select doctor</option>
+              <option *ngFor="let doctor of doctors" [ngValue]="doctor.userId">
+                {{ doctor.firstName }} {{ doctor.lastName }}
+              </option>
+            </select>
+            <small class="text-danger" *ngIf="controlHasError('doctorid')">Doctor is required.</small>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" formControlName="status">
+            <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </div>
+
+        <div class="mt-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="4" formControlName="description" placeholder="Description"></textarea>
+          <small class="text-danger" *ngIf="controlHasError('description')">Description is required.</small>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <label class="form-label">Approval By Doctor (ID)</label>
+            <input type="number" class="form-control" formControlName="approvalByDocter" placeholder="Optional" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Approved At</label>
+            <input type="datetime-local" class="form-control" formControlName="approvedAt" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer bg-body d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-light" (click)="closeFormModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+          {{ isSaving ? 'Saving...' : (formMode === 'create' ? 'Create Report' : 'Save Changes') }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

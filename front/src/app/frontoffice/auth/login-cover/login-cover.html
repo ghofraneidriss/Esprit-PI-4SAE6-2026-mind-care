@@ -59,7 +59,7 @@
                 <button type="submit" value="Submit" class="btn btn-primary waves-effect waves-light w-100" [disabled]="isLoading">{{ isLoading ? 'Logging in...' : 'Login' }}</button>
               </div>
               <div *ngIf="errorMessage" class="text-danger text-center mb-3">{{ errorMessage }}</div>
-              <p class="mb-5 text-center">Don’t have an account? <a routerLink="/auth/register-cover">Sign Up here</a>
+              <p class="mb-5 text-center">Don’t have an account? <a routerLink="/auth/signup">Sign Up here</a>
               </p>
               <div class="border-bottom position-relative my-4 text-center">
                 <span class="px-3 position-absolute translate-middle top-50 start-50 bg-body">Or Continue With</span>

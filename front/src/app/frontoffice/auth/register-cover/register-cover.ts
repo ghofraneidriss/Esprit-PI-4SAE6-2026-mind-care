@@ -9,7 +9,7 @@ import { AuthService, RegisterRequest } from '../auth.service';
   styleUrls: ['./register-cover.css'],
 })
 export class RegisterCoverAuthPage {
-  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'VOLUNTEER', 'ADMIN'];
+  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
 
   model: RegisterRequest = {
     firstName: '',
@@ -46,7 +46,7 @@ export class RegisterCoverAuthPage {
     this.authService.register(this.model).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigateByUrl('/auth/login-cover');
+        this.router.navigateByUrl('/auth/login');
       },
       error: (error) => {
         this.isLoading = false;

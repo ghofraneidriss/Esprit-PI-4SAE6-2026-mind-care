@@ -29,8 +29,9 @@ export interface LoginRequest {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8081/api/users';
+  private readonly apiUrl = 'http://localhost:8082/api/users';
   private readonly storageKey = 'loggedUser';
+  private readonly backofficeRoles = new Set(['ADMIN', 'DOCTOR', 'CAREGIVER']);
 
   constructor(private readonly http: HttpClient) {}
 
@@ -65,6 +66,15 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getLoggedRole() === 'ADMIN';
+  }
+
+  isBackofficeRole(role?: string | null): boolean {
+    const normalizedRole = this.normalizeRole(role ?? this.getLoggedRole());
+    return this.backofficeRoles.has(normalizedRole);
+  }
+
+  isPatient(): boolean {
+    return this.getLoggedRole() === 'PATIENT';
   }
 
   logout(): void {

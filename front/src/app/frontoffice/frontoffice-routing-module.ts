@@ -39,8 +39,10 @@ const routes: Routes = [
   { path: 'terms', component: TermsFrontPage },
   { path: 'testimonials', component: TestimonialsFrontPage },
   { path: 'auth/forgot-password-cover', component: ForgotPasswordCoverAuthPage },
+  { path: 'auth/login', component: LoginCoverAuthPage },
   { path: 'auth/login-cover', component: LoginCoverAuthPage },
   { path: 'auth/new-password-cover', component: NewPasswordCoverAuthPage },
+  { path: 'auth/signup', component: RegisterCoverAuthPage },
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
   { path: '**', redirectTo: '' },
 ];

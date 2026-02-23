@@ -9,7 +9,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login-cover.css'],
 })
 export class LoginCoverAuthPage {
-  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'VOLUNTEER', 'ADMIN'];
+  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
 
   credentials = {
     email: '',
@@ -38,7 +38,7 @@ export class LoginCoverAuthPage {
       next: (user) => {
         this.isLoading = false;
         const loggedRole = this.authService.normalizeRole(user.role || this.credentials.role);
-        if (loggedRole === 'ADMIN') {
+        if (this.authService.isBackofficeRole(loggedRole)) {
           this.router.navigateByUrl('/admin');
           return;
         }

@@ -6,7 +6,7 @@ export const frontofficeAccessGuard: CanMatchFn = (_route, _segments: UrlSegment
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAdmin()) {
+  if (authService.isBackofficeRole()) {
     return router.createUrlTree(['/admin']);
   }
 

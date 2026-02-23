@@ -1,5 +1,6 @@
 ﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { BackofficeRoutingModule } from './backoffice-routing-module';
 import { Home2 } from './home2/home2';
@@ -17,6 +18,8 @@ import { SettingsPage } from './settings/settings';
 import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
+import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { FilesManagementPageComponent } from './files-management/files-management';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -37,9 +40,11 @@ import { Footer } from './footer/footer';
     TaskManagementPage,
     TeamManagementPage,
     UserManagementPage,
+    MedicalReportsPageComponent,
+    FilesManagementPageComponent,
     Header,
     Footer,
   ],
-  imports: [CommonModule, BackofficeRoutingModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })
 export class BackofficeModule {}

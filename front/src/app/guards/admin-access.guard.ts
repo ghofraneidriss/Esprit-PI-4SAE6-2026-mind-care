@@ -8,10 +8,10 @@ export const adminAccessGuard: CanMatchFn = (_route, _segments: UrlSegment[]) =>
   const loggedUser = authService.getLoggedUser();
 
   if (!loggedUser) {
-    return router.createUrlTree(['/auth/login-cover']);
+    return router.createUrlTree(['/auth/login']);
   }
 
-  if (authService.isAdmin()) {
+  if (authService.isBackofficeRole(loggedUser.role)) {
     return true;
   }
 

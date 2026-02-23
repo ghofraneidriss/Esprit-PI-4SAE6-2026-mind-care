@@ -16,6 +16,8 @@ import { SettingsPage } from './settings/settings';
 import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
+import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { FilesManagementPageComponent } from './files-management/files-management';
 
 const routes: Routes = [
   { path: '', component: Home2 },
@@ -34,6 +36,8 @@ const routes: Routes = [
   { path: 'task-management', component: TaskManagementPage },
   { path: 'team-management', component: TeamManagementPage },
   { path: 'user-management', component: UserManagementPage },
+  { path: 'medical-reports', component: MedicalReportsPageComponent },
+  { path: 'files-management', component: FilesManagementPageComponent },
   { path: '**', redirectTo: '' },
 ];
 
