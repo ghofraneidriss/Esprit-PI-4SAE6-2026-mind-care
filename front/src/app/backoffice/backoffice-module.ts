@@ -19,7 +19,6 @@ import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
-import { FilesManagementPageComponent } from './files-management/files-management';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -41,7 +40,6 @@ import { Footer } from './footer/footer';
     TeamManagementPage,
     UserManagementPage,
     MedicalReportsPageComponent,
-    FilesManagementPageComponent,
     Header,
     Footer,
   ],
