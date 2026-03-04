@@ -1,0 +1,225 @@
+<section class="section recommendations-section">
+    <div class="container">
+
+        <!-- En-tête de section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <div class="section-title">
+                    <h2 class="title">Nos Recommandations</h2>
+                    <p class="text-muted">Retrouvez ici les conseils et recommandations de nos spécialistes pour vous
+                        accompagner au quotidien.</p>
+                    <button class="btn btn-primary mt-3" (click)="openCreateForm()" *ngIf="!showForm">
+                        <i class="fi fi-rr-plus me-1"></i> Ajouter une Recommandation
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages succès / erreur -->
+        <div class="row justify-content-center mb-3" *ngIf="successMessage">
+            <div class="col-lg-10">
+                <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2">
+                    <i class="fi fi-rr-check-circle"></i> {{ successMessage }}
+                    <button type="button" class="btn-close ms-auto" (click)="successMessage = ''"></button>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3" *ngIf="errorMessage">
+            <div class="col-lg-10">
+                <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2">
+                    <i class="fi fi-rr-exclamation"></i> {{ errorMessage }}
+                    <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire Création / Édition -->
+        <div class="row justify-content-center mb-5" *ngIf="showForm">
+            <div class="col-lg-8">
+                <div class="card shadow border-0 recommendation-form-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fi fi-rr-edit me-2"></i>
+                            {{ isEditing ? 'Modifier la Recommandation' : 'Nouvelle Recommandation' }}
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form (ngSubmit)="save()">
+
+                            <div class="row g-3">
+                                <!-- IDs Microservices -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Patient ID <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control"
+                                        [(ngModel)]="currentRecommendation.patientId" name="patientId" required
+                                        placeholder="ID du Patient">
+                                    <small class="text-muted">Sera validé via users-service</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Docteur ID <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control"
+                                        [(ngModel)]="currentRecommendation.doctorId" name="doctorId" required
+                                        placeholder="ID du Docteur">
+                                    <small class="text-muted">Sera validé via users-service</small>
+                                </div>
+
+                                <!-- Type -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Type <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" [(ngModel)]="currentRecommendation.type" name="type"
+                                        required>
+                                        <option *ngFor="let t of recommendationTypes" [value]="t">{{ t }}</option>
+                                    </select>
+                                </div>
+
+                                <!-- Statut -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Statut <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" [(ngModel)]="currentRecommendation.status" name="status"
+                                        required>
+                                        <option *ngFor="let s of recommendationStatuses" [value]="s">{{ s }}</option>
+                                    </select>
+                                </div>
+
+                                <!-- Sélection des Jeux Médicaux (Événements) -->
+                                <div class="col-12" *ngIf="medicalEvents.length > 0">
+                                    <label class="form-label fw-semibold d-block">Jeux Médicaux Recommandés</label>
+                                    <div class="d-flex flex-wrap gap-3 p-3 bg-light rounded border">
+                                        <div class="form-check" *ngFor="let event of medicalEvents">
+                                            <input class="form-check-input" type="checkbox" [id]="'event-' + event.id"
+                                                [checked]="currentRecommendation.medicalEvents?.includes(event)"
+                                                (change)="toggleEvent(event)">
+                                            <label class="form-check-label" [for]="'event-' + event.id">
+                                                {{ event.title }} <small class="text-muted">({{ event.difficulty
+                                                    }})</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Sélectionnez les jeux pour aider à détecter
+                                        l'Alzheimer</small>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Contenu (Conseils) <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control" [(ngModel)]="currentRecommendation.content"
+                                        name="content" rows="3" placeholder="Saisissez vos conseils médicaux..."
+                                        required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+                                    <i class="fi fi-rr-cross me-1"></i> Annuler
+                                </button>
+                                <button type="submit" class="btn btn-primary"
+                                    [disabled]="!currentRecommendation.content.trim()">
+                                    <i class="fi fi-rr-check me-1"></i>
+                                    {{ isEditing ? 'Enregistrer les modifications' : 'Créer la recommandation' }}
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner de chargement -->
+        <div class="row justify-content-center" *ngIf="loading">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p class="mt-2 text-muted small">Connexion au service de recommandations...</p>
+            </div>
+        </div>
+
+        <!-- Grille des recommandations -->
+        <div class="row" *ngIf="!loading">
+
+            <!-- Message vide -->
+            <div class="col-12 text-center py-5" *ngIf="recommendations.length === 0">
+                <i class="fi fi-rr-info display-4 text-muted"></i>
+                <p class="mt-3 text-muted">Aucune recommandation disponible pour le moment.</p>
+            </div>
+
+            <!-- Cards -->
+            <div class="col-md-6 col-lg-4 mb-4" *ngFor="let rec of recommendations">
+                <div class="card h-100 border-0 shadow-sm recommendation-card">
+                    <div class="card-body">
+
+                        <!-- En-tête de la card -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge" [ngClass]="getTypeBadgeClass(rec.type)">
+                                {{ rec.type }}
+                            </span>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-link p-1 text-primary" (click)="edit(rec)"
+                                    title="Modifier">
+                                    <i class="fi fi-rr-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-link p-1 text-danger" (click)="delete(rec.id)"
+                                    title="Supprimer">
+                                    <i class="fi fi-rr-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Contenu -->
+                        <div class="mb-3">
+                            <i class="fi fi-rr-quote-right text-primary opacity-25 float-end"></i>
+                            <p class="card-text fw-medium">{{ rec.content }}</p>
+                        </div>
+
+                        <!-- Info Docteur / Patient -->
+                        <div class="d-flex flex-column gap-1 mb-3 small">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fi fi-rr-user-md text-primary"></i>
+                                <span><strong>Par :</strong> {{ rec.doctorName || 'Dr. ID: ' + rec.doctorId }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fi fi-rr-user text-info"></i>
+                                <span><strong>Pour :</strong> {{ rec.patientName || 'Patient ID: ' + rec.patientId
+                                    }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Jeux Recommandés -->
+                        <div *ngIf="rec.medicalEvents && rec.medicalEvents.length > 0" class="mb-3">
+                            <h6 class="small fw-bold mb-2">Jeux de diagnostic :</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span *ngFor="let game of rec.medicalEvents"
+                                    class="badge bg-light text-dark border p-1 px-2">
+                                    <i class="fi fi-rr-dice me-1"></i> {{ game.title }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Badge statut -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="badge" [ngClass]="{
+                                'bg-warning-subtle text-warning': rec.status === 'PENDING',
+                                'bg-success-subtle text-success': rec.status === 'APPROVED',
+                                'bg-danger-subtle text-danger':  rec.status === 'REJECTED'
+                            }">{{ rec.status }}</span>
+                        </div>
+
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <small class="text-muted">
+                            <i class="fi fi-rr-calendar me-1"></i>
+                            Publié le {{ rec.createdAt | date:'dd/MM/yyyy' }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

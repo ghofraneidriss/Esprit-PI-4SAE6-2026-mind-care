@@ -23,6 +23,7 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
+import { RecommendationsPage } from './recommendations/recommendations';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -48,9 +49,10 @@ import { Footer } from './footer/footer';
     LoginCoverAuthPage,
     NewPasswordCoverAuthPage,
     RegisterCoverAuthPage,
+    RecommendationsPage,
     Header,
     Footer,
   ],
   imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
 })
-export class FrontofficeModule {}
+export class FrontofficeModule { }

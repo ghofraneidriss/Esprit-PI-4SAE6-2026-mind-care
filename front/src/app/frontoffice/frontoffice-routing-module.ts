@@ -20,8 +20,10 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
+import { RecommendationsPage } from './recommendations/recommendations';
 
 const routes: Routes = [
+  { path: 'recommendations', component: RecommendationsPage },
   { path: '', component: Home1 },
   { path: '404', component: Page404FrontPage },
   { path: 'about', component: AboutFrontPage },
@@ -51,4 +53,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FrontofficeRoutingModule {}
+export class FrontofficeRoutingModule { }

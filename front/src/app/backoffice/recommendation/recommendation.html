@@ -1,0 +1,159 @@
+<div class="page-layout">
+  <div class="container-fluid p-4">
+
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h3 mb-0">
+        <i class="fi fi-rr-star me-2 text-primary"></i> Gestion des Recommandations
+      </h2>
+      <button class="btn btn-primary" (click)="openCreateForm()" *ngIf="!showForm">
+        <i class="fi fi-rr-plus me-1"></i> Nouvelle Recommandation
+      </button>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div class="alert alert-danger d-flex align-items-center gap-2" *ngIf="errorMessage">
+      <i class="fi fi-rr-exclamation"></i>
+      {{ errorMessage }}
+      <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+    </div>
+
+    <!-- Formulaire Création / Édition -->
+    <div class="card shadow-sm border-0 mb-4" *ngIf="showForm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+          <i class="fi fi-rr-edit me-2"></i>
+          {{ isEditing ? 'Modifier la Recommandation' : 'Nouvelle Recommandation' }}
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <form (ngSubmit)="save()">
+
+          <div class="row g-3">
+            <!-- Patient ID -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Patient ID <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" [(ngModel)]="currentRecommendation.patientId" name="patientId"
+                required placeholder="ID du Patient">
+            </div>
+
+            <!-- Docteur ID -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Docteur ID <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" [(ngModel)]="currentRecommendation.doctorId" name="doctorId"
+                required placeholder="ID du Docteur">
+            </div>
+
+            <!-- Type -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
+              <select class="form-select" [(ngModel)]="currentRecommendation.type" name="type" required>
+                <option *ngFor="let t of recommendationTypes" [value]="t">{{ t }}</option>
+              </select>
+              <small class="text-muted">Correspond à RecommendationType (Spring Boot)</small>
+            </div>
+
+            <!-- Statut (édition uniquement) -->
+            <div class="col-md-6" *ngIf="isEditing">
+              <label class="form-label fw-semibold">Statut</label>
+              <select class="form-select" [(ngModel)]="currentRecommendation.status" name="status">
+                <option *ngFor="let s of recommendationStatuses" [value]="s">{{ s }}</option>
+              </select>
+              <small class="text-muted">Correspond à RecommendationStatus (Spring Boot)</small>
+            </div>
+
+            <!-- Contenu -->
+            <div class="col-12">
+              <label class="form-label fw-semibold">Contenu <span class="text-danger">*</span></label>
+              <textarea class="form-control" [(ngModel)]="currentRecommendation.content" name="content" rows="4"
+                placeholder="Saisissez le contenu de la recommandation..." required></textarea>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+              <i class="fi fi-rr-cross me-1"></i> Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!currentRecommendation.content.trim()">
+              <i class="fi fi-rr-check me-1"></i>
+              {{ isEditing ? 'Enregistrer les modifications' : 'Créer la recommandation' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tableau des recommandations -->
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+
+        <!-- Chargement -->
+        <div class="text-center py-5" *ngIf="loading">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="mt-2 text-muted">Connexion à localhost:8085...</p>
+        </div>
+
+        <div class="table-responsive" *ngIf="!loading">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Contenu</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Créé le</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let rec of recommendations">
+                <td><code>#{{ rec.id }}</code></td>
+                <td class="text-truncate" style="max-width: 300px;">{{ rec.content }}</td>
+                <td>
+                  <span class="badge bg-info-subtle text-info">{{ rec.type }}</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-warning-subtle text-warning': rec.status === 'PENDING',
+                    'bg-success-subtle text-success': rec.status === 'APPROVED',
+                    'bg-danger-subtle text-danger':  rec.status === 'REJECTED'
+                  }">{{ rec.status }}</span>
+                </td>
+                <td>{{ rec.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="text-end">
+                  <!-- Approuver -->
+                  <button *ngIf="rec.status === 'PENDING'" class="btn btn-sm btn-success-subtle text-success me-1"
+                    (click)="approve(rec.id)" title="Approuver">
+                    <i class="fi fi-rr-check"></i>
+                  </button>
+                  <!-- Rejeter -->
+                  <button *ngIf="rec.status === 'PENDING'" class="btn btn-sm btn-warning-subtle text-warning me-1"
+                    (click)="reject(rec)" title="Rejeter">
+                    <i class="fi fi-rr-cross"></i>
+                  </button>
+                  <!-- Modifier -->
+                  <button class="btn btn-sm btn-primary-subtle text-primary me-1" (click)="edit(rec)" title="Modifier">
+                    <i class="fi fi-rr-pencil"></i>
+                  </button>
+                  <!-- Supprimer -->
+                  <button class="btn btn-sm btn-danger-subtle text-danger" (click)="delete(rec.id)" title="Supprimer">
+                    <i class="fi fi-rr-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="recommendations.length === 0">
+                <td colspan="6" class="text-center py-5 text-muted">
+                  <i class="fi fi-rr-info-guide display-6 d-block mb-2"></i>
+                  Aucune recommandation trouvée.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

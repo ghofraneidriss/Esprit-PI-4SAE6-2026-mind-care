@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FileRecord, FileType } from './file.model';
 import { FileService } from './file.service';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-files-management-page',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule], // Ajoutez cette ligne
   templateUrl: './files-management.html',
   styleUrls: ['./files-management.css'],
 })

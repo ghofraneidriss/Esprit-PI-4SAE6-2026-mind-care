@@ -16,9 +16,11 @@ import { SettingsPage } from './settings/settings';
 import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
+import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 
 const routes: Routes = [
+  { path: 'recommendation', component: RecommendationPage },
   { path: '', component: Home2 },
   { path: 'reports', component: Home2 },
   { path: 'activities', component: ActivitiesPage },
@@ -43,4 +45,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class BackofficeRoutingModule {}
+export class BackofficeRoutingModule { }

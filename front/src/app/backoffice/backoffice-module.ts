@@ -18,6 +18,7 @@ import { SettingsPage } from './settings/settings';
 import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
+import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
@@ -39,10 +40,11 @@ import { Footer } from './footer/footer';
     TaskManagementPage,
     TeamManagementPage,
     UserManagementPage,
+    RecommendationPage,
     MedicalReportsPageComponent,
     Header,
     Footer,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })
-export class BackofficeModule {}
+export class BackofficeModule { }
