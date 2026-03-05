@@ -1,5 +1,6 @@
 ﻿import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { strictAdminGuard } from '../guards/strict-admin.guard';
 
 import { Home2 } from './home2/home2';
 import { ActivitiesPage } from './activities/activities';
@@ -35,7 +36,7 @@ const routes: Routes = [
   { path: 'settings', component: SettingsPage },
   { path: 'task-management', component: TaskManagementPage },
   { path: 'team-management', component: TeamManagementPage },
-  { path: 'user-management', component: UserManagementPage },
+  { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
   { path: 'medical-reports', component: MedicalReportsPageComponent },
   { path: 'files-management', component: FilesManagementPageComponent },
   { path: '**', redirectTo: '' },

@@ -1,15 +1,14 @@
 package tn.esprit.medical_report_service.Services;
 
-import com.google.api.client.util.Value;
-import com.google.api.services.storage.Storage;
+import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
-
 @Service
 @RequiredArgsConstructor
 public class GcsReportStorageService {
@@ -22,6 +21,7 @@ public class GcsReportStorageService {
     public String uploadPdfAndGetSignedUrl(byte[] pdfBytes, String objectName) {
 
         BlobId blobId = BlobId.of(bucketName, objectName);
+
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                 .setContentType("application/pdf")
                 .build();

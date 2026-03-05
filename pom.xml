@@ -25,8 +25,6 @@
     <!-- Liste des microservices -->
     <modules>
         <module>users_service</module>
-        <module>forums_service</module>
-        <module>volunteer_service</module>
         <module>api_gateway</module>
         <module>medical_report_service</module>
     </modules>

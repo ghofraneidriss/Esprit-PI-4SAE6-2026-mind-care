@@ -45,6 +45,18 @@ export class AuthService {
       .pipe(tap((user) => localStorage.setItem(this.storageKey, JSON.stringify(user))));
   }
 
+  getAllUsers(): Observable<AuthUser[]> {
+    return this.http.get<AuthUser[]>(this.apiUrl);
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  updateUser(id: number, payload: Partial<AuthUser>): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.apiUrl}/${id}`, payload);
+  }
+
   getLoggedUser(): AuthUser | null {
     const rawUser = localStorage.getItem(this.storageKey);
     if (!rawUser) {

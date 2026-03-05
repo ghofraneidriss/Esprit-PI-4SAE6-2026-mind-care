@@ -23,20 +23,24 @@ export class MedicalReportsPageComponent implements OnInit {
   reports: MedicalReport[] = [];
   filteredReports: MedicalReport[] = [];
   selectedReport: MedicalReport | null = null;
+  isLoading = true;
 
   patients: UserOption[] = [];
   doctors: UserOption[] = [];
+  allFiles: any[] = []; // List of all existing files to choose from
 
   isFormOpen = false;
   formMode: 'create' | 'edit' = 'create';
   submitAttempted = false;
   formError = '';
   isSaving = false;
+  loggedDoctorName = '';
 
   filters = {
     query: '',
     status: '' as '' | ReportStatus,
   };
+  fileQuery = ''; // Filter for file selector
 
   readonly statusOptions: Array<{ label: string; value: ReportStatus }> = [
     { label: 'Draft', value: 'DRAFT' },
@@ -61,12 +65,18 @@ export class MedicalReportsPageComponent implements OnInit {
       status: ['DRAFT', Validators.required],
       approvalByDocter: [null],
       approvedAt: [''],
+      fileIds: [[]] // Multi-select list of existing file IDs
     });
   }
 
   ngOnInit(): void {
+    const loggedUser = this.authService.getLoggedUser();
+    if (loggedUser && this.authService.isDoctor()) {
+      this.loggedDoctorName = `${loggedUser.firstName} ${loggedUser.lastName}`;
+    }
     this.loadUserOptions();
     this.loadReports();
+    this.loadAllFiles();
   }
 
   applyFilters(): void {
@@ -101,15 +111,20 @@ export class MedicalReportsPageComponent implements OnInit {
     this.formMode = 'create';
     this.submitAttempted = false;
     this.formError = '';
+
+    const loggedUser = this.authService.getLoggedUser();
+    const isDoctor = this.authService.isDoctor();
+
     this.form.reset({
       title: '',
       patientid: null,
-      doctorid: null,
-      doctorEmail: '',
+      doctorid: isDoctor && loggedUser ? loggedUser.userId : null,
+      doctorEmail: isDoctor && loggedUser ? (loggedUser.email || '') : '',
       description: '',
       status: 'DRAFT',
       approvalByDocter: null,
       approvedAt: '',
+      fileIds: []
     });
     this.isFormOpen = true;
   }
@@ -131,6 +146,7 @@ export class MedicalReportsPageComponent implements OnInit {
       status: this.selectedReport.status,
       approvalByDocter: this.selectedReport.approvalByDocter ?? null,
       approvedAt: this.toDateTimeLocal(this.selectedReport.approvedAt),
+      fileIds: (this.selectedReport.files || []).map(f => f.fileid)
     });
     this.isFormOpen = true;
   }
@@ -166,6 +182,7 @@ export class MedicalReportsPageComponent implements OnInit {
       approvedAt: value.approvedAt
         ? this.toBackendDateTime(value.approvedAt)
         : null,
+      files: (value.fileIds || []).map((id: number) => ({ fileid: id }))
     };
 
     this.isSaving = true;
@@ -311,10 +328,12 @@ export class MedicalReportsPageComponent implements OnInit {
   }
 
   private loadReports(deletedId?: number, selectId?: number): void {
+    this.isLoading = true;
     this.medicalReportService.getAll().subscribe({
       next: (reports) => {
         this.reports = reports;
         this.applyFilters();
+        this.isLoading = false;
 
         if (selectId) {
           this.selectedReport =
@@ -334,6 +353,7 @@ export class MedicalReportsPageComponent implements OnInit {
         }
       },
       error: (error) => {
+        this.isLoading = false;
         this.formError =
           error?.error?.message ??
           'Unable to load medical reports. Verify medical_report_service is running.';
@@ -402,4 +422,41 @@ export class MedicalReportsPageComponent implements OnInit {
     );
   }
 
+  private loadAllFiles(): void {
+    this.http.get<any[]>('http://localhost:8083/api/files').subscribe({
+      next: (files) => {
+        this.allFiles = files;
+      },
+      error: (err) => {
+        console.warn('Files service unavailable or failed to load files', err);
+      }
+    });
+  }
+
+  onFileCheck(event: any, fileId: number): void {
+    const checked = event.target.checked;
+    let selected = this.form.get('fileIds')?.value || [];
+    if (checked) {
+      if (!selected.includes(fileId)) {
+        selected.push(fileId);
+      }
+    } else {
+      selected = selected.filter((id: number) => id !== fileId);
+    }
+    this.form.patchValue({ fileIds: selected });
+  }
+
+  isFileSelected(fileId: number): boolean {
+    const selected = this.form.get('fileIds')?.value || [];
+    return selected.includes(fileId);
+  }
+
+  getFilteredFiles(): any[] {
+    const q = this.fileQuery.toLowerCase().trim();
+    if (!q) return this.allFiles;
+    return this.allFiles.filter(f =>
+      (f.fileName || '').toLowerCase().includes(q) ||
+      (f.fileType || '').toLowerCase().includes(q)
+    );
+  }
 }
