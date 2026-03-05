@@ -1,0 +1,94 @@
+<app-header></app-header>
+
+<div class="reports-container">
+    <div class="container py-5">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold text-primary">Your Medical Reports</h1>
+                <p class="lead text-muted">Welcome back, {{ patientName }}. Manage and download your medical records
+                    securely.</p>
+                <div class="title-underline mx-auto"></div>
+            </div>
+        </div>
+
+        <!-- Skeleton Loading State (Premium Feel) -->
+        <div *ngIf="isLoading" class="row g-4">
+            <div class="col-md-6 col-lg-4" *ngFor="let item of [1,2,3]">
+                <div class="card h-100 border-0 shadow-sm skeleton-card overflow-hidden">
+                    <div class="skeleton-header"></div>
+                    <div class="card-body p-4">
+                        <div class="skeleton-line title mb-3"></div>
+                        <div class="skeleton-doctor mb-3"></div>
+                        <div class="skeleton-line mb-2"></div>
+                        <div class="skeleton-line mb-2"></div>
+                        <div class="skeleton-line w-75"></div>
+                    </div>
+                    <div class="card-footer bg-white border-0 p-3 pt-0">
+                        <div class="skeleton-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error" class="alert alert-danger shadow-sm border-0 rounded-3 p-4 text-center">
+            <i class="bi bi-exclamation-triangle-fill fs-1 d-block mb-3"></i>
+            <h4 class="alert-heading">Notice</h4>
+            <p>{{ error }}</p>
+            <a routerLink="/auth/login" class="btn btn-outline-danger mt-2" *ngIf="error.includes('login')">Login
+                Now</a>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && !error && reports.length === 0" class="text-center py-5 empty-state">
+            <div class="empty-icon-wrapper mb-4">
+                <i class="bi bi-folder-x display-1 text-muted opacity-25"></i>
+            </div>
+            <h3 class="fw-bold">No reports found</h3>
+            <p class="text-muted">You don't have any medical reports yet. They will appear here once your doctor shares
+                them.</p>
+        </div>
+
+        <!-- Reports Grid -->
+        <div *ngIf="!isLoading && !error && reports.length > 0" class="row g-4">
+            <div class="col-md-6 col-lg-4" *ngFor="let report of reports">
+                <div class="card h-100 border-0 shadow-sm report-card overflow-hidden">
+                    <div class="card-header bg-primary text-white py-3 border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-white text-primary rounded-pill">#{{ report.reportid }}</span>
+                            <small class="opacity-75">{{ report.createdAt | date:'mediumDate' }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-bold text-dark mb-3 text-truncate">{{ report.title }}</h5>
+                        <div class="doctor-info mb-3 p-2 bg-light rounded d-flex align-items-center">
+                            <div
+                                class="avatar bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                <span class="small font-weight-bold">DR</span>
+                            </div>
+                            <div class="small">
+                                <p class="mb-0 text-muted">Attending Physician:</p>
+                                <p class="mb-0 fw-600">{{ report.doctorName }}</p>
+                            </div>
+                        </div>
+                        <p class="card-text text-muted small description-fade">
+                            {{ report.description ? (report.description | slice:0:150) : 'No description provided' }}
+                            {{ (report.description?.length ?? 0) > 150 ? '...' : '' }}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-0 p-3 pt-0">
+                        <button
+                            class="btn btn-primary w-100 py-2 rounded-3 d-flex align-items-center justify-content-center"
+                            [disabled]="!report.reportUrl" (click)="downloadReport(report.reportUrl)">
+                            <i class="bi bi-cloud-arrow-down-fill me-2 fs-5"></i>
+                            {{ report.reportUrl ? 'Download PDF Report' : 'Processing...' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

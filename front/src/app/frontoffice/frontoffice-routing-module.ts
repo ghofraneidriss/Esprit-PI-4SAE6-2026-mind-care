@@ -20,6 +20,7 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
+import { PatientReportsPage } from './reports/reports';
 
 const routes: Routes = [
   { path: '', component: Home1 },
@@ -44,6 +45,7 @@ const routes: Routes = [
   { path: 'auth/new-password-cover', component: NewPasswordCoverAuthPage },
   { path: 'auth/signup', component: RegisterCoverAuthPage },
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
+  { path: 'reports', component: PatientReportsPage },
   { path: '**', redirectTo: '' },
 ];
 
@@ -51,4 +53,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FrontofficeRoutingModule {}
+export class FrontofficeRoutingModule { }

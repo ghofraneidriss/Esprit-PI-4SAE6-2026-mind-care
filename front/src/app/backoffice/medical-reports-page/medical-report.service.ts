@@ -7,7 +7,7 @@ import { MedicalReport } from './medical-report.model';
 export class MedicalReportService {
   private readonly apiUrl = 'http://localhost:8083/api/medical-reports';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getAll(): Observable<MedicalReport[]> {
     return this.http.get<MedicalReport[]>(this.apiUrl);
@@ -28,6 +28,10 @@ export class MedicalReportService {
 
   delete(id: number): Observable<boolean> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(map(() => true));
+  }
+
+  exportPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/export`, { responseType: 'blob' });
   }
 }
 

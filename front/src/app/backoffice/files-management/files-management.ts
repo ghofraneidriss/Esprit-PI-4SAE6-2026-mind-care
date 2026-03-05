@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileRecord, FileType } from './file.model';
 import { FileService } from './file.service';
+import { AuthService } from '../../frontoffice/auth/auth.service';
 
 @Component({
   selector: 'app-files-management-page',
@@ -31,7 +32,10 @@ export class FilesManagementPageComponent implements OnInit {
     fileType: 'OTHER',
   };
 
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly fileService: FileService,
+    public readonly authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.loadFiles();
