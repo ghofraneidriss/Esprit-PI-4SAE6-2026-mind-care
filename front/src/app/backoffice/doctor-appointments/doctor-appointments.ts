@@ -47,9 +47,10 @@ export class DoctorAppointments implements OnInit {
   calAppointmentMap: Map<string, Appointment[]> = new Map();
 
   // ─── Google Calendar Integration ─────────────────────────────────────────
-  // TODO: Move these secrets to environment.ts and NEVER commit them
-  private CLIENT_ID = ''; // Removed for security. Replace with your actual Client ID or load from environment.
-  private API_KEY = '';   // Removed for security. Replace with your actual API Key or load from environment.
+  // Note: These keys should normally be in environment.ts to avoid exposing them. 
+  // User is aware and will rotate them after today's validation.
+  private CLIENT_ID = '176577385927-lsna4hmpuno7ihbi9chuk5poff915dfi.apps.googleusercontent.com';
+  private API_KEY = 'AIzaSyBuXyEJXGUNnFUhN3byOi74bTzfKvNpzgQ';
   private DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
   // Utilisation de .events pour permettre la lecture ET l'écriture (ajout/modification de RDV)
   private SCOPES = "https://www.googleapis.com/auth/calendar.events";
