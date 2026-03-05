@@ -1,0 +1,6 @@
+eureka_server=2642
+forums_service=2796
+incident_service=2880
+users_service=3007
+api_gateway=3280
+angular_frontend=3458

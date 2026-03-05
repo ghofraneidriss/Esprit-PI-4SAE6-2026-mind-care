@@ -5,12 +5,10 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-<<<<<<< HEAD
         <option value="$PROJECT_DIR$/users_service/pom.xml" />
         <option value="$PROJECT_DIR$/irm_scan_service/pom.xml" />
         <option value="$PROJECT_DIR$/medical_report_service/pom.xml" />
-        <option value="$PROJECT_DIR$/Activities_service/pom.xml" />
-        <option value="$PROJECT_DIR$/movement_service/pom.xml" />
+        <option value="$PROJECT_DIR$/incident_service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
@@ -23,10 +21,4 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17 (3)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-=======
-      </list>
-    </option>
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="openjdk-22" project-jdk-type="JavaSDK" />
->>>>>>> 42bf8ed763718cbe3c0892baab9e519ea11d2c32
 </project>

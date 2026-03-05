@@ -1,0 +1,26 @@
+services:
+  mysql-forums:
+    image: 'mysql:8.0'
+    container_name: alzheimer-mysql-forums
+    environment:
+      - 'MYSQL_DATABASE=alzheimer_forums'
+      - 'MYSQL_ROOT_PASSWORD=root'
+      - 'MYSQL_USER=forums_user'
+      - 'MYSQL_PASSWORD=forums_password'
+    ports:
+      - '3308:3306'  # Port externe:interne
+    volumes:
+      - mysql-forums-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - alzheimer-network
+
+volumes:
+  mysql-forums-data:
+
+networks:
+  alzheimer-network:
+    driver: bridge

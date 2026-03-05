@@ -26,7 +26,9 @@
     <modules>
         <module>users_service</module>
         <module>forums_service</module>
-        <module>server/incident_service</module>
+        <module>incident_service</module>
+        <module>eureka_server</module>
+        <module>api_gateway</module>
     </modules>
 
     <properties>
@@ -37,7 +39,7 @@
         <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 
-    <!-- ✅ Gestion des versions Spring Cloud -->
+    <!-- ✅ Spring Cloud BOM — gère les versions de toutes les dépendances Spring Cloud -->
     <dependencyManagement>
         <dependencies>
             <dependency>
