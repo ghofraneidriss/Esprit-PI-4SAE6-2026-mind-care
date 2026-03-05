@@ -39,22 +39,18 @@ export class AuthService {
     return this.http.post<AuthUser>(`${this.apiUrl}/register`, payload);
   }
 
+  getAllUsers(): Observable<AuthUser[]> {
+    return this.http.get<AuthUser[]>(`${this.apiUrl}`);
+  }
+
+  getUserById(id: number): Observable<AuthUser> {
+    return this.http.get<AuthUser>(`${this.apiUrl}/${id}`);
+  }
+
   login(payload: LoginRequest): Observable<AuthUser> {
     return this.http
       .post<AuthUser>(`${this.apiUrl}/login`, payload)
       .pipe(tap((user) => localStorage.setItem(this.storageKey, JSON.stringify(user))));
-  }
-
-  getAllUsers(): Observable<AuthUser[]> {
-    return this.http.get<AuthUser[]>(this.apiUrl);
-  }
-
-  deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
-  updateUser(id: number, payload: Partial<AuthUser>): Observable<AuthUser> {
-    return this.http.put<AuthUser>(`${this.apiUrl}/${id}`, payload);
   }
 
   getLoggedUser(): AuthUser | null {
@@ -78,10 +74,6 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getLoggedRole() === 'ADMIN';
-  }
-
-  isDoctor(): boolean {
-    return this.getLoggedRole() === 'DOCTOR';
   }
 
   isBackofficeRole(role?: string | null): boolean {
