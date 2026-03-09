@@ -12,4 +12,7 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
     List<Recommendation> findByType(RecommendationType type);
 
     List<Recommendation> findByStatus(RecommendationStatus status);
+
+    List<Recommendation> findByContentContainingIgnoreCaseOrPatientNameContainingIgnoreCaseOrDoctorNameContainingIgnoreCase(
+            String content, String patientName, String doctorName);
 }

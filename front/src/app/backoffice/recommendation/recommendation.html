@@ -1,159 +1,221 @@
-<div class="page-layout">
-  <div class="container-fluid p-4">
+<div class="container-fluid p-4">
 
     <!-- En-tête -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="h3 mb-0">
-        <i class="fi fi-rr-star me-2 text-primary"></i> Gestion des Recommandations
-      </h2>
-      <button class="btn btn-primary" (click)="openCreateForm()" *ngIf="!showForm">
-        <i class="fi fi-rr-plus me-1"></i> Nouvelle Recommandation
-      </button>
-    </div>
-
-    <!-- Message d'erreur -->
-    <div class="alert alert-danger d-flex align-items-center gap-2" *ngIf="errorMessage">
-      <i class="fi fi-rr-exclamation"></i>
-      {{ errorMessage }}
-      <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
-    </div>
-
-    <!-- Formulaire Création / Édition -->
-    <div class="card shadow-sm border-0 mb-4" *ngIf="showForm">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">
-          <i class="fi fi-rr-edit me-2"></i>
-          {{ isEditing ? 'Modifier la Recommandation' : 'Nouvelle Recommandation' }}
-        </h5>
-      </div>
-      <div class="card-body p-4">
-        <form (ngSubmit)="save()">
-
-          <div class="row g-3">
-            <!-- Patient ID -->
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Patient ID <span class="text-danger">*</span></label>
-              <input type="number" class="form-control" [(ngModel)]="currentRecommendation.patientId" name="patientId"
-                required placeholder="ID du Patient">
+        <div>
+            <h2 class="h3 mb-1">
+                <i class="fi fi-rr-comment-medical me-2 text-primary"></i> Gestion des Recommandations
+            </h2>
+            <p class="text-muted mb-0 small">Définissez des conseils et exercices personnalisés pour les patients
+            </p>
+        </div>
+        @if (!showForm) {
+        <div class="d-flex gap-3 align-items-center">
+            <div class="input-group search-bar shadow-sm rounded">
+                <span class="input-group-text bg-white border-end-0"><i class="fi fi-rr-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0 ps-0"
+                    placeholder="Rechercher par patient, docteur ou contenu..." [(ngModel)]="searchTerm"
+                    (keyup.enter)="onSearch()" (input)="!searchTerm && onSearch()">
             </div>
-
-            <!-- Docteur ID -->
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Docteur ID <span class="text-danger">*</span></label>
-              <input type="number" class="form-control" [(ngModel)]="currentRecommendation.doctorId" name="doctorId"
-                required placeholder="ID du Docteur">
-            </div>
-
-            <!-- Type -->
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
-              <select class="form-select" [(ngModel)]="currentRecommendation.type" name="type" required>
-                <option *ngFor="let t of recommendationTypes" [value]="t">{{ t }}</option>
-              </select>
-              <small class="text-muted">Correspond à RecommendationType (Spring Boot)</small>
-            </div>
-
-            <!-- Statut (édition uniquement) -->
-            <div class="col-md-6" *ngIf="isEditing">
-              <label class="form-label fw-semibold">Statut</label>
-              <select class="form-select" [(ngModel)]="currentRecommendation.status" name="status">
-                <option *ngFor="let s of recommendationStatuses" [value]="s">{{ s }}</option>
-              </select>
-              <small class="text-muted">Correspond à RecommendationStatus (Spring Boot)</small>
-            </div>
-
-            <!-- Contenu -->
-            <div class="col-12">
-              <label class="form-label fw-semibold">Contenu <span class="text-danger">*</span></label>
-              <textarea class="form-control" [(ngModel)]="currentRecommendation.content" name="content" rows="4"
-                placeholder="Saisissez le contenu de la recommandation..." required></textarea>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
-              <i class="fi fi-rr-cross me-1"></i> Annuler
+            <button class="btn btn-primary shadow-sm text-nowrap" (click)="openCreateForm()">
+                <i class="fi fi-rr-plus me-1"></i> Nouvelle Recommandation
             </button>
-            <button type="submit" class="btn btn-primary" [disabled]="!currentRecommendation.content.trim()">
-              <i class="fi fi-rr-check me-1"></i>
-              {{ isEditing ? 'Enregistrer les modifications' : 'Créer la recommandation' }}
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+        }
     </div>
+
+    <!-- Alertes -->
+    @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2 mb-4 shadow-sm border-0">
+        <i class="fi fi-rr-exclamation"></i>
+        <div>{{ errorMessage }}</div>
+        <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+    </div>
+    }
+
+    <!-- Formulaire -->
+    @if (showForm) {
+    <div class="card shadow border-0 mb-4 form-card animate__animated animate__fadeIn">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0 fw-semibold">
+                <i class="fi {{ isEditing ? 'fi-rr-pencil' : 'fi-rr-plus' }} me-2"></i>
+                {{ isEditing ? 'Modifier la Recommandation' : 'Créer une Prescription' }}
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <form (ngSubmit)="save()">
+                <div class="row g-3">
+
+                    <!-- Patient & Docteur (Simulation IDs) -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-uppercase">ID Patient <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fi fi-rr-user"></i></span>
+                            <input type="number" class="form-control" [(ngModel)]="currentRecommendation.patientId"
+                                name="patientId" required placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-uppercase">votre ID (Docteur) <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fi fi-rr-user-md"></i></span>
+                            <input type="number" class="form-control" [(ngModel)]="currentRecommendation.doctorId"
+                                name="doctorId" required placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- Contenu -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold small text-uppercase">Conseils & Contenu <span
+                                class="text-danger">*</span></label>
+                        <textarea class="form-control" [(ngModel)]="currentRecommendation.content" name="content"
+                            rows="4" required placeholder="Décrivez vos recommandations thérapeutiques..."></textarea>
+                    </div>
+
+                    <!-- Sélection de Jeux (Events) -->
+                    <div class="col-12 mt-4">
+                        <label class="form-label fw-bold small text-uppercase mb-3 d-block">
+                            <i class="fi fi-rr-dice text-primary me-2"></i> Sélectionner des Jeux de Diagnostic
+                        </label>
+
+                        <div class="row g-2">
+                            @for (event of medicalEvents; track event.id || $index) {
+                            <div class="col-md-4">
+                                <div class="event-pill p-3 border rounded-3 d-flex align-items-center gap-2 cursor-pointer transition-all"
+                                    [class.active]="isEventSelected(event)" (click)="toggleEvent(event)">
+                                    <div class="icon-circle bg-light rounded-circle p-2">
+                                        <i class="fi fi-rr-dice fs-5"></i>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <div class="fw-semibold text-truncate small">{{ event.title }}</div>
+                                        <div class="text-muted extremely-small">{{ event.type }}</div>
+                                    </div>
+                                    @if (isEventSelected(event)) {
+                                    <i class="fi fi-rr-check-circle text-primary"></i>
+                                    }
+                                </div>
+                            </div>
+                            } @empty {
+                            <div class="col-12 text-center py-3 bg-light rounded">
+                                <p class="text-muted small mb-0">Aucun jeu disponible en bibliothèque.</p>
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <button type="button" class="btn btn-light px-4" (click)="cancel()">Annuler</button>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm"
+                        [disabled]="!currentRecommendation.content.trim()">
+                        {{ isEditing ? 'Mettre à jour' : 'Prescrire' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    }
 
     <!-- Tableau des recommandations -->
+    @if (!showForm) {
     <div class="card shadow-sm border-0">
-      <div class="card-body p-0">
+        <div class="card-body p-0">
 
-        <!-- Chargement -->
-        <div class="text-center py-5" *ngIf="loading">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Chargement...</span>
-          </div>
-          <p class="mt-2 text-muted">Connexion à localhost:8085...</p>
+            @if (isLoading) {
+            <!-- Chargement -->
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p class="text-muted">Chargement des recommandations en cours...</p>
+            </div>
+            } @else {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Docteur</th>
+                            <th>Patient</th>
+                            <th>Conseils</th>
+                            <th>Jeux Prescrits</th>
+                            <th>Statut</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (rec of recommendations; track rec.id || $index) {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar avatar-xs bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 32px; height: 32px;">
+                                        <i class="fi fi-rr-user-md small"></i>
+                                    </div>
+                                    <span class="fw-semibold small">{{ rec.doctorName || 'ID: ' + rec.doctorId
+                                        }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar avatar-xs bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 32px; height: 32px;">
+                                        <i class="fi fi-rr-user small"></i>
+                                    </div>
+                                    <span class="small">{{ rec.patientName || 'ID: ' + rec.patientId }}</span>
+                                </div>
+                            </td>
+                            <td style="max-width: 250px;">
+                                <p class="mb-0 text-truncate small" title="{{ rec.content }}">{{ rec.content }}</p>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @for (game of rec.medicalEvents; track game.id || $index) {
+                                    <span class="badge bg-light text-dark border extremely-small">
+                                        {{ game.title }}
+                                    </span>
+                                    } @empty {
+                                    <span class="text-muted extremely-small">-</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" [ngClass]="{
+                                        'bg-warning-subtle text-warning': rec.status === 'PENDING',
+                                        'bg-success-subtle text-success': rec.status === 'APPROVED',
+                                        'bg-danger-subtle text-danger':  rec.status === 'REJECTED'
+                                    }">{{ rec.status }}</span>
+                            </td>
+                            <td class="text-end px-3">
+                                <div class="btn-group shadow-xs rounded-2">
+                                    <button class="btn btn-sm btn-white text-primary border" (click)="edit(rec)"
+                                        title="Modifier">
+                                        <i class="fi fi-rr-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-white text-danger border" (click)="delete(rec.id)"
+                                        title="Supprimer">
+                                        <i class="fi fi-rr-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fi fi-rr-info display-4 d-block mb-3 opacity-25"></i>
+                                Aucune recommandation trouvée.
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
         </div>
-
-        <div class="table-responsive" *ngIf="!loading">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>ID</th>
-                <th>Contenu</th>
-                <th>Type</th>
-                <th>Statut</th>
-                <th>Créé le</th>
-                <th class="text-end">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let rec of recommendations">
-                <td><code>#{{ rec.id }}</code></td>
-                <td class="text-truncate" style="max-width: 300px;">{{ rec.content }}</td>
-                <td>
-                  <span class="badge bg-info-subtle text-info">{{ rec.type }}</span>
-                </td>
-                <td>
-                  <span class="badge" [ngClass]="{
-                    'bg-warning-subtle text-warning': rec.status === 'PENDING',
-                    'bg-success-subtle text-success': rec.status === 'APPROVED',
-                    'bg-danger-subtle text-danger':  rec.status === 'REJECTED'
-                  }">{{ rec.status }}</span>
-                </td>
-                <td>{{ rec.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-                <td class="text-end">
-                  <!-- Approuver -->
-                  <button *ngIf="rec.status === 'PENDING'" class="btn btn-sm btn-success-subtle text-success me-1"
-                    (click)="approve(rec.id)" title="Approuver">
-                    <i class="fi fi-rr-check"></i>
-                  </button>
-                  <!-- Rejeter -->
-                  <button *ngIf="rec.status === 'PENDING'" class="btn btn-sm btn-warning-subtle text-warning me-1"
-                    (click)="reject(rec)" title="Rejeter">
-                    <i class="fi fi-rr-cross"></i>
-                  </button>
-                  <!-- Modifier -->
-                  <button class="btn btn-sm btn-primary-subtle text-primary me-1" (click)="edit(rec)" title="Modifier">
-                    <i class="fi fi-rr-pencil"></i>
-                  </button>
-                  <!-- Supprimer -->
-                  <button class="btn btn-sm btn-danger-subtle text-danger" (click)="delete(rec.id)" title="Supprimer">
-                    <i class="fi fi-rr-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr *ngIf="recommendations.length === 0">
-                <td colspan="6" class="text-center py-5 text-muted">
-                  <i class="fi fi-rr-info-guide display-6 d-block mb-2"></i>
-                  Aucune recommandation trouvée.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
+    }
 
-  </div>
 </div>

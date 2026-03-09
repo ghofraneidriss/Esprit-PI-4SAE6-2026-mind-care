@@ -1,0 +1,23 @@
+.page-layout {
+    background-color: #FDFDFF;
+    min-height: 100vh;
+}
+
+.search-bar {
+    max-width: 350px;
+}
+
+.event-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 12px;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.badge {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}

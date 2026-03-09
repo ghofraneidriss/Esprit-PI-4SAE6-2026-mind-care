@@ -76,6 +76,13 @@ public class RecommendationServiceImpl implements RecommendationService {
         return repository.save(recommendation);
     }
 
+    @Override
+    public List<Recommendation> search(String keyword) {
+        return repository
+                .findByContentContainingIgnoreCaseOrPatientNameContainingIgnoreCaseOrDoctorNameContainingIgnoreCase(
+                        keyword, keyword, keyword);
+    }
+
     /**
      * Authenticates users via Feign and fetches full names (similar to
      * medical_report_service pattern)

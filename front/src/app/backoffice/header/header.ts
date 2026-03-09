@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-backoffice-header',
   standalone: false,
   templateUrl: './header.html',
   styleUrl: './header.css',

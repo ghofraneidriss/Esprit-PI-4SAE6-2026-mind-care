@@ -7,7 +7,7 @@ import { FileRecord } from './file.model';
 export class FileService {
   private readonly apiUrl = 'http://localhost:8083/api/files';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getAll(): Observable<FileRecord[]> {
     return this.http.get<FileRecord[]>(this.apiUrl);

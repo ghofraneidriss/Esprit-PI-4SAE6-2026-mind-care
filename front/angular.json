@@ -38,8 +38,42 @@
             ],
             "styles": [
               "src/styles.css",
+              "src/assets/frontoffice/vendor/bootstrap/css/bootstrap.min.css",
+              "src/assets/frontoffice/vendor/bootstrap-icons/bootstrap-icons.css",
+              "src/assets/frontoffice/vendor/aos/aos.css",
+              "src/assets/frontoffice/vendor/glightbox/css/glightbox.min.css",
+              "src/assets/frontoffice/vendor/fontawesome-free/css/all.min.css",
+              "src/assets/frontoffice/vendor/swiper/swiper-bundle.min.css",
               "src/assets/frontoffice/css/main.css",
-              "src/assets/backoffice/css/styles.css"
+              "src/assets/backoffice/css/styles.css",
+              "src/assets/backoffice/libs/flaticon/css/all/all.straight.css",
+              "src/assets/backoffice/libs/flaticon/css/brands/all.css",
+              "src/assets/backoffice/libs/flaticon/css/bold/rounded.css",
+              "src/assets/backoffice/libs/flaticon/css/regular/rounded.css",
+              "src/assets/backoffice/libs/flaticon/css/solid/rounded.css",
+              "src/assets/backoffice/libs/flaticon/css/thin/rounded.css",
+              "src/assets/backoffice/libs/lucide/lucide.css",
+              "src/assets/backoffice/libs/fontawesome/css/all.min.css",
+              "src/assets/backoffice/libs/simplebar/simplebar.css",
+              "src/assets/backoffice/libs/node-waves/waves.css",
+              "src/assets/backoffice/libs/bootstrap-select/css/bootstrap-select.min.css",
+              "src/assets/backoffice/libs/flatpickr/flatpickr.min.css",
+              "src/assets/backoffice/libs/datatables/datatables.min.css"
+            ],
+            "scripts": [
+              "src/assets/frontoffice/vendor/bootstrap/js/bootstrap.bundle.min.js",
+              "src/assets/frontoffice/vendor/aos/aos.js",
+              "src/assets/frontoffice/vendor/glightbox/js/glightbox.min.js",
+              "src/assets/frontoffice/vendor/purecounter/purecounter_vanilla.js",
+              "src/assets/frontoffice/vendor/imagesloaded/imagesloaded.pkgd.min.js",
+              "src/assets/frontoffice/vendor/isotope-layout/isotope.pkgd.min.js",
+              "src/assets/frontoffice/vendor/swiper/swiper-bundle.min.js",
+              "src/assets/backoffice/libs/global/global.min.js",
+              "src/assets/backoffice/libs/sortable/Sortable.min.js",
+              "src/assets/backoffice/libs/chartjs/chart.js",
+              "src/assets/backoffice/libs/flatpickr/flatpickr.min.js",
+              "src/assets/backoffice/libs/datatables/datatables.min.js",
+              "src/assets/backoffice/js/main.js"
             ]
           },
           "configurations": {

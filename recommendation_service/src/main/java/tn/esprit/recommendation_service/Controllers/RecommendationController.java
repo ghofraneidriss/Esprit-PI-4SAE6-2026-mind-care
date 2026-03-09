@@ -27,6 +27,11 @@ public class RecommendationController {
         return ResponseEntity.ok(service.getAll());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Recommendation>> search(@RequestParam String query) {
+        return ResponseEntity.ok(service.search(query));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Recommendation> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));

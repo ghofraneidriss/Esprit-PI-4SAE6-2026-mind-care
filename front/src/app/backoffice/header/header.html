@@ -1,1 +1,92 @@
-<p>header works!</p>
+<header class="app-header">
+    <div class="app-header-inner">
+        <button class="app-toggler" type="button" aria-label="app toggler">
+            <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.66699 12.6668L3.66699 8.00016L7.66699 3.3335" stroke="#1C274C" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round"></path>
+                <path opacity="0.5" d="M12.667 12.6668L8.66699 8.00016L12.667 3.3335" stroke="#1C274C"
+                    stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </button>
+        <div class="app-header-start d-none d-md-flex">
+            <form class="d-flex align-items-center h-100 w-lg-250px w-xxl-300px position-relative" action="#">
+                <button type="button" class="btn btn-sm border-0 position-absolute start-0 ms-3 p-0">
+                    <i class="fi fi-rr-search"></i>
+                </button>
+                <input type="text" class="form-control form-control-fill ps-5" placeholder="Rechercher..."
+                    data-bs-toggle="modal" data-bs-target="#searchResultsModal">
+            </form>
+        </div>
+        <div class="app-header-end">
+            <div class="px-lg-4 px-2 ps-0 d-flex align-items-center">
+                <a href="javascript:void(0);" class="theme-btn">
+                    <svg class="icon-light" width="20" height="21" viewbox="0 0 20 21" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M14.1663 10.5002C14.1663 12.8013 12.3008 14.6668 9.99967 14.6668C7.69849 14.6668 5.83301 12.8013 5.83301 10.5002C5.83301 8.19898 7.69849 6.3335 9.99967 6.3335C12.3008 6.3335 14.1663 8.19898 14.1663 10.5002Z"
+                            fill="var(--bs-heading-color)"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M10.0003 1.5415C10.3455 1.5415 10.6253 1.82133 10.6253 2.1665V3.83317C10.6253 4.17834 10.3455 4.45817 10.0003 4.45817C9.65516 4.45817 9.37532 4.17834 9.37532 3.83317V2.1665C9.37532 1.82133 9.65516 1.5415 10.0003 1.5415ZM1.04199 10.4998C1.04199 10.1547 1.32182 9.87484 1.66699 9.87484H3.33366C3.67883 9.87484 3.95866 10.1547 3.95866 10.4998C3.95866 10.845 3.67883 11.1248 3.33366 11.1248H1.66699C1.32182 11.1248 1.04199 10.845 1.04199 10.4998ZM16.042 10.4998C16.042 10.1547 16.3218 9.87484 16.667 9.87484H18.3337C18.6788 9.87484 18.9587 10.1547 18.9587 10.4998C18.9587 10.845 18.6788 11.1248 18.3337 11.1248H16.667C16.3218 11.1248 16.042 10.845 16.042 10.4998ZM10.0003 16.5415C10.3455 16.5415 10.6253 16.8213 10.6253 17.1665V18.8332C10.6253 19.1783 10.3455 19.4582 10.0003 19.4582C9.65516 19.4582 9.37532 19.1783 9.37532 18.8332V17.1665C9.37532 16.8213 9.65516 16.5415 10.0003 16.5415Z"
+                            fill="var(--bs-heading-color)"></path>
+                    </svg>
+                    <div class="theme-toggle"></div>
+                    <svg class="icon-dark" width="20" height="21" viewbox="0 0 20 21" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M16.5835 2.4225C16.4495 2.08117 15.9681 2.08117 15.834 2.4225L15.4754 3.33523C15.4345 3.43944 15.3523 3.52193 15.2485 3.56303L14.339 3.92301C13.999 4.05762 13.999 4.54067 14.339 4.67529L15.2485 5.03527C15.3523 5.07637 15.4345 5.15886 15.4754 5.26306L15.834 6.1758C15.9681 6.51712 16.4495 6.51712 16.5835 6.17581L16.9422 5.26306C16.9831 5.15886 17.0653 5.07637 17.1691 5.03527L18.0785 4.67529C18.4186 4.54067 18.4186 4.05762 18.0785 3.92301L17.1691 3.56303C17.0653 3.52193 16.9831 3.43944 16.9422 3.33523L16.5835 2.4225Z"
+                            fill="var(--bs-heading-color)"></path>
+                        <path opacity="0.5"
+                            d="M10.0003 18.8332C14.6027 18.8332 18.3337 15.1022 18.3337 10.4998C18.3337 10.1143 17.7557 10.0505 17.5563 10.3805C16.6077 11.9503 14.8849 12.9998 12.917 12.9998C9.92541 12.9998 7.50032 10.5748 7.50032 7.58317C7.50032 5.61521 8.54982 3.89238 10.1197 2.9438C10.4497 2.7444 10.3859 2.1665 10.0003 2.1665C5.39795 2.1665 1.66699 5.89746 1.66699 10.4998C1.66699 15.1022 5.39795 18.8332 10.0003 18.8332Z"
+                            fill="var(--bs-heading-color)"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="vr my-3"></div>
+            <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
+                <a routerLink="/admin/profile" class="d-flex align-items-center py-2">
+                    <div class="text-end me-2 d-none d-lg-inline-block">
+                        <div class="fw-bold text-dark text-nowrap">Robert Brown</div>
+                        <small class="text-body d-block lh-sm">Manager</small>
+                    </div>
+                    <div class="avatar avatar-sm rounded-circle avatar-status-success">
+                        <img src="/assets/backoffice/images/avatar/avatar1.webp" alt="">
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/profile">
+                            <i class="fi fi-rr-user scale-1x"></i> Profil
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 text-danger" routerLink="/auth/login">
+                            <i class="fi fi-sr-exit scale-1x"></i> Déconnexion
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="modal fade" id="searchResultsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header py-1 px-3">
+                <form class="d-flex align-items-center position-relative w-100">
+                    <i class="fi fi-rr-search position-absolute start-0 ms-2"></i>
+                    <input type="text" class="form-control form-control-lg ps-5 border-0 shadow-none"
+                        placeholder="Rechercher...">
+                </form>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pb-2" style="height: 300px;">
+                <span class="text-uppercase text-2xs fw-semibold text-muted d-block mb-2">Recherches récentes:</span>
+                <ul class="list-inline search-list">
+                    <li><a class="search-item" routerLink="/admin/recommendation">Recommandations</a></li>
+                    <li><a class="search-item" routerLink="/admin/medical-events">Évènements Médicaux</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -51,5 +51,13 @@ export class RecommendationService {
     deleteEvent(id: number): Observable<void> {
         return this.http.delete<void>(`${this.eventUrl}/${id}`);
     }
+
+    searchRecommendations(query: string): Observable<Recommendation[]> {
+        return this.http.get<Recommendation[]>(`${this.apiUrl}/search?query=${query}`);
+    }
+
+    searchEvents(query: string): Observable<any[]> {
+        return this.http.get<any[]>(`${this.eventUrl}/search?query=${query}`);
+    }
 }
 

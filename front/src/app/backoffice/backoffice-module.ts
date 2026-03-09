@@ -20,8 +20,11 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { MedicalEventsPage } from './medical-events/medical-events';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { Sidebar } from './sidebar/sidebar';
+import { BackofficeLayoutComponent } from './backoffice-layout';
 
 @NgModule({
   declarations: [
@@ -41,9 +44,12 @@ import { Footer } from './footer/footer';
     TeamManagementPage,
     UserManagementPage,
     RecommendationPage,
+    MedicalEventsPage,
     MedicalReportsPageComponent,
     Header,
     Footer,
+    Sidebar,
+    BackofficeLayoutComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })

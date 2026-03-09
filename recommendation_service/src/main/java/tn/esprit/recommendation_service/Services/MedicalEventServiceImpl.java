@@ -20,7 +20,7 @@ public class MedicalEventServiceImpl implements MedicalEventService {
 
     @Override
     public List<MedicalEvent> getAllEvents() {
-        return repository.findAll();
+        return repository.findAllByOrderByIdDesc();
     }
 
     @Override
@@ -31,5 +31,11 @@ public class MedicalEventServiceImpl implements MedicalEventService {
     @Override
     public void deleteEvent(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public List<MedicalEvent> searchEvents(String keyword) {
+        return repository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByTitleAsc(
+                keyword, keyword);
     }
 }

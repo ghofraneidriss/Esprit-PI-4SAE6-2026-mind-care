@@ -18,26 +18,36 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { MedicalEventsPage } from './medical-events/medical-events';
+
+import { BackofficeLayoutComponent } from './backoffice-layout';
 
 const routes: Routes = [
-  { path: 'recommendation', component: RecommendationPage },
-  { path: '', component: Home2 },
-  { path: 'reports', component: Home2 },
-  { path: 'activities', component: ActivitiesPage },
-  { path: 'calendar', component: CalendarPage },
-  { path: 'chat', component: ChatPage },
-  { path: 'customers', component: CustomersPage },
-  { path: 'deals', component: DealsPage },
-  { path: 'employee', component: EmployeePage },
-  { path: 'finance', component: FinancePage },
-  { path: 'profile', component: ProfilePage },
-  { path: 'review', component: ReviewPage },
-  { path: 'sales', component: SalesPage },
-  { path: 'settings', component: SettingsPage },
-  { path: 'task-management', component: TaskManagementPage },
-  { path: 'team-management', component: TeamManagementPage },
-  { path: 'user-management', component: UserManagementPage },
-  { path: 'medical-reports', component: MedicalReportsPageComponent },
+  {
+    path: '',
+    component: BackofficeLayoutComponent,
+    children: [
+      { path: 'recommendation', component: RecommendationPage },
+      { path: 'medical-events', component: MedicalEventsPage },
+      { path: '', component: Home2 },
+      { path: 'reports', component: Home2 },
+      { path: 'activities', component: ActivitiesPage },
+      { path: 'calendar', component: CalendarPage },
+      { path: 'chat', component: ChatPage },
+      { path: 'customers', component: CustomersPage },
+      { path: 'deals', component: DealsPage },
+      { path: 'employee', component: EmployeePage },
+      { path: 'finance', component: FinancePage },
+      { path: 'profile', component: ProfilePage },
+      { path: 'review', component: ReviewPage },
+      { path: 'sales', component: SalesPage },
+      { path: 'settings', component: SettingsPage },
+      { path: 'task-management', component: TaskManagementPage },
+      { path: 'team-management', component: TeamManagementPage },
+      { path: 'user-management', component: UserManagementPage },
+      { path: 'medical-reports', component: MedicalReportsPageComponent },
+    ]
+  },
   { path: '**', redirectTo: '' },
 ];
 

@@ -27,6 +27,11 @@ public class MedicalEventController {
         return ResponseEntity.ok(service.getAllEvents());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<MedicalEvent>> search(@RequestParam String query) {
+        return ResponseEntity.ok(service.searchEvents(query));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MedicalEvent> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getEventById(id));

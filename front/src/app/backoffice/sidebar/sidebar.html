@@ -1,0 +1,77 @@
+<aside class="app-menubar-tabs" id="appMenubar">
+    <div class="app-navbar-brand">
+        <a class="navbar-brand-logo" routerLink="/admin">
+            <img src="/assets/backoffice/images/favicon.png" alt="NexLink Admin Dashboard Logo">
+        </a>
+    </div>
+    <div class="app-navbar-tabs" data-simplebar="">
+        <ul class="nav" id="appMenubarTabs" role="tablist" aria-orientation="vertical">
+            <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Dashboard">
+                <a class="menu-link active" href="#dashboardTab" role="tab" aria-controls="dashboardTab"
+                    aria-selected="true" data-bs-toggle="tab">
+                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.5"
+                            d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
+                            stroke="var(--bs-heading-color)" stroke-width="2"></path>
+                        <path d="M12 15V18" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round">
+                        </path>
+                    </svg>
+                </a>
+            </li>
+            <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Apps">
+                <a class="menu-link" href="#appsTab" role="tab" aria-controls="appsTab" aria-selected="false"
+                    data-bs-toggle="tab">
+                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M21.609 13.5616L21.8382 11.1263C22.0182 9.2137 22.1082 8.25739 21.781 7.86207C21.604 7.64823 21.3633 7.5172 21.106 7.4946C20.6303 7.45282 20.0329 8.1329 18.8381 9.49307C18.2202 10.1965 17.9113 10.5482 17.5666 10.6027C17.3757 10.6328 17.1811 10.6018 17.0047 10.5131C16.6865 10.3529 16.4743 9.91812 16.0499 9.04851L13.8131 4.46485C13.0112 2.82162 12.6102 2 12 2C11.3898 2 10.9888 2.82162 10.1869 4.46486L7.95007 9.04852C7.5257 9.91812 7.31351 10.3529 6.99526 10.5131C6.81892 10.6018 6.62434 10.6328 6.43337 10.6027C6.08872 10.5482 5.77977 10.1965 5.16187 9.49307C3.96708 8.1329 3.36968 7.45282 2.89399 7.4946C2.63666 7.5172 2.39598 7.64823 2.21899 7.86207C1.8918 8.25739 1.9818 9.2137 2.16181 11.1263L2.391 13.5616C2.76865 17.5742 2.95748 19.5805 4.14009 20.7902C5.32271 22 7.09517 22 10.6401 22H13.3599C16.9048 22 18.6773 22 19.8599 20.7902C21.0425 19.5805 21.2313 17.5742 21.609 13.5616Z"
+                            stroke="var(--bs-heading-color)" stroke-width="2"></path>
+                        <path opacity="0.5" d="M9 18H15" stroke="var(--bs-heading-color)" stroke-width="2"
+                            stroke-linecap="round"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="app-tab-content">
+        <div class="app-side-brands">
+            <a class="navbar-brand-text" routerLink="/admin">MindCare</a>
+        </div>
+        <div class="app-content-inner">
+            <div class="tab-content" id="appMenubarTabsContent">
+                <div class="tab-pane fade show active" id="dashboardTab" role="tabpanel" tabindex="0">
+                    <nav class="app-navbar" data-simplebar="">
+                        <ul class="side-menubar">
+                            <li class="menu-heading">
+                                <span class="menu-label">Menu Principal</span>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" routerLink="/admin" role="button">
+                                    <i class="fi fi-rr-house-blank"></i>
+                                    <span class="menu-label">Tableau de bord</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" routerLink="/admin/recommendation" role="button">
+                                    <i class="fi fi-rr-comment-medical"></i>
+                                    <span class="menu-label">Recommandations</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" routerLink="/admin/medical-events" role="button">
+                                    <i class="fi fi-rr-dice"></i>
+                                    <span class="menu-label">Jeux Médicaux</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" routerLink="/admin/user-management" role="button">
+                                    <i class="fi fi-rr-users"></i>
+                                    <span class="menu-label">Gestion Utilisateurs</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>

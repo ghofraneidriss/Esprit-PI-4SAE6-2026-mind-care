@@ -26,6 +26,7 @@ import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { RecommendationsPage } from './recommendations/recommendations';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { FrontofficeLayoutComponent } from './frontoffice-layout';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { Footer } from './footer/footer';
     RecommendationsPage,
     Header,
     Footer,
+    FrontofficeLayoutComponent
   ],
   imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
 })

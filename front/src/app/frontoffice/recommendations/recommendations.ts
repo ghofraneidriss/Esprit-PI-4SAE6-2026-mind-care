@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Recommendation, RecommendationStatus, RecommendationType, MedicalEvent } from '../../backoffice/recommendation/recommendation.model';
 import { RecommendationService } from '../../backoffice/recommendation/recommendation.service';
 
@@ -22,7 +22,7 @@ export class RecommendationsPage implements OnInit {
 
     currentRecommendation: Recommendation = this.initNewRecommendation();
 
-    constructor(private recommendationService: RecommendationService) { }
+    constructor(private recommendationService: RecommendationService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadRecommendations();
@@ -43,15 +43,29 @@ export class RecommendationsPage implements OnInit {
     loadRecommendations(): void {
         this.loading = true;
         this.recommendationService.getAll().subscribe({
-            next: (data) => {
-                this.recommendations = data;
+            next: (data: any) => {
+                // Robust handling for both Array and Page object
+                if (Array.isArray(data)) {
+                    this.recommendations = data;
+                } else if (data && data.content) {
+                    this.recommendations = data.content;
+                } else {
+                    this.recommendations = [];
+                }
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.errorMessage = 'Erreur lors de la connexion au service de recommandation (Port 8085).';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
+    }
+
+    isEventSelected(event: MedicalEvent): boolean {
+        if (!this.currentRecommendation.medicalEvents || !event.id) return false;
+        return this.currentRecommendation.medicalEvents.some(m => m.id === event.id);
     }
 
     loadMedicalEvents(): void {

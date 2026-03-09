@@ -11,4 +11,6 @@ public interface MedicalEventService {
     MedicalEvent getEventById(Long id);
 
     void deleteEvent(Long id);
+
+    List<MedicalEvent> searchEvents(String keyword);
 }

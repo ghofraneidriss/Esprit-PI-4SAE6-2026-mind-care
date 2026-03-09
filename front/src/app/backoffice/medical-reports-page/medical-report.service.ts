@@ -7,7 +7,7 @@ import { MedicalReport } from './medical-report.model';
 export class MedicalReportService {
   private readonly apiUrl = 'http://localhost:8083/api/medical-reports';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getAll(): Observable<MedicalReport[]> {
     return this.http.get<MedicalReport[]>(this.apiUrl);

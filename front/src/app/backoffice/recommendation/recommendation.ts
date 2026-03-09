@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Recommendation, RecommendationType, RecommendationStatus } from './recommendation.model';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Recommendation, RecommendationType, RecommendationStatus, MedicalEvent } from './recommendation.model';
 import { RecommendationService } from './recommendation.service';
 
 @Component({
@@ -10,9 +10,11 @@ import { RecommendationService } from './recommendation.service';
 })
 export class RecommendationPage implements OnInit {
     recommendations: Recommendation[] = [];
-    loading = false;
+    medicalEvents: MedicalEvent[] = []; // Les jeux disponibles pour prescription
     showForm = false;
     isEditing = false;
+    isLoading = true;
+    searchTerm = '';
     errorMessage = '';
 
     recommendationTypes = Object.values(RecommendationType);
@@ -26,38 +28,94 @@ export class RecommendationPage implements OnInit {
         patientId: 0
     };
 
-    constructor(private recommendationService: RecommendationService) { }
+    constructor(private recommendationService: RecommendationService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadRecommendations();
+        this.loadMedicalEvents(); // Load medical events on init
     }
 
-    loadRecommendations(): void {
-        this.loading = true;
+    loadRecommendations(callback?: () => void): void {
+        this.isLoading = true;
         this.errorMessage = '';
-        this.recommendationService.getAll().subscribe({
-            next: (data) => {
-                this.recommendations = data;
-                this.loading = false;
+
+        const obs = this.searchTerm.trim()
+            ? this.recommendationService.searchRecommendations(this.searchTerm)
+            : this.recommendationService.getAll();
+
+        obs.subscribe({
+            next: (data: any) => {
+                // Le backend renvoie parfois un Page (data.content) au lieu d'une liste directe. On gère les deux cas.
+                if (data && data.content && Array.isArray(data.content)) {
+                    this.recommendations = data.content;
+                } else if (Array.isArray(data)) {
+                    this.recommendations = data;
+                } else if (data && typeof data === 'object') {
+                    // Fallback si la structure est inattendue mais contient des données
+                    this.recommendations = data.content || [];
+                } else {
+                    this.recommendations = [];
+                }
+
+                this.isLoading = false;
+                this.cdr.detectChanges();
+                if (callback) callback();
             },
             error: (err) => {
-                this.errorMessage = 'Erreur lors du chargement des recommandations. Vérifiez que le serveur est démarré sur le port 8085.';
-                console.error(err);
-                this.loading = false;
+                this.errorMessage = 'Le service de recommandation est injoignable (port 8085).';
+                console.error('Fetch error:', err);
+                this.isLoading = false;
+                this.cdr.detectChanges();
+                if (callback) callback();
             }
         });
     }
 
+    onSearch(): void {
+        this.loadRecommendations();
+    }
+
+    loadMedicalEvents(): void {
+        this.recommendationService.getAllEvents().subscribe({
+            next: (data) => this.medicalEvents = data,
+            error: () => console.error('Erreur de chargement des jeux médicaux.')
+        });
+    }
+
     openCreateForm(): void {
+        this.loadRecommendations();
+        this.loadMedicalEvents();
         this.isEditing = false;
-        this.currentRecommendation = {
+        this.currentRecommendation = this.initNew();
+        this.showForm = true;
+    }
+
+    private initNew(): Recommendation {
+        return {
             content: '',
-            type: RecommendationType.OTHER,
+            type: RecommendationType.LIFESTYLE,
             status: RecommendationStatus.PENDING,
             doctorId: 0,
-            patientId: 0
+            patientId: 0,
+            medicalEvents: []
         };
-        this.showForm = true;
+    }
+
+    isEventSelected(event: MedicalEvent): boolean {
+        if (!this.currentRecommendation.medicalEvents) return false;
+        return this.currentRecommendation.medicalEvents.some(e => e.id === event.id);
+    }
+
+    toggleEvent(event: MedicalEvent): void {
+        if (!this.currentRecommendation.medicalEvents) {
+            this.currentRecommendation.medicalEvents = [];
+        }
+        const index = this.currentRecommendation.medicalEvents.findIndex(e => e.id === event.id);
+        if (index > -1) {
+            this.currentRecommendation.medicalEvents.splice(index, 1);
+        } else {
+            this.currentRecommendation.medicalEvents.push(event);
+        }
     }
 
     edit(rec: Recommendation): void {
@@ -69,15 +127,21 @@ export class RecommendationPage implements OnInit {
     save(): void {
         if (!this.currentRecommendation.content.trim()) return;
 
+        const handleSuccess = () => {
+            this.loadRecommendations(() => {
+                this.showForm = false;
+            });
+        };
+
         if (this.isEditing && this.currentRecommendation.id) {
             this.recommendationService.update(this.currentRecommendation.id, this.currentRecommendation).subscribe({
-                next: () => { this.loadRecommendations(); this.showForm = false; },
-                error: (err) => { this.errorMessage = 'Erreur lors de la mise à jour.'; console.error(err); }
+                next: handleSuccess,
+                error: (err) => this.errorMessage = 'Erreur de mise à jour.'
             });
         } else {
             this.recommendationService.create(this.currentRecommendation).subscribe({
-                next: () => { this.loadRecommendations(); this.showForm = false; },
-                error: (err) => { this.errorMessage = 'Erreur lors de la création.'; console.error(err); }
+                next: handleSuccess,
+                error: (err) => this.errorMessage = 'Erreur de création.'
             });
         }
     }
@@ -85,6 +149,7 @@ export class RecommendationPage implements OnInit {
     cancel(): void {
         this.showForm = false;
         this.errorMessage = '';
+        this.loadRecommendations(); // Refresh just in case while closing
     }
 
     approve(id: number | undefined): void {
