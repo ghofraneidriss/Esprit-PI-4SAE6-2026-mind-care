@@ -6,63 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api_gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/.tsbuildinfo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_common.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_common.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_common_http.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_common_http.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_forms.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_forms.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_platform-browser.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_platform-browser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_router.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/@angular_router.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-4B5Y5CP2.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-4B5Y5CP2.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-FZ6KDRWY.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-FZ6KDRWY.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-IJD2TDG4.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-IJD2TDG4.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-VRZ2CBNE.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/.angular/cache/21.1.3/mind_care/vite/deps/chunk-VRZ2CBNE.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/node_modules/.package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/app-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/app-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/app-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/app-routing-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/activities/activities.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/activities/activities.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/activities/activities.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-routing-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/deals/deals.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/deals/deals.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/deals/deals.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-appointment-detail/doctor-appointment-detail.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-appointments/doctor-appointments.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/finance/finance.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/finance/finance.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/finance/finance.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/forums/forums.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/forums/forums.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/forums/forums.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/movement/movement.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/movement/movement.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/movement/movement.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/user-management/user-management.css" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/user-management/user-management.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/user-management/user-management.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/user-management/user-management.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/user-management/user-management.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/user-management/user-management.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/appointment/appointment.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/appointment/appointment.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/appointment/appointment.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/auth/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/auth/auth.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/department-details/department-details.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/department-details/department-details.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/department-details/department-details.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/departments/departments.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/departments/departments.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/departments/departments.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/forums/forums.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/forums/forums.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/forums/forums.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-routing-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/home1/home1.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/home1/home1.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -360,7 +303,7 @@
       <workItem from="1774280432626" duration="28000" />
       <workItem from="1774282430126" duration="1769000" />
       <workItem from="1774369944544" duration="618000" />
-      <workItem from="1774459543372" duration="4140000" />
+      <workItem from="1774459543372" duration="5237000" />
     </task>
     <servers />
   </component>
