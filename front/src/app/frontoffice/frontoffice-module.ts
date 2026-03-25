@@ -6,16 +6,12 @@ import { FrontofficeRoutingModule } from './frontoffice-routing-module';
 import { Home1 } from './home1/home1';
 import { Page404FrontPage } from './404/404';
 import { AboutFrontPage } from './about/about';
-import { AppointmentFrontPage } from './appointment/appointment';
 import { ContactFrontPage } from './contact/contact';
-import { DepartmentDetailsFrontPage } from './department-details/department-details';
-import { DepartmentsFrontPage } from './departments/departments';
 import { DoctorsFrontPage } from './doctors/doctors';
 import { FaqFrontPage } from './faq/faq';
 import { GalleryFrontPage } from './gallery/gallery';
 import { PrivacyFrontPage } from './privacy/privacy';
 import { ServiceDetailsFrontPage } from './service-details/service-details';
-import { ServicesFrontPage } from './services/services';
 import { StarterPageFrontPage } from './starter-page/starter-page';
 import { TermsFrontPage } from './terms/terms';
 import { TestimonialsFrontPage } from './testimonials/testimonials';
@@ -23,9 +19,7 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
-import { PatientReportsPage } from './reports/reports';
 import { FrontofficeActivitiesPage } from './activities/activities';
-import { FrontofficeForumsPage } from './forums/forums';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -34,16 +28,12 @@ import { Footer } from './footer/footer';
     Home1,
     Page404FrontPage,
     AboutFrontPage,
-    AppointmentFrontPage,
     ContactFrontPage,
-    DepartmentDetailsFrontPage,
-    DepartmentsFrontPage,
     DoctorsFrontPage,
     FaqFrontPage,
     GalleryFrontPage,
     PrivacyFrontPage,
     ServiceDetailsFrontPage,
-    ServicesFrontPage,
     StarterPageFrontPage,
     TermsFrontPage,
     TestimonialsFrontPage,
@@ -51,9 +41,7 @@ import { Footer } from './footer/footer';
     LoginCoverAuthPage,
     NewPasswordCoverAuthPage,
     RegisterCoverAuthPage,
-    PatientReportsPage,
     FrontofficeActivitiesPage,
-    FrontofficeForumsPage,
     Header,
     Footer,
   ],

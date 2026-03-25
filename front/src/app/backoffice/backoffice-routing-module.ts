@@ -3,13 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { strictAdminGuard } from '../guards/strict-admin.guard';
 
 import { Home2 } from './home2/home2';
-import { ActivitiesPage } from './activities/activities';
 import { CalendarPage } from './calendar/calendar';
 import { ChatPage } from './chat/chat';
 import { CustomersPage } from './customers/customers';
-import { DealsPage } from './deals/deals';
 import { EmployeePage } from './employee/employee';
-import { FinancePage } from './finance/finance';
 import { ProfilePage } from './profile/profile';
 import { ReviewPage } from './review/review';
 import { SalesPage } from './sales/sales';
@@ -19,20 +16,15 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
-import { ForumsPage } from './forums/forums';
 import { IncidentsPage } from './incidents/incidents';
-import { MovementPage } from './movement/movement';
 
 const routes: Routes = [
   { path: '', component: Home2 },
   { path: 'reports', component: Home2 },
-  { path: 'activities', component: ActivitiesPage },
   { path: 'calendar', component: CalendarPage },
   { path: 'chat', component: ChatPage },
   { path: 'customers', component: CustomersPage },
-  { path: 'deals', component: DealsPage },
   { path: 'employee', component: EmployeePage },
-  { path: 'finance', component: FinancePage },
   { path: 'profile', component: ProfilePage },
   { path: 'review', component: ReviewPage },
   { path: 'sales', component: SalesPage },
@@ -42,10 +34,8 @@ const routes: Routes = [
   { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
   { path: 'medical-reports', component: MedicalReportsPageComponent },
   { path: 'files-management', component: FilesManagementPageComponent },
-  { path: 'forums', component: ForumsPage },
   { path: 'incidents', component: IncidentsPage },
-  { path: 'movement', component: MovementPage },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: '/404' },
 ];
 
 @NgModule({
