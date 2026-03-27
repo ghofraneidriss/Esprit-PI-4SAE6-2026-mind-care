@@ -19,26 +19,16 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
+import { VolunteeringPageComponent } from './volunteering/volunteering';
+import { AssignmentHistoryPageComponent } from './assignment-history/assignment-history';
 
 const routes: Routes = [
   { path: '', component: Home2 },
-  { path: 'reports', component: Home2 },
-  { path: 'activities', component: ActivitiesPage },
-  { path: 'calendar', component: CalendarPage },
-  { path: 'chat', component: ChatPage },
-  { path: 'customers', component: CustomersPage },
-  { path: 'deals', component: DealsPage },
-  { path: 'employee', component: EmployeePage },
-  { path: 'finance', component: FinancePage },
-  { path: 'profile', component: ProfilePage },
-  { path: 'review', component: ReviewPage },
-  { path: 'sales', component: SalesPage },
-  { path: 'settings', component: SettingsPage },
-  { path: 'task-management', component: TaskManagementPage },
-  { path: 'team-management', component: TeamManagementPage },
   { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
   { path: 'medical-reports', component: MedicalReportsPageComponent },
   { path: 'files-management', component: FilesManagementPageComponent },
+  { path: 'volunteering', component: VolunteeringPageComponent },
+  { path: 'assignment-history', component: AssignmentHistoryPageComponent },
   { path: '**', redirectTo: '' },
 ];
 

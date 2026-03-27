@@ -20,6 +20,8 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
+import { VolunteeringPageComponent } from './volunteering/volunteering';
+import { AssignmentHistoryPageComponent } from './assignment-history/assignment-history';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -42,9 +44,11 @@ import { Footer } from './footer/footer';
     UserManagementPage,
     MedicalReportsPageComponent,
     FilesManagementPageComponent,
+    VolunteeringPageComponent,
+    AssignmentHistoryPageComponent,
     Header,
     Footer,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })
-export class BackofficeModule {}
+export class BackofficeModule { }

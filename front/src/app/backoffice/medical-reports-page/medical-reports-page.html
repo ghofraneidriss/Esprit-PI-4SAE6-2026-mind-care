@@ -24,17 +24,17 @@
         <i class="fi fi-rr-folder-open"></i>
         <span>Files Management</span>
       </a>
+      <a routerLink="/admin/volunteering" class="nav-link">
+        <i class="fi fi-rr-people-carry-box"></i>
+        <span>Volunteering</span>
+      </a>
+      <a routerLink="/admin/assignment-history" class="nav-link">
+        <i class="fi fi-rr-time-past"></i>
+        <span>Assignment History</span>
+      </a>
 
       <ng-container *ngIf="authService.isAdmin()">
         <span class="nav-heading">Management</span>
-        <a routerLink="/admin/employee" class="nav-link">
-          <i class="fi fi-rr-employee-man"></i>
-          <span>Employees</span>
-        </a>
-        <a routerLink="/admin/customers" class="nav-link">
-          <i class="fi fi-rr-review"></i>
-          <span>Customers</span>
-        </a>
         <a routerLink="/admin/user-management" class="nav-link">
           <i class="fi fi-rr-users"></i>
           <span>User Management</span>

@@ -1,0 +1,886 @@
+:host {
+    display: contents;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ─── Layout ─────────────────────────────────────────── */
+.vol-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ─── Sidebar (mirrors files-management pattern) ──────── */
+.vol-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: #fff;
+    color: #363f40;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 10;
+    border-right: 1px solid #e2e8f0;
+}
+
+.sidebar-brand {
+    padding: 20px 22px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #1f2f31;
+}
+
+.brand-link:hover {
+    color: #099aa7;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(9, 154, 167, 0.1);
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #099aa7;
+}
+
+.brand-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-nav .nav-heading {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 16px 12px 6px;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s, transform 0.12s;
+}
+
+.sidebar-nav .nav-link i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar-nav .nav-link:hover {
+    background: #f1f5f9;
+    color: #099aa7;
+    transform: translateX(2px);
+}
+
+.sidebar-nav .nav-link.active {
+    background: rgba(9, 154, 167, 0.08);
+    color: #099aa7;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    padding: 14px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.sidebar-footer .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s;
+}
+
+.sidebar-footer .nav-link:hover {
+    background: #f1f5f9;
+    color: #099aa7;
+}
+
+/* ─── Page wrapper ────────────────────────────────────── */
+.vol-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 0;
+    background: #f7f9f9;
+}
+
+/* ─── Hero ───────────────────────────────────────────── */
+.vol-hero {
+    background: #fff;
+    border-bottom: 1px solid #e9edf3;
+    padding: 22px 28px 20px;
+}
+
+.vol-hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.vol-title {
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hero-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(9, 154, 167, 0.1);
+    border-radius: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    color: #099aa7;
+}
+
+.vol-subtitle {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 0.86rem;
+}
+
+.hero-search-wrap {
+    position: relative;
+    min-width: 280px;
+    max-width: 400px;
+    flex: 1 1 280px;
+}
+
+.hero-search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.hero-search {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border-radius: 10px;
+    border: 1px solid #dbe2ea;
+    font-size: 0.88rem;
+    color: #1e293b;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.hero-search:focus {
+    border-color: #099aa7;
+    box-shadow: 0 0 0 3px rgba(9, 154, 167, 0.1);
+    background: #fff;
+}
+
+/* ─── Summary Stat Cards ─────────────────────────────── */
+.vol-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding: 18px 22px 0;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #e4e7f0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.stat-blue {
+    background: #e8efff;
+    color: #3b6fd4;
+}
+
+.stat-green {
+    background: #e0f7f4;
+    color: #099aa7;
+}
+
+.stat-purple {
+    background: #f0eaff;
+    color: #7b5ea7;
+}
+
+/* ─── Content area ────────────────────────────────────── */
+.vol-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 18px;
+    padding: 18px 22px 30px;
+    align-items: start;
+}
+
+/* ─── Mission Board ───────────────────────────────────── */
+.mission-board-section {
+    background: #fff;
+    border: 1px solid #e4e7f0;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.section-title {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.section-header .section-title {
+    margin-bottom: 0;
+}
+
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #099aa7;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 3px 10px rgba(9, 154, 167, 0.3);
+}
+
+.btn-create:hover {
+    background: #07889a;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(9, 154, 167, 0.38);
+}
+
+/* ─── Kanban columns ─────────────────────────────────── */
+.kanban-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.kanban-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.kanban-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: 4px;
+}
+
+.open-header {
+    border-color: #3b6fd4;
+}
+
+.assigned-header {
+    border-color: #f59e0b;
+}
+
+.completed-header {
+    border-color: #22c55e;
+}
+
+.col-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.col-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+}
+
+.open-badge {
+    background: #e8efff;
+    color: #3b6fd4;
+}
+
+.assigned-badge {
+    background: #fff3d9;
+    color: #b45309;
+}
+
+.completed-badge {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* ─── Mission cards ──────────────────────────────────── */
+.kanban-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.kanban-cards::-webkit-scrollbar {
+    width: 4px;
+}
+
+.kanban-cards::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.mission-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1px solid #dfe7f0;
+    border-radius: 14px;
+    padding: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.mission-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+}
+
+.mc-top {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.mc-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.icon-blue {
+    background: #e8efff;
+    color: #3b6fd4;
+}
+
+.icon-orange {
+    background: #fff3d9;
+    color: #b45309;
+}
+
+.icon-green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.mc-title-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.mc-title {
+    margin: 0 0 6px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.priority-chip {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 3px 9px;
+}
+
+.priority-high {
+    background: #ffe4e6;
+    color: #be123c;
+}
+
+.priority-medium {
+    background: #fff3d9;
+    color: #b45309;
+}
+
+.priority-low {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.mc-meta {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.mc-meta li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.775rem;
+    color: #64748b;
+}
+
+.mc-meta li i {
+    font-size: 12px;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.btn-delete-mission {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px;
+    border-radius: 5px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.btn-delete-mission:hover {
+    color: #e24653;
+    background: #fff1f2;
+}
+
+.kanban-empty {
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #94a3b8;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.82rem;
+}
+
+.kanban-empty i {
+    font-size: 18px;
+}
+
+/* ─── Volunteer Directory ────────────────────────────── */
+.volunteer-directory {
+    background: #fff;
+    border: 1px solid #e4e7f0;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dir-search-wrap {
+    position: relative;
+}
+
+.dir-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    font-size: 13px;
+}
+
+.dir-search {
+    width: 100%;
+    padding: 9px 13px 9px 34px;
+    border-radius: 10px;
+    border: 1px solid #dbe2ea;
+    font-size: 0.85rem;
+    color: #1e293b;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dir-search:focus {
+    border-color: #099aa7;
+    box-shadow: 0 0 0 3px rgba(9, 154, 167, 0.1);
+    background: #fff;
+}
+
+.verified-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.83rem;
+    color: #475569;
+    cursor: pointer;
+    user-select: none;
+}
+
+.verified-toggle input {
+    accent-color: #099aa7;
+    cursor: pointer;
+}
+
+/* ─── Volunteer cards ────────────────────────────────── */
+.volunteer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 620px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.volunteer-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.volunteer-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.volunteer-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.volunteer-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.09);
+}
+
+.vc-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.vol-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vc-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.vc-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.verified-badge {
+    color: #3b6fd4;
+    font-size: 13px;
+}
+
+.vc-city {
+    font-size: 0.76rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.vc-city i {
+    font-size: 11px;
+}
+
+.vc-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.skill-chip {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #e8f0ff;
+    color: #2c67e3;
+    border: 1px solid #d0e0ff;
+}
+
+.vc-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.vc-availability {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.vc-availability i {
+    color: #099aa7;
+}
+
+.vc-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vc-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.star-icon {
+    font-size: 12px;
+}
+
+.rating-value {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-left: 3px;
+}
+
+.missions-count {
+    margin-left: auto;
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.btn-assign {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: #099aa7;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-weight: 600;
+    font-size: 0.84rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.btn-assign:hover {
+    background: #07889a;
+    transform: translateY(-1px);
+}
+
+.dir-empty {
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #94a3b8;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.82rem;
+}
+
+.dir-empty i {
+    font-size: 18px;
+}
+
+/* ─── Modal ──────────────────────────────────────────── */
+.vol-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1055;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.vol-modal {
+    width: min(680px, 100%);
+}
+
+/* ─── Responsive ──────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .vol-content {
+        grid-template-columns: 1fr;
+    }
+
+    .kanban-columns {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1024px) {
+    .vol-sidebar {
+        display: none;
+    }
+
+    .vol-content {
+        padding: 14px;
+    }
+
+    .vol-stats {
+        padding: 14px 14px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .vol-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .kanban-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .vol-hero {
+        padding: 16px 14px 14px;
+    }
+
+    .hero-search-wrap {
+        min-width: unset;
+        max-width: 100%;
+    }
+}
