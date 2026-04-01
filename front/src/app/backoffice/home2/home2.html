@@ -1,111 +1,148 @@
-﻿<div class="admin-layout">
-  <!-- Sidebar -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-brand">
-      <a routerLink="/admin" class="brand-link">
-        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
-        <span class="brand-text">MindCare</span>
-      </a>
-    </div>
-    <nav class="sidebar-nav">
-      <span class="nav-heading">Main Menu</span>
-      <a routerLink="/admin" class="nav-link active">
-        <i class="fi fi-rr-house-blank"></i>
-        <span>Dashboard</span>
-      </a>
-      <a routerLink="/admin/medical-reports" class="nav-link">
-        <i class="fi fi-rr-document"></i>
-        <span>Medical Reports</span>
-      </a>
-      <a routerLink="/admin/files-management" class="nav-link">
-        <i class="fi fi-rr-folder-open"></i>
-        <span>Files Management</span>
-      </a>
-      <a routerLink="/admin/volunteering" class="nav-link">
-        <i class="fi fi-rr-people-carry-box"></i>
-        <span>Volunteering</span>
-      </a>
-      <a routerLink="/admin/assignment-history" class="nav-link">
-        <i class="fi fi-rr-time-past"></i>
-        <span>Assignment History</span>
-      </a>
-      <ng-container *ngIf="authService.isAdmin()">
-        <span class="nav-heading">Management</span>
-        <a routerLink="/admin/user-management" class="nav-link">
-          <i class="fi fi-rr-users"></i>
-          <span>User Management</span>
-        </a>
-      </ng-container>
-      <a routerLink="/admin/settings" class="nav-link mt-auto">
-        <i class="fi fi-rr-settings"></i>
-        <span>Settings</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <a routerLink="/" class="nav-link logout-link">
-        <i class="fi fi-rr-exit"></i>
-        <span>Back to Site</span>
-      </a>
-    </div>
-  </aside>
+<div class="app-page-head d-flex align-items-center justify-content-between">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <a routerLink="/admin"><i class="fi fi-rr-home"></i> Home</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+  </nav>
+</div>
 
-  <!-- Main Page -->
-  <div class="admin-page">
-    <!-- Header -->
-    <header class="admin-header">
-      <h1 class="admin-title">Dashboard</h1>
-      <p class="admin-subtitle">Welcome back, {{ authService.getLoggedUser()?.firstName || 'Admin' }}</p>
-    </header>
+<section class="dashboard-grid">
+  <div class="dashboard-main">
+    <section class="metric-grid">
+      <article class="metric-card">
+        <div class="metric-head">
+          <h3>Total Contacts</h3>
+          <button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button>
+        </div>
+        <div class="metric-body">
+          <div>
+            <div class="metric-value-row"><h2>5,758</h2><span class="metric-badge positive">+2.57%</span></div>
+            <p>Vs last month: 1,195</p>
+          </div>
+          <div class="spark spark-blue"></div>
+        </div>
+      </article>
 
-    <!-- Stats -->
-    <section class="admin-stats-grid">
-      <div class="admin-stat-card card-blue">
-        <div class="admin-stat-content">
-          <span class="admin-stat-label">Total Patients</span>
-          <h2 class="admin-stat-val">2,415</h2>
+      <article class="metric-card">
+        <div class="metric-head">
+          <h3>Lead Analytics</h3>
+          <button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button>
         </div>
-        <div class="admin-stat-icon icon-blue">
-          <i class="fi fi-rr-users"></i>
+        <div class="metric-body stacked">
+          <div class="metric-value-row"><h2>70</h2><span class="metric-badge negative">-2.57%</span></div>
+          <div class="mini-bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <p>Compared to last month</p>
         </div>
-      </div>
+      </article>
 
-      <div class="admin-stat-card card-green">
-        <div class="admin-stat-content">
-          <span class="admin-stat-label">Active Doctors</span>
-          <h2 class="admin-stat-val">124</h2>
+      <article class="metric-card">
+        <div class="metric-head plain">
+          <h3>Tasks Overview</h3>
+          <span class="metric-small">Tasks Done <strong>25</strong></span>
         </div>
-        <div class="admin-stat-icon icon-green">
-          <i class="fi fi-rr-user-md"></i>
+        <div class="progress-track"><span class="progress-bar primary" style="width: 70%"></span></div>
+        <div class="task-overview">
+          <div class="task-legend">
+            <span><i class="legend-dot low"></i> Follow-ups</span>
+            <span><i class="legend-dot mid"></i> In Progress</span>
+            <span><i class="legend-dot high"></i> Pending</span>
+          </div>
+          <div class="task-ring">70%</div>
         </div>
-      </div>
+      </article>
 
-      <div class="admin-stat-card card-purple">
-        <div class="admin-stat-content">
-          <span class="admin-stat-label">Medical Reports</span>
-          <h2 class="admin-stat-val">18.5k</h2>
+      <article class="metric-card">
+        <div class="metric-head">
+          <h3>Active Deals</h3>
+          <button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button>
         </div>
-        <div class="admin-stat-icon icon-purple">
-          <i class="fi fi-rr-document-signed"></i>
+        <div class="metric-body stacked">
+          <div class="metric-value-row"><h2>1,249</h2><span class="metric-badge positive">+2.57%</span></div>
+          <div class="deal-line-chart"><span></span><span></span><span></span><span></span><span></span></div>
+          <p>Vs last month: 1,195</p>
         </div>
-      </div>
-
-      <div class="admin-stat-card card-orange">
-        <div class="admin-stat-content">
-          <span class="admin-stat-label">Volunteer Missions</span>
-          <h2 class="admin-stat-val">342</h2>
-        </div>
-        <div class="admin-stat-icon icon-orange">
-          <i class="fi fi-rr-people-carry-box"></i>
-        </div>
-      </div>
+      </article>
     </section>
 
-    <!-- Main Content Box -->
-    <div class="admin-widget">
-      <i class="fi fi-rr-chart-line-up"></i>
-      <h3>Dashboard Overview</h3>
-      <p>This is the unified admin portal. Please navigate using the sidebar menu to manage reports, volunteers, and
-        users securely.</p>
-    </div>
+    <article class="panel-card revenue-panel">
+      <div class="panel-head">
+        <h3>Revenue</h3>
+        <div class="pill-group"><span class="pill">Today</span><span class="pill">Week</span><span class="pill active">Month</span></div>
+      </div>
+      <div class="revenue-value">
+        <h2><span>$</span>2,56,054.<strong>50</strong></h2>
+        <p>+20% vs last month</p>
+      </div>
+      <div class="revenue-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </article>
+
+    <section class="bottom-grid">
+      <article class="panel-card deals-panel">
+        <div class="panel-head"><h3>Deals Overview</h3><span class="panel-note">+15% vs last month</span></div>
+        <div class="mini-stat-grid">
+          <div class="mini-stat"><div class="mini-stat-icon"><i class="fi fi-rr-check-double"></i></div><div><p>Closed Deals</p><h4>27</h4><span>+10 Deals</span></div></div>
+          <div class="mini-stat"><div class="mini-stat-icon"><i class="fi fi-rr-clock-five"></i></div><div><p>Pipeline Value</p><h4>$5.2M</h4><span>+$270K</span></div></div>
+        </div>
+        <div class="deals-wave"></div>
+        <div class="conversion-pill"><span>Conversion Rate</span><strong>16%</strong><em>-2%</em></div>
+      </article>
+
+      <article class="panel-card pipeline-panel">
+        <div class="panel-head"><h3>Sales Pipeline Overview</h3><button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button></div>
+        <div class="pipeline-value"><h2><span>$</span>2,56,054.<strong>50</strong></h2><p>+20% vs last month</p></div>
+        <div class="pipeline-list">
+          <div class="pipeline-row"><div class="pipeline-label">Leads</div><div class="pipeline-count">120</div><div class="progress-track"><span class="progress-bar primary" style="width: 85%"></span></div></div>
+          <div class="pipeline-row"><div class="pipeline-label">Prospects</div><div class="pipeline-count">85</div><div class="progress-track"><span class="progress-bar success" style="width: 60%"></span></div></div>
+          <div class="pipeline-row"><div class="pipeline-label">Opportunities</div><div class="pipeline-count">40</div><div class="progress-track"><span class="progress-bar info" style="width: 40%"></span></div></div>
+          <div class="pipeline-row"><div class="pipeline-label">Closed Deals</div><div class="pipeline-count">20</div><div class="progress-track"><span class="progress-bar danger" style="width: 25%"></span></div></div>
+        </div>
+      </article>
+    </section>
   </div>
-</div>
+
+  <div class="dashboard-side">
+    <article class="panel-card">
+      <div class="panel-head"><h3>Traffic Sources</h3><button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button></div>
+      <div class="donut-visual"><div class="donut-ring"><strong>41.5%</strong><span>Organic</span></div></div>
+      <div class="source-list">
+        <div><span><i class="legend-dot low"></i> Organic Search</span><strong>41.50%</strong></div>
+        <div><span><i class="legend-dot mid"></i> Direct Traffic</span><strong>27%</strong></div>
+        <div><span><i class="legend-dot high"></i> Referral Traffic</span><strong>18%</strong></div>
+        <div><span><i class="legend-dot dark"></i> Social Media</span><strong>10.30%</strong></div>
+        <div><span><i class="legend-dot solid"></i> Email Traffic</span><strong>3.20%</strong></div>
+      </div>
+    </article>
+
+    <article class="panel-card">
+      <div class="panel-head"><h3>Retention Rate</h3><button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button></div>
+      <div class="metric-value-row retention-row"><h2>92%</h2><span>+15% vs last month</span></div>
+      <div class="retention-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </article>
+
+    <article class="panel-card earning-panel">
+      <div class="panel-head dark"><h3>Total Earning</h3><button type="button" class="metric-menu invert"><i class="fi fi-bs-menu-dots"></i></button></div>
+      <div class="earning-ring"><div class="earning-circle"><strong>673</strong><span>Orders</span></div></div>
+      <div class="earning-stats">
+        <div><h4>$2.78m</h4><p>245 Pickups</p></div>
+        <div><h4>$65,823</h4><p>120 Shipment</p></div>
+      </div>
+      <div class="status-list">
+        <div><span>Paid</span><strong>70%</strong></div>
+        <div><span>Cancelled</span><strong>25%</strong></div>
+        <div><span>Refunded</span><strong>5%</strong></div>
+      </div>
+    </article>
+
+    <article class="panel-card">
+      <div class="panel-head"><h3>Upcoming Meetings</h3><button type="button" class="metric-menu"><i class="fi fi-rr-plus"></i></button></div>
+      <div class="meeting-list">
+        <div class="meeting-item"><h4>Team Stand Up</h4><p>On Google Meet</p><div><span>Marketing</span><strong>06:00 - 07:00</strong></div></div>
+        <div class="meeting-item"><h4>All Hands Meeting</h4><p>On Google Meet</p><div><span>Manager</span><strong>08:00 - 09:00</strong></div></div>
+        <div class="meeting-item"><h4>Sprint Planning</h4><p>On Google Meet</p><div><span>Product</span><strong>11:00 - 12:00</strong></div></div>
+      </div>
+    </article>
+  </div>
+</section>

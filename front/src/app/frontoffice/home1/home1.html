@@ -2,6 +2,38 @@
 
 <main class="main">
 
+  <section class="volunteer-dashboard" *ngIf="isVolunteerDashboard">
+    <div class="container">
+      <div class="volunteer-dashboard__panel">
+        <div class="volunteer-dashboard__intro">
+          <span class="volunteer-dashboard__eyebrow">Volunteer Space</span>
+          <h2>Welcome back, {{ authService.getLoggedUser()?.firstName || 'Volunteer' }}</h2>
+          <p>Check your latest mission activity and open your assignment history from your dashboard.</p>
+        </div>
+
+        <div class="volunteer-dashboard__cards">
+          <a routerLink="/admin/assignment-history" class="volunteer-dashboard__card primary">
+            <div>
+              <span class="volunteer-dashboard__label">Main Action</span>
+              <h3>Assignment History</h3>
+              <p>Review assigned missions, completed visits, and volunteer activity.</p>
+            </div>
+            <span class="volunteer-dashboard__arrow">View</span>
+          </a>
+
+          <a routerLink="/admin/volunteering" class="volunteer-dashboard__card">
+            <div>
+              <span class="volunteer-dashboard__label">Mission Board</span>
+              <h3>Volunteering</h3>
+              <p>See available mission details and your volunteering workspace.</p>
+            </div>
+            <span class="volunteer-dashboard__arrow">Open</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Hero Section -->
   <section id="hero" class="hero section">
     <div class="container">

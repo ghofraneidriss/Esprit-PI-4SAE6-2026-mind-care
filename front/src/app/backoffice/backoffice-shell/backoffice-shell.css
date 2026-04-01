@@ -1,0 +1,45 @@
+:host {
+  display: contents;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-user__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5955d1, #0b9b9a);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.header-user__meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.header-user__meta strong {
+  font-size: 0.95rem;
+}
+
+.header-user__meta span {
+  color: var(--bs-secondary-color);
+  font-size: 0.82rem;
+}
+
+.theme-btn {
+  color: var(--bs-heading-color);
+}
+
+.app-tab-content .side-menubar .menu-link.active {
+  color: var(--bs-primary);
+}

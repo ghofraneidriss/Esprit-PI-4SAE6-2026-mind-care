@@ -1,345 +1,116 @@
-<div class="vol-layout">
-    <!-- Sidebar -->
-    <aside class="vol-sidebar">
-        <div class="sidebar-brand">
-            <a routerLink="/admin" class="brand-link">
-                <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
-                <span class="brand-text">MindCare</span>
-            </a>
-        </div>
-        <nav class="sidebar-nav">
-            <span class="nav-heading">Main Menu</span>
-            <a routerLink="/admin" class="nav-link">
-                <i class="fi fi-rr-house-blank"></i>
-                <span>Dashboard</span>
-            </a>
-            <a routerLink="/admin/medical-reports" class="nav-link">
-                <i class="fi fi-rr-document"></i>
-                <span>Medical Reports</span>
-            </a>
-            <a routerLink="/admin/files-management" class="nav-link">
-                <i class="fi fi-rr-folder-open"></i>
-                <span>Files Management</span>
-            </a>
-            <a routerLink="/admin/volunteering" class="nav-link active">
-                <i class="fi fi-rr-people-carry-box"></i>
-                <span>Volunteering & Missions</span>
-            </a>
-            <a routerLink="/admin/assignment-history" class="nav-link">
-                <i class="fi fi-rr-time-past"></i>
-                <span>Assignment History</span>
-            </a>
-            <ng-container *ngIf="authService.isAdmin()">
-                <span class="nav-heading">Management</span>
-                <a routerLink="/admin/user-management" class="nav-link">
-                    <i class="fi fi-rr-users"></i>
-                    <span>User Management</span>
-                </a>
-            </ng-container>
-        </nav>
-        <div class="sidebar-footer">
-            <a routerLink="/" class="nav-link logout-link">
-                <i class="fi fi-rr-exit"></i>
-                <span>Back to Site</span>
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main page -->
-    <div class="vol-page">
-        <!-- Hero header -->
-        <header class="vol-hero">
-            <div class="vol-hero-inner">
-                <div>
-                    <h1 class="vol-title">
-                        <span class="hero-icon"><i class="fi fi-rr-people-carry-box"></i></span>
-                        Volunteering &amp; Missions
-                    </h1>
-                    <p class="vol-subtitle">Manage volunteer assignments and community support missions</p>
-                </div>
-                <div class="hero-search-wrap">
-                    <i class="fi fi-rr-search hero-search-icon"></i>
-                    <input type="text" class="hero-search" placeholder="Search patients, reports, missions..."
-                        [(ngModel)]="searchQuery" />
-                </div>
-            </div>
-        </header>
-
-        <!-- Stat cards -->
-        <section class="vol-stats">
-            <article class="stat-card">
-                <div class="stat-copy">
-                    <span class="stat-label">Total Missions</span>
-                    <h2 class="stat-value">{{ totalMissions }}</h2>
-                </div>
-                <div class="stat-icon stat-blue">
-                    <i class="fi fi-rr-checkbox"></i>
-                </div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-copy">
-                    <span class="stat-label">Active Volunteers</span>
-                    <h2 class="stat-value">{{ activeVolunteers }}</h2>
-                </div>
-                <div class="stat-icon stat-green">
-                    <i class="fi fi-rr-users"></i>
-                </div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-copy">
-                    <span class="stat-label">Completion Rate</span>
-                    <h2 class="stat-value">{{ completionRate }}%</h2>
-                </div>
-                <div class="stat-icon stat-purple">
-                    <i class="fi fi-rr-chart-histogram"></i>
-                </div>
-            </article>
-        </section>
-
-        <!-- Loading / Error feedback -->
-        <div *ngIf="isLoading" class="vol-loading">
-            <span class="vol-spinner"></span>
-            <span>Loading missions…</span>
-        </div>
-        <div *ngIf="errorMessage && !isLoading" class="vol-error-banner">
-            <i class="fi fi-rr-exclamation"></i> {{ errorMessage }}
-            <button type="button" class="btn-retry" (click)="loadMissions()">Retry</button>
-        </div>
-
-        <!-- Mission Board + Volunteer Directory -->
-        <div class="vol-content" *ngIf="!isLoading">
-            <!-- Mission Board -->
-            <section class="mission-board-section">
-                <div class="section-header">
-                    <h2 class="section-title">Mission Board</h2>
-                    <button type="button" class="btn-create" (click)="openCreateModal()">
-                        <i class="fi fi-rr-plus"></i> Create Mission
-                    </button>
-                </div>
-
-                <div class="kanban-columns">
-                    <!-- Open -->
-                    <div class="kanban-col">
-                        <div class="kanban-col-header open-header">
-                            <span class="col-title">Open</span>
-                            <span class="col-badge open-badge">{{ openMissions.length }}</span>
-                        </div>
-                        <div class="kanban-cards" *ngIf="openMissions.length > 0; else emptyOpen">
-                            <article class="mission-card" *ngFor="let m of openMissions">
-                                <div class="mc-top">
-                                    <div class="mc-icon-wrap icon-blue">
-                                        <i [class]="m.icon"></i>
-                                    </div>
-                                    <div class="mc-title-area">
-                                        <h4 class="mc-title" [title]="m.title">{{ m.title }}</h4>
-                                        <span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority
-                                            }}</span>
-                                    </div>
-                                </div>
-                                <ul class="mc-meta">
-                                    <li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li>
-                                    <li><i class="fi fi-rr-marker"></i> {{ m.location }}</li>
-                                    <li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li>
-                                    <li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li>
-                                    <li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li>
-                                </ul>
-                                <button type="button" class="btn-delete-mission" (click)="deleteMission(m)">
-                                    <i class="fi fi-rr-trash"></i>
-                                </button>
-                            </article>
-                        </div>
-                        <ng-template #emptyOpen>
-                            <div class="kanban-empty"><i class="fi fi-rr-inbox"></i>
-                                <p>No open missions</p>
-                            </div>
-                        </ng-template>
-                    </div>
-
-                    <!-- Assigned -->
-                    <div class="kanban-col">
-                        <div class="kanban-col-header assigned-header">
-                            <span class="col-title">Assigned</span>
-                            <span class="col-badge assigned-badge">{{ assignedMissions.length }}</span>
-                        </div>
-                        <div class="kanban-cards" *ngIf="assignedMissions.length > 0; else emptyAssigned">
-                            <article class="mission-card" *ngFor="let m of assignedMissions">
-                                <div class="mc-top">
-                                    <div class="mc-icon-wrap icon-orange">
-                                        <i [class]="m.icon"></i>
-                                    </div>
-                                    <div class="mc-title-area">
-                                        <h4 class="mc-title" [title]="m.title">{{ m.title }}</h4>
-                                        <span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority
-                                            }}</span>
-                                    </div>
-                                </div>
-                                <ul class="mc-meta">
-                                    <li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li>
-                                    <li><i class="fi fi-rr-marker"></i> {{ m.location }}</li>
-                                    <li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li>
-                                    <li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li>
-                                    <li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li>
-                                </ul>
-                            </article>
-                        </div>
-                        <ng-template #emptyAssigned>
-                            <div class="kanban-empty"><i class="fi fi-rr-inbox"></i>
-                                <p>No assigned missions</p>
-                            </div>
-                        </ng-template>
-                    </div>
-
-                    <!-- Completed -->
-                    <div class="kanban-col">
-                        <div class="kanban-col-header completed-header">
-                            <span class="col-title">Completed</span>
-                            <span class="col-badge completed-badge">{{ completedMissions.length }}</span>
-                        </div>
-                        <div class="kanban-cards" *ngIf="completedMissions.length > 0; else emptyCompleted">
-                            <article class="mission-card" *ngFor="let m of completedMissions">
-                                <div class="mc-top">
-                                    <div class="mc-icon-wrap icon-green">
-                                        <i [class]="m.icon"></i>
-                                    </div>
-                                    <div class="mc-title-area">
-                                        <h4 class="mc-title" [title]="m.title">{{ m.title }}</h4>
-                                        <span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority
-                                            }}</span>
-                                    </div>
-                                </div>
-                                <ul class="mc-meta">
-                                    <li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li>
-                                    <li><i class="fi fi-rr-marker"></i> {{ m.location }}</li>
-                                    <li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li>
-                                    <li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li>
-                                    <li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li>
-                                </ul>
-                            </article>
-                        </div>
-                        <ng-template #emptyCompleted>
-                            <div class="kanban-empty"><i class="fi fi-rr-inbox"></i>
-                                <p>No completed missions</p>
-                            </div>
-                        </ng-template>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Volunteer Directory -->
-            <aside class="volunteer-directory">
-                <h2 class="section-title">Volunteer Directory</h2>
-                <div class="dir-search-wrap">
-                    <i class="fi fi-rr-search dir-search-icon"></i>
-                    <input type="text" class="dir-search" placeholder="Search volunteers..."
-                        [(ngModel)]="volunteerSearch" />
-                </div>
-                <label class="verified-toggle">
-                    <input type="checkbox" [(ngModel)]="showVerifiedOnly" />
-                    <span>Show verified only</span>
-                </label>
-
-                <div class="volunteer-list">
-                    <article class="volunteer-card" *ngFor="let v of filteredVolunteers">
-                        <div class="vc-head">
-                            <div class="vol-avatar" [style.background]="v.avatarColor">{{ v.initials }}</div>
-                            <div class="vc-info">
-                                <div class="vc-name">
-                                    {{ v.name }}
-                                    <span class="verified-badge" *ngIf="v.verified" title="Verified">
-                                        <i class="fi fi-sr-badge-check"></i>
-                                    </span>
-                                </div>
-                                <span class="vc-city"><i class="fi fi-rr-marker"></i> {{ v.city }}</span>
-                            </div>
-                        </div>
-                        <div class="vc-skills">
-                            <span class="skill-chip" *ngFor="let skill of v.skills">{{ skill }}</span>
-                        </div>
-                        <div class="vc-meta">
-                            <span class="vc-availability"><i class="fi fi-rr-calendar"></i> {{ v.availability }}</span>
-                        </div>
-                        <div class="vc-footer">
-                            <div class="vc-rating">
-                                <i class="fi fi-ss-star star-icon"
-                                    *ngFor="let i of starsArray(v.rating); let idx = index"
-                                    [style.color]="isFilledStar(idx, v.rating) ? '#f5a623' : '#e2e8f0'"></i>
-                                <span class="rating-value">{{ v.rating }} rating</span>
-                                <span class="missions-count">{{ v.missions }} missions</span>
-                            </div>
-                            <button type="button" class="btn-assign" (click)="assignVolunteer(v)">
-                                <i class="fi fi-rr-user-add"></i> Assign to Mission
-                            </button>
-                        </div>
-                    </article>
-
-                    <div class="dir-empty" *ngIf="filteredVolunteers.length === 0">
-                        <i class="fi fi-rr-users"></i>
-                        <p>No volunteers found</p>
-                    </div>
-                </div>
-            </aside>
-        </div>
+<div class="vol-page">
+  <header class="vol-hero">
+    <div class="vol-hero-inner">
+      <div>
+        <h1 class="vol-title">
+          <span class="hero-icon"><i class="fi fi-rr-people-carry-box"></i></span>
+          Volunteering &amp; Missions
+        </h1>
+        <p class="vol-subtitle">Manage volunteer assignments and community support missions</p>
+      </div>
+      <div class="hero-search-wrap">
+        <i class="fi fi-rr-search hero-search-icon"></i>
+        <input type="text" class="hero-search" placeholder="Search patients, reports, missions..." [(ngModel)]="searchQuery" />
+      </div>
     </div>
+  </header>
+
+  <section class="vol-stats">
+    <article class="stat-card"><div class="stat-copy"><span class="stat-label">Total Missions</span><h2 class="stat-value">{{ totalMissions }}</h2></div><div class="stat-icon stat-blue"><i class="fi fi-rr-checkbox"></i></div></article>
+    <article class="stat-card"><div class="stat-copy"><span class="stat-label">Active Volunteers</span><h2 class="stat-value">{{ activeVolunteers }}</h2></div><div class="stat-icon stat-green"><i class="fi fi-rr-users"></i></div></article>
+    <article class="stat-card"><div class="stat-copy"><span class="stat-label">Completion Rate</span><h2 class="stat-value">{{ completionRate }}%</h2></div><div class="stat-icon stat-purple"><i class="fi fi-rr-chart-histogram"></i></div></article>
+  </section>
+
+  <div *ngIf="isLoading" class="vol-loading"><span class="vol-spinner"></span><span>Loading missions...</span></div>
+  <div *ngIf="errorMessage && !isLoading" class="vol-error-banner"><i class="fi fi-rr-exclamation"></i> {{ errorMessage }} <button type="button" class="btn-retry" (click)="loadMissions()">Retry</button></div>
+
+  <div class="vol-content" *ngIf="!isLoading">
+    <section class="mission-board-section">
+      <div class="section-header">
+        <h2 class="section-title">Mission Board</h2>
+        <button type="button" class="btn-create" (click)="openCreateModal()"><i class="fi fi-rr-plus"></i> Create Mission</button>
+      </div>
+
+      <div class="kanban-columns">
+        <div class="kanban-col">
+          <div class="kanban-col-header open-header"><span class="col-title">Open</span><span class="col-badge open-badge">{{ openMissions.length }}</span></div>
+          <div class="kanban-cards" *ngIf="openMissions.length > 0; else emptyOpen">
+            <article class="mission-card" *ngFor="let m of openMissions">
+              <div class="mc-top"><div class="mc-icon-wrap icon-blue"><i [class]="m.icon"></i></div><div class="mc-title-area"><h4 class="mc-title" [title]="m.title">{{ m.title }}</h4><span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority }}</span></div></div>
+              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
+              <button type="button" class="btn-delete-mission" (click)="deleteMission(m)"><i class="fi fi-rr-trash"></i></button>
+            </article>
+          </div>
+          <ng-template #emptyOpen><div class="kanban-empty"><i class="fi fi-rr-inbox"></i><p>No open missions</p></div></ng-template>
+        </div>
+
+        <div class="kanban-col">
+          <div class="kanban-col-header assigned-header"><span class="col-title">Assigned</span><span class="col-badge assigned-badge">{{ assignedMissions.length }}</span></div>
+          <div class="kanban-cards" *ngIf="assignedMissions.length > 0; else emptyAssigned">
+            <article class="mission-card" *ngFor="let m of assignedMissions">
+              <div class="mc-top"><div class="mc-icon-wrap icon-orange"><i [class]="m.icon"></i></div><div class="mc-title-area"><h4 class="mc-title" [title]="m.title">{{ m.title }}</h4><span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority }}</span></div></div>
+              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
+            </article>
+          </div>
+          <ng-template #emptyAssigned><div class="kanban-empty"><i class="fi fi-rr-inbox"></i><p>No assigned missions</p></div></ng-template>
+        </div>
+
+        <div class="kanban-col">
+          <div class="kanban-col-header completed-header"><span class="col-title">Completed</span><span class="col-badge completed-badge">{{ completedMissions.length }}</span></div>
+          <div class="kanban-cards" *ngIf="completedMissions.length > 0; else emptyCompleted">
+            <article class="mission-card" *ngFor="let m of completedMissions">
+              <div class="mc-top"><div class="mc-icon-wrap icon-green"><i [class]="m.icon"></i></div><div class="mc-title-area"><h4 class="mc-title" [title]="m.title">{{ m.title }}</h4><span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority }}</span></div></div>
+              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
+            </article>
+          </div>
+          <ng-template #emptyCompleted><div class="kanban-empty"><i class="fi fi-rr-inbox"></i><p>No completed missions</p></div></ng-template>
+        </div>
+      </div>
+    </section>
+
+    <aside class="volunteer-directory">
+      <h2 class="section-title">Volunteer Directory</h2>
+      <div class="dir-search-wrap"><i class="fi fi-rr-search dir-search-icon"></i><input type="text" class="dir-search" placeholder="Search volunteers..." [(ngModel)]="volunteerSearch" /></div>
+      <label class="verified-toggle"><input type="checkbox" [(ngModel)]="showVerifiedOnly" /><span>Show verified only</span></label>
+
+      <div class="volunteer-list">
+        <article class="volunteer-card" *ngFor="let v of filteredVolunteers">
+          <div class="vc-head"><div class="vol-avatar" [style.background]="v.avatarColor">{{ v.initials }}</div><div class="vc-info"><div class="vc-name">{{ v.name }} <span class="verified-badge" *ngIf="v.verified" title="Verified"><i class="fi fi-sr-badge-check"></i></span></div><span class="vc-city"><i class="fi fi-rr-marker"></i> {{ v.city }}</span></div></div>
+          <div class="vc-skills"><span class="skill-chip" *ngFor="let skill of v.skills">{{ skill }}</span></div>
+          <div class="vc-meta"><span class="vc-availability"><i class="fi fi-rr-calendar"></i> {{ v.availability }}</span></div>
+          <div class="vc-footer">
+            <div class="vc-rating"><i class="fi fi-ss-star star-icon" *ngFor="let i of starsArray(v.rating); let idx = index" [style.color]="isFilledStar(idx, v.rating) ? '#f5a623' : '#e2e8f0'"></i><span class="rating-value">{{ v.rating }} rating</span><span class="missions-count">{{ v.missions }} missions</span></div>
+            <button type="button" class="btn-assign" (click)="assignVolunteer(v)"><i class="fi fi-rr-user-add"></i> Assign to Mission</button>
+          </div>
+        </article>
+
+        <div class="dir-empty" *ngIf="filteredVolunteers.length === 0"><i class="fi fi-rr-users"></i><p>No volunteers found</p></div>
+      </div>
+    </aside>
+  </div>
 </div>
 
-<!-- Create Mission Modal -->
 <div class="vol-modal-backdrop" *ngIf="isCreateModalOpen" (click)="closeCreateModal()">
-    <section class="vol-modal card" (click)="$event.stopPropagation()">
-        <div class="card-header bg-body d-flex align-items-center justify-content-between">
-            <h3 class="mb-0">Create New Mission</h3>
-            <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle"
-                (click)="closeCreateModal()">
-                <i class="fi fi-rr-cross-small"></i>
-            </button>
-        </div>
-        <div class="card-body">
-            <div *ngIf="formError" class="alert alert-danger mb-3">{{ formError }}</div>
-            <div class="row g-3">
-                <div class="col-12">
-                    <label class="form-label">Mission Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="newMission.title"
-                        placeholder="Enter mission title" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Category <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="newMission.category"
-                        placeholder="e.g. Home Visit" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Priority</label>
-                    <select class="form-select" [(ngModel)]="newMission.priority">
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Location</label>
-                    <input type="text" class="form-control" [(ngModel)]="newMission.location"
-                        placeholder="Enter location" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Date &amp; Time</label>
-                    <input type="text" class="form-control" [(ngModel)]="newMission.date"
-                        placeholder="e.g. 2025-02-01 at 10:00 AM" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Duration</label>
-                    <input type="text" class="form-control" [(ngModel)]="newMission.duration"
-                        placeholder="e.g. 2 hours" />
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Assign to Volunteer</label>
-                    <input type="text" class="form-control" [(ngModel)]="newMission.assignee"
-                        placeholder="Volunteer name (optional)" />
-                </div>
-            </div>
-        </div>
-        <div class="card-footer bg-body d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-light" (click)="closeCreateModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="saveMission()">
-                {{ isSaving ? 'Saving...' : 'Create Mission' }}
-            </button>
-        </div>
-    </section>
+  <section class="vol-modal card" (click)="$event.stopPropagation()">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0">Create New Mission</h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="closeCreateModal()"><i class="fi fi-rr-cross-small"></i></button>
+    </div>
+    <div class="card-body">
+      <div *ngIf="formError" class="alert alert-danger mb-3">{{ formError }}</div>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label">Mission Title <span class="text-danger">*</span></label><input type="text" class="form-control" [(ngModel)]="newMission.title" placeholder="Enter mission title" /></div>
+        <div class="col-md-6"><label class="form-label">Category <span class="text-danger">*</span></label><input type="text" class="form-control" [(ngModel)]="newMission.category" placeholder="e.g. Home Visit" /></div>
+        <div class="col-md-6"><label class="form-label">Priority</label><select class="form-select" [(ngModel)]="newMission.priority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
+        <div class="col-12"><label class="form-label">Location</label><input type="text" class="form-control" [(ngModel)]="newMission.location" placeholder="Enter location" /></div>
+        <div class="col-md-6"><label class="form-label">Date &amp; Time</label><input type="text" class="form-control" [(ngModel)]="newMission.date" placeholder="e.g. 2025-02-01 at 10:00 AM" /></div>
+        <div class="col-md-6"><label class="form-label">Duration</label><input type="text" class="form-control" [(ngModel)]="newMission.duration" placeholder="e.g. 2 hours" /></div>
+        <div class="col-12"><label class="form-label">Assign to Volunteer</label><input type="text" class="form-control" [(ngModel)]="newMission.assignee" placeholder="Volunteer name (optional)" /></div>
+      </div>
+    </div>
+    <div class="card-footer bg-body d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-light" (click)="closeCreateModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="saveMission()">{{ isSaving ? 'Saving...' : 'Create Mission' }}</button>
+    </div>
+  </section>
 </div>

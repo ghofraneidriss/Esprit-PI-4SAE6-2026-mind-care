@@ -1,248 +1,93 @@
-<div class="ah-layout">
-    <!-- Sidebar -->
-    <aside class="ah-sidebar">
-        <div class="sidebar-brand">
-            <a routerLink="/admin" class="brand-link">
-                <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
-                <span class="brand-text">MindCare</span>
-            </a>
-        </div>
-        <nav class="sidebar-nav">
-            <span class="nav-heading">Main Menu</span>
-            <a routerLink="/admin" class="nav-link">
-                <i class="fi fi-rr-house-blank"></i>
-                <span>Dashboard</span>
-            </a>
-            <a routerLink="/admin/medical-reports" class="nav-link">
-                <i class="fi fi-rr-document"></i>
-                <span>Medical Reports</span>
-            </a>
-            <a routerLink="/admin/files-management" class="nav-link">
-                <i class="fi fi-rr-folder-open"></i>
-                <span>Files Management</span>
-            </a>
-            <a routerLink="/admin/volunteering" class="nav-link">
-                <i class="fi fi-rr-people-carry-box"></i>
-                <span>Volunteering</span>
-            </a>
-            <a routerLink="/admin/assignment-history" class="nav-link active">
-                <i class="fi fi-rr-time-past"></i>
-                <span>Assignment History</span>
-            </a>
-            <ng-container *ngIf="authService.isAdmin()">
-                <span class="nav-heading">Management</span>
-                <a routerLink="/admin/user-management" class="nav-link">
-                    <i class="fi fi-rr-users"></i>
-                    <span>User Management</span>
-                </a>
-            </ng-container>
-            <a routerLink="/admin/settings" class="nav-link mt-auto">
-                <i class="fi fi-rr-settings"></i>
-                <span>Settings</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <a routerLink="/" class="nav-link logout-link">
-                <i class="fi fi-rr-exit"></i>
-                <span>Back to Site</span>
-            </a>
-        </div>
-    </aside>
+<div class="ah-page">
+  <header class="ah-header">
+    <h1 class="ah-title">Assignment History</h1>
+    <p class="ah-subtitle">Track volunteer mission assignments and completed tasks</p>
+  </header>
 
-    <!-- Main Page -->
-    <div class="ah-page">
-        <!-- Header -->
-        <header class="ah-header">
-            <h1 class="ah-title">Assignment History</h1>
-            <p class="ah-subtitle">Track volunteer mission assignments and completed tasks</p>
-        </header>
+  <section class="ah-stats-grid">
+    <div class="ah-stat-card card-blue"><div class="ah-stat-content"><span class="ah-stat-label">Total Assignments</span><h2 class="ah-stat-val">{{ totalAssignments }}</h2></div><div class="ah-stat-icon icon-blue"><i class="fi fi-rr-chart-pie-alt"></i></div></div>
+    <div class="ah-stat-card card-yellow"><div class="ah-stat-content"><span class="ah-stat-label">Active Assignments</span><h2 class="ah-stat-val">{{ activeAssignments }}</h2></div><div class="ah-stat-icon icon-yellow"><i class="fi fi-rr-rotate-right"></i></div></div>
+    <div class="ah-stat-card card-green"><div class="ah-stat-content"><span class="ah-stat-label">Completed Missions</span><h2 class="ah-stat-val">{{ completedMissions }}</h2></div><div class="ah-stat-icon icon-green"><i class="fi fi-rr-check-circle"></i></div></div>
+    <div class="ah-stat-card card-red"><div class="ah-stat-content"><span class="ah-stat-label">Average Rating</span><h2 class="ah-stat-val">{{ averageRating }}<span class="ah-stat-small">/5</span></h2></div><div class="ah-stat-icon icon-red"><i class="fi fi-sr-star"></i></div></div>
+  </section>
 
-        <!-- Stats -->
-        <section class="ah-stats-grid">
-            <div class="ah-stat-card card-blue">
-                <div class="ah-stat-content">
-                    <span class="ah-stat-label">Total Assignments</span>
-                    <h2 class="ah-stat-val">{{ totalAssignments }}</h2>
-                </div>
-                <div class="ah-stat-icon icon-blue">
-                    <i class="fi fi-rr-chart-pie-alt"></i>
-                </div>
-            </div>
-
-            <div class="ah-stat-card card-yellow">
-                <div class="ah-stat-content">
-                    <span class="ah-stat-label">Active Assignments</span>
-                    <h2 class="ah-stat-val">{{ activeAssignments }}</h2>
-                </div>
-                <div class="ah-stat-icon icon-yellow">
-                    <i class="fi fi-rr-rotate-right"></i>
-                </div>
-            </div>
-
-            <div class="ah-stat-card card-green">
-                <div class="ah-stat-content">
-                    <span class="ah-stat-label">Completed Missions</span>
-                    <h2 class="ah-stat-val">{{ completedMissions }}</h2>
-                </div>
-                <div class="ah-stat-icon icon-green">
-                    <i class="fi fi-rr-check-circle"></i>
-                </div>
-            </div>
-
-            <div class="ah-stat-card card-red">
-                <div class="ah-stat-content">
-                    <span class="ah-stat-label">Average Rating</span>
-                    <h2 class="ah-stat-val">{{ averageRating }}<span class="ah-stat-small">/5</span></h2>
-                </div>
-                <div class="ah-stat-icon icon-red">
-                    <i class="fi fi-sr-star"></i>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content Box -->
-        <div class="ah-content-box">
-            <!-- Toolbar -->
-            <div class="ah-toolbar">
-                <div class="ah-search-wrap">
-                    <i class="fi fi-rr-search ah-search-icon"></i>
-                    <input type="text" class="ah-search-input" placeholder="Search mission or patient name..."
-                        [(ngModel)]="searchQuery" />
-                </div>
-
-                <div class="ah-filters">
-                    <button class="ah-filter-btn" [class.active]="activeFilter === 'All'"
-                        (click)="setFilter('All')">All</button>
-                    <button class="ah-filter-btn" [class.active]="activeFilter === 'Assigned'"
-                        (click)="setFilter('Assigned')">Assigned</button>
-                    <button class="ah-filter-btn" [class.active]="activeFilter === 'In Progress'"
-                        (click)="setFilter('In Progress')">In Progress</button>
-                    <button class="ah-filter-btn" [class.active]="activeFilter === 'Completed'"
-                        (click)="setFilter('Completed')">Completed</button>
-                    <button class="ah-filter-btn" [class.active]="activeFilter === 'Cancelled'"
-                        (click)="setFilter('Cancelled')">Cancelled</button>
-                </div>
-
-                <div class="ah-date-picker">
-                    <i class="fi fi-rr-calendar"></i>
-                    <input type="date" class="ah-date-input" placeholder="mm/dd/yyyy" />
-                </div>
-
-                <div class="ah-sort">
-                    <i class="fi fi-rr-sort-amount-down-alt"></i>
-                    <select class="ah-sort-select">
-                        <option value="latest">Latest First</option>
-                        <option value="oldest">Oldest First</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- List Meta -->
-            <div class="ah-list-meta">
-                <span class="ah-showing">Showing <strong>{{ filteredAssignments.length }}</strong> assignments</span>
-                <span class="ah-hint"><i class="fi fi-rr-info"></i> Click "View Details" to inspect any
-                    assignment</span>
-            </div>
-
-            <!-- Data Table -->
-            <div class="ah-table-wrap">
-                <table class="ah-table">
-                    <thead>
-                        <tr>
-                            <th>MISSION</th>
-                            <th>CATEGORY</th>
-                            <th>PATIENT</th>
-                            <th>ASSIGNED</th>
-                            <th>MISSION DATE</th>
-                            <th>DURATION</th>
-                            <th>RATING</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let a of filteredAssignments">
-                            <td>
-                                <div class="ah-td-mission">
-                                    <div class="ah-td-icon">
-                                        <i [class]="a.missionIcon"></i>
-                                    </div>
-                                    <div class="ah-td-title">
-                                        <div class="ah-td-name">{{ a.missionTitle }}</div>
-                                        <div class="ah-td-sub">{{ a.volunteerName }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="ah-td-category">{{ a.category }}</span></td>
-                            <td>
-                                <div class="ah-td-patient">
-                                    <div class="ah-patient-avatar bg-{{ a.patientColor }}">{{ a.patientInitials }}</div>
-                                    <span class="ah-patient-name">{{ a.patientName }}</span>
-                                </div>
-                            </td>
-                            <td><span class="ah-td-date">{{ a.assignedDate }}</span></td>
-                            <td><span class="ah-td-date">{{ a.missionDate }}</span></td>
-                            <td><span class="ah-td-duration">{{ a.duration }}</span></td>
-                            <td>
-                                <div class="ah-td-rating" *ngIf="a.rating; else noRating">
-                                    <i class="fi fi-sr-star star-filled"
-                                        *ngFor="let i of starsArray(a.rating); let idx = index"
-                                        [class.star-empty]="!isFilledStar(idx, a.rating)"></i>
-                                    <span class="ah-rating-val">{{ a.rating }}</span>
-                                </div>
-                                <ng-template #noRating><span class="ah-td-dash">—</span></ng-template>
-                            </td>
-                            <td>
-                                <span class="ah-pill ah-pill-{{ a.statusColor }}"><span class="ah-dot"></span> {{
-                                    a.status }}</span>
-                            </td>
-                            <td>
-                                <button class="ah-btn-details">View Details</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="ah-empty" *ngIf="filteredAssignments.length === 0">
-                    <i class="fi fi-rr-inbox"></i>
-                    <p>No assignments found matching your criteria</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- My Completed Missions Section -->
-        <div class="ah-completed-section">
-            <div class="ah-completed-header">
-                <div>
-                    <h2 class="ah-title">My Completed Missions</h2>
-                    <p class="ah-subtitle">{{ myCompletedMissions.length }} missions successfully completed</p>
-                </div>
-                <div class="ah-completed-badge">{{ myCompletedMissions.length }} Completed</div>
-            </div>
-
-            <div class="ah-grid">
-                <div class="ah-card" *ngFor="let m of myCompletedMissions">
-                    <div class="ah-card-header">
-                        <div class="ah-card-icon"><i [class]="m.icon"></i></div>
-                        <span class="ah-completed-pill"><span class="ah-dot"></span> Completed</span>
-                    </div>
-
-                    <h3 class="ah-card-title">{{ m.title }}</h3>
-                    <span class="ah-card-category">{{ m.category }}</span>
-
-                    <div class="ah-card-patient">
-                        <div class="ah-patient-avatar mini">{{ m.patientInitial }}</div>
-                        <span class="ah-patient-name">{{ m.patientName }}</span>
-                    </div>
-
-                    <div class="ah-card-footer">
-                        <span class="ah-card-date"><i class="fi fi-rr-calendar"></i> {{ m.date }}</span>
-                        <div class="ah-card-rating">
-                            <i class="fi fi-sr-star star-filled" *ngFor="let i of starsArray(m.rating); let idx = index"
-                                [class.star-empty]="!isFilledStar(idx, m.rating)"></i>
-                            <span class="ah-rating-val">{{ m.rating }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="ah-content-box">
+    <div class="ah-toolbar">
+      <div class="ah-search-wrap"><i class="fi fi-rr-search ah-search-icon"></i><input type="text" class="ah-search-input" placeholder="Search mission or patient name..." [(ngModel)]="searchQuery" /></div>
+      <div class="ah-filters">
+        <button class="ah-filter-btn" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">All</button>
+        <button class="ah-filter-btn" [class.active]="activeFilter === 'Assigned'" (click)="setFilter('Assigned')">Assigned</button>
+        <button class="ah-filter-btn" [class.active]="activeFilter === 'In Progress'" (click)="setFilter('In Progress')">In Progress</button>
+        <button class="ah-filter-btn" [class.active]="activeFilter === 'Completed'" (click)="setFilter('Completed')">Completed</button>
+        <button class="ah-filter-btn" [class.active]="activeFilter === 'Cancelled'" (click)="setFilter('Cancelled')">Cancelled</button>
+      </div>
+      <div class="ah-date-picker"><i class="fi fi-rr-calendar"></i><input type="date" class="ah-date-input" placeholder="mm/dd/yyyy" /></div>
+      <div class="ah-sort"><i class="fi fi-rr-sort-amount-down-alt"></i><select class="ah-sort-select"><option value="latest">Latest First</option><option value="oldest">Oldest First</option></select></div>
     </div>
+
+    <div class="ah-list-meta">
+      <span class="ah-showing">Showing <strong>{{ filteredAssignments.length }}</strong> assignments</span>
+      <span class="ah-hint"><i class="fi fi-rr-info"></i> Click "View Details" to inspect any assignment</span>
+    </div>
+
+    <div class="ah-table-wrap">
+      <table class="ah-table">
+        <thead>
+          <tr>
+            <th>MISSION</th>
+            <th>CATEGORY</th>
+            <th>PATIENT</th>
+            <th>ASSIGNED</th>
+            <th>MISSION DATE</th>
+            <th>DURATION</th>
+            <th>RATING</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of filteredAssignments">
+            <td><div class="ah-td-mission"><div class="ah-td-icon"><i [class]="a.missionIcon"></i></div><div class="ah-td-title"><div class="ah-td-name">{{ a.missionTitle }}</div><div class="ah-td-sub">{{ a.volunteerName }}</div></div></div></td>
+            <td><span class="ah-td-category">{{ a.category }}</span></td>
+            <td><div class="ah-td-patient"><div class="ah-patient-avatar bg-{{ a.patientColor }}">{{ a.patientInitials }}</div><span class="ah-patient-name">{{ a.patientName }}</span></div></td>
+            <td><span class="ah-td-date">{{ a.assignedDate }}</span></td>
+            <td><span class="ah-td-date">{{ a.missionDate }}</span></td>
+            <td><span class="ah-td-duration">{{ a.duration }}</span></td>
+            <td>
+              <div class="ah-td-rating" *ngIf="a.rating; else noRating">
+                <i class="fi fi-sr-star star-filled" *ngFor="let i of starsArray(a.rating); let idx = index" [class.star-empty]="!isFilledStar(idx, a.rating)"></i>
+                <span class="ah-rating-val">{{ a.rating }}</span>
+              </div>
+              <ng-template #noRating><span class="ah-td-dash">-</span></ng-template>
+            </td>
+            <td><span class="ah-pill ah-pill-{{ a.statusColor }}"><span class="ah-dot"></span> {{ a.status }}</span></td>
+            <td><button class="ah-btn-details">View Details</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ah-empty" *ngIf="filteredAssignments.length === 0"><i class="fi fi-rr-inbox"></i><p>No assignments found matching your criteria</p></div>
+    </div>
+  </div>
+
+  <div class="ah-completed-section">
+    <div class="ah-completed-header">
+      <div>
+        <h2 class="ah-title">My Completed Missions</h2>
+        <p class="ah-subtitle">{{ myCompletedMissions.length }} missions successfully completed</p>
+      </div>
+      <div class="ah-completed-badge">{{ myCompletedMissions.length }} Completed</div>
+    </div>
+
+    <div class="ah-grid">
+      <div class="ah-card" *ngFor="let m of myCompletedMissions">
+        <div class="ah-card-header"><div class="ah-card-icon"><i [class]="m.icon"></i></div><span class="ah-completed-pill"><span class="ah-dot"></span> Completed</span></div>
+        <h3 class="ah-card-title">{{ m.title }}</h3>
+        <span class="ah-card-category">{{ m.category }}</span>
+        <div class="ah-card-patient"><div class="ah-patient-avatar mini">{{ m.patientInitial }}</div><span class="ah-patient-name">{{ m.patientName }}</span></div>
+        <div class="ah-card-footer">
+          <span class="ah-card-date"><i class="fi fi-rr-calendar"></i> {{ m.date }}</span>
+          <div class="ah-card-rating"><i class="fi fi-sr-star star-filled" *ngFor="let i of starsArray(m.rating); let idx = index" [class.star-empty]="!isFilledStar(idx, m.rating)"></i><span class="ah-rating-val">{{ m.rating }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

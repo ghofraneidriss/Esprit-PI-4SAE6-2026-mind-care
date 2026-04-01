@@ -24,6 +24,7 @@ import { VolunteeringPageComponent } from './volunteering/volunteering';
 import { AssignmentHistoryPageComponent } from './assignment-history/assignment-history';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { BackofficeShellComponent } from './backoffice-shell/backoffice-shell';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { Footer } from './footer/footer';
     AssignmentHistoryPageComponent,
     Header,
     Footer,
+    BackofficeShellComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })

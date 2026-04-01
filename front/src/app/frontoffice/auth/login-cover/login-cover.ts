@@ -9,7 +9,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login-cover.css'],
 })
 export class LoginCoverAuthPage {
-  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
+  roles = ['PATIENT', 'VOLUNTEER', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
 
   credentials = {
     email: '',

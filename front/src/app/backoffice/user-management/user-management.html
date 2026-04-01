@@ -1,148 +1,60 @@
-﻿<div class="mr-layout">
+<div class="mr-page">
+  <div class="mr-hero">
+    <div class="mr-hero-inner">
+      <div>
+        <h1 class="mr-hero-title">
+          <span class="hero-icon"><i class="fi fi-rr-users"></i></span>
+          User Management
+        </h1>
+        <p class="mr-hero-subtitle">Manage system users and their roles</p>
+      </div>
 
-  <!-- ══════════════════════════════════════
-       Sidebar Navigation
-  ══════════════════════════════════════ -->
-  <aside class="mr-sidebar">
-    <div class="sidebar-brand">
-      <a routerLink="/admin" class="brand-link">
-        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
-        <span class="brand-text">MindCare</span>
-      </a>
-    </div>
-    <nav class="sidebar-nav">
-      <span class="nav-heading">Main Menu</span>
-      <a routerLink="/admin" class="nav-link">
-        <i class="fi fi-rr-house-blank"></i>
-        <span>Dashboard</span>
-      </a>
-      <a routerLink="/admin/medical-reports" class="nav-link">
-        <i class="fi fi-rr-document"></i>
-        <span>Medical Reports</span>
-      </a>
-      <a routerLink="/admin/files-management" class="nav-link">
-        <i class="fi fi-rr-folder-open"></i>
-        <span>Files Management</span>
-      </a>
-      <a routerLink="/admin/volunteering" class="nav-link">
-        <i class="fi fi-rr-people-carry-box"></i>
-        <span>Volunteering</span>
-      </a>
-      <a routerLink="/admin/assignment-history" class="nav-link">
-        <i class="fi fi-rr-time-past"></i>
-        <span>Assignment History</span>
-      </a>
-
-      <!-- Only visible to admins theoretically, but the guard protects the route -->
-      <ng-container>
-        <span class="nav-heading">Management</span>
-        <a routerLink="/admin/user-management" class="nav-link active">
-          <i class="fi fi-rr-users"></i>
-          <span>User Management</span>
-        </a>
-      </ng-container>
-    </nav>
-    <div class="sidebar-footer">
-      <a routerLink="/" class="nav-link logout-link">
-        <i class="fi fi-rr-exit"></i>
-        <span>Back to Site</span>
-      </a>
-    </div>
-  </aside>
-
-  <!-- ══════════════════════════════════════
-       Main Content
-  ══════════════════════════════════════ -->
-  <div class="mr-page">
-
-    <div class="mr-hero">
-      <div class="mr-hero-inner">
-        <div>
-          <h1 class="mr-hero-title">
-            <span class="hero-icon"><i class="fi fi-rr-users"></i></span>
-            User Management
-          </h1>
-          <p class="mr-hero-subtitle">Manage system users and their roles</p>
-        </div>
-
-        <div class="d-flex align-items-center gap-3 flex-wrap">
-          <div class="mr-hero-stats">
-            <div class="mr-stat-chip">
-              <span class="chip-value">{{ users.length }}</span>
-              <span class="chip-label">Total Users</span>
-            </div>
-          </div>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="mr-hero-stats">
+          <div class="mr-stat-chip"><span class="chip-value">{{ users.length }}</span><span class="chip-label">Total Users</span></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="mr-body p-4" style="background: var(--bg-body); overflow-y: auto;">
-      <div *ngIf="isLoading" class="d-flex justify-content-center mt-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
+  <div class="mr-body p-4" style="background: var(--bg-body); overflow-y: auto;">
+    <div *ngIf="isLoading" class="d-flex justify-content-center mt-5">
+      <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
 
-      <div *ngIf="errorMessage && !isLoading"
-        class="d-flex flex-column align-items-center justify-content-center mt-5 p-4">
-        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-          <i class="fi fi-rr-triangle-warning"></i>
-          {{ errorMessage }}
-        </div>
-        <button class="btn btn-outline-primary mt-2" (click)="fetchUsers()">
-          <i class="fi fi-rr-refresh me-1"></i> Retry
-        </button>
-      </div>
+    <div *ngIf="errorMessage && !isLoading" class="d-flex flex-column align-items-center justify-content-center mt-5 p-4">
+      <div class="alert alert-danger d-flex align-items-center gap-2" role="alert"><i class="fi fi-rr-triangle-warning"></i>{{ errorMessage }}</div>
+      <button class="btn btn-outline-primary mt-2" (click)="fetchUsers()"><i class="fi fi-rr-refresh me-1"></i> Retry</button>
+    </div>
 
-      <div *ngIf="!isLoading && !errorMessage" class="table-responsive bg-white rounded-3 shadow-sm p-4">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Role</th>
-              <th scope="col" class="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td class="fw-bold text-secondary">#{{ user.userId }}</td>
-              <td>
-                <div class="d-flex align-items-center gap-3">
-                  <div
-                    class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center"
-                    style="width: 36px; height: 36px">
-                    {{ user.firstName[0] }}{{ user.lastName[0] }}
-                  </div>
-                  <div>
-                    <h6 class="mb-0 fw-semibold">{{ user.firstName }} {{ user.lastName }}</h6>
-                  </div>
+    <div *ngIf="!isLoading && !errorMessage" class="table-responsive bg-white rounded-3 shadow-sm p-4">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Role</th><th scope="col" class="text-end">Actions</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td class="fw-bold text-secondary">#{{ user.userId }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px">
+                  {{ user.firstName[0] }}{{ user.lastName[0] }}
                 </div>
-              </td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.phone || '—' }}</td>
-              <td>
-                <select class="form-select form-select-sm w-auto d-inline-block" [value]="user.role"
-                  (change)="updateRole(user, $event)">
-                  <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-                </select>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.userId)" title="Delete User">
-                  <i class="fi fi-rr-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="users.length === 0">
-              <td colspan="6" class="text-center py-4 text-muted">
-                No users found.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <div><h6 class="mb-0 fw-semibold">{{ user.firstName }} {{ user.lastName }}</h6></div>
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone || '-' }}</td>
+            <td>
+              <select class="form-select form-select-sm w-auto d-inline-block" [value]="user.role" (change)="updateRole(user, $event)">
+                <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+              </select>
+            </td>
+            <td class="text-end"><button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.userId)" title="Delete User"><i class="fi fi-rr-trash"></i></button></td>
+          </tr>
+          <tr *ngIf="users.length === 0"><td colspan="6" class="text-center py-4 text-muted">No users found.</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

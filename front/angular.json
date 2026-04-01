@@ -38,6 +38,12 @@
             "styles": [
               "src/styles.css",
               "src/assets/frontoffice/css/main.css",
+              "src/assets/backoffice/libs/flaticon/css/all/all.css",
+              "src/assets/backoffice/libs/simplebar/simplebar.css",
+              "src/assets/backoffice/libs/node-waves/waves.css",
+              "src/assets/backoffice/libs/bootstrap-select/css/bootstrap-select.min.css",
+              "src/assets/backoffice/libs/flatpickr/flatpickr.min.css",
+              "src/assets/backoffice/libs/datatables/datatables.min.css",
               "src/assets/backoffice/css/styles.css"
             ]
           },
