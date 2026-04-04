@@ -1,0 +1,160 @@
+<div class="container-fluid p-4">
+
+  <!-- Header -->
+  <div class="row mb-4 align-items-center">
+    <div class="col">
+      <h3 class="fw-bold mb-1">Mood &amp; Behavior Tracker</h3>
+      <p class="text-muted small mb-0">Track patient emotional well-being over time</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Left: Form + Stats -->
+    <div class="col-lg-4">
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-6">
+          <div class="card border-0 shadow-sm text-center p-3">
+            <div class="fs-2 fw-bold text-primary">{{ entries.length }}</div>
+            <div class="small text-muted">Total Entries</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card border-0 shadow-sm text-center p-3">
+            <div class="fs-2 fw-bold text-success">{{ getAvgScore() }}</div>
+            <div class="small text-muted">Avg Score</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-3 pb-0">
+          <h6 class="fw-semibold mb-0"><i class="ri-add-circle-line me-1 text-primary"></i>Log Mood Entry</h6>
+        </div>
+        <div class="card-body">
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Patient ID</label>
+            <input type="number" class="form-control" [(ngModel)]="patientId" (change)="load()" min="1">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Date</label>
+            <input type="date" class="form-control" [(ngModel)]="form.date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Mood Score</label>
+            <div class="d-flex gap-2 mt-1">
+              <button *ngFor="let s of [1,2,3,4,5]"
+                      class="btn btn-sm flex-fill fw-bold"
+                      [class.btn-primary]="form.score === s"
+                      [class.btn-outline-secondary]="form.score !== s"
+                      (click)="form.score = s">
+                {{ s }}
+              </button>
+            </div>
+            <div class="mt-1 small text-center text-muted">{{ getScoreLabel(form.score!) }}</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Note (optional)</label>
+            <textarea class="form-control" rows="2" [(ngModel)]="form.note"
+                      placeholder="Any observations, behaviors..."></textarea>
+          </div>
+
+          <button class="btn btn-primary w-100" (click)="save()"
+                  [disabled]="saving || !form.date || !form.score">
+            <span *ngIf="saving" class="spinner-border spinner-border-sm me-1"></span>
+            <i *ngIf="!saving" class="ri-save-line me-1"></i>
+            Log Entry
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Chart + History -->
+    <div class="col-lg-8">
+
+      <!-- Chart -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 pt-3 pb-0">
+          <h6 class="fw-semibold mb-0"><i class="ri-line-chart-line me-1 text-primary"></i>Mood Trend (last 14 entries)</h6>
+        </div>
+        <div class="card-body" style="height:220px">
+          <div *ngIf="loading" class="h-100 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <canvas *ngIf="!loading && entries.length > 0" #moodChart></canvas>
+          <div *ngIf="!loading && entries.length === 0"
+               class="h-100 d-flex align-items-center justify-content-center text-muted">
+            <div class="text-center">
+              <i class="ri-emotion-line fs-1"></i>
+              <p class="mt-2 mb-0 small">Log entries to see trend</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-3 pb-0">
+          <h6 class="fw-semibold mb-0"><i class="ri-history-line me-1 text-primary"></i>Entry History</h6>
+        </div>
+        <div class="card-body p-0">
+
+          <div *ngIf="loading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+
+          <div *ngIf="!loading && entries.length === 0" class="text-center text-muted py-4">
+            <i class="ri-emotion-line fs-2"></i>
+            <p class="mt-1 mb-0 small">No entries yet for patient {{ patientId }}</p>
+          </div>
+
+          <div class="table-responsive" *ngIf="!loading && entries.length > 0">
+            <table class="table table-hover mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th class="small fw-semibold ps-3">Date</th>
+                  <th class="small fw-semibold">Score</th>
+                  <th class="small fw-semibold">Mood</th>
+                  <th class="small fw-semibold">Note</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of entries">
+                  <td class="small ps-3">{{ e.date }}</td>
+                  <td>
+                    <span class="badge rounded-pill" [class]="'bg-' + getScoreColor(e.score)">
+                      {{ e.score }}/5
+                    </span>
+                  </td>
+                  <td class="small">{{ getScoreLabel(e.score) }}</td>
+                  <td class="small text-muted" style="max-width:200px">
+                    <span class="text-truncate d-inline-block" style="max-width:180px"
+                          [title]="e.note || ''">
+                      {{ e.note || '—' }}
+                    </span>
+                  </td>
+                  <td class="text-end pe-3">
+                    <button class="btn btn-sm btn-outline-danger border-0" (click)="delete(e.id!)">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

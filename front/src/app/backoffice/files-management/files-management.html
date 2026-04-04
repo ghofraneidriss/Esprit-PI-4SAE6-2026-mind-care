@@ -1,127 +1,199 @@
-<div class="files-page">
-  <section class="files-head">
-    <h1>Files Management</h1>
-    <p>Browse and manage all files across medical reports</p>
-  </section>
-
-  <section class="stats-grid">
-    <article class="stat-card">
-      <div class="stat-icon stat-blue">
-        <i class="fi fi-rr-folder"></i>
-      </div>
-      <div class="stat-copy">
-        <h2>{{ totalCount }}</h2>
-        <div class="stat-label">Total Files</div>
-        <small>All records</small>
-      </div>
-    </article>
-    <article class="stat-card">
-      <div class="stat-icon stat-teal">
-        <i class="fi fi-rr-scan"></i>
-      </div>
-      <div class="stat-copy">
-        <h2>{{ mriCount }}</h2>
-        <div class="stat-label">MRI Scans</div>
-        <small>DICOM files</small>
-      </div>
-    </article>
-    <article class="stat-card">
-      <div class="stat-icon stat-red">
-        <i class="fi fi-rr-file-pdf"></i>
-      </div>
-      <div class="stat-copy">
-        <h2>{{ pdfCount }}</h2>
-        <div class="stat-label">PDF Documents</div>
-        <small>Reports & results</small>
-      </div>
-    </article>
-    <article class="stat-card">
-      <div class="stat-icon stat-amber">
-        <i class="fi fi-rr-file"></i>
-      </div>
-      <div class="stat-copy">
-        <h2>{{ otherCount }}</h2>
-        <div class="stat-label">Other Files</div>
-        <small>Images & documents</small>
-      </div>
-    </article>
-  </section>
-
-  <section class="panel">
-    <label class="section-label">Link uploads to report</label>
-    <select class="form-select">
-      <option selected>Select a medical report...</option>
-    </select>
-    <div class="upload-placeholder">
-      <div class="upload-icon"><i class="fi fi-rr-cloud-upload"></i></div>
-      <h3>Data is connected to Spring Boot API</h3>
-      <p>Create, edit, and delete records from this page</p>
+<div class="fm-layout">
+  <aside class="mr-sidebar">
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link">
+        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
+        <span class="brand-text">MindCare</span>
+      </a>
     </div>
-  </section>
+    <nav class="sidebar-nav">
+      <span class="nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="nav-link">
+        <i class="fi fi-rr-house-blank"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/medical-reports" class="nav-link">
+        <i class="fi fi-rr-document"></i>
+        <span>Medical Reports</span>
+      </a>
+      <a routerLink="/admin/files-management" class="nav-link active">
+        <i class="fi fi-rr-folder-open"></i>
+        <span>Files Management</span>
+      </a>
+      <a routerLink="/admin/activities" class="nav-link">
+        <i class="fi fi-rr-list-check"></i>
+        <span>Activities</span>
+      </a>
+      <a routerLink="/admin/forums" class="nav-link">
+        <i class="fi fi-rr-comment-alt"></i>
+        <span>Forums</span>
+      </a>
+      <a routerLink="/admin/incidents" class="nav-link">
+        <i class="fi fi-rr-shield-exclamation"></i>
+        <span>Incidents</span>
+      </a>
+      <a routerLink="/admin/movement" class="nav-link">
+        <i class="fi fi-rr-running"></i>
+        <span>Movement</span>
+      </a>
 
-  <section class="panel">
-    <div *ngIf="formError" class="alert alert-danger mb-3">{{ formError }}</div>
-
-    <div class="toolbar">
-      <input
-        class="form-control search-input"
-        type="text"
-        placeholder="Search by file name, id, caregiver..."
-        [(ngModel)]="filters.query"
-        (ngModelChange)="applyFilters()"
-      />
-      <select class="form-select narrow" [(ngModel)]="filters.type" (ngModelChange)="applyFilters()">
-        <option value="">All Types</option>
-        <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
-      </select>
-      <button type="button" class="btn btn-primary upload-btn" (click)="openCreateModal()">
-        <i class="fi fi-rr-plus me-2"></i>Create File
-      </button>
+      <ng-container *ngIf="authService.isAdmin()">
+        <span class="nav-heading">Management</span>
+        <a routerLink="/admin/employee" class="nav-link">
+          <i class="fi fi-rr-employee-man"></i>
+          <span>Employees</span>
+        </a>
+        <a routerLink="/admin/customers" class="nav-link">
+          <i class="fi fi-rr-review"></i>
+          <span>Customers</span>
+        </a>
+        <a routerLink="/admin/user-management" class="nav-link">
+          <i class="fi fi-rr-users"></i>
+          <span>User Management</span>
+        </a>
+      </ng-container>
+    </nav>
+    <div class="sidebar-footer">
+      <a routerLink="/" class="nav-link logout-link">
+        <i class="fi fi-rr-exit"></i>
+        <span>Back to Site</span>
+      </a>
     </div>
+  </aside>
 
-    <p class="files-count">Showing <strong>{{ filteredFiles.length }}</strong> of {{ files.length }} files</p>
+  <div class="fm-page">
+    <header class="fm-hero">
+      <div class="fm-hero-inner">
+        <div>
+          <h1 class="fm-title">
+            <span class="hero-icon"><i class="fi fi-rr-folder-open"></i></span>
+            Files Management
+          </h1>
+          <p class="fm-subtitle">Browse, edit, and manage all files linked to medical care</p>
+        </div>
 
-    <div class="table-shell">
-      <table class="table files-table">
-        <thead>
-          <tr>
-            <th>FILE NAME</th>
-            <th>TYPE</th>
-            <th>CAREGIVER ID</th>
-            <th>CREATED / UPDATED</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of filteredFiles">
-            <td>
-              <div class="file-title">{{ row.fileName }}</div>
-              <div class="file-meta">ID: {{ row.fileid }}</div>
-            </td>
-            <td>
-              <span class="kind-chip" [ngClass]="toKindClass(row.fileType)">{{ toKindLabel(row.fileType) }}</span>
-            </td>
-            <td>{{ row.caregiverid }}</td>
-            <td>
-              <div>{{ row.createdAt || '-' }}</div>
-              <small class="text-muted">{{ row.updatedAt || '-' }}</small>
-            </td>
-            <td class="actions-cell">
-              <button type="button" class="btn btn-sm btn-light me-2" (click)="openEditModal(row)">
-                <i class="fi fi-rr-edit me-1"></i>Edit
-              </button>
-              <button type="button" class="btn btn-sm btn-danger-subtle text-danger" (click)="deleteFile(row)">
-                <i class="fi fi-rr-trash me-1"></i>Delete
-              </button>
-            </td>
-          </tr>
-          <tr *ngIf="filteredFiles.length === 0">
-            <td colspan="5" class="text-center py-4 text-muted">No files found</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+        <div class="fm-hero-actions">
+          <div class="fm-stat-chip">
+            <span class="chip-value">{{ totalCount }}</span>
+            <span class="chip-label">Total</span>
+          </div>
+          <div class="fm-stat-chip">
+            <span class="chip-value">{{ mriCount }}</span>
+            <span class="chip-label">MRI</span>
+          </div>
+          <div class="fm-stat-chip">
+            <span class="chip-value">{{ pdfCount }}</span>
+            <span class="chip-label">PDF</span>
+          </div>
+          <button type="button" class="btn-create" (click)="openCreateModal()">
+            <i class="fi fi-rr-plus"></i>New File
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="fm-content">
+      <div *ngIf="formError" class="alert alert-danger mb-3">{{ formError }}</div>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <div class="stat-icon stat-blue">
+            <i class="fi fi-rr-folder"></i>
+          </div>
+          <div class="stat-copy">
+            <h2>{{ totalCount }}</h2>
+            <div class="stat-label">Total Files</div>
+            <small>All records</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon stat-teal">
+            <i class="fi fi-rr-scan"></i>
+          </div>
+          <div class="stat-copy">
+            <h2>{{ mriCount }}</h2>
+            <div class="stat-label">MRI Scans</div>
+            <small>DICOM files</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon stat-red">
+            <i class="fi fi-rr-file-pdf"></i>
+          </div>
+          <div class="stat-copy">
+            <h2>{{ pdfCount }}</h2>
+            <div class="stat-label">PDF Documents</div>
+            <small>Reports and results</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon stat-amber">
+            <i class="fi fi-rr-file"></i>
+          </div>
+          <div class="stat-copy">
+            <h2>{{ otherCount }}</h2>
+            <div class="stat-label">Other Files</div>
+            <small>Images and documents</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="fm-toolbar-card">
+        <div class="search-wrap">
+          <i class="fi fi-rr-search"></i>
+          <input class="form-control" type="text" placeholder="Search by file name, id, caregiver..."
+            [(ngModel)]="filters.query" (ngModelChange)="applyFilters()" />
+        </div>
+        <select class="form-select type-filter" [(ngModel)]="filters.type" (ngModelChange)="applyFilters()">
+          <option value="">All Types</option>
+          <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
+        </select>
+      </section>
+
+      <p class="files-count">Showing <strong>{{ filteredFiles.length }}</strong> of {{ files.length }} files</p>
+
+      <section class="file-cards">
+        <article class="file-card" *ngFor="let row of filteredFiles" [ngClass]="toKindClass(row.fileType)">
+          <div class="card-top">
+            <div class="card-head-main">
+              <h3 class="file-title">{{ row.fileName }}</h3>
+              <p class="file-meta"><span class="file-id">#{{ row.fileid }}</span></p>
+            </div>
+            <span class="kind-chip" [ngClass]="toKindClass(row.fileType)">{{ toKindLabel(row.fileType) }}</span>
+          </div>
+
+          <div class="card-grid">
+            <div class="meta-item">
+              <span class="meta-label">Caregiver ID</span>
+              <span class="meta-value">{{ row.caregiverid }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Created</span>
+              <span class="meta-value">{{ row.createdAt || '-' }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Updated</span>
+              <span class="meta-value">{{ row.updatedAt || '-' }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="btn btn-sm btn-edit" (click)="openEditModal(row)">
+              <i class="fi fi-rr-edit me-1"></i>Edit
+            </button>
+            <button type="button" class="btn btn-sm btn-delete" (click)="deleteFile(row)">
+              <i class="fi fi-rr-trash me-1"></i>Delete
+            </button>
+          </div>
+        </article>
+
+        <div class="empty-state" *ngIf="filteredFiles.length === 0">
+          <i class="fi fi-rr-folder-open"></i>
+          <p>No files found</p>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>
 
 <div class="files-modal-backdrop" *ngIf="isFormOpen">

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/Activities_service/src/main/java/tn/esprit/activities_service/ActivitiesServiceApplication.java;C:/Users/HP/Desktop/alzheimer-backend/Activities_service/src/test/java/tn/esprit/activities_service/ActivitiesServiceApplicationTests.java;C:/Users/HP/Desktop/alzheimer-backend/movement_service/src/main/java/tn/esprit/movement_service/MovementServiceApplication.java;C:/Users/HP/Desktop/alzheimer-backend/movement_service/src/test/java/tn/esprit/movement_service/MovementServiceApplicationTests.java;C:/Users/HP/Desktop/alzheimer-backend/src/main/java/tn/esprit/Main.java;C:/Users/HP/Desktop/alzheimer-backend/users_service/src/main/java/tn/esprit/users_service/UsersServiceApplication.java;C:/Users/HP/Desktop/alzheimer-backend/users_service/src/test/java/tn/esprit/users_service/UsersServiceApplicationTests.java" />
+  </component>
+</project>

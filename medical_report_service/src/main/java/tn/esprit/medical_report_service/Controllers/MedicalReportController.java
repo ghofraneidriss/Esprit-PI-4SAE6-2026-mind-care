@@ -7,25 +7,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.medical_report_service.Enteties.MedicalReport;
+import tn.esprit.medical_report_service.Services.GcsReportStorageService;
 import tn.esprit.medical_report_service.Services.IMedicalReport;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import tn.esprit.medical_report_service.Services.CloudinaryStorageService;
+
+import tn.esprit.medical_report_service.DTOs.MedicalReportDTO;
 
 @RestController
 @RequestMapping("/api/medical-reports")
 @AllArgsConstructor
-@CrossOrigin(origins = { "http://localhost:4200", "http://127.0.0.1:4200" })
 public class MedicalReportController {
 
-    private IMedicalReport medicalReportService;
+    private final GcsReportStorageService gcsReportStorageService;
+    private final CloudinaryStorageService cloudinaryStorageService;
+    private final IMedicalReport medicalReportService;
 
     @PostMapping
-    public MedicalReport addMedicalReport(@Valid @RequestBody MedicalReport medicalReport) {
+    public MedicalReportDTO addMedicalReport(@Valid @RequestBody MedicalReport medicalReport) {
         return medicalReportService.addMedicalReport(medicalReport);
     }
 
     @PutMapping
-    public MedicalReport updateMedicalReport(@Valid @RequestBody MedicalReport medicalReport) {
+    public MedicalReportDTO updateMedicalReport(@Valid @RequestBody MedicalReport medicalReport) {
         return medicalReportService.updateMedicalReport(medicalReport);
     }
 
@@ -35,13 +42,18 @@ public class MedicalReportController {
     }
 
     @GetMapping("/{id}")
-    public MedicalReport getMedicalReportById(@PathVariable Long id) {
+    public MedicalReportDTO getMedicalReportById(@PathVariable Long id) {
         return medicalReportService.getMedicalReportById(id);
     }
 
     @GetMapping
-    public List<MedicalReport> getAllMedicalReports() {
+    public List<MedicalReportDTO> getAllMedicalReports() {
         return medicalReportService.getAllMedicalReports();
+    }
+
+    @GetMapping("/patient/{patientId}")
+    public List<MedicalReportDTO> getReportsByPatientId(@PathVariable Long patientId) {
+        return medicalReportService.getReportsByPatientId(patientId);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -56,5 +68,42 @@ public class MedicalReportController {
                 .map(error -> error.getDefaultMessage() == null ? "Validation error" : error.getDefaultMessage())
                 .orElse("Validation error");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", message));
+    }
+
+    @GetMapping({ "/{id}/pdf", "/{id}/export" })
+    public ResponseEntity<byte[]> downloadMedicalReportPdf(@PathVariable Long id) {
+
+        byte[] pdfBytes = medicalReportService.exportUploadAndNotify(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=medical_report_" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/gcs-test")
+    public ResponseEntity<Map<String, String>> testGcs() {
+
+        byte[] testPdf = "Hello GCS".getBytes(); // for test (not real pdf)
+        String objectName = "tests/test_" + System.currentTimeMillis() + ".pdf";
+
+        String url = gcsReportStorageService.uploadPdfAndGetSignedUrl(testPdf, objectName);
+
+        return ResponseEntity.ok(Map.of(
+                "objectName", objectName,
+                "signedUrl", url));
+    }
+
+    @GetMapping("/cloudinary-test")
+    public ResponseEntity<Map<String, String>> testCloudinary() {
+        byte[] testPdf = "Hello Cloudinary".getBytes();
+        String fileName = "test_" + System.currentTimeMillis() + ".pdf";
+        String folder = "test-reports";
+        String tags = "test,manual-test";
+        String url = cloudinaryStorageService.uploadPdf(testPdf, fileName, folder, tags);
+
+        return ResponseEntity.ok(Map.of(
+                "fileName", fileName,
+                "url", url));
     }
 }

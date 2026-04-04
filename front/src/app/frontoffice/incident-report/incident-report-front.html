@@ -1,0 +1,155 @@
+<div class="content container-fluid pt-5 mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+
+            <!-- Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="page-title mb-1">Signaler un Incident</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+                            <li class="breadcrumb-item"><a routerLink="/incidents/history">Incidents</a></li>
+                            <li class="breadcrumb-item active">Signaler</li>
+                        </ol>
+                    </nav>
+                </div>
+                <a routerLink="/incidents/history" class="btn btn-outline-secondary btn-sm">
+                    ← Retour
+                </a>
+            </div>
+
+            <!-- Success -->
+            <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                ✔ <strong>{{ successMessage }}</strong>
+            </div>
+
+            <!-- Error -->
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                ⚠ {{ errorMessage }}
+            </div>
+
+            <!-- Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold">📝 Nouveau signalement</h5>
+                </div>
+
+                <div class="card-body p-4">
+                    <form [formGroup]="incidentForm" (ngSubmit)="onSubmit()">
+
+                        <!-- Patient Block -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                {{ isCaregiver ? 'Patient concerné' : 'Vous signalez pour' }}
+                            </label>
+
+                            <!-- PATIENT: own info card -->
+                            <div *ngIf="!isCaregiver"
+                                 class="d-flex align-items-center p-3 rounded border bg-light">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3 flex-shrink-0"
+                                     style="width:48px;height:48px;font-size:1.1rem">
+                                    {{ (currentUser?.firstName || '?').charAt(0).toUpperCase() }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ authService.getFullName() }}</div>
+                                    <small class="text-muted">ID: {{ currentUser?.userId }}</small>
+                                </div>
+                            </div>
+
+                            <!-- CAREGIVER: patient dropdown -->
+                            <div *ngIf="isCaregiver">
+                                <div *ngIf="loadingPatients" class="text-muted fst-italic small py-2">
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                    Chargement des patients...
+                                </div>
+                                <div *ngIf="!loadingPatients && assignedPatients.length === 0"
+                                     class="alert alert-warning small mb-0">
+                                    Aucun patient assigné à votre compte.
+                                </div>
+                                <select *ngIf="!loadingPatients && assignedPatients.length > 0"
+                                        [(ngModel)]="selectedPatientId"
+                                        [ngModelOptions]="{standalone: true}"
+                                        class="form-select">
+                                    <option *ngFor="let patient of assignedPatients" [ngValue]="patient.userId">
+                                        {{ patient.firstName }} {{ patient.lastName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Incident Type -->
+                        <div class="mb-4">
+                            <label for="type" class="form-label fw-semibold">Type d'incident</label>
+                            <select id="type" formControlName="type" class="form-select"
+                                    [ngClass]="{'is-invalid': submitted && incidentForm.get('type')?.invalid}">
+                                <option value="">— Sélectionner un type —</option>
+                                <option *ngFor="let type of incidentTypes" [value]="type.id">
+                                    {{ type.name }}
+                                </option>
+                            </select>
+                            <div class="invalid-feedback">Veuillez sélectionner un type d'incident.</div>
+                        </div>
+
+                        <!-- Severity Level -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Niveau de sévérité</label>
+                            <div class="btn-group w-100" role="group">
+                                <ng-container *ngFor="let level of severityLevels">
+                                    <input type="radio"
+                                           class="btn-check"
+                                           [id]="'sev-' + level"
+                                           [value]="level"
+                                           formControlName="severityLevel"
+                                           autocomplete="off">
+                                    <label class="btn"
+                                           [for]="'sev-' + level"
+                                           [ngClass]="{
+                                               'btn-success':         level === 'LOW'    && incidentForm.get('severityLevel')?.value === 'LOW',
+                                               'btn-outline-success': level === 'LOW'    && incidentForm.get('severityLevel')?.value !== 'LOW',
+                                               'btn-warning':         level === 'MEDIUM' && incidentForm.get('severityLevel')?.value === 'MEDIUM',
+                                               'btn-outline-warning': level === 'MEDIUM' && incidentForm.get('severityLevel')?.value !== 'MEDIUM',
+                                               'btn-danger':          level === 'HIGH'   && incidentForm.get('severityLevel')?.value === 'HIGH',
+                                               'btn-outline-danger':  level === 'HIGH'   && incidentForm.get('severityLevel')?.value !== 'HIGH'
+                                           }">
+                                        <span *ngIf="level === 'LOW'">🟢 Faible</span>
+                                        <span *ngIf="level === 'MEDIUM'">🟡 Moyen</span>
+                                        <span *ngIf="level === 'HIGH'">🔴 Élevé</span>
+                                    </label>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-semibold">Description</label>
+                            <textarea id="description"
+                                      formControlName="description"
+                                      rows="5"
+                                      class="form-control"
+                                      placeholder="Décrivez l'incident en détail (minimum 10 caractères)..."
+                                      [ngClass]="{'is-invalid': submitted && incidentForm.get('description')?.invalid}">
+                            </textarea>
+                            <div class="invalid-feedback">La description doit contenir au moins 10 caractères.</div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid mt-2">
+                            <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitted">
+                                <span *ngIf="!submitted">
+                                    ✈ Signaler l'Incident
+                                </span>
+                                <span *ngIf="submitted" class="d-flex align-items-center justify-content-center">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    Envoi en cours...
+                                </span>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

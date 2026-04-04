@@ -9,15 +9,18 @@ import java.util.List;
 
 @Data
 public class MedicalReportDTO {
-    private Long id;
-    private Long patientId;
-    private Long doctorId;
+    private Long reportid;
+    private Long patientid;
+    private Long doctorid;
     private String title;
     private String description;
     private String diagnosis;
     private RiskLevel riskLevel;
-    private LocalDateTime reportDate;
+    private LocalDateTime approvedAt;
     private ReportStatus status;
+    private String doctorName;
+    private String doctorEmail;
+    private String reportUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<FileDTO> files;

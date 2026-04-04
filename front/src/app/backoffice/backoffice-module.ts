@@ -4,13 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { BackofficeRoutingModule } from './backoffice-routing-module';
 import { Home2 } from './home2/home2';
-import { ActivitiesPage } from './activities/activities';
 import { CalendarPage } from './calendar/calendar';
 import { ChatPage } from './chat/chat';
 import { CustomersPage } from './customers/customers';
-import { DealsPage } from './deals/deals';
 import { EmployeePage } from './employee/employee';
-import { FinancePage } from './finance/finance';
 import { ProfilePage } from './profile/profile';
 import { ReviewPage } from './review/review';
 import { SalesPage } from './sales/sales';
@@ -19,6 +16,8 @@ import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { FilesManagementPageComponent } from './files-management/files-management';
+import { IncidentsPage } from './incidents/incidents';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { FollowUpPageComponent } from './followup-page/followup-page';
@@ -38,13 +37,11 @@ import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
 @NgModule({
   declarations: [
     Home2,
-    ActivitiesPage,
+   
     CalendarPage,
     ChatPage,
     CustomersPage,
-    DealsPage,
     EmployeePage,
-    FinancePage,
     ProfilePage,
     ReviewPage,
     SalesPage,
@@ -53,6 +50,8 @@ import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
     TeamManagementPage,
     UserManagementPage,
     MedicalReportsPageComponent,
+    FilesManagementPageComponent,
+    IncidentsPage,
     Header,
     Footer,
     FollowUpPageComponent,

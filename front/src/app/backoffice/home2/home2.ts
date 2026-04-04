@@ -13,7 +13,7 @@ export class Home2 implements OnInit {
   showUserMenu = false;
 
   constructor(
-    private readonly authService: AuthService,
+    public readonly authService: AuthService,
     private readonly router: Router
   ) {}
 

@@ -41,4 +41,5 @@ node_modules/
 front/node_modules/
 .angular/
 dist/
-coverage/.claude/
+coverage/
+.claude/

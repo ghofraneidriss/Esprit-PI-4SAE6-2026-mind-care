@@ -16,7 +16,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./frontoffice/frontoffice-module').then((m) => m.FrontofficeModule),
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: '404' },
 ];
 
 @NgModule({

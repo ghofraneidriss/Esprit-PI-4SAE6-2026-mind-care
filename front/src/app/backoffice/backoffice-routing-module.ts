@@ -1,14 +1,12 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { strictAdminGuard } from '../guards/strict-admin.guard';
 
 import { Home2 } from './home2/home2';
-import { ActivitiesPage } from './activities/activities';
 import { CalendarPage } from './calendar/calendar';
 import { ChatPage } from './chat/chat';
 import { CustomersPage } from './customers/customers';
-import { DealsPage } from './deals/deals';
 import { EmployeePage } from './employee/employee';
-import { FinancePage } from './finance/finance';
 import { ProfilePage } from './profile/profile';
 import { ReviewPage } from './review/review';
 import { SalesPage } from './sales/sales';
@@ -26,24 +24,24 @@ import { CriticalLostItemsComponent } from './lost-item/critical-lost-items/crit
 import { ItemAlertsComponent } from './lost-item/item-alerts/item-alerts';
 import { ItemStatsComponent } from './lost-item/item-stats/item-stats';
 import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
+import { SearchLogComponent } from './lost-item/search-log/search-log';
+import { FilesManagementPageComponent } from './files-management/files-management';
+import { IncidentsPage } from './incidents/incidents';
 
 const routes: Routes = [
   { path: '', component: Home2 },
   { path: 'reports', component: Home2 },
-  { path: 'activities', component: ActivitiesPage },
   { path: 'calendar', component: CalendarPage },
   { path: 'chat', component: ChatPage },
   { path: 'customers', component: CustomersPage },
-  { path: 'deals', component: DealsPage },
   { path: 'employee', component: EmployeePage },
-  { path: 'finance', component: FinancePage },
   { path: 'profile', component: ProfilePage },
   { path: 'review', component: ReviewPage },
   { path: 'sales', component: SalesPage },
   { path: 'settings', component: SettingsPage },
   { path: 'task-management', component: TaskManagementPage },
   { path: 'team-management', component: TeamManagementPage },
-  { path: 'user-management', component: UserManagementPage },
+  { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
   { path: 'medical-reports', component: MedicalReportsPageComponent },
   { path: 'followups', component: FollowUpPageComponent },
   { path: 'alerts', component: AlertPageComponent },
@@ -52,16 +50,18 @@ const routes: Routes = [
   { path: 'lost-items/critical', component: CriticalLostItemsComponent },
   { path: 'lost-items/alerts', component: ItemAlertsComponent },
   { path: 'lost-items/statistics', component: ItemStatsComponent },
+  { path: 'lost-items/search-log', component: SearchLogComponent },
   { path: 'lost-items/risk/:patientId', component: PatientRiskComponent },
   { path: 'lost-items/risk', component: PatientRiskComponent },
   { path: 'lost-items/:id', component: LostItemDetailComponent },
   { path: 'lost-items/:id/edit', component: LostItemFormComponent },
+  { path: 'files-management', component: FilesManagementPageComponent },
+  { path: 'incidents', component: IncidentsPage },
   { path: '**', redirectTo: '' },
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class BackofficeRoutingModule {}
+export class BackofficeRoutingModule { }

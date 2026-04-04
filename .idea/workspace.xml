@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="microservices-report" />
+      </map>
+    </option>
+    <option name="RECENT_COMMON_BRANCH" value="main" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ghofraneidriss&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ghofraneidriss/mind-care.git&quot;,
+    &quot;accountId&quot;: &quot;d6a549cc-6b84-41d9-90e7-f97f067025b2&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MavenRunner">
+    <option name="skipTests" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="39nrOh5PazJOt9Q8kttvJB3XtwN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.users_service.keycloak: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [site].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api_gateway [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.incident_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.incident_service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.incident_service [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.incident_service [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.incident_service [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.incident_service [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [site].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.medical_report_service [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.movement_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.movement_service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.movement_service [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.movement_service [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.movement_service [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.movement_service [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.users_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.users_service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.users_service [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.users_service [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.users_service [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.users_service [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.volunteer_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.volunteer_service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.volunteer_service [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.volunteer_service [validate].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ForumsServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.IncidentServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.MedicalReportServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.MovementServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.VolunteerServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/IDRISS/Desktop/MindCare/mind-care&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\IDRISS\\Desktop\\MindCare\\mind-care\\front\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\IDRISS\Desktop\MindCare\mind-care\medical_report_service\src\main\resources\gcp" />
+      <recent name="C:\Users\IDRISS\Desktop\MindCare\mind-care\medical_report_service\src\main\java\tn\esprit\medical_report_service" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.UsersServiceApplication">
+    <configuration name="UsersServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="tn.esprit.users_service.UsersServiceApplication" />
+      <module name="users_service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="tn.esprit.users_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="api_gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.api_gateway.ApiGatewayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ForumsServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="forums_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.forums_service.ForumsServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IncidentServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="incident_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.incident_service.IncidentServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MedicalReportServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="17 (3)" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="medical_report_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.medical_report_service.MedicalReportServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MovementServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="movement_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.movement_service.MovementServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UsersServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="17 (3)" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="users_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.users_service.UsersServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VolunteerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="volunteer_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.volunteer_service.VolunteerServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="users_service.keycloak: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="keycloak" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="users_service/docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.UsersServiceApplication" />
+      <item itemvalue="Docker.users_service.keycloak: Compose Deployment" />
+      <item itemvalue="Spring Boot.IncidentServiceApplication" />
+      <item itemvalue="Spring Boot.MovementServiceApplication" />
+      <item itemvalue="Spring Boot.ApiGatewayApplication" />
+      <item itemvalue="Spring Boot.ForumsServiceApplication" />
+      <item itemvalue="Spring Boot.MedicalReportServiceApplication" />
+      <item itemvalue="Spring Boot.UsersServiceApplication" />
+      <item itemvalue="Spring Boot.VolunteerServiceApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.users_service.keycloak: Compose Deployment" />
+        <item itemvalue="Application.UsersServiceApplication" />
+        <item itemvalue="Application.UsersServiceApplication" />
+        <item itemvalue="Docker.users_service.keycloak: Compose Deployment" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="StructureViewState">
+    <option name="selectedTab" value="Logical" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="" />
+      <created>1771342645418</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771342645418</updated>
+      <workItem from="1771342646811" duration="15997000" />
+      <workItem from="1771412364938" duration="22223000" />
+      <workItem from="1771463407876" duration="314000" />
+      <workItem from="1771463803147" duration="1476000" />
+      <workItem from="1771499375019" duration="2501000" />
+      <workItem from="1771708548544" duration="64000" />
+      <workItem from="1771885736183" duration="5312000" />
+      <workItem from="1771925153918" duration="70000" />
+      <workItem from="1771968461794" duration="8162000" />
+      <workItem from="1772049423039" duration="21083000" />
+      <workItem from="1772099111243" duration="4212000" />
+      <workItem from="1772286283138" duration="4038000" />
+      <workItem from="1772654092716" duration="19738000" />
+      <workItem from="1772696586181" duration="4712000" />
+      <workItem from="1774219027370" duration="1760000" />
+      <workItem from="1774225531669" duration="171000" />
+      <workItem from="1774280432626" duration="28000" />
+      <workItem from="1774282430126" duration="1769000" />
+      <workItem from="1774369944544" duration="618000" />
+      <workItem from="1774459543372" duration="5237000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

@@ -12,6 +12,15 @@ export interface AuthUser {
   createdAt?: string;
 }
 
+export interface UpdateUserRequest {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  password?: string;
+}
+
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
@@ -33,10 +42,18 @@ export class AuthService {
   private readonly storageKey = 'loggedUser';
   private readonly backofficeRoles = new Set(['ADMIN', 'DOCTOR', 'CAREGIVER']);
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   register(payload: RegisterRequest): Observable<AuthUser> {
     return this.http.post<AuthUser>(`${this.apiUrl}/register`, payload);
+  }
+
+  getAllUsers(): Observable<AuthUser[]> {
+    return this.http.get<AuthUser[]>(`${this.apiUrl}`);
+  }
+
+  getUserById(id: number): Observable<AuthUser> {
+    return this.http.get<AuthUser>(`${this.apiUrl}/${id}`);
   }
 
   login(payload: LoginRequest): Observable<AuthUser> {
@@ -68,6 +85,10 @@ export class AuthService {
     return this.getLoggedRole() === 'ADMIN';
   }
 
+  isDoctor(): boolean {
+    return this.getLoggedRole() === 'DOCTOR';
+  }
+
   isBackofficeRole(role?: string | null): boolean {
     const normalizedRole = this.normalizeRole(role ?? this.getLoggedRole());
     return this.backofficeRoles.has(normalizedRole);
@@ -75,6 +96,14 @@ export class AuthService {
 
   isPatient(): boolean {
     return this.getLoggedRole() === 'PATIENT';
+  }
+
+  updateUser(id: number, payload: UpdateUserRequest): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.apiUrl}/${id}`, payload);
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   logout(): void {

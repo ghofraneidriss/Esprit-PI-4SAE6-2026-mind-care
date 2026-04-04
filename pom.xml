@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot comme parent -->
+    <!-- ✅ Spring Boot comme parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -22,14 +22,15 @@
     <name>Alzheimer App - Parent</name>
     <description>Multi-module project for Alzheimer detection application</description>
 
-    <!-- Liste des microservices -->
+    <!-- ✅ Liste des microservices -->
     <modules>
         <module>users_service</module>
-        <module>forums_service</module>
-        <module>volunteer_service</module>
+        <module>server/incident_service</module>
         <module>api_gateway</module>
         <module>medical_report_service</module>
         <module>lost_item_service</module>
+        <module>server/forums_service</module>
+        <module>movement_service</module>
     </modules>
 
     <properties>

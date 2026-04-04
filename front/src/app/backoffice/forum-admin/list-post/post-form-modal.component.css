@@ -1,0 +1,168 @@
+/* Post Form Modal - Glassmorphism Design */
+::ng-deep .post-form-modal .mat-dialog-container {
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), rgba(167, 139, 250, 0.1));
+  backdrop-filter: blur(15px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(45, 212, 191, 0.15);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Modal Content Wrapper */
+::ng-deep .post-form-modal .mat-dialog-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 2rem;
+  margin: 0;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Glassmorphism Overlay Effect */
+::ng-deep .post-form-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(45, 212, 191, 0.05) 0%, 
+    rgba(167, 139, 250, 0.05) 50%, 
+    rgba(45, 212, 191, 0.05) 100%);
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Form Title */
+::ng-deep .post-form-modal h2 {
+  background: linear-gradient(135deg, #2DD4BF, #A78BFA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Fields */
+::ng-deep .post-form-modal .mat-form-field-appearance-outline .mat-form-field-outline {
+  border-color: rgba(45, 212, 191, 0.3);
+  border-radius: 12px;
+}
+
+::ng-deep .post-form-modal .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
+  border-color: #2DD4BF;
+  border-width: 2px;
+}
+
+::ng-deep .post-form-modal .mat-form-field-label {
+  color: rgba(45, 212, 191, 0.7);
+}
+
+::ng-deep .post-form-modal .mat-focused .mat-form-field-label {
+  color: #2DD4BF;
+}
+
+/* Textarea */
+::ng-deep .post-form-modal .mat-form-field-type-mat-textarea .mat-form-field-flex {
+  border-radius: 12px;
+}
+
+::ng-deep .post-form-modal .mat-input-element {
+  color: #1a202c;
+}
+
+/* Select Dropdown */
+::ng-deep .post-form-modal .mat-select-trigger {
+  border-radius: 12px;
+}
+
+::ng-deep .post-form-modal .mat-select-value {
+  color: #1a202c;
+}
+
+/* Publish Button - Violet Glow */
+::ng-deep .post-form-modal .mat-primary .mat-button-wrapper,
+::ng-deep .post-form-modal .mat-raised-button.mat-primary {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+::ng-deep .post-form-modal .mat-raised-button.mat-primary:hover {
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Cancel Button */
+::ng-deep .post-form-modal .mat-button {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  border-radius: 12px;
+  color: #2DD4BF;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .post-form-modal .mat-button:hover {
+  background: rgba(45, 212, 191, 0.1);
+  border-color: #2DD4BF;
+}
+
+/* Dialog Actions */
+::ng-deep .post-form-modal .mat-dialog-actions {
+  padding: 1rem 2rem 2rem;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 24px 24px;
+  gap: 1rem;
+}
+
+/* Scrollbar Styling */
+::ng-deep .post-form-modal .mat-dialog-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+::ng-deep .post-form-modal .mat-dialog-content::-webkit-scrollbar-track {
+  background: rgba(45, 212, 191, 0.1);
+  border-radius: 3px;
+}
+
+::ng-deep .post-form-modal .mat-dialog-content::-webkit-scrollbar-thumb {
+  background: rgba(45, 212, 191, 0.3);
+  border-radius: 3px;
+}
+
+::ng-deep .post-form-modal .mat-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 212, 191, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  ::ng-deep .post-form-modal .mat-dialog-container {
+    margin: 1rem;
+    border-radius: 20px;
+  }
+  
+  ::ng-deep .post-form-modal .mat-dialog-content {
+    padding: 1.5rem;
+  }
+  
+  ::ng-deep .post-form-modal .mat-dialog-actions {
+    padding: 1rem 1.5rem 1.5rem;
+    flex-direction: column;
+  }
+  
+  ::ng-deep .post-form-modal .mat-button,
+  ::ng-deep .post-form-modal .mat-raised-button {
+    width: 100%;
+  }
+}

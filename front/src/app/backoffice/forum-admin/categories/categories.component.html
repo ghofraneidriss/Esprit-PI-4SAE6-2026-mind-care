@@ -1,0 +1,59 @@
+<div class="categories-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="hero-banner">
+      <div class="hero-content">
+        <h1 class="page-title">Forum Categories</h1>
+        <p class="page-subtitle">Manage and organize forum discussions</p>
+      </div>
+    </div>
+    <button class="new-category-btn" (click)="openCreateCategoryModal()">
+      <i class="ri-add-line"></i>
+      New Category
+    </button>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading categories...</p>
+  </div>
+
+  <!-- Categories Grid -->
+  <div class="categories-grid" *ngIf="!loading">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="categories.length === 0">
+      <i class="ri-folder-line empty-icon"></i>
+      <h3>No categories found</h3>
+      <p>Create your first category to get started</p>
+    </div>
+
+    <!-- Category Cards -->
+    <div 
+      class="category-card" 
+      *ngFor="let category of categories"
+      [style.borderColor]="getCategoryColor(category.name)"
+    >
+      <div class="category-header">
+        <div class="category-icon" [style.backgroundColor]="getCategoryColor(category.name) + '20'">
+          <i [class]="getCategoryIcon(category.name)" [style.color]="getCategoryColor(category.name)"></i>
+        </div>
+        <div class="category-info">
+          <h3 class="category-name">{{ category.name }}</h3>
+          <p class="category-description">{{ category.description || 'No description available' }}</p>
+        </div>
+      </div>
+      
+      <div class="category-actions">
+        <button class="action-btn edit-btn" (click)="openEditCategoryModal(category)">
+          <i class="ri-edit-line"></i>
+          Edit
+        </button>
+        <button class="action-btn delete-btn" (click)="deleteCategory(category)">
+          <i class="ri-delete-bin-line"></i>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

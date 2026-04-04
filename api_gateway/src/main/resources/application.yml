@@ -30,7 +30,7 @@ spring:
             - id: medical-report-service
               uri: lb://medical-report-service
               predicates:
-                - Path=/api/medical-reports/**
+                - Path=/api/medical-reports/**,/api/mri-scans/**,/api/ai-results/**
 
             - id: files-service
               uri: lb://medical-report-service
@@ -66,12 +66,6 @@ spring:
                 - Path=/lost-item/**
               filters:
                 - StripPrefix=1
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/mind-care
 
 eureka:
   client:
