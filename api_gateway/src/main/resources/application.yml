@@ -1,0 +1,81 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            # ===== FOLLOWUP-ALERT SERVICE (port 8085) =====
+            - id: followup-service
+              uri: lb://followup-alert-service
+              predicates:
+                - Path=/api/followups/**
+
+            - id: alert-service
+              uri: lb://followup-alert-service
+              predicates:
+                - Path=/api/alerts/**
+
+            # ===== USERS SERVICE (port 8082) =====
+            - id: users-service
+              uri: lb://users-service
+              predicates:
+                - Path=/api/users/**
+
+            # ===== MEDICAL REPORT SERVICE (port 8083) =====
+            - id: medical-report-service
+              uri: lb://medical-report-service
+              predicates:
+                - Path=/api/medical-reports/**
+
+            - id: files-service
+              uri: lb://medical-report-service
+              predicates:
+                - Path=/api/files/**
+
+            # ===== FORUMS SERVICE =====
+            - id: forums-categories
+              uri: lb://forums-service
+              predicates:
+                - Path=/api/categories/**
+
+            - id: forums-posts
+              uri: lb://forums-service
+              predicates:
+                - Path=/api/posts/**
+
+            - id: forums-comments
+              uri: lb://forums-service
+              predicates:
+                - Path=/api/comments/**
+
+            # ===== VOLUNTEER SERVICE =====
+            - id: volunteer-service
+              uri: lb://volunteer-service
+              predicates:
+                - Path=/api/volunteers/**
+
+            # ===== LOST ITEM SERVICE (port 8086) =====
+            - id: lost-item-service
+              uri: lb://LOST-ITEM-SERVICE
+              predicates:
+                - Path=/lost-item/**
+              filters:
+                - StripPrefix=1
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/mind-care
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

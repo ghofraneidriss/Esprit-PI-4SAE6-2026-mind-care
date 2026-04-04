@@ -1,0 +1,28 @@
+<div class="card mb-2 shadow-sm border-0" style="border-left: 3px solid #428dff !important;">
+  <div class="card-body py-2 px-3">
+    <div class="d-flex align-items-start justify-content-between gap-2">
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="fi fi-rr-calendar" style="color:#428dff;"></i>
+          <span class="fw-semibold small">{{ report.searchDate }}</span>
+          <span [class]="getResultClass(report.searchResult)" style="font-size:0.72rem;">
+            {{ report.searchResult?.replace('_', ' ') }}
+          </span>
+          <span [class]="getStatusClass(report.status)" style="font-size:0.72rem;">
+            {{ report.status }}
+          </span>
+        </div>
+        <div *ngIf="report.locationSearched" class="small text-muted mb-1">
+          <i class="fi fi-rr-marker me-1"></i>{{ report.locationSearched }}
+        </div>
+        <div *ngIf="report.notes" class="small text-body">
+          {{ report.notes | slice:0:150 }}{{ (report.notes?.length ?? 0) > 150 ? '…' : '' }}
+        </div>
+      </div>
+      <div class="d-flex flex-column gap-1 flex-shrink-0">
+        <button class="btn btn-xs btn-outline-secondary" (click)="editClicked.emit(report)">Edit</button>
+        <button class="btn btn-xs btn-outline-danger" (click)="deleteClicked.emit(report.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

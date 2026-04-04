@@ -1,0 +1,197 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
+      <i class="fi fi-rr-arrow-left me-1"></i> Back
+    </button>
+    <div class="flex-grow-1">
+      <h4 class="mb-0" style="color:#6b1fad;font-weight:700;">
+        <i class="fi fi-rr-shield-exclamation me-2"></i>Patient Risk Assessment
+      </h4>
+      <small class="text-muted">Lost item risk scoring and frequency trend analysis</small>
+    </div>
+    <button class="btn btn-sm btn-outline-warning" (click)="viewAlerts()">
+      <i class="fi fi-rr-bell me-1"></i> View Alerts
+    </button>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="pageError" class="alert alert-danger">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+  </div>
+
+  <!-- No patient ID -->
+  <div *ngIf="!patientId && !isLoading" class="alert alert-warning">
+    <i class="fi fi-rr-exclamation me-2"></i>No patient selected. Navigate from a patient's item detail or provide a patient ID in the URL.
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border" style="color:#6b1fad;"></div>
+    <p class="mt-2 text-muted">Calculating risk score…</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && risk">
+
+    <!-- Risk Score + Summary -->
+    <div class="row g-3 mb-4">
+
+      <!-- Gauge Card -->
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100 text-center">
+          <div class="card-body d-flex flex-column align-items-center justify-content-center py-4">
+            <svg viewBox="0 0 120 120" width="160" height="160">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+              <circle cx="60" cy="60" r="54" fill="none"
+                      [attr.stroke]="getRiskGaugeColor()"
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-dasharray="339.29"
+                      [attr.stroke-dashoffset]="gaugeOffset()"
+                      transform="rotate(-90 60 60)"/>
+              <text x="60" y="57" text-anchor="middle" font-size="22" font-weight="700" [attr.fill]="getRiskGaugeColor()">
+                {{ risk.riskScore }}
+              </text>
+              <text x="60" y="72" text-anchor="middle" font-size="11" fill="#6b7280">/100</text>
+            </svg>
+            <div class="mt-2">
+              <span class="badge fs-6 px-3 py-2" [ngClass]="getRiskBadgeClass()">{{ risk.riskLevel }} RISK</span>
+            </div>
+            <small class="text-muted mt-2">Patient #{{ risk.patientId }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="col-md-8">
+        <div class="row g-3 h-100">
+          <div class="col-6">
+            <div class="card shadow-sm border-0 h-100 text-center">
+              <div class="card-body py-3">
+                <div class="fs-2 fw-bold" style="color:#6b1fad;">{{ risk.totalItems }}</div>
+                <small class="text-muted">Total Items</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card shadow-sm border-0 h-100 text-center" style="border-top:3px solid #dc3545!important;">
+              <div class="card-body py-3">
+                <div class="fs-2 fw-bold text-danger">{{ risk.activeItems }}</div>
+                <small class="text-muted">Active (Lost/Searching)</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card shadow-sm border-0 h-100 text-center" style="border-top:3px solid #22c55e!important;">
+              <div class="card-body py-3">
+                <div class="fs-2 fw-bold text-success">{{ risk.foundItems }}</div>
+                <small class="text-muted">Found</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card shadow-sm border-0 h-100 text-center">
+              <div class="card-body py-3">
+                <div class="fs-2 fw-bold" style="color:#6b1fad;">{{ risk.recoveryRate }}%</div>
+                <small class="text-muted">Recovery Rate</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medication Warning -->
+    <div *ngIf="risk.hasMedicationLost" class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+      <i class="fi fi-rr-exclamation fs-5"></i>
+      <strong>Medication item currently lost</strong> — immediate caregiver attention required.
+    </div>
+
+    <!-- Risk Factors -->
+    <div class="card shadow-sm border-0 mb-4" *ngIf="risk.riskFactors && risk.riskFactors.length > 0">
+      <div class="card-body">
+        <h6 class="card-title fw-bold mb-3" style="color:#6b1fad;">
+          <i class="fi fi-rr-exclamation me-2"></i>Risk Factors
+        </h6>
+        <ul class="list-unstyled mb-0">
+          <li *ngFor="let factor of risk.riskFactors" class="d-flex align-items-start gap-2 mb-2">
+            <span class="badge bg-warning text-dark mt-1">!</span>
+            <span class="small">{{ factor }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Unresolved Alerts -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body">
+        <h6 class="card-title fw-bold mb-3" style="color:#6b1fad;">
+          <i class="fi fi-rr-bell me-2"></i>Alert Summary
+        </h6>
+        <div class="row g-3">
+          <div class="col-6 col-md-4 text-center">
+            <div class="fs-3 fw-bold text-danger">{{ risk.unresolvedAlerts }}</div>
+            <small class="text-muted">Unresolved Alerts</small>
+          </div>
+          <div class="col-6 col-md-4 text-center">
+            <div class="fs-3 fw-bold text-warning">{{ risk.criticalAlerts }}</div>
+            <small class="text-muted">Critical Alerts</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frequency Trend -->
+    <div class="card shadow-sm border-0" *ngIf="trend">
+      <div class="card-body">
+        <h6 class="card-title fw-bold mb-3" style="color:#6b1fad;">
+          <i class="fi fi-rr-chart-histogram me-2"></i>Frequency Trend (Last 3 Months)
+        </h6>
+
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <span class="fs-3 fw-bold" [ngClass]="getTrendTextClass()">{{ getTrendIcon() }}</span>
+          <div>
+            <div class="fw-bold" [ngClass]="getTrendTextClass()">{{ trend.trend }}</div>
+            <small class="text-muted">monthly loss frequency</small>
+          </div>
+          <span class="badge bg-danger ms-2" *ngIf="trend.isFrequentLoser">
+            <i class="fi fi-rr-exclamation me-1"></i>Frequent Loser
+          </span>
+        </div>
+
+        <!-- Month Bars -->
+        <div class="d-flex align-items-end gap-4 justify-content-center" style="height:120px;">
+          <div class="d-flex flex-column align-items-center gap-1">
+            <div class="fw-semibold small">{{ trend.twoMonthsAgoCount }}</div>
+            <div class="rounded-top" style="width:60px;background:#e5e7eb;"
+                 [style.height.px]="trend.twoMonthsAgoCount * 20 + 10"></div>
+            <small class="text-muted">2 mo. ago</small>
+          </div>
+          <div class="d-flex flex-column align-items-center gap-1">
+            <div class="fw-semibold small">{{ trend.previousMonthCount }}</div>
+            <div class="rounded-top" style="width:60px;background:#c4b5fd;"
+                 [style.height.px]="trend.previousMonthCount * 20 + 10"></div>
+            <small class="text-muted">Last month</small>
+          </div>
+          <div class="d-flex flex-column align-items-center gap-1">
+            <div class="fw-semibold small">{{ trend.recentMonthCount }}</div>
+            <div class="rounded-top" [style.width.px]="60"
+                 [ngClass]="trend.trend === 'INCREASING' ? 'bg-danger' : trend.trend === 'DECREASING' ? 'bg-success' : 'bg-warning'"
+                 [style.height.px]="trend.recentMonthCount * 20 + 10"></div>
+            <small class="text-muted">This month</small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- No data -->
+  <div *ngIf="!isLoading && !risk && patientId && !pageError" class="text-center py-5">
+    <i class="fi fi-rr-shield-check fs-1 d-block mb-2 text-success"></i>
+    <p class="text-muted">No risk data found for this patient.</p>
+  </div>
+
+</div>

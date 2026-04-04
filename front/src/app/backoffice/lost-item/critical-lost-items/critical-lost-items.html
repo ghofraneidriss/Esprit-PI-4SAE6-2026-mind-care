@@ -1,0 +1,72 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
+      <i class="fi fi-rr-arrow-left me-1"></i> Back
+    </button>
+    <div>
+      <h4 class="mb-0 d-flex align-items-center gap-2" style="color:#dc3545;font-weight:700;">
+        <i class="fi fi-rr-bell-ring"></i>
+        Critical & Urgent Items
+        <span class="badge bg-danger ms-1 fs-6">{{ urgentCount }}</span>
+      </h4>
+      <small class="text-muted">Items with CRITICAL priority or SEARCHING status</small>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="pageError" class="alert alert-danger">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-danger"></div>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!isLoading && items.length === 0" class="text-center py-5">
+    <i class="fi fi-rr-shield-check fs-1 d-block mb-2 text-success"></i>
+    <p class="text-muted">No critical or urgent items. All clear!</p>
+  </div>
+
+  <!-- Items Grid -->
+  <div *ngIf="!isLoading && items.length > 0" class="row g-3">
+    <div *ngFor="let item of items" class="col-md-6 col-lg-4">
+      <div class="card shadow-sm border-0 h-100"
+           style="border-top: 3px solid #dc3545 !important; cursor:pointer;"
+           (click)="viewItem(item.id!)">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between mb-2">
+            <h6 class="mb-0 fw-bold" style="color:#6b1fad;">{{ item.title }}</h6>
+            <div class="d-flex gap-1">
+              <span [class]="getStatusClass(item.status)" style="font-size:0.72rem;">{{ item.status }}</span>
+              <span [class]="getPriorityClass(item.priority)" style="font-size:0.72rem;">{{ item.priority }}</span>
+            </div>
+          </div>
+
+          <div class="small text-muted mb-1">
+            <span class="badge me-1" style="background:#efd5c8;color:#6b1fad;">{{ item.category }}</span>
+          </div>
+
+          <div *ngIf="item.lastSeenLocation" class="small text-muted">
+            <i class="fi fi-rr-marker me-1"></i>{{ item.lastSeenLocation }}
+          </div>
+          <div *ngIf="item.lastSeenDate" class="small text-muted">
+            <i class="fi fi-rr-calendar me-1"></i>{{ item.lastSeenDate }}
+          </div>
+          <div *ngIf="item.description" class="small mt-2 text-body">
+            {{ item.description | slice:0:80 }}{{ (item.description?.length ?? 0) > 80 ? '…' : '' }}
+          </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between align-items-center py-2"
+             style="background:#fff9f6;">
+          <small class="text-muted">Patient {{ item.patientId }}</small>
+          <small class="text-muted">{{ item.createdAt | slice:0:10 }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -29,6 +29,7 @@
         <module>volunteer_service</module>
         <module>api_gateway</module>
         <module>medical_report_service</module>
+        <module>lost_item_service</module>
     </modules>
 
     <properties>

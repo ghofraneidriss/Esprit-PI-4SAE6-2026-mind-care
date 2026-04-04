@@ -19,6 +19,13 @@ import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FollowUpPageComponent } from './followup-page/followup-page';
 import { AlertPageComponent } from './alert-page/alert-page';
+import { LostItemListComponent } from './lost-item/lost-item-list/lost-item-list';
+import { LostItemFormComponent } from './lost-item/lost-item-form/lost-item-form';
+import { LostItemDetailComponent } from './lost-item/lost-item-detail/lost-item-detail';
+import { CriticalLostItemsComponent } from './lost-item/critical-lost-items/critical-lost-items';
+import { ItemAlertsComponent } from './lost-item/item-alerts/item-alerts';
+import { ItemStatsComponent } from './lost-item/item-stats/item-stats';
+import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
 
 const routes: Routes = [
   { path: '', component: Home2 },
@@ -40,6 +47,15 @@ const routes: Routes = [
   { path: 'medical-reports', component: MedicalReportsPageComponent },
   { path: 'followups', component: FollowUpPageComponent },
   { path: 'alerts', component: AlertPageComponent },
+  { path: 'lost-items', component: LostItemListComponent },
+  { path: 'lost-items/new', component: LostItemFormComponent },
+  { path: 'lost-items/critical', component: CriticalLostItemsComponent },
+  { path: 'lost-items/alerts', component: ItemAlertsComponent },
+  { path: 'lost-items/statistics', component: ItemStatsComponent },
+  { path: 'lost-items/risk/:patientId', component: PatientRiskComponent },
+  { path: 'lost-items/risk', component: PatientRiskComponent },
+  { path: 'lost-items/:id', component: LostItemDetailComponent },
+  { path: 'lost-items/:id/edit', component: LostItemFormComponent },
   { path: '**', redirectTo: '' },
 
 ];

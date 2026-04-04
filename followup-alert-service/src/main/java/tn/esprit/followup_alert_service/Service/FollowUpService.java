@@ -20,7 +20,7 @@ public class FollowUpService {
     private final FollowUpRepository followUpRepository;
     private final AlertRepository alertRepository;
 
-    // ==================== EXISTING CRUD (unchanged) ====================
+    //  CRUD
 
     @Transactional
     public FollowUp createFollowUp(FollowUp followUp) {
@@ -174,7 +174,7 @@ public class FollowUpService {
         }
     }
 
-    // ==================== FONCTIONNALITE AVANCEE 2: Cognitive Decline Detection ====================
+    // ==================== FONCTIONNALITE AVANCEE  Cognitive Decline Detection ====================
 
     public boolean detectCognitiveDecline(Long patientId) {
         List<FollowUp> followUps = followUpRepository.findByPatientId(patientId);

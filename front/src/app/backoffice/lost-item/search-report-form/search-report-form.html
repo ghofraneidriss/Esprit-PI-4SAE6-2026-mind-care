@@ -1,0 +1,65 @@
+<div class="card shadow-sm mb-3">
+  <div class="card-header" style="background:#f8f4fc;border-bottom:2px solid #6b1fad;">
+    <h6 class="mb-0" style="color:#6b1fad;">
+      <i class="fi fi-rr-file-add me-2"></i>
+      {{ editReport ? 'Edit Search Report' : 'Add Search Report' }}
+    </h6>
+  </div>
+  <div class="card-body">
+
+    <!-- Duplicate/error alert -->
+    <div *ngIf="formError" class="alert alert-danger d-flex align-items-start gap-2">
+      <i class="fi fi-rr-exclamation mt-1"></i>
+      <span>{{ formError }}</span>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row g-3">
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small">Search Date <span class="text-danger">*</span></label>
+          <input type="date" class="form-control form-control-sm" formControlName="searchDate"
+                 [class.is-invalid]="isInvalid('searchDate')">
+          <div class="invalid-feedback">Search date is required.</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small">Location Searched</label>
+          <input type="text" class="form-control form-control-sm" formControlName="locationSearched"
+                 placeholder="e.g., Bedroom, Corridor…">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small">Search Result</label>
+          <select class="form-select form-select-sm" formControlName="searchResult">
+            <option *ngFor="let r of searchResultOptions" [value]="r.value">{{ r.label }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small">Report Status</label>
+          <select class="form-select form-select-sm" formControlName="status">
+            <option value="OPEN">Open</option>
+            <option value="CLOSED">Closed</option>
+            <option value="ESCALATED">Escalated</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Notes</label>
+          <textarea class="form-control form-control-sm" formControlName="notes" rows="3"
+                    placeholder="Describe search details, areas checked, findings…"></textarea>
+        </div>
+
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn-sm" style="background:#6b1fad;color:#fff;" [disabled]="isSaving">
+          <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1"></span>
+          {{ editReport ? 'Update Report' : 'Submit Report' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,221 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
+      <i class="fi fi-rr-arrow-left me-1"></i> Back
+    </button>
+    <div class="flex-grow-1">
+      <h4 class="mb-0" style="color:#6b1fad;font-weight:700;">
+        <i class="fi fi-rr-chart-histogram me-2"></i>Lost Item Statistics
+      </h4>
+      <small class="text-muted">Global overview of all lost item activity</small>
+    </div>
+    <button class="btn btn-sm" style="background:#6b1fad;color:#fff;" (click)="loadStats()">
+Refresh
+    </button>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="pageError" class="alert alert-danger">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border" style="color:#6b1fad;"></div>
+  </div>
+
+  <ng-container *ngIf="!isLoading && globalStats">
+
+    <!-- KPI Row 1: Item Counts -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm border-0 text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold" style="color:#6b1fad;">{{ globalStats.totalItems }}</div>
+            <small class="text-muted">Total Items</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm border-0 text-center h-100" style="border-top:3px solid #dc3545!important;">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-danger">{{ globalStats.lostCount }}</div>
+            <small class="text-muted">Lost</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm border-0 text-center h-100" style="border-top:3px solid #ffc107!important;">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-warning">{{ globalStats.searchingCount }}</div>
+            <small class="text-muted">Searching</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm border-0 text-center h-100" style="border-top:3px solid #22c55e!important;">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-success">{{ globalStats.foundCount }}</div>
+            <small class="text-muted">Found</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm border-0 text-center h-100">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-secondary">{{ globalStats.closedCount }}</div>
+            <small class="text-muted">Closed</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm border-0 text-center h-100" style="border-top:3px solid #dc3545!important;">
+          <div class="card-body py-3">
+            <div class="fs-2 fw-bold text-danger">{{ globalStats.criticalUnresolvedAlerts }}</div>
+            <small class="text-muted">Critical Alerts</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Row 2: Recovery Rate & Avg Days -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h6 class="card-title text-muted fw-semibold mb-3">Recovery Rate</h6>
+            <div class="d-flex align-items-center gap-3">
+              <div class="fs-1 fw-bold" [style.color]="getRecoveryColor()">
+                {{ globalStats.recoveryRate }}%
+              </div>
+              <div class="flex-grow-1">
+                <div class="progress" style="height:12px;">
+                  <div class="progress-bar" role="progressbar"
+                       [style.width.%]="globalStats.recoveryRate"
+                       [style.background-color]="getRecoveryColor()">
+                  </div>
+                </div>
+                <small class="text-muted mt-1 d-block">
+                  {{ globalStats.foundCount }} found out of {{ globalStats.totalItems }} items
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+            <h6 class="card-title text-muted fw-semibold mb-2">Average Days to Find</h6>
+            <div class="fs-1 fw-bold" style="color:#6b1fad;">{{ globalStats.averageDaysToFind }}</div>
+            <small class="text-muted">days from report to recovery</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row: Category + Priority Distribution -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h6 class="card-title fw-bold mb-3" style="color:#6b1fad;">
+              <i class="fi fi-rr-apps me-2"></i>Items by Category
+            </h6>
+            <div *ngFor="let entry of categoryEntries()" class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="small fw-semibold">{{ entry.key }}</span>
+                <span class="badge" style="background:#efd5c8;color:#6b1fad;">{{ entry.value }}</span>
+              </div>
+              <div class="progress" style="height:8px;">
+                <div class="progress-bar" role="progressbar"
+                     style="background:#6b1fad;"
+                     [style.width.%]="categoryBarWidth(entry.value)">
+                </div>
+              </div>
+            </div>
+            <div *ngIf="categoryEntries().length === 0" class="text-muted text-center py-3">
+              No category data
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h6 class="card-title fw-bold mb-3" style="color:#6b1fad;">
+              <i class="fi fi-rr-exclamation me-2"></i>Items by Priority
+            </h6>
+            <div *ngFor="let entry of priorityEntries()" class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="small fw-semibold">{{ entry.key }}</span>
+                <span [class]="getPriorityBadge(entry.key)">{{ entry.value }}</span>
+              </div>
+              <div class="progress" style="height:8px;">
+                <div class="progress-bar" role="progressbar"
+                     [ngClass]="getPriorityBarClass(entry.key)"
+                     [style.width.%]="priorityBarWidth(entry.value)">
+                </div>
+              </div>
+            </div>
+            <div *ngIf="priorityEntries().length === 0" class="text-muted text-center py-3">
+              No priority data
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Overview -->
+    <div class="card shadow-sm border-0" *ngIf="alertStats">
+      <div class="card-body">
+        <h6 class="card-title fw-bold mb-3" style="color:#6b1fad;">
+          <i class="fi fi-rr-bell me-2"></i>Alert Overview
+        </h6>
+        <div class="row g-3 mb-3">
+          <div class="col-6 col-md-3 col-lg text-center">
+            <div class="fs-3 fw-bold text-muted">{{ alertStats.totalAlerts }}</div>
+            <small class="text-muted">Total</small>
+          </div>
+          <div class="col-6 col-md-3 col-lg text-center">
+            <div class="fs-3 fw-bold text-danger">{{ alertStats.newCount }}</div>
+            <small class="text-muted">New</small>
+          </div>
+          <div class="col-6 col-md-3 col-lg text-center">
+            <div class="fs-3 fw-bold text-info">{{ alertStats.viewedCount }}</div>
+            <small class="text-muted">Viewed</small>
+          </div>
+          <div class="col-6 col-md-3 col-lg text-center">
+            <div class="fs-3 fw-bold text-success">{{ alertStats.resolvedCount }}</div>
+            <small class="text-muted">Resolved</small>
+          </div>
+          <div class="col-6 col-md-3 col-lg text-center">
+            <div class="fs-3 fw-bold text-danger">{{ alertStats.criticalUnresolvedCount }}</div>
+            <small class="text-muted">Critical Unresolved</small>
+          </div>
+        </div>
+
+        <!-- Alerts by Level -->
+        <div *ngIf="alertLevelEntries().length > 0">
+          <h6 class="fw-semibold text-muted mb-2 small">Alerts by Level</h6>
+          <div *ngFor="let entry of alertLevelEntries()" class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="small fw-semibold">{{ entry.key }}</span>
+              <span [class]="getPriorityBadge(entry.key)">{{ entry.value }}</span>
+            </div>
+            <div class="progress" style="height:6px;">
+              <div class="progress-bar" role="progressbar"
+                   [ngClass]="getPriorityBarClass(entry.key)"
+                   [style.width.%]="priorityBarWidth(entry.value)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

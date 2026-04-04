@@ -161,60 +161,55 @@
             </a>
           </div>
           <div class="vr my-3"></div>
-          <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
-            <a routerLink="/admin/profile" class="d-flex align-items-center py-2">
-              <div class="text-end me-2 d-none d-lg-inline-block">
-                <div class="fw-bold text-dark">Robert Brown</div>
-                <small class="text-body d-block lh-sm">
-                  <i class="fi fi-rr-angle-down text-3xs me-1"></i> Manager
-                </small>
+          <!-- User Menu -->
+          <div class="ms-sm-3 ms-2 ms-lg-4 position-relative" style="z-index:1050;">
+            <!-- Avatar trigger -->
+            <button type="button" (click)="toggleUserMenu()"
+                    style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;gap:10px;">
+              <div class="d-none d-lg-block text-end">
+                <div class="fw-bold text-dark" style="font-size:0.9rem;">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+                <small class="text-muted" style="font-size:0.75rem;">{{ currentUser?.role }}</small>
               </div>
-              <div class="avatar avatar-sm rounded-circle avatar-status-success">
-                <img src="assets/backoffice/images/avatar/avatar1.webp" alt="">
+              <div style="width:38px;height:38px;border-radius:50%;background:#6b1fad;color:#fff;
+                          font-weight:700;font-size:1rem;display:flex;align-items:center;justify-content:center;">
+                {{ (currentUser?.firstName || 'U').charAt(0).toUpperCase() }}
               </div>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
-              <li class="d-flex align-items-center p-2">
-                <div class="avatar avatar-sm rounded-circle">
-                  <img src="assets/backoffice/images/avatar/avatar1.webp" alt="">
-                </div>
-                <div class="ms-2">
-                  <div class="fw-bold text-dark">Robert Brown </div>
-                  <small class="text-body d-block lh-sm">robert@gmail.com</small>
-                </div>
-              </li>
-              <li>
-                <div class="dropdown-divider my-1"></div>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/profile">
-                  <i class="fi fi-rr-user scale-1x"></i> View Profile
+            </button>
+
+            <!-- Dropdown panel -->
+            <div *ngIf="showUserMenu"
+                 style="position:absolute;right:0;top:48px;width:240px;background:#fff;
+                        border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);
+                        z-index:9999;overflow:hidden;">
+              <!-- User info -->
+              <div style="padding:14px 16px;border-bottom:1px solid #f3f4f6;">
+                <div style="font-weight:700;color:#111;">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+                <div style="font-size:0.78rem;color:#6b7280;">{{ currentUser?.email }}</div>
+                <span style="font-size:0.72rem;background:#ede9fe;color:#6b1fad;padding:2px 10px;border-radius:20px;font-weight:600;">
+                  {{ currentUser?.role }}
+                </span>
+              </div>
+              <!-- Links -->
+              <div style="padding:6px 0;">
+                <a routerLink="/admin/lost-items/alerts" (click)="closeUserMenu()"
+                   style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#374151;text-decoration:none;font-size:0.88rem;"
+                   onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='none'">
+                  <i class="fi fi-rr-bell"></i> My Alerts
                 </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/task-management">
-                  <i class="fi fi-rr-note scale-1x"></i> My Task
+                <a routerLink="/admin/lost-items/risk" (click)="closeUserMenu()"
+                   style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#374151;text-decoration:none;font-size:0.88rem;"
+                   onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='none'">
+                  <i class="fi fi-rr-shield-exclamation"></i> Risk Assessment
                 </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/settings">
-                  <i class="fi fi-rr-settings scale-1x"></i> Account Settings
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex align-items-center gap-2" href="pages/pricing.html">
-                  <i class="fi fi-rr-usd-circle scale-1x"></i> Upgrade Plan
-                </a>
-              </li>
-              <li>
-                <div class="dropdown-divider my-1"></div>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" routerLink="/auth/login" onclick="localStorage.removeItem('loggedUser')">
-                  <i class="fi fi-sr-exit scale-1x"></i> Log Out
-                </a>
-              </li>
-            </ul>
+                <div style="height:1px;background:#f3f4f6;margin:4px 0;"></div>
+                <button (click)="logout()"
+                        style="width:100%;background:none;border:none;display:flex;align-items:center;gap:10px;
+                               padding:10px 16px;color:#dc2626;font-size:0.88rem;cursor:pointer;text-align:left;"
+                        onmouseover="this.style.background='#fff7f7'" onmouseout="this.style.background='none'">
+                  <i class="fi fi-sr-exit"></i> Log Out
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -409,7 +404,58 @@
                       <span class="menu-label">User Management</span>
                     </a>
                   </li>
-                  
+                  <!-- FollowUp & Alerts Section -->
+                  <li class="menu-heading">
+                    <span class="menu-label">FollowUp & Alerts</span>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/followups" role="button">
+                      <i class="fi fi-rr-clipboard-list"></i>
+                      <span class="menu-label">Follow-Ups</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/alerts" role="button">
+                      <i class="fi fi-rr-bell"></i>
+                      <span class="menu-label">FollowUp Alerts</span>
+                    </a>
+                  </li>
+
+                  <!-- Lost Items Section -->
+                  <li class="menu-heading">
+                    <span class="menu-label">Lost Items</span>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/lost-items" role="button">
+                      <i class="fi fi-rr-search"></i>
+                      <span class="menu-label">All Lost Items</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/lost-items/alerts" role="button">
+                      <i class="fi fi-rr-bell-ring"></i>
+                      <span class="menu-label">Item Alerts</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/lost-items/statistics" role="button">
+                      <i class="fi fi-rr-chart-histogram"></i>
+                      <span class="menu-label">Statistics</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/lost-items/risk" role="button">
+                      <i class="fi fi-rr-shield-exclamation"></i>
+                      <span class="menu-label">Patient Risk</span>
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a class="menu-link" routerLink="/admin/lost-items/critical" role="button">
+                      <i class="fi fi-rr-exclamation"></i>
+                      <span class="menu-label">Critical Items</span>
+                    </a>
+                  </li>
+
                 </ul>
               </nav>
             </div>
@@ -1145,6 +1191,49 @@
                       <div class="maxw-100px ratio ratio-1x1">
                         <canvas id="chartTasksOverview"></canvas>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lost Items Dashboard Card -->
+              <div class="col-xxl-6 col-md-6">
+                <div class="card" style="border-top:3px solid #6b1fad;">
+                  <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0">
+                    <div class="clearfix">
+                      <h6 style="color:#6b1fad;"><i class="fi fi-rr-search me-2"></i>Lost Items</h6>
+                    </div>
+                    <a routerLink="/admin/lost-items" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem;">View All</a>
+                  </div>
+                  <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <span class="small text-muted">Track patient belongings</span>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap mt-2">
+                      <a routerLink="/admin/lost-items/new" class="btn btn-sm" style="background:#6b1fad;color:#fff;font-size:0.78rem;">
+                        <i class="fi fi-rr-plus me-1"></i>Report Item
+                      </a>
+                      <a routerLink="/admin/lost-items/critical" class="btn btn-sm btn-outline-danger" style="font-size:0.78rem;">
+                        <i class="fi fi-rr-exclamation me-1"></i>Critical
+                      </a>
+                      <a routerLink="/admin/lost-items/alerts" class="btn btn-sm btn-outline-warning" style="font-size:0.78rem;">
+                        <i class="fi fi-rr-bell me-1"></i>Alerts
+                      </a>
+                      <a routerLink="/admin/lost-items/statistics" class="btn btn-sm btn-outline-info" style="font-size:0.78rem;">
+                        <i class="fi fi-rr-chart-histogram me-1"></i>Stats
+                      </a>
+                      <a routerLink="/admin/lost-items/risk" class="btn btn-sm btn-outline-secondary" style="font-size:0.78rem;">
+                        <i class="fi fi-rr-shield-exclamation me-1"></i>Risk
+                      </a>
+                    </div>
+                  </div>
+                  <div class="card-footer border-0 pt-0">
+                    <div class="border-top pb-1"></div>
+                    <div class="d-flex align-items-center gap-2 mt-2">
+                      <span class="badge bg-danger" style="font-size:0.7rem;">LOST</span>
+                      <span class="badge bg-warning text-dark" style="font-size:0.7rem;">SEARCHING</span>
+                      <span class="badge bg-success" style="font-size:0.7rem;">FOUND</span>
+                      <span class="badge bg-secondary" style="font-size:0.7rem;">CLOSED</span>
                     </div>
                   </div>
                 </div>

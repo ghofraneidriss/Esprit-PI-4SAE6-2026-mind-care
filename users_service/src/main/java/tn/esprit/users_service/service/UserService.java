@@ -17,6 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already in use");

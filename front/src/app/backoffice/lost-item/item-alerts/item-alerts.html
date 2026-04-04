@@ -1,0 +1,140 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
+      <i class="fi fi-rr-arrow-left me-1"></i> Back
+    </button>
+    <div class="flex-grow-1">
+      <h4 class="mb-0 d-flex align-items-center gap-2" style="color:#6b1fad;font-weight:700;">
+        <i class="fi fi-rr-bell-ring"></i>
+        Item Alerts
+        <span class="badge bg-danger ms-1" *ngIf="criticalCount > 0">{{ criticalCount }} Critical</span>
+        <span class="badge bg-warning text-dark ms-1" *ngIf="newCount > 0">{{ newCount }} New</span>
+      </h4>
+      <small class="text-muted">Automated alerts for lost items requiring attention</small>
+    </div>
+    <button class="btn btn-sm btn-outline-primary" (click)="loadAlerts()">
+      <i class="fi fi-rr-bell me-1"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Feedback -->
+  <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
+    <i class="fi fi-rr-check me-2"></i>{{ successMsg }}
+    <button type="button" class="btn-close" (click)="successMsg=''"></button>
+  </div>
+  <div *ngIf="pageError" class="alert alert-danger alert-dismissible">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <button type="button" class="btn-close" (click)="pageError=''"></button>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body py-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label mb-1 small fw-semibold">Filter by Level</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filterLevel" (change)="applyFilters()">
+            <option value="">All Levels</option>
+            <option *ngFor="let l of levelOptions" [value]="l">{{ l }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label mb-1 small fw-semibold">Filter by Status</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filterStatus" (change)="applyFilters()">
+            <option value="">All Statuses</option>
+            <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary w-100" (click)="resetFilters()">
+Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border" style="color:#6b1fad;"></div>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!isLoading && filteredAlerts.length === 0" class="text-center py-5">
+    <i class="fi fi-rr-bell fs-1 d-block mb-2" style="color:#efd5c8;"></i>
+    <p class="text-muted">No alerts found for the selected filters.</p>
+  </div>
+
+  <!-- Alerts Table -->
+  <div *ngIf="!isLoading && filteredAlerts.length > 0" class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead style="background:#f8f4fc;">
+            <tr>
+              <th class="ps-4">Alert</th>
+              <th>Level</th>
+              <th>Status</th>
+              <th>Item #</th>
+              <th>Patient #</th>
+              <th>Created</th>
+              <th class="text-end pe-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let alert of filteredAlerts"
+                [style.border-left]="alert.level === 'CRITICAL' ? '4px solid #dc3545' : alert.level === 'HIGH' ? '4px solid #fd7e14' : 'none'">
+              <td class="ps-4">
+                <div class="fw-semibold" style="color:#6b1fad;">{{ alert.title }}</div>
+                <small class="text-muted" *ngIf="alert.description">
+                  {{ alert.description | slice:0:50 }}{{ (alert.description?.length ?? 0) > 50 ? '…' : '' }}
+                </small>
+              </td>
+              <td>
+                <span [class]="getLevelClass(alert.level)">{{ alert.level }}</span>
+              </td>
+              <td>
+                <span [class]="getStatusClass(alert.status)">{{ alert.status }}</span>
+              </td>
+              <td>
+                <span *ngIf="alert.lostItemId && alert.lostItemId !== 0" class="fw-semibold">#{{ alert.lostItemId }}</span>
+                <span *ngIf="!alert.lostItemId || alert.lostItemId === 0" class="text-muted">—</span>
+              </td>
+              <td><span class="text-muted">#{{ alert.patientId }}</span></td>
+              <td>
+                <small class="text-muted">{{ alert.createdAt | date:'dd/MM/yy HH:mm' }}</small>
+                <div *ngIf="alert.viewedAt" class="small text-muted">
+                  <i class="fi fi-rr-eye me-1"></i>{{ alert.viewedAt | date:'dd/MM/yy HH:mm' }}
+                </div>
+              </td>
+              <td class="pe-3">
+                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                  <button class="btn btn-xs btn-outline-primary"
+                          *ngIf="alert.lostItemId && alert.lostItemId !== 0"
+                          (click)="viewItem(alert.lostItemId)">View</button>
+                  <button class="btn btn-xs btn-outline-info"
+                          *ngIf="alert.status === 'NEW'"
+                          (click)="markViewed(alert)">Seen</button>
+                  <button class="btn btn-xs btn-outline-success"
+                          *ngIf="alert.status !== 'RESOLVED'"
+                          (click)="resolveAlert(alert)">Resolve</button>
+                  <button class="btn btn-xs btn-outline-warning"
+                          *ngIf="alert.level !== 'CRITICAL'"
+                          (click)="escalateAlert(alert)">Escalate</button>
+                  <button class="btn btn-xs btn-outline-danger"
+                          (click)="deleteAlert(alert.id)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">Showing {{ filteredAlerts.length }} of {{ alerts.length }} alerts</small>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,148 @@
+<div class="container-fluid py-4">
+
+  <!-- Page Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-1" style="color:#6b1fad;font-weight:700;">
+        <i class="fi fi-rr-search me-2"></i> Lost Items
+      </h4>
+      <small class="text-muted">Track and manage patient lost items</small>
+    </div>
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/lost-items/critical" class="btn btn-sm btn-outline-danger">
+        <i class="fi fi-rr-bell me-1"></i> Critical Items
+      </a>
+      <a routerLink="/admin/lost-items/new" class="btn btn-sm" style="background:#6b1fad;color:#fff;">
+        <i class="fi fi-rr-plus me-1"></i> Report Lost Item
+      </a>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
+    <i class="fi fi-rr-check me-2"></i>{{ successMsg }}
+  </div>
+  <div *ngIf="pageError" class="alert alert-danger alert-dismissible">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <button type="button" class="btn-close" (click)="pageError=''"></button>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body py-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label mb-1 small fw-semibold">Filter by Status</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filters.status">
+            <option value="">All Statuses</option>
+            <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label mb-1 small fw-semibold">Filter by Category</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filters.category">
+            <option value="">All Categories</option>
+            <option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn btn-sm btn-primary w-100" (click)="applyFilters()">
+            <i class="fi fi-rr-filter me-1"></i> Apply
+          </button>
+          <button class="btn btn-sm btn-outline-secondary w-100" (click)="resetFilters()">
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border" style="color:#6b1fad;"></div>
+      </div>
+
+      <div *ngIf="!isLoading && items.length === 0" class="text-center py-5 text-muted">
+        <i class="fi fi-rr-search fs-1 d-block mb-2" style="color:#efd5c8;"></i>
+        No lost items found. <a routerLink="/admin/lost-items/new" style="color:#6b1fad;">Report one now.</a>
+      </div>
+
+      <div *ngIf="!isLoading && items.length > 0" class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead style="background:#f8f4fc;">
+            <tr>
+              <th class="ps-4">Item</th>
+              <th>Category</th>
+              <th>Last Seen</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Date Reported</th>
+              <th class="text-end pe-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items">
+              <td class="ps-4">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="avatar avatar-sm rounded-circle d-flex align-items-center justify-content-center"
+                       style="background:#efd5c8;width:36px;height:36px;">
+                    <i class="fi fi-rr-box-alt" style="color:#6b1fad;"></i>
+                  </div>
+                  <div>
+                    <div class="fw-semibold">{{ item.title }}</div>
+                    <small class="text-muted">{{ item.description | slice:0:40 }}{{ (item.description?.length ?? 0) > 40 ? '…' : '' }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge" style="background:#efd5c8;color:#6b1fad;">{{ item.category }}</span>
+              </td>
+              <td>
+                <div class="small">{{ item.lastSeenLocation || '—' }}</div>
+                <small class="text-muted">{{ item.lastSeenDate || '' }}</small>
+              </td>
+              <td><span [class]="getPriorityClass(item.priority)">{{ item.priority }}</span></td>
+              <td><span [class]="getStatusClass(item.status)">{{ item.status }}</span></td>
+              <td>
+                <small class="text-muted">{{ item.createdAt | slice:0:10 }}</small>
+              </td>
+              <td class="text-end pe-4">
+                <div class="d-flex justify-content-end gap-1">
+                  <button class="btn btn-xs btn-outline-primary" title="View" (click)="viewItem(item.id!)">View</button>
+                  <button class="btn btn-xs btn-outline-secondary" title="Edit" (click)="editItem(item.id!)"
+                          [disabled]="item.status === 'CLOSED' || item.status === 'FOUND'">Edit</button>
+                  <button class="btn btn-xs btn-outline-success" title="Mark as Found" (click)="markFound(item.id!)"
+                          [disabled]="item.status === 'FOUND' || item.status === 'CLOSED'">Found</button>
+                  <button class="btn btn-xs btn-outline-danger" title="Delete" (click)="deleteItem(item.id!)"
+                          [disabled]="item.status === 'CLOSED'">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="card-footer d-flex align-items-center justify-content-between">
+      <small class="text-muted">
+        Showing {{ items.length }} of {{ totalElements }} items
+      </small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <button class="page-link" (click)="goToPage(currentPage - 1)">‹</button>
+          </li>
+          <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
+            <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+            <button class="page-link" (click)="goToPage(currentPage + 1)">›</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
