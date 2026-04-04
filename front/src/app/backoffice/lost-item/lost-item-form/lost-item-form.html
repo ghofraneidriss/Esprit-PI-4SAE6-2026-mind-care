@@ -51,10 +51,18 @@
             </select>
           </div>
 
-          <!-- Patient: dropdown for CAREGIVER, manual input for ADMIN/DOCTOR -->
+          <!-- Patient field: locked for PATIENT role, dropdown for CAREGIVER, manual for ADMIN/DOCTOR -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Patient <span class="text-danger">*</span></label>
-            <ng-container *ngIf="isCaregiver; else manualPatient">
+
+            <!-- PATIENT: read-only, auto-filled -->
+            <ng-container *ngIf="isPatient">
+              <input type="number" class="form-control bg-light" formControlName="patientId" readonly>
+              <small class="text-muted"><i class="fi fi-rr-lock me-1"></i>Auto-filled — this is your account</small>
+            </ng-container>
+
+            <!-- CAREGIVER: dropdown of assigned patients -->
+            <ng-container *ngIf="isCaregiver">
               <select class="form-select" formControlName="patientId" [class.is-invalid]="isInvalid('patientId')">
                 <option [value]="null">
                   {{ patientsLoading ? 'Loading patients…' : 'Select patient…' }}
@@ -64,10 +72,13 @@
                 </option>
               </select>
             </ng-container>
-            <ng-template #manualPatient>
+
+            <!-- ADMIN / DOCTOR: manual input -->
+            <ng-container *ngIf="!isPatient && !isCaregiver">
               <input type="number" class="form-control" formControlName="patientId"
                      [class.is-invalid]="isInvalid('patientId')" placeholder="Patient user ID">
-            </ng-template>
+            </ng-container>
+
             <div class="invalid-feedback">Patient is required.</div>
           </div>
           <div class="col-md-6">

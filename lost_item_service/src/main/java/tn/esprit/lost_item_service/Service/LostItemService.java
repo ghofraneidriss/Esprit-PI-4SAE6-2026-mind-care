@@ -13,6 +13,7 @@ import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import tn.esprit.lost_item_service.Repository.SearchReportRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,6 +111,12 @@ public class LostItemService {
     public List<LostItem> getAllCriticalItems() {
         return lostItemRepository.findAll().stream()
                 .filter(i -> i.getPriority() == ItemPriority.CRITICAL || i.getStatus() == ItemStatus.SEARCHING)
+                .toList();
+    }
+
+    public List<LostItem> getItemsByPatientIdFlat(Long patientId) {
+        return lostItemRepository.findByPatientId(patientId).stream()
+                .sorted(Comparator.comparing(LostItem::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
     }
 

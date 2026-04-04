@@ -23,8 +23,27 @@ public class LostItemController {
 
     private final LostItemService lostItemService;
 
+    /**
+     * GET /api/lost-items
+     * - ADMIN / DOCTOR: returns all items
+     * - CAREGIVER: returns only items for their assigned patients
+     * - PATIENT: returns only their own items
+     *
+     * Angular sends X-User-Id and X-User-Role headers via HTTP interceptor.
+     */
     @GetMapping
-    public ResponseEntity<List<LostItem>> getAllLostItems() {
+    public ResponseEntity<List<LostItem>> getAllLostItems(
+            @RequestHeader(value = "X-User-Id",   required = false) Long userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole
+    ) {
+        String role = userRole != null ? userRole.toUpperCase() : "ADMIN";
+
+        if ("PATIENT".equals(role) && userId != null) {
+            return ResponseEntity.ok(lostItemService.getItemsByPatientIdFlat(userId));
+        }
+        if ("CAREGIVER".equals(role) && userId != null) {
+            return ResponseEntity.ok(lostItemService.getItemsByCaregiverId(userId));
+        }
         return ResponseEntity.ok(lostItemService.getAllLostItems());
     }
 

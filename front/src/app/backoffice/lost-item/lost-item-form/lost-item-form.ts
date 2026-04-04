@@ -70,6 +70,8 @@ export class LostItemFormComponent implements OnInit {
     });
   }
 
+  get isPatient(): boolean { return this.currentRole === 'PATIENT'; }
+
   ngOnInit(): void {
     const user = this.authService.getLoggedUser();
     this.currentRole = this.authService.getLoggedRole();
@@ -77,6 +79,12 @@ export class LostItemFormComponent implements OnInit {
 
     if (user) {
       this.form.patchValue({ caregiverId: user.userId });
+    }
+
+    // PATIENT: auto-fill patientId with their own userId and lock it
+    if (this.isPatient && user) {
+      this.form.patchValue({ patientId: user.userId });
+      this.form.get('patientId')?.disable();
     }
 
     // CAREGIVER: load patient list for dropdown
@@ -110,7 +118,8 @@ export class LostItemFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.isSaving = true;
-    const payload = this.form.value as Partial<LostItem>;
+    // getRawValue() includes disabled controls (patientId for PATIENT role)
+    const payload = this.form.getRawValue() as Partial<LostItem>;
 
     const request$ = this.isEditMode && this.editingId
       ? this.lostItemService.updateLostItem(this.editingId, payload)

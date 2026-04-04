@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import {
   LostItem, SearchReport, ItemStatus, ItemCategory, PagedLostItems,
   ItemAlert, AlertLevel, AlertStatus,
-  GlobalStats, AlertStats, PatientRisk, FrequencyTrend
+  GlobalStats, AlertStats, PatientRisk, FrequencyTrend,
+  SearchTimeline, SearchLogStats
 } from './lost-item.model';
 
 @Injectable({ providedIn: 'root' })
@@ -118,6 +119,44 @@ export class LostItemService {
     return this.http.get<{ lostItemId: number; openCount: number }>(
       `${this.reportsUrl}/lost-item/${lostItemId}/open-count`
     );
+  }
+
+  // ── Advanced Search Log ─────────────────────────────────────────────────────
+
+  advancedSearchReports(params: {
+    lostItemId?: number;
+    reportedBy?: number;
+    searchResult?: string;
+    status?: string;
+    locationKeyword?: string;
+    from?: string;
+    to?: string;
+  }): Observable<SearchReport[]> {
+    let httpParams = new HttpParams();
+    if (params.lostItemId)     httpParams = httpParams.set('lostItemId', params.lostItemId);
+    if (params.reportedBy)     httpParams = httpParams.set('reportedBy', params.reportedBy);
+    if (params.searchResult)   httpParams = httpParams.set('searchResult', params.searchResult);
+    if (params.status)         httpParams = httpParams.set('status', params.status);
+    if (params.locationKeyword) httpParams = httpParams.set('locationKeyword', params.locationKeyword);
+    if (params.from)           httpParams = httpParams.set('from', params.from);
+    if (params.to)             httpParams = httpParams.set('to', params.to);
+    return this.http.get<SearchReport[]>(`${this.reportsUrl}/search`, { params: httpParams });
+  }
+
+  getSearchTimeline(lostItemId: number): Observable<SearchTimeline> {
+    return this.http.get<SearchTimeline>(`${this.reportsUrl}/lost-item/${lostItemId}/timeline`);
+  }
+
+  getSearchLogStats(): Observable<SearchLogStats> {
+    return this.http.get<SearchLogStats>(`${this.reportsUrl}/statistics`);
+  }
+
+  getReportsByReporter(reportedBy: number): Observable<SearchReport[]> {
+    return this.http.get<SearchReport[]>(`${this.reportsUrl}/reporter/${reportedBy}`);
+  }
+
+  getReportsByPatient(patientId: number): Observable<SearchReport[]> {
+    return this.http.get<SearchReport[]>(`${this.reportsUrl}/patient/${patientId}`);
   }
 
   // ── Item Alerts ─────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -22,7 +22,6 @@ import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { FollowUpPageComponent } from './followup-page/followup-page';
 import { AlertPageComponent } from './alert-page/alert-page';
-import { FilesManagementPageComponent } from './files-management/files-management';
 import { LostItemListComponent } from './lost-item/lost-item-list/lost-item-list';
 import { LostItemFormComponent } from './lost-item/lost-item-form/lost-item-form';
 import { LostItemDetailComponent } from './lost-item/lost-item-detail/lost-item-detail';
@@ -32,12 +31,11 @@ import { CriticalLostItemsComponent } from './lost-item/critical-lost-items/crit
 import { ItemAlertsComponent } from './lost-item/item-alerts/item-alerts';
 import { ItemStatsComponent } from './lost-item/item-stats/item-stats';
 import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
-
+import { SearchLogComponent } from './lost-item/search-log/search-log';
 
 @NgModule({
   declarations: [
     Home2,
-   
     CalendarPage,
     ChatPage,
     CustomersPage,
@@ -56,7 +54,6 @@ import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
     Footer,
     FollowUpPageComponent,
     AlertPageComponent,
-    FilesManagementPageComponent,
     LostItemListComponent,
     LostItemFormComponent,
     LostItemDetailComponent,
@@ -66,6 +63,7 @@ import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
     ItemAlertsComponent,
     ItemStatsComponent,
     PatientRiskComponent,
+    SearchLogComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })

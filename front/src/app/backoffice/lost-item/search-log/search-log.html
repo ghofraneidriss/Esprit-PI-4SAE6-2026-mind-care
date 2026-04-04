@@ -1,0 +1,496 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-1" style="color:#6b1fad;font-weight:700;">
+        <i class="fi fi-rr-document-signed me-2"></i> Search Log
+      </h4>
+      <small class="text-muted">Advanced log of all item search reports</small>
+    </div>
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/lost-items" class="btn btn-sm btn-outline-secondary">
+        <i class="fi fi-rr-arrow-left me-1"></i> Back to Items
+      </a>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
+    <i class="fi fi-rr-check me-2"></i>{{ successMsg }}
+    <button type="button" class="btn-close" (click)="successMsg=''"></button>
+  </div>
+  <div *ngIf="pageError" class="alert alert-danger alert-dismissible">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <button type="button" class="btn-close" (click)="pageError=''"></button>
+  </div>
+
+  <!-- Tab Nav -->
+  <ul class="nav nav-pills mb-4 gap-1">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab==='list'" (click)="setTab('list')">
+        <i class="fi fi-rr-list me-1"></i> Report List
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab==='timeline'" (click)="setTab('timeline')">
+        <i class="fi fi-rr-time-past me-1"></i> Item Timeline
+      </button>
+    </li>
+    <li class="nav-item" *ngIf="isAdminOrDoctor">
+      <button class="nav-link" [class.active]="activeTab==='stats'" (click)="setTab('stats')">
+        <i class="fi fi-rr-chart-pie me-1"></i> Global Stats
+      </button>
+    </li>
+  </ul>
+
+  <!-- ── TAB: REPORT LIST ─────────────────────────────────────────────────── -->
+  <ng-container *ngIf="activeTab==='list'">
+
+    <!-- Filter Card -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header d-flex align-items-center justify-content-between py-2 px-3"
+           style="background:#f8f4fc;cursor:pointer;" (click)="showFilters=!showFilters">
+        <span class="fw-semibold small" style="color:#6b1fad;">
+          <i class="fi fi-rr-filter me-1"></i> Filters
+        </span>
+        <i class="fi" [class.fi-rr-angle-up]="showFilters" [class.fi-rr-angle-down]="!showFilters"></i>
+      </div>
+      <div class="card-body" *ngIf="showFilters" [formGroup]="filterForm">
+        <div class="row g-2">
+          <!-- Lost Item ID -->
+          <div class="col-md-2">
+            <label class="form-label small fw-semibold">Item ID</label>
+            <input type="number" class="form-control form-control-sm" formControlName="lostItemId" placeholder="e.g. 42">
+          </div>
+          <!-- Reporter ID - hidden for PATIENT -->
+          <div class="col-md-2" *ngIf="!isPatient">
+            <label class="form-label small fw-semibold">Reporter ID</label>
+            <input type="number" class="form-control form-control-sm" formControlName="reportedBy"
+                   [readonly]="isCaregiver" placeholder="User ID">
+          </div>
+          <!-- Result -->
+          <div class="col-md-2">
+            <label class="form-label small fw-semibold">Result</label>
+            <select class="form-select form-select-sm" formControlName="searchResult">
+              <option value="">All Results</option>
+              <option *ngFor="let r of resultOptions" [value]="r.value">{{ r.label }}</option>
+            </select>
+          </div>
+          <!-- Status -->
+          <div class="col-md-2">
+            <label class="form-label small fw-semibold">Status</label>
+            <select class="form-select form-select-sm" formControlName="status">
+              <option value="">All Statuses</option>
+              <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+          <!-- Location -->
+          <div class="col-md-2">
+            <label class="form-label small fw-semibold">Location contains</label>
+            <input type="text" class="form-control form-control-sm" formControlName="locationKeyword" placeholder="e.g. kitchen">
+          </div>
+        </div>
+        <div class="row g-2 mt-1">
+          <!-- Date range -->
+          <div class="col-md-2">
+            <label class="form-label small fw-semibold">From</label>
+            <input type="date" class="form-control form-control-sm" formControlName="from">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small fw-semibold">To</label>
+            <input type="date" class="form-control form-control-sm" formControlName="to">
+          </div>
+          <div class="col-md-4 d-flex align-items-end gap-2">
+            <button class="btn btn-sm btn-primary" (click)="applyFilters()">
+              <i class="fi fi-rr-search me-1"></i> Search
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary badges -->
+    <div class="d-flex gap-2 flex-wrap mb-3">
+      <span class="badge fs-6 px-3 py-2" style="background:#6b1fad;">
+        {{ reports.length }} Report{{ reports.length !== 1 ? 's' : '' }}
+      </span>
+      <span class="badge bg-success fs-6 px-3 py-2">
+        {{ countByResult('FOUND') }} Found
+      </span>
+      <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+        {{ countByResult('NOT_FOUND') }} Not Found
+      </span>
+      <span class="badge bg-primary fs-6 px-3 py-2">
+        {{ countByStatus('OPEN') }} Open
+      </span>
+    </div>
+
+    <!-- Report Table -->
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border" style="color:#6b1fad;"></div>
+        </div>
+
+        <div *ngIf="!isLoading && reports.length === 0" class="text-center py-5 text-muted">
+          <i class="fi fi-rr-document-signed d-block mb-2" style="font-size:2.5rem;color:#efd5c8;"></i>
+          No reports match your filters.
+        </div>
+
+        <div *ngIf="!isLoading && reports.length > 0" class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead style="background:#f8f4fc;">
+              <tr>
+                <th class="ps-4">#</th>
+                <th>Item ID</th>
+                <th>Date Searched</th>
+                <th>Location</th>
+                <th>Result</th>
+                <th>Status</th>
+                <th>Reporter</th>
+                <th>Notes</th>
+                <th *ngIf="isAdminOrDoctor" class="text-end pe-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of pagedReports">
+                <td class="ps-4 text-muted small">{{ r.id }}</td>
+                <td>
+                  <a [routerLink]="['/admin/lost-items', r.lostItemId]"
+                     style="color:#6b1fad;font-weight:600;">#{{ r.lostItemId }}</a>
+                </td>
+                <td>
+                  <span class="fw-semibold">{{ r.searchDate }}</span>
+                </td>
+                <td>
+                  <span class="text-muted small">{{ r.locationSearched || '—' }}</span>
+                </td>
+                <td><span [class]="getResultClass(r.searchResult)">{{ r.searchResult }}</span></td>
+                <td><span [class]="getStatusClass(r.status)">{{ r.status }}</span></td>
+                <td>
+                  <span class="badge" style="background:#efd5c8;color:#6b1fad;">
+                    User #{{ r.reportedBy }}
+                  </span>
+                </td>
+                <td>
+                  <small class="text-muted">{{ r.notes ? (r.notes | slice:0:50) + (r.notes.length > 50 ? '…' : '') : '—' }}</small>
+                </td>
+                <td *ngIf="isAdminOrDoctor" class="text-end pe-4">
+                  <button class="btn btn-xs btn-outline-danger" (click)="deleteReport(r.id!)">
+                    <i class="fi fi-rr-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="totalPages > 1" class="card-footer d-flex align-items-center justify-content-between">
+        <small class="text-muted">Showing {{ pagedReports.length }} of {{ reports.length }}</small>
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <button class="page-link" (click)="goToPage(currentPage - 1)">‹</button>
+            </li>
+            <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
+              <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <button class="page-link" (click)="goToPage(currentPage + 1)">›</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ── TAB: ITEM TIMELINE ───────────────────────────────────────────────── -->
+  <ng-container *ngIf="activeTab==='timeline'">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label small fw-semibold">Lost Item ID</label>
+            <input type="number" class="form-control" [(ngModel)]="timelineLostItemId" placeholder="Enter item ID">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary" (click)="loadTimeline()" [disabled]="!timelineLostItemId || isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></span>
+              <i *ngIf="!isLoading" class="fi fi-rr-time-past me-1"></i> Load Timeline
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-container *ngIf="timeline">
+      <!-- Summary cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-2">
+          <div class="card text-center shadow-sm">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-4" style="color:#6b1fad;">{{ timeline.totalSearches }}</div>
+              <small class="text-muted">Total Searches</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card text-center shadow-sm">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-4 text-success">{{ timeline.foundCount }}</div>
+              <small class="text-muted">Found</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card text-center shadow-sm">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-4 text-warning">{{ timeline.partiallyFoundCount }}</div>
+              <small class="text-muted">Partial</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card text-center shadow-sm">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-4 text-danger">{{ timeline.notFoundCount }}</div>
+              <small class="text-muted">Not Found</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card text-center shadow-sm">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-4 text-primary">{{ timeline.openReports }}</div>
+              <small class="text-muted">Open</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card text-center shadow-sm">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-4" style="color:#6b1fad;">{{ timeline.successRate }}%</div>
+              <small class="text-muted">Success Rate</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Heatmap -->
+      <div class="card shadow-sm mb-4" *ngIf="objectKeys(timeline.locationFrequency).length > 0">
+        <div class="card-header py-2 px-3" style="background:#f8f4fc;">
+          <span class="fw-semibold small" style="color:#6b1fad;">
+            <i class="fi fi-rr-map-marker me-1"></i> Location Heatmap
+          </span>
+        </div>
+        <div class="card-body">
+          <div *ngFor="let loc of objectKeys(timeline.locationFrequency)" class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <small class="fw-semibold">{{ loc }}</small>
+              <small class="text-muted">{{ timeline.locationFrequency[loc] }}x</small>
+            </div>
+            <div class="progress" style="height:8px;">
+              <div class="progress-bar"
+                   style="background:#6b1fad;"
+                   [style.width]="getBarWidth(timeline.locationFrequency[loc], objectKeys(timeline.locationFrequency).length > 0 ? timeline.locationFrequency[objectKeys(timeline.locationFrequency)[0]] : 1)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chronological Timeline -->
+      <div class="card shadow-sm">
+        <div class="card-header py-2 px-3" style="background:#f8f4fc;">
+          <span class="fw-semibold small" style="color:#6b1fad;">
+            <i class="fi fi-rr-time-past me-1"></i> Chronological Timeline
+          </span>
+        </div>
+        <div class="card-body p-0">
+          <div *ngFor="let day of timeline.timeline; let last = last"
+               class="d-flex gap-3 px-4 py-3" [style.border-bottom]="!last ? '1px solid #f3f4f6' : ''">
+            <!-- Date pill -->
+            <div class="flex-shrink-0 text-center" style="min-width:80px;">
+              <div class="rounded px-2 py-1 small fw-bold" style="background:#ede9fe;color:#6b1fad;">
+                {{ day.date }}
+              </div>
+              <small class="text-muted">{{ day.reportCount }} report(s)</small>
+            </div>
+            <!-- Reports that day -->
+            <div class="flex-grow-1">
+              <div *ngFor="let r of day.results" class="d-flex align-items-start gap-2 mb-1">
+                <span [class]="getResultClass(r.result)" style="font-size:0.72rem;">{{ r.result | resultLabel }}</span>
+                <small class="text-muted">{{ r.location || 'Location not specified' }}</small>
+                <span [class]="getStatusClass(r.status)" style="font-size:0.7rem;">{{ r.status }}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="timeline.timeline.length === 0" class="text-center py-4 text-muted">
+            No timeline data available.
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="!timeline && !isLoading" class="text-center py-5 text-muted">
+      <i class="fi fi-rr-time-past d-block mb-2" style="font-size:2.5rem;color:#efd5c8;"></i>
+      Enter a Lost Item ID above to view its search timeline.
+    </div>
+  </ng-container>
+
+  <!-- ── TAB: GLOBAL STATS ────────────────────────────────────────────────── -->
+  <ng-container *ngIf="activeTab==='stats' && isAdminOrDoctor">
+    <div *ngIf="isStatsLoading" class="text-center py-5">
+      <div class="spinner-border" style="color:#6b1fad;"></div>
+    </div>
+
+    <ng-container *ngIf="!isStatsLoading && stats">
+      <!-- KPI row -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card shadow-sm text-center">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-3" style="color:#6b1fad;">{{ stats.totalReports }}</div>
+              <small class="text-muted">Total Reports</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card shadow-sm text-center">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-3 text-success">{{ stats.globalSuccessRate }}%</div>
+              <small class="text-muted">Global Success Rate</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card shadow-sm text-center">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-3 text-primary">{{ stats.resultDistribution['FOUND'] ?? 0 }}</div>
+              <small class="text-muted">Items Found</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card shadow-sm text-center">
+            <div class="card-body py-3">
+              <div class="fw-bold fs-3 text-danger">{{ stats.resultDistribution['NOT_FOUND'] ?? 0 }}</div>
+              <small class="text-muted">Still Not Found</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Result Distribution -->
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header py-2 px-3" style="background:#f8f4fc;">
+              <span class="fw-semibold small" style="color:#6b1fad;">Result Distribution</span>
+            </div>
+            <div class="card-body">
+              <div *ngFor="let key of objectKeys(stats.resultDistribution)" class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <small class="fw-semibold">{{ key }}</small>
+                  <small class="text-muted">{{ stats.resultDistribution[key] }}</small>
+                </div>
+                <div class="progress" style="height:10px;">
+                  <div class="progress-bar"
+                       [style.background]="key==='FOUND' ? '#198754' : key==='PARTIALLY_FOUND' ? '#ffc107' : '#dc3545'"
+                       [style.width]="getBarWidth(stats.resultDistribution[key], maxResultCount)">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Searched Items -->
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header py-2 px-3" style="background:#f8f4fc;">
+              <span class="fw-semibold small" style="color:#6b1fad;">Most Searched Items</span>
+            </div>
+            <div class="card-body p-0">
+              <table class="table table-sm table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th class="ps-3">Item</th>
+                    <th class="text-end pe-3">Searches</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of stats.topSearchedItems">
+                    <td class="ps-3">
+                      <a [routerLink]="['/admin/lost-items', item.lostItemId]" style="color:#6b1fad;">
+                        {{ item.itemTitle }}
+                      </a>
+                    </td>
+                    <td class="text-end pe-3">
+                      <span class="badge" style="background:#efd5c8;color:#6b1fad;">{{ item.searchCount }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Distribution -->
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header py-2 px-3" style="background:#f8f4fc;">
+              <span class="fw-semibold small" style="color:#6b1fad;">Status Distribution</span>
+            </div>
+            <div class="card-body">
+              <div *ngFor="let key of objectKeys(stats.statusDistribution)" class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <small class="fw-semibold">{{ key }}</small>
+                  <small class="text-muted">{{ stats.statusDistribution[key] }}</small>
+                </div>
+                <div class="progress" style="height:10px;">
+                  <div class="progress-bar"
+                       [style.background]="key==='OPEN' ? '#0d6efd' : key==='ESCALATED' ? '#dc3545' : '#6c757d'"
+                       [style.width]="getBarWidth(stats.statusDistribution[key], stats.totalReports)">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Reporters -->
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header py-2 px-3" style="background:#f8f4fc;">
+              <span class="fw-semibold small" style="color:#6b1fad;">Top Reporters</span>
+            </div>
+            <div class="card-body p-0">
+              <table class="table table-sm table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th class="ps-3">Reporter</th>
+                    <th class="text-end pe-3">Reports</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let r of stats.topReporters">
+                    <td class="ps-3">
+                      <span class="badge" style="background:#efd5c8;color:#6b1fad;">User #{{ r.reportedBy }}</span>
+                    </td>
+                    <td class="text-end pe-3">{{ r.reportCount }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+</div>

@@ -6,7 +6,10 @@
       "Bash(curl:*)",
       "Bash(npm install:*)",
       "Bash(done)",
-      "Bash(mysql -u root -e \"USE incident_db; UPDATE incident_type SET points = 10 WHERE points IS NULL; SELECT id, name, points, default_severity FROM incident_type;\")"
+      "Bash(mysql -u root -e \"USE incident_db; UPDATE incident_type SET points = 10 WHERE points IS NULL; SELECT id, name, points, default_severity FROM incident_type;\")",
+      "Bash(xargs git:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

@@ -63,11 +63,28 @@ export class LostItemListComponent implements OnInit {
     this.loadItems();
   }
 
+  get isPatient(): boolean { return this.currentRole === 'PATIENT'; }
+
   loadItems(): void {
     this.isLoading = true;
     this.pageError = '';
 
-    if (this.isCaregiver && this.currentUserId) {
+    if (this.isPatient && this.currentUserId) {
+      // PATIENT: only their own items (backend also enforces via X-User-Id header)
+      this.lostItemService.getPatientLostItems(
+        this.currentUserId, this.filters.status || undefined, this.filters.category || undefined
+      ).subscribe({
+        next: (page) => {
+          this.items = page.content;
+          this.applyClientFilters();
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.pageError = err?.error?.message ?? 'Failed to load items.';
+          this.isLoading = false;
+        }
+      });
+    } else if (this.isCaregiver && this.currentUserId) {
       // CAREGIVER: only their assigned patients' items
       this.lostItemService.getItemsByCaregiverId(this.currentUserId).subscribe({
         next: (items) => {
@@ -81,7 +98,7 @@ export class LostItemListComponent implements OnInit {
         }
       });
     } else {
-      // ADMIN / DOCTOR: all items
+      // ADMIN / DOCTOR: all items (backend scopes via X-User-Role header)
       this.lostItemService.getAllLostItems().subscribe({
         next: (items) => {
           this.items = items;

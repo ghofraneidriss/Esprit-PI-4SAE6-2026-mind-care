@@ -102,3 +102,30 @@ export interface FrequencyTrend {
   previousMonthCount: number;
   twoMonthsAgoCount: number;
 }
+
+export interface SearchTimelineDay {
+  date: string;
+  reportCount: number;
+  results: Array<{ id: number; result: string; location: string; status: string }>;
+}
+
+export interface SearchTimeline {
+  lostItemId: number;
+  totalSearches: number;
+  foundCount: number;
+  partiallyFoundCount: number;
+  notFoundCount: number;
+  openReports: number;
+  successRate: number;
+  locationFrequency: Record<string, number>;
+  timeline: SearchTimelineDay[];
+}
+
+export interface SearchLogStats {
+  totalReports: number;
+  resultDistribution: Record<string, number>;
+  statusDistribution: Record<string, number>;
+  globalSuccessRate: number;
+  topSearchedItems: Array<{ lostItemId: number; itemTitle: string; searchCount: number }>;
+  topReporters: Array<{ reportedBy: number; reportCount: number }>;
+}
