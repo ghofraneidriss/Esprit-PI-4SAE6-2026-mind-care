@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RecommendationService } from '../recommendation/recommendation.service';
-import { MedicalEvent } from '../recommendation/recommendation.model';
+import { DifficultyLevel, MedicalEvent, MedicalEventType } from '../recommendation/recommendation.model';
 
 @Component({
     selector: 'app-medical-events',
@@ -12,12 +13,13 @@ export class MedicalEventsPage implements OnInit {
     events: MedicalEvent[] = [];
     showForm = false;
     isLoading = true;
+    isSaving = false;
     searchTerm = '';
     errorMessage = '';
     successMessage = '';
 
-    difficultyOptions = ['EASY', 'MEDIUM', 'HARD'];
-    typeOptions = ['GAME', 'MEMORY_TEST', 'COGNITIVE_TEST', 'REACTION_TEST'];
+    difficultyOptions = Object.values(DifficultyLevel);
+    typeOptions = Object.values(MedicalEventType);
 
     newEvent: MedicalEvent = this.initNew();
 
@@ -28,7 +30,7 @@ export class MedicalEventsPage implements OnInit {
     }
 
     private initNew(): MedicalEvent {
-        return { title: '', description: '', type: 'GAME', difficulty: 'EASY' };
+        return { title: '', description: '', type: MedicalEventType.MEMORY, difficulty: DifficultyLevel.EASY };
     }
 
     loadEvents(callback?: () => void): void {
@@ -39,7 +41,6 @@ export class MedicalEventsPage implements OnInit {
 
         obs.subscribe({
             next: (data: any) => {
-                // Gestion robuste : tableau direct ou structure paginée content
                 if (Array.isArray(data)) {
                     this.events = data;
                 } else if (data && data.content && Array.isArray(data.content)) {
@@ -52,8 +53,8 @@ export class MedicalEventsPage implements OnInit {
                 if (callback) callback();
             },
             error: (err) => {
-                console.error('Erreur de chargement des jeux médicaux:', err);
-                this.errorMessage = 'Impossible de charger les jeux. Vérifiez que le backend tourne sur le port 8085.';
+                console.error('Erreur de chargement des jeux medicaux:', err);
+                this.errorMessage = this.extractErrorMessage(err, 'Impossible de charger les jeux. Verifiez que le backend tourne sur le port 8085.');
                 this.isLoading = false;
                 this.cdr.detectChanges();
                 if (callback) callback();
@@ -75,30 +76,45 @@ export class MedicalEventsPage implements OnInit {
     save(): void {
         if (!this.newEvent.title.trim()) return;
 
+        this.isSaving = true;
+        this.errorMessage = '';
+
         this.recommendationService.createEvent(this.newEvent).subscribe({
-            next: () => {
-                this.successMessage = `Jeu "${this.newEvent.title}" créé avec succès !`;
+            next: (created) => {
+                this.successMessage = `Jeu "${this.newEvent.title}" cree avec succes !`;
                 this.errorMessage = '';
-                this.loadEvents(() => this.showForm = false);
+                this.events = [created, ...this.events];
+                this.searchTerm = '';
+                this.loadEvents(() => {
+                    this.showForm = false;
+                    this.isSaving = false;
+                });
             },
-            error: () => {
-                this.errorMessage = 'Erreur lors de la création du jeu.';
+            error: (err) => {
+                this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la creation du jeu.');
                 this.successMessage = '';
+                this.isSaving = false;
             }
         });
     }
 
     delete(id: number | undefined): void {
-        if (id && confirm('Supprimer ce jeu médical ?')) {
+        if (id && confirm('Supprimer ce jeu medical ?')) {
             this.recommendationService.deleteEvent(id).subscribe({
-                next: () => { this.successMessage = 'Jeu supprimé.'; this.loadEvents(); },
-                error: () => { this.errorMessage = 'Erreur lors de la suppression.'; }
+                next: () => {
+                    this.successMessage = 'Jeu supprime.';
+                    this.loadEvents();
+                },
+                error: (err) => {
+                    this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la suppression.');
+                }
             });
         }
     }
 
     cancel(): void {
         this.showForm = false;
+        this.isSaving = false;
     }
 
     getDifficultyClass(difficulty: string): string {
@@ -112,11 +128,25 @@ export class MedicalEventsPage implements OnInit {
 
     getTypeIcon(type: string): string {
         const map: Record<string, string> = {
-            GAME: 'fi-rr-dice',
-            MEMORY_TEST: 'fi-rr-brain',
-            COGNITIVE_TEST: 'fi-rr-star',
-            REACTION_TEST: 'fi-rr-time-fast'
+            MEMORY: 'fi-rr-brain',
+            FLUENCY: 'fi-rr-comment-alt',
+            VISUOSPATIAL: 'fi-rr-eye',
+            ATTENTION: 'fi-rr-bulb',
+            MEDICATION: 'fi-rr-pills',
+            EXERCISE: 'fi-rr-dumbbell',
+            DIET: 'fi-rr-apple-whole',
+            LIFESTYLE: 'fi-rr-heart',
+            OTHER: 'fi-rr-dice'
         };
         return map[type] || 'fi-rr-square';
+    }
+
+    private extractErrorMessage(err: unknown, fallback: string): string {
+        if (err instanceof HttpErrorResponse) {
+            if (typeof err.error === 'string') return err.error;
+            if (err.error?.message) return err.error.message;
+            if (err.message) return err.message;
+        }
+        return fallback;
     }
 }

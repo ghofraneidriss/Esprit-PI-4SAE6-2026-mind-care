@@ -24,6 +24,8 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { RecommendationsPage } from './recommendations/recommendations';
+import { SouvenirsFrontPage } from './souvenirs/souvenirs';
+import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { FrontofficeLayoutComponent } from './frontoffice-layout';
@@ -51,6 +53,8 @@ import { FrontofficeLayoutComponent } from './frontoffice-layout';
     NewPasswordCoverAuthPage,
     RegisterCoverAuthPage,
     RecommendationsPage,
+    SouvenirsFrontPage,
+    AlzheimerUnderstandingFrontPage,
     Header,
     Footer,
     FrontofficeLayoutComponent

@@ -19,6 +19,7 @@ import { UserManagementPage } from './user-management/user-management';
 import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { MedicalEventsPage } from './medical-events/medical-events';
+import { SouvenirsPage } from './souvenirs/souvenirs';
 
 import { BackofficeLayoutComponent } from './backoffice-layout';
 
@@ -29,6 +30,7 @@ const routes: Routes = [
     children: [
       { path: 'recommendation', component: RecommendationPage },
       { path: 'medical-events', component: MedicalEventsPage },
+      { path: 'souvenirs', component: SouvenirsPage },
       { path: '', component: Home2 },
       { path: 'reports', component: Home2 },
       { path: 'activities', component: ActivitiesPage },

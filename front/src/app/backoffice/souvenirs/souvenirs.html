@@ -1,0 +1,241 @@
+<div class="container-fluid p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="h3 mb-1"><i class="fi fi-rr-book-alt me-2 text-primary"></i>Souvenirs Culturels</h2>
+            <p class="text-muted mb-0 small">Gestion des souvenirs IMAGE/AUDIO pour stimulation de memoire Alzheimer.</p>
+        </div>
+        <button class="btn btn-primary" (click)="openCreateForm()">
+            <i class="fi fi-rr-plus me-1"></i> Nouveau Souvenir
+        </button>
+    </div>
+
+    @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2">
+        <i class="fi fi-rr-exclamation"></i>
+        <div>{{ errorMessage }}</div>
+        <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+    </div>
+    }
+
+    @if (successMessage) {
+    <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2">
+        <i class="fi fi-rr-check-circle"></i>
+        <div>{{ successMessage }}</div>
+        <button type="button" class="btn-close ms-auto" (click)="successMessage = ''"></button>
+    </div>
+    }
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Patient ID</label>
+                    <input class="form-control" type="number" [(ngModel)]="patientFilterInput" placeholder="Ex: 4">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Theme</label>
+                    <select class="form-select" [(ngModel)]="themeFilter">
+                        <option value="">Tous les themes</option>
+                        @for (theme of themeOptions; track theme) {
+                        <option [value]="theme">{{ theme }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Media</label>
+                    <select class="form-select" [(ngModel)]="mediaTypeFilter">
+                        <option value="">Tous les medias</option>
+                        @for (mediaType of mediaTypeOptions; track mediaType) {
+                        <option [value]="mediaType">{{ mediaType }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button class="btn btn-outline-primary w-100" (click)="loadByPatient()">
+                        <i class="fi fi-rr-search me-1"></i> Charger
+                    </button>
+                </div>
+                <div class="col-12">
+                    <div class="stats-chip mt-2">
+                        <div class="fw-semibold">Total souvenirs: {{ totalEntrees }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (showEntreeForm) {
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            {{ isEditingEntree ? 'Modifier Souvenir' : 'Creer Souvenir' }}
+        </div>
+        <div class="card-body">
+            <form (ngSubmit)="saveEntree()">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Doctor ID *</label>
+                        <input class="form-control" type="number" [(ngModel)]="entreeForm.doctorId" name="doctorId" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Care giver ID *</label>
+                        <input class="form-control" type="number" [(ngModel)]="entreeForm.caregiverId" name="caregiverId" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Patient ID *</label>
+                        <input class="form-control" type="number" [(ngModel)]="entreeForm.patientId" name="patientId" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Theme culturel *</label>
+                        <select class="form-select" [(ngModel)]="entreeForm.themeCulturel" name="themeCulturel">
+                            @for (theme of themeOptions; track theme) {
+                            <option [value]="theme">{{ theme }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Type media *</label>
+                        <select class="form-select" [(ngModel)]="entreeForm.mediaType" name="mediaType">
+                            @for (mediaType of mediaTypeOptions; track mediaType) {
+                            <option [value]="mediaType">{{ mediaType }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Titre media</label>
+                        <input class="form-control" type="text" [(ngModel)]="entreeForm.mediaTitle" name="mediaTitle">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Media URL</label>
+                        <input class="form-control" type="text" [(ngModel)]="entreeForm.mediaUrl" name="mediaUrl"
+                            placeholder="https://... (optionnel, mais recommande)">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Infos care giver (source clinique)</label>
+                        <textarea class="form-control" rows="2" [(ngModel)]="entreeForm.infosCaregiver" name="infosCaregiver"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Texte souvenir *</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="entreeForm.texte" name="texte" required></textarea>
+                    </div>
+
+                    @if (entreeForm.mediaType === 'AUDIO') {
+                    <div class="col-md-6">
+                        <label class="form-label">Nom voix attendue</label>
+                        <input class="form-control" type="text" [(ngModel)]="entreeForm.expectedSpeakerName" name="expectedSpeakerName">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Lien avec patient</label>
+                        <input class="form-control" type="text" [(ngModel)]="entreeForm.expectedSpeakerRelation" name="expectedSpeakerRelation" placeholder="Ex: Mere, Frere, Ami">
+                    </div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-light" (click)="cancelEntreeForm()">Annuler</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSavingEntree">
+                        @if (isSavingEntree) {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        {{ isEditingEntree ? 'Mettre a jour' : 'Enregistrer' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    }
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Liste des souvenirs</span>
+            <small class="text-muted">Cliquez une ligne pour afficher l apercu media</small>
+        </div>
+        <div class="card-body p-0">
+            @if (isLoadingEntrees) {
+            <div class="text-center py-4">
+                <span class="spinner-border spinner-border-sm me-2"></span>Chargement...
+            </div>
+            } @else {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Theme</th>
+                            <th>Media</th>
+                            <th>Texte</th>
+                            <th>Etat</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (entree of entrees; track entree.id || $index) {
+                        <tr [class.row-selected]="selectedEntree?.id === entree.id" (click)="selectEntree(entree)">
+                            <td>#{{ entree.id }}</td>
+                            <td>{{ entree.patientId }}</td>
+                            <td>{{ entree.themeCulturel }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ entree.mediaType }}</span></td>
+                            <td class="text-truncate-cell" title="{{ entree.texte }}">{{ entree.texte }}</td>
+                            <td>
+                                <span class="badge" [ngClass]="entree.traitee ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
+                                    {{ entree.traitee ? 'TRAITEE' : 'EN_ATTENTE' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-primary" (click)="$event.stopPropagation(); editEntree(entree)">Modifier</button>
+                                    <button class="btn btn-sm btn-outline-success" (click)="$event.stopPropagation(); markTraitee(entree)">Traiter</button>
+                                    <button class="btn btn-sm btn-outline-danger" (click)="$event.stopPropagation(); deleteEntree(entree)">Supprimer</button>
+                                </div>
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">Aucun souvenir.</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </div>
+    </div>
+
+    @if (selectedEntree) {
+    <div class="card border-0 shadow-sm">
+        <div class="card-header">Apercu souvenir selectionne</div>
+        <div class="card-body">
+            <h5 class="mb-1">{{ selectedEntree.mediaTitle || ('Souvenir #' + selectedEntree.id) }}</h5>
+            <p class="text-muted mb-3">{{ selectedEntree.texte }}</p>
+
+            @if (selectedEntree.mediaType === 'IMAGE') {
+            @if (selectedEntree.mediaUrl) {
+            <img [src]="selectedEntree.mediaUrl || ''" alt="Souvenir" class="media-preview-image">
+            } @else {
+            <div class="small text-muted">Aucune image URL fournie pour ce souvenir.</div>
+            }
+            } @else {
+            @if (selectedEntree.mediaUrl) {
+            <audio class="w-100" controls [src]="selectedEntree.mediaUrl || ''"></audio>
+            } @else {
+            <div class="small text-muted">Aucun audio URL fourni pour ce souvenir.</div>
+            }
+            <div class="mt-3 small text-muted">
+                <div>Voix attendue: {{ selectedEntree.expectedSpeakerName || '-' }}</div>
+                <div>Lien: {{ selectedEntree.expectedSpeakerRelation || '-' }}</div>
+                <div>Reponse patient: {{ selectedEntree.patientGuessSpeakerName || '-' }}</div>
+                <div>Voix reconnue: {{ selectedEntree.voiceRecognized ? 'Oui' : 'Non' }}</div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+</div>

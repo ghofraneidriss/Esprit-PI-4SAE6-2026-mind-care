@@ -1,22 +1,10 @@
 <section id="recommendations" class="recommendations section light-background">
-    <!-- Section Title -->
     <div class="container section-title" data-aos="fade-up">
-        <h2>Détection & Recommandations</h2>
-        <p>Conseils médicaux et parcours de détection précoce personnalisés par nos docteurs.</p>
-    </div>
-
-    <div class="container mb-4">
-        <div class="d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm">
-            <h5 class="mb-0 fw-bold text-primary"><i class="fi fi-rr-list-check me-2"></i> Tableau de bord des soins
-            </h5>
-            <button class="btn btn-primary" (click)="openCreateForm()" *ngIf="!showForm">
-                <i class="fi fi-rr-plus me-1"></i> Nouvelle Recommandation
-            </button>
-        </div>
+        <h2>Mes recommandations</h2>
+        <p>Consultez uniquement les recommandations que votre medecin a preparees pour vous.</p>
     </div>
 
     <div class="container px-4">
-        <!-- Alertes -->
         @if (successMessage) {
         <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2">
             <i class="fi fi-rr-check-circle"></i> {{ successMessage }}
@@ -31,161 +19,93 @@
         </div>
         }
 
-        <!-- Formulaire de Prescription (Frontoffice Style) -->
-        @if (showForm) {
-        <div class="card shadow border-0 mb-5 animate__animated animate__fadeIn">
-            <div class="card-header bg-primary text-white py-3">
-                <h5 class="mb-0 fw-bold">
-                    <i class="fi {{ isEditing ? 'fi-rr-pencil' : 'fi-rr-add' }} me-2"></i>
-                    {{ isEditing ? 'Modifier la Recommandation' : 'Nouvelle Prescription Docteur' }}
-                </h5>
+        <div class="patient-banner shadow-sm">
+            <div>
+                <div class="patient-banner-label">Patient connecte</div>
+                <div class="patient-banner-name">
+                    {{ currentPatient ? (currentPatient.firstName + ' ' + currentPatient.lastName) : 'Non connecte' }}
+                </div>
             </div>
-            <div class="card-body p-4">
-                <form (ngSubmit)="save()">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-muted">ID Patient Cible</label>
-                            <input type="number" class="form-control" [(ngModel)]="currentRecommendation.patientId"
-                                name="patientId" required placeholder="Ex: 5">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-muted">Votre ID Docteur</label>
-                            <input type="number" class="form-control" [(ngModel)]="currentRecommendation.doctorId"
-                                name="doctorId" required placeholder="Ex: 1">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-bold small text-muted">Contenu Thérapeutique</label>
-                            <textarea class="form-control" [(ngModel)]="currentRecommendation.content" name="content"
-                                rows="3" required placeholder="Ex: Exercices de mémorisation recommandés..."></textarea>
-                        </div>
-
-                        <!-- Sélection de Jeux médicaux (Events) -->
-                        <div class="col-12">
-                            <label class="form-label fw-bold small text-muted mb-3 d-block">
-                                <i class="fi fi-rr-dice-d6 me-2"></i> Associer des tests de diagnostic :
-                            </label>
-                            <div class="d-flex flex-wrap gap-2">
-                                @for (event of medicalEvents; track event.id || $index) {
-                                <div class="game-selector-pill p-2 px-3 border rounded-pill d-flex align-items-center gap-2 cursor-pointer transition-all"
-                                    [class.active]="isEventSelected(event)" (click)="toggleEvent(event)">
-                                    <i class="fi fi-rr-dice small"></i>
-                                    <span class="small fw-semibold">{{ event.title }}</span>
-                                    @if (isEventSelected(event)) {
-                                    <i class="fi fi-rr-check-circle text-primary"></i>
-                                    }
-                                </div>
-                                } @empty {
-                                <p class="text-muted small">Aucun jeu disponible.</p>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                        <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
-                        <button type="submit" class="btn btn-primary px-4 shadow-sm"
-                            [disabled]="!currentRecommendation.content.trim()">
-                            {{ isEditing ? 'Confirmer' : 'Publier' }}
-                        </button>
-                    </div>
-                </form>
+            <div class="patient-banner-meta">
+                @if (currentPatient?.userId) {
+                <span class="badge bg-light text-dark border">ID: {{ currentPatient?.userId }}</span>
+                }
+                <button class="btn btn-outline-primary btn-sm" (click)="loadRecommendations()" [disabled]="loading || !isPatientLoggedIn">
+                    Actualiser
+                </button>
             </div>
         </div>
-        }
 
-        <!-- Spinner de chargement -->
         @if (loading) {
         <div class="row justify-content-center">
             <div class="col-12 text-center py-5">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Chargement...</span>
                 </div>
-                <p class="text-muted mt-3">Synchronisation de vos données...</p>
+                <p class="text-muted mt-3">Chargement de vos recommandations...</p>
             </div>
         </div>
+        } @else if (!isPatientLoggedIn) {
+        <div class="empty-state-card">
+            <h4>Connexion patient requise</h4>
+            <p>Veuillez vous connecter comme patient pour voir vos recommandations personnelles.</p>
+            <a routerLink="/auth/login" class="btn btn-primary">Se connecter</a>
+        </div>
+        } @else if (recommendations.length === 0) {
+        <div class="empty-state-card">
+            <h4>Aucune recommandation pour le moment</h4>
+            <p>Votre medecin n'a pas encore ajoute de recommandation a votre dossier.</p>
+        </div>
         } @else {
-        <!-- Grille des recommandations -->
-        <div class="row">
-            @if (recommendations.length === 0) {
-            <!-- Message vide -->
-            <div class="col-12 text-center py-5">
-                <i class="fi fi-rr-info display-4 text-muted"></i>
-                <p class="mt-3 text-muted">Aucune recommandation disponible pour le moment.</p>
-            </div>
-            } @else {
-            <!-- Cards -->
+        <div class="row g-4">
             @for (rec of recommendations; track rec.id || $index) {
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm recommendation-card">
+            <div class="col-md-6 col-xl-4">
+                <div class="card recommendation-card h-100 border-0 shadow-sm">
                     <div class="card-body">
-
-                        <!-- En-tête de la card -->
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge" [ngClass]="getTypeBadgeClass(rec.type)">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                            <span class="badge recommendation-badge" [ngClass]="getTypeBadgeClass(rec.type)">
                                 {{ rec.type }}
                             </span>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-link p-1 text-primary" (click)="edit(rec)"
-                                    title="Modifier">
-                                    <i class="fi fi-rr-pencil"></i>
+                            <span class="badge recommendation-badge" [ngClass]="getStatusBadgeClass(rec.status)">
+                                {{ rec.status }}
+                            </span>
+                        </div>
+
+                        <p class="recommendation-content">{{ rec.content }}</p>
+
+                        <div class="recommendation-meta">
+                            <div><strong>Docteur:</strong> {{ rec.doctorName || ('ID ' + rec.doctorId) }}</div>
+                            <div><strong>Priorite:</strong> {{ rec.priority ?? 0 }}/10</div>
+                            <div><strong>Event:</strong> {{ rec.generatedMedicalEventTitle || '-' }}</div>
+                            <div><strong>Publication:</strong> {{ rec.createdAt | date:'dd/MM/yyyy' }}</div>
+                        </div>
+
+                        @if (rec.status === 'ACTIVE') {
+                        <div class="patient-action-panel mt-3">
+                            <div class="small text-muted mb-2">Votre decision</div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button class="btn btn-success btn-sm patient-action-btn"
+                                    (click)="acceptRecommendation(rec)"
+                                    [disabled]="isActionLoading(rec.id)">
+                                    @if (isActionLoading(rec.id)) {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                    }
+                                    <i class="fi fi-rr-check me-1"></i> Accepter
                                 </button>
-                                <button class="btn btn-sm btn-link p-1 text-danger" (click)="delete(rec.id)"
-                                    title="Supprimer">
-                                    <i class="fi fi-rr-trash"></i>
+                                <button class="btn btn-outline-danger btn-sm patient-action-btn"
+                                    (click)="rejectRecommendation(rec)"
+                                    [disabled]="isActionLoading(rec.id)">
+                                    @if (isActionLoading(rec.id)) {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                    }
+                                    <i class="fi fi-rr-cross-small me-1"></i> Rejeter
                                 </button>
-                            </div>
-                        </div>
-
-                        <!-- Contenu -->
-                        <div class="mb-3">
-                            <i class="fi fi-rr-quote-right text-primary opacity-25 float-end"></i>
-                            <p class="card-text fw-medium">{{ rec.content }}</p>
-                        </div>
-
-                        <!-- Info Docteur / Patient -->
-                        <div class="d-flex flex-column gap-1 mb-3 small">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="fi fi-rr-user-md text-primary"></i>
-                                <span><strong>Par :</strong> {{ rec.doctorName || 'Dr. ID: ' + rec.doctorId }}</span>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="fi fi-rr-user text-info"></i>
-                                <span><strong>Pour :</strong> {{ rec.patientName || 'Patient ID: ' + rec.patientId
-                                    }}</span>
-                            </div>
-                        </div>
-
-                        @if (rec.medicalEvents && rec.medicalEvents.length > 0) {
-                        <div class="mb-3">
-                            <h6 class="small fw-bold mb-2">Jeux de diagnostic :</h6>
-                            <div class="d-flex flex-wrap gap-1">
-                                @for (game of rec.medicalEvents; track game.id || $index) {
-                                <span class="badge bg-light text-dark border p-1 px-2">
-                                    <i class="fi fi-rr-dice me-1"></i> {{ game.title }}
-                                </span>
-                                }
                             </div>
                         </div>
                         }
-
-                        <!-- Badge statut -->
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                            <span class="badge" [ngClass]="{
-                                'bg-warning-subtle text-warning': rec.status === 'PENDING',
-                                'bg-success-subtle text-success': rec.status === 'APPROVED',
-                                'bg-danger-subtle text-danger':  rec.status === 'REJECTED'
-                            }">{{ rec.status }}</span>
-                        </div>
-
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pt-0">
-                        <small class="text-muted">
-                            <i class="fi fi-rr-calendar me-1"></i>
-                            Publié le {{ rec.createdAt | date:'dd/MM/yyyy' }}
-                        </small>
                     </div>
                 </div>
             </div>
-            }
             }
         </div>
         }

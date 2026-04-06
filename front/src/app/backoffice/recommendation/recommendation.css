@@ -32,3 +32,21 @@
 .avatar-xs {
     font-size: 0.8rem;
 }
+
+.action-btn {
+    min-width: 105px;
+    font-weight: 600;
+}
+
+.type-chip {
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.doctor-filter {
+    width: 110px;
+}
+
+.alert-card {
+    background: rgba(255, 255, 255, 0.7);
+}

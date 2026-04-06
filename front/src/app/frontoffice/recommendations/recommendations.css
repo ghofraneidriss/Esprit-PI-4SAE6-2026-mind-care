@@ -1,20 +1,89 @@
-.recommendations-section {
-    padding: 60px 0;
-    background: #f8f9fa;
+.recommendations {
+    padding-top: 110px;
+    padding-bottom: 60px;
+}
+
+.patient-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f5fcfd 0%, #ffffff 100%);
+    border: 1px solid rgba(15, 140, 160, 0.12);
+}
+
+.patient-banner-label {
+    color: #68747f;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.patient-banner-name {
+    color: #10222b;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.patient-banner-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.empty-state-card {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
 }
 
 .recommendation-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border-radius: 12px;
-    overflow: hidden;
+    border-radius: 20px;
 }
 
-.recommendation-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+.recommendation-badge {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
 }
 
-.recommendation-form-card {
+.recommendation-content {
+    color: #24333d;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.7;
+    min-height: 110px;
+}
+
+.recommendation-meta {
+    display: grid;
+    gap: 0.45rem;
+    color: #5e6a74;
+    font-size: 0.92rem;
+}
+
+.patient-action-panel {
+    background: #f8fbff;
+    border: 1px solid rgba(13, 110, 253, 0.12);
     border-radius: 12px;
-    overflow: hidden;
+    padding: 0.85rem;
+}
+
+.patient-action-btn {
+    min-width: 124px;
+    font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+    .patient-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

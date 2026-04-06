@@ -1,0 +1,113 @@
+.alz-page {
+    background:
+        radial-gradient(circle at top left, rgba(18, 148, 166, 0.08), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
+    min-height: calc(100vh - 120px);
+    padding-bottom: 5rem;
+}
+
+.alz-breadcrumb {
+    background: #f4f4f4;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    font-size: 0.92rem;
+    padding: 0.85rem 0;
+}
+
+.alz-breadcrumb .container {
+    color: #5d6670;
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+}
+
+.alz-breadcrumb a {
+    color: #0f8ca0;
+    text-decoration: none;
+}
+
+.alz-content {
+    padding-top: 3.5rem;
+}
+
+.alz-image-card {
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 20px 45px rgba(11, 46, 59, 0.12);
+}
+
+.alz-image-card img {
+    display: block;
+    width: 100%;
+    min-height: 360px;
+    object-fit: cover;
+}
+
+.alz-copy {
+    text-align: center;
+    padding-inline: 1rem;
+}
+
+.alz-kicker {
+    color: #0f8ca0;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.alz-copy h1 {
+    color: #0f8ca0;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.alz-copy h2 {
+    color: #19212a;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.alz-copy p {
+    color: #3f4952;
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+.alz-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    min-width: 170px;
+    padding: 0.95rem 1.6rem;
+    border-radius: 999px;
+    background: #0f8ca0;
+    color: #ffffff;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.alz-cta:hover {
+    background: #0b7687;
+    box-shadow: 0 16px 30px rgba(15, 140, 160, 0.22);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 991.98px) {
+    .alz-content {
+        padding-top: 2rem;
+    }
+
+    .alz-copy {
+        text-align: left;
+        padding-inline: 0;
+    }
+}

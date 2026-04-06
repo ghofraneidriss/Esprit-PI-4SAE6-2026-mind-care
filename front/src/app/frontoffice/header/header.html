@@ -10,9 +10,27 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a routerLink="/" class="active">Home</a></li>
+          <li class="dropdown alzheimer-menu" [class.alzheimer-open]="isAlzheimerMenuOpen" (click)="keepMenuOpen($event)">
+            <a href="#" (click)="toggleAlzheimerMenu($event)">
+              <span>ALZHEIMER</span>
+              <i class="bi bi-chevron-down toggle-dropdown"></i>
+            </a>
+            <ul class="alzheimer-submenu">
+              @for (section of alzheimerSections; track section.label) {
+              <li>
+                @if (section.route) {
+                <a [routerLink]="section.route" (click)="closeAlzheimerMenu()">{{ section.label }}</a>
+                } @else {
+                <a href="#" (click)="$event.preventDefault()">{{ section.label }}</a>
+                }
+              </li>
+              }
+            </ul>
+          </li>
           <li><a routerLink="/about">About</a></li>
           <li><a routerLink="/departments">Departments</a></li>
           <li><a routerLink="/services">Services</a></li>
+          <li><a routerLink="/souvenirs">Souvenirs</a></li>
           <li><a routerLink="/doctors">Doctors</a></li>
           <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>

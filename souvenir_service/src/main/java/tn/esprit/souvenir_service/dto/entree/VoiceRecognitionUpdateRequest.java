@@ -1,0 +1,21 @@
+package tn.esprit.souvenir_service.dto.entree;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class VoiceRecognitionUpdateRequest {
+
+    @NotBlank(message = "patientGuessSpeakerName is required")
+    private String patientGuessSpeakerName;
+
+    private Boolean voiceRecognized;
+}

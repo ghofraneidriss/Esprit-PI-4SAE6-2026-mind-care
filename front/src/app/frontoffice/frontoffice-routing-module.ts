@@ -21,6 +21,8 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { RecommendationsPage } from './recommendations/recommendations';
+import { SouvenirsFrontPage } from './souvenirs/souvenirs';
+import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
 import { FrontofficeLayoutComponent } from './frontoffice-layout';
 
 const routes: Routes = [
@@ -29,6 +31,8 @@ const routes: Routes = [
     component: FrontofficeLayoutComponent,
     children: [
       { path: 'recommendations', component: RecommendationsPage },
+      { path: 'souvenirs', component: SouvenirsFrontPage },
+      { path: 'alzheimer/comprendre-maladie', component: AlzheimerUnderstandingFrontPage },
       { path: '', component: Home1 },
       { path: '404', component: Page404FrontPage },
       { path: 'about', component: AboutFrontPage },

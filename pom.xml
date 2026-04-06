@@ -30,6 +30,7 @@
         <module>api_gateway</module>
         <module>medical_report_service</module>
         <module>recommendation_service</module>
+        <module>souvenir_service</module>
     </modules>
 
     <properties>

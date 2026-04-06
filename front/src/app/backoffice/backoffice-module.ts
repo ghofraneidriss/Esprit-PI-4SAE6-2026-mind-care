@@ -21,6 +21,7 @@ import { UserManagementPage } from './user-management/user-management';
 import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { MedicalEventsPage } from './medical-events/medical-events';
+import { SouvenirsPage } from './souvenirs/souvenirs';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { Sidebar } from './sidebar/sidebar';
@@ -45,6 +46,7 @@ import { BackofficeLayoutComponent } from './backoffice-layout';
     UserManagementPage,
     RecommendationPage,
     MedicalEventsPage,
+    SouvenirsPage,
     MedicalReportsPageComponent,
     Header,
     Footer,
