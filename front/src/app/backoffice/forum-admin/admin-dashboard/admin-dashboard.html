@@ -1,0 +1,133 @@
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 p-4 bg-white rounded shadow-sm border">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a routerLink="/admin">Home</a></li>
+                    <li class="breadcrumb-item active">Forum Overview</li>
+                </ol>
+            </nav>
+            <h1 class="h4 fw-bold mb-1">Forum Management</h1>
+            <p class="text-muted small mb-0">Control discussion posts and track engagement metrics.</p>
+        </div>
+        <button (click)="openPostForm()" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+            <i class="ri-add-line me-2"></i> Create New Post
+        </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-4">
+        <div *ngFor="let stat of stats" class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center justify-content-between p-4">
+                    <div>
+                        <div class="text-muted small fw-medium mb-1">{{ stat.label }}</div>
+                        <div class="h3 fw-bold mb-1">{{ stat.value }}</div>
+                        <div class="small fw-semibold mt-1"
+                            [ngClass]="stat.change.startsWith('+') ? 'text-success' : 'text-muted'">
+                            {{ stat.change }} <span class="fw-normal text-muted">vs last month</span>
+                        </div>
+                    </div>
+                    <div class="rounded p-3 bg-light text-primary fs-3">
+                        <i class="ri" [ngClass]="stat.icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Discussions Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom-0">
+            <h5 class="mb-0 fw-bold">Recent Communications</h5>
+            <a routerLink="/admin/forum/posts" class="btn btn-sm btn-outline-primary px-3 rounded-pill">
+                <i class="ri-list-check me-1"></i> VIEW ALL POSTS
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 small text-uppercase text-muted fw-bold">Post Title</th>
+                        <th class="py-3 small text-uppercase text-muted fw-bold">Category</th>
+                        <th class="py-3 small text-uppercase text-muted fw-bold">Author</th>
+                        <th class="py-3 small text-uppercase text-muted fw-bold">Date</th>
+                        <th class="text-end pe-4 py-3 small text-uppercase text-muted fw-bold">Control</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Initial Loading (Only if array is empty) -->
+                    <tr *ngIf="loading && recentPosts.length === 0">
+                        <td colspan="5" class="py-5 text-center">
+                            <div class="spinner-border text-primary mb-2" role="status"></div>
+                            <p class="text-muted small">Accessing server data...</p>
+                        </td>
+                    </tr>
+
+                    <!-- Error Case -->
+                    <tr *ngIf="!loading && error && recentPosts.length === 0">
+                        <td colspan="5" class="py-5 text-center text-danger">
+                            <i class="ri-error-warning-line fs-1 mb-2"></i>
+                            <h6 class="fw-bold">{{ error }}</h6>
+                            <button (click)="loadPosts()" class="btn btn-sm btn-outline-danger mt-2">Retry
+                                Loading</button>
+                        </td>
+                    </tr>
+
+                    <!-- No Data Case -->
+                    <tr *ngIf="!loading && !error && recentPosts.length === 0">
+                        <td colspan="5" class="py-5 text-center">
+                            <i class="ri-chat-delete-line fs-1 text-muted mb-3 d-block"></i>
+                            <h5 class="fw-bold">No posts found in the system</h5>
+                            <p class="text-muted mb-4 small">Total records currently 0.</p>
+                            <button (click)="openPostForm()" class="btn btn-primary rounded-pill px-4">
+                                <i class="ri-add-line me-2"></i> Create Your First Post
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Records List (Always show if data exists) -->
+                    <tr *ngFor="let post of recentPosts">
+                        <td class="ps-4">
+                            <div class="fw-medium text-dark text-truncate" style="max-width: 320px;">{{ post.title }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill bg-light text-dark border px-3">
+                                {{ post.categoryName || 'General' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="avatar avatar-xs bg-light rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ri-user-star-line text-primary small"></i>
+                                </div>
+                                <span class="small">{{ post.author || 'User #' + post.userId }}</span>
+                            </div>
+                        </td>
+                        <td class="small text-muted">
+                            {{ post.createdAt | date:'mediumDate' }}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group gap-2">
+                                <button (click)="viewPost(post)" class="btn btn-sm btn-icon btn-light" title="Preview">
+                                    <i class="ri-external-link-line"></i>
+                                </button>
+                                <button (click)="openPostForm(post)" class="btn btn-sm btn-icon btn-light"
+                                    title="Modify">
+                                    <i class="ri-edit-2-line text-warning"></i>
+                                </button>
+                                <button (click)="deletePost(post)" class="btn btn-sm btn-icon btn-light" title="Remove">
+                                    <i class="ri-delete-bin-6-line text-danger"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

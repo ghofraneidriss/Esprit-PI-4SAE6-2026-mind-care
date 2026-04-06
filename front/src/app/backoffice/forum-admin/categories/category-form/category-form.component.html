@@ -1,0 +1,48 @@
+<div class="category-form-container">
+  <div class="category-form-card">
+    <div class="form-header">
+      <h2 class="form-title">{{ isEditMode ? 'Edit Category' : 'Create Category' }}</h2>
+      <button class="close-btn" (click)="onCancel()">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+    
+    <form [formGroup]="categoryForm" (ngSubmit)="onSave()" class="category-form">
+      <div class="form-group">
+        <label for="name" class="form-label">Category Name *</label>
+        <input 
+          id="name"
+          type="text" 
+          formControlName="name" 
+          class="form-input"
+          placeholder="Enter category name"
+          required
+        >
+        <div class="error-message" *ngIf="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+          Category name is required
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="description" class="form-label">Description</label>
+        <textarea 
+          id="description"
+          formControlName="description" 
+          class="form-textarea"
+          placeholder="Enter category description (optional)"
+          rows="4"
+        ></textarea>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="submit" class="save-btn" [disabled]="categoryForm.invalid">
+          <i class="ri-save-line"></i>
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

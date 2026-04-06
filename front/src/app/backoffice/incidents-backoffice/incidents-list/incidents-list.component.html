@@ -1,0 +1,373 @@
+<div class="container-fluid py-4">
+  <!-- Page Header -->
+  <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+          <li class="breadcrumb-item"><a routerLink="/admin">Home</a></li>
+          <li class="breadcrumb-item active">Caregiver Reports</li>
+        </ol>
+      </nav>
+      <h2 class="page-title mb-0">Caregiver Incident Reports</h2>
+    </div>
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/incident-types/types" class="btn btn-outline-primary d-flex align-items-center gap-2 px-3">
+        <i class="fi fi-rr-settings-sliders"></i>
+        MANAGE CATEGORIES
+      </a>
+      <button (click)="openAddModal()" class="btn btn-danger d-flex align-items-center gap-2 px-4 shadow">
+        <i class="fi fi-rr-plus"></i>
+        SIGNAL NEW INCIDENT
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5 card border-0 shadow-sm">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <h5 class="text-muted">Loading reports...</h5>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!loading && error && incidents.length === 0"
+        class="alert alert-danger mx-0 mb-4 d-flex align-items-center justify-content-between p-3 shadow-sm">
+        <div class="d-flex align-items-center">
+          <i class="fi fi-rr-exclamation text-danger fs-3 me-3"></i>
+          <div>
+            <h6 class="mb-0 fw-bold">Service Unreachable</h6>
+            <p class="mb-0 small text-muted">{{ error }}</p>
+          </div>
+        </div>
+        <button (click)="loadReportedIncidents()" class="btn btn-danger btn-sm px-4 rounded-pill">Retry</button>
+      </div>
+
+      <!-- Incidents Table -->
+      <div *ngIf="!loading && incidents.length > 0" class="card border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr>
+                <th class="ps-4">No.</th>
+                <th>Patient</th>
+                <th>Type & Severity</th>
+                <th>Summary</th>
+                <th>Status</th>
+                <th class="text-end pe-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let incident of incidents">
+                <td class="ps-4 fw-bold text-muted">#{{ incident.id }}</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar avatar-sm bg-info-subtle text-info rounded-circle me-3">
+                      <i class="fi fi-rr-user"></i>
+                    </div>
+                    <div>
+                      <div class="fw-bold">{{ getPatientName(incident.patientId) }}</div>
+                      <small class="text-muted text-xs"
+                             style="cursor:pointer; text-decoration:underline dotted;"
+                             (click)="viewPatientHistory(incident.patientId)">
+                        View History
+                      </small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex flex-column gap-1">
+                    <span class="badge bg-light text-dark border w-fit-content py-1 px-3">
+                      {{ incident.type.name || 'General' }}
+                    </span>
+                    <span class="badge w-fit-content py-1 px-3"
+                      [ngClass]="getSeverityBadgeClass(incident.severityLevel)">
+                      {{ incident.severityLevel }}
+                    </span>
+                    <span *ngIf="incident.computedScore != null"
+                          class="badge bg-secondary bg-opacity-10 text-secondary w-fit-content py-1 px-2"
+                          style="font-size:0.7rem">
+                      Score: {{ incident.computedScore }} pts
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-dark small text-truncate" style="max-width: 300px;" [title]="incident.description">
+                    {{ incident.description }}
+                  </div>
+                </td>
+                <td>
+                  <span class="badge rounded-pill px-3" [ngClass]="getStatusBadgeClass(incident.status)">
+                    {{ incident.status }}
+                  </span>
+                </td>
+                <td class="text-end pe-4">
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-primary px-3" (click)="viewDetails(incident)"
+                      data-bs-toggle="modal" [attr.data-bs-target]="'#incidentDetailModal' + incident.id">
+                      Details
+                    </button>
+                    <button *ngIf="incident.status !== 'RESOLVED'" class="btn btn-sm btn-success mx-1 px-3"
+                      (click)="updateIncidentStatus(incident.id!, 'RESOLVED')">
+                      Resolve
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && incidents.length === 0" class="text-center py-5 card border-0 shadow-sm">
+        <div class="avatar avatar-xl bg-light text-muted rounded-circle mb-3 mx-auto">
+          <i class="fi fi-rr-shield-check"></i>
+        </div>
+        <h5>No pending incidents.</h5>
+        <p class="text-muted small">All clear!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail + Comments Modal -->
+<div *ngFor="let incident of incidents" class="modal fade" id="incidentDetailModal{{ incident.id }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow border-0">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h5 class="modal-title fw-bold">Incident #{{ incident.id }}</h5>
+          <small class="text-muted">{{ incident.type.name }} · {{ getPatientName(incident.patientId) }}</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+
+        <!-- Info Row -->
+        <div class="row g-3 mb-4">
+          <div class="col-12">
+            <label class="fw-bold small text-muted text-uppercase mb-1 d-block">Description</label>
+            <div class="p-3 bg-light rounded">{{ incident.description }}</div>
+          </div>
+          <div class="col-4">
+            <label class="fw-bold small text-muted text-uppercase mb-1 d-block">Severity</label>
+            <span class="badge px-3 py-2" [ngClass]="getSeverityBadgeClass(incident.severityLevel)">{{ incident.severityLevel }}</span>
+          </div>
+          <div class="col-4">
+            <label class="fw-bold small text-muted text-uppercase mb-1 d-block">Status</label>
+            <span class="badge rounded-pill px-3 py-2" [ngClass]="getStatusBadgeClass(incident.status)">{{ incident.status }}</span>
+          </div>
+          <div class="col-4">
+            <label class="fw-bold small text-muted text-uppercase mb-1 d-block">Source</label>
+            <span class="text-dark small">{{ incident.source || '—' }}</span>
+          </div>
+        </div>
+
+        <hr class="my-3">
+
+        <!-- Comments Section -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h6 class="fw-bold mb-0">
+            <i class="fi fi-rr-comments me-2 text-primary"></i>
+            Follow-up Notes
+            <span class="badge bg-primary bg-opacity-10 text-primary ms-1">{{ comments.length }}</span>
+          </h6>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="commentsLoading" class="text-center py-3">
+          <div class="spinner-border spinner-border-sm text-primary"></div>
+        </div>
+
+        <!-- Timeline -->
+        <div *ngIf="!commentsLoading" class="comment-timeline mb-3" style="max-height: 260px; overflow-y: auto;">
+          <div *ngIf="comments.length === 0" class="text-center py-3 text-muted small">
+            <i class="fi fi-rr-comment-slash d-block fs-4 mb-1"></i>
+            No follow-up notes yet.
+          </div>
+
+          <div *ngFor="let c of comments" class="d-flex gap-3 mb-3">
+            <!-- Avatar -->
+            <div class="flex-shrink-0">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+                   style="width:36px;height:36px;font-size:0.8rem">
+                {{ (c.authorName || 'A').charAt(0).toUpperCase() }}
+              </div>
+            </div>
+            <!-- Bubble -->
+            <div class="flex-grow-1">
+              <div class="bg-light rounded-3 p-3 position-relative">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <span class="fw-bold small text-dark">{{ c.authorName || 'Admin' }}</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted" style="font-size:0.7rem">
+                      {{ c.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                    </span>
+                    <button class="btn btn-link text-danger p-0" style="font-size:0.75rem"
+                            (click)="deleteComment(c.id!)">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="mb-0 small text-dark">{{ c.content }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Comment Input -->
+        <div class="d-flex gap-2 mt-2">
+          <input type="text" class="form-control form-control-sm border-0 bg-light"
+                 placeholder="Add a follow-up note..."
+                 [(ngModel)]="newCommentContent"
+                 (keyup.enter)="addComment()">
+          <button class="btn btn-primary btn-sm px-3" (click)="addComment()"
+                  [disabled]="!newCommentContent.trim() || addingComment">
+            <span *ngIf="addingComment" class="spinner-border spinner-border-sm"></span>
+            <i *ngIf="!addingComment" class="fi fi-rr-paper-plane"></i>
+          </button>
+        </div>
+
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Close</button>
+        <button *ngIf="incident.status !== 'RESOLVED'" class="btn btn-success px-4"
+                (click)="updateIncidentStatus(incident.id!, 'RESOLVED')" data-bs-dismiss="modal">
+          Mark Resolved
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Patient History Modal -->
+<div class="modal fade" [class.show]="isHistoryModalOpen" [style.display]="isHistoryModalOpen ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content shadow border-0">
+      <div class="modal-header border-0">
+        <div>
+          <h5 class="modal-title fw-bold">
+            <i class="fi fi-rr-time-past me-2 text-primary"></i>
+            Incident History
+          </h5>
+          <small class="text-muted">{{ historyPatientName }}</small>
+        </div>
+        <button type="button" class="btn-close" (click)="isHistoryModalOpen = false"></button>
+      </div>
+      <div class="modal-body px-4 pb-4">
+
+        <!-- Loading -->
+        <div *ngIf="historyLoading" class="text-center py-5">
+          <div class="spinner-border text-primary mb-2"></div>
+          <p class="text-muted small">Loading history...</p>
+        </div>
+
+        <!-- Empty -->
+        <div *ngIf="!historyLoading && patientHistory.length === 0" class="text-center py-5">
+          <i class="fi fi-rr-box-open d-block fs-1 text-muted mb-2"></i>
+          <p class="text-muted">No incidents found for this patient.</p>
+        </div>
+
+        <!-- History Timeline -->
+        <div *ngIf="!historyLoading && patientHistory.length > 0">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+              {{ patientHistory.length }} incident(s) total
+            </span>
+          </div>
+          <div *ngFor="let h of patientHistory" class="card border-0 bg-light mb-2 px-3 py-2">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center gap-3">
+                <div>
+                  <div class="fw-bold small">{{ h.type.name || 'General' }}</div>
+                  <div class="text-muted" style="font-size:0.78rem">{{ h.description | slice:0:80 }}{{ (h.description || '').length > 80 ? '…' : '' }}</div>
+                </div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="badge px-2 py-1" [ngClass]="getSeverityBadgeClass(h.severityLevel)">
+                  {{ h.severityLevel }}
+                </span>
+                <span class="badge rounded-pill px-2 py-1" [ngClass]="getStatusBadgeClass(h.status)">
+                  {{ h.status }}
+                </span>
+                <small *ngIf="h.computedScore != null" class="text-muted" style="font-size:0.7rem">
+                  Score: {{ h.computedScore }} pts
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light px-4" (click)="isHistoryModalOpen = false">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="isHistoryModalOpen" *ngIf="isHistoryModalOpen"></div>
+
+<!-- Modal Creation (Matches user request for better design) -->
+<div class="modal fade" [class.show]="isAddModalOpen" [style.display]="isAddModalOpen ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow border-0">
+      <div class="modal-header bg-danger text-white border-0 py-3">
+        <h5 class="modal-title fw-bold">Report New Incident</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="isAddModalOpen = false"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-4 text-center">
+          <div class="avatar avatar-lg bg-danger-subtle text-danger rounded-circle mb-2 mx-auto">
+            <i class="fi fi-rr-sensor-alert fs-2"></i>
+          </div>
+          <p class="text-muted small">Manual recording of a detected incident.</p>
+        </div>
+
+        <form [formGroup]="incidentForm">
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Target Patient</label>
+            <select class="form-select border-0 bg-light py-2" formControlName="patientId">
+              <option value="">Select Patient...</option>
+              <option value="1">Patient #1 (John Doe)</option>
+              <option value="2">Patient #2 (Jane Smith)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Incident Details</label>
+            <textarea class="form-control border-0 bg-light" rows="4" formControlName="description"
+              placeholder="Describe the event..."></textarea>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label fw-bold small text-muted text-uppercase">Severity</label>
+              <select class="form-select border-0 bg-light py-2" formControlName="severityLevel">
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+              </select>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label fw-bold small text-muted text-uppercase">Category</label>
+              <select class="form-select border-0 bg-light py-2" formControlName="typeId">
+                <option value="">— Select a type —</option>
+                <option *ngFor="let type of incidentTypes" [value]="type.id">
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-0 pb-4 justify-content-center">
+        <button type="button" class="btn btn-light px-4 rounded-pill" (click)="isAddModalOpen = false">Cancel</button>
+        <button type="button" class="btn btn-danger px-5 rounded-pill shadow" (click)="saveIncident()"
+          [disabled]="incidentForm.invalid || loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? 'Submitting...' : 'Submit Signal' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="isAddModalOpen" *ngIf="isAddModalOpen"></div>

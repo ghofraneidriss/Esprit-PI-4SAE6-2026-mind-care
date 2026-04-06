@@ -1,0 +1,38 @@
+.card-incident-type {
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    border-radius: 12px;
+}
+
+.card-incident-type:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(0.98);
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.avatar-3xs {
+    width: 24px;
+    height: 24px;
+    font-size: 8px;
+}
+
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+.w-fit-content {
+    width: fit-content;
+}

@@ -1,7 +1,8 @@
 import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-frontoffice-header',
+  selector: 'app-header',
   standalone: false,
   templateUrl: './header.html',
   styleUrl: './header.css',
@@ -23,6 +24,17 @@ export class Header {
     { label: 'La fin de vie' },
     { label: 'Glossaire' }
   ];
+
+  constructor(private readonly router: Router) {}
+
+  get isLoggedIn(): boolean {
+    return !!localStorage.getItem('loggedUser');
+  }
+
+  logout(): void {
+    localStorage.removeItem('loggedUser');
+    this.router.navigate(['/auth/signup']);
+  }
 
   toggleAlzheimerMenu(event: Event): void {
     event.preventDefault();

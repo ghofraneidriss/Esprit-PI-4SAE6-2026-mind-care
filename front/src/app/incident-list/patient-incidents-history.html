@@ -1,0 +1,88 @@
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-extrabold text-[#00a3c1] sm:text-4xl">Incident History</h2>
+        <p class="mt-4 text-xl text-gray-500">View all your reported incidents, including resolved ones.</p>
+
+        <div class="mt-8 flex justify-center space-x-4">
+            <a routerLink="/incidents/report"
+                class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#00a3c1] hover:bg-[#008d9e] shadow-lg transform hover:-translate-y-0.5 transition-all">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Report New Incident
+            </a>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex flex-col items-center justify-center my-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00a3c1] mb-4"></div>
+        <p class="text-gray-500">Loading your history...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && incidents.length === 0"
+        class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
+        <div class="mx-auto h-16 w-16 bg-[#00a3c1]/10 rounded-full flex items-center justify-center mb-4">
+            <svg class="h-8 w-8 text-[#00a3c1]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">No history found</h3>
+        <p class="mt-2 text-gray-500 max-w-sm mx-auto">You haven't reported any incidents yet.</p>
+    </div>
+
+    <!-- Incident Cards Grid -->
+    <div *ngIf="!loading && incidents.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div *ngFor="let incident of incidents"
+            class="bg-white overflow-hidden shadow rounded-xl hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col h-full">
+            <!-- Card Header -->
+            <div class="px-5 py-4 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                <div class="flex items-center">
+                    <span class="h-2 w-2 rounded-full mr-2" [ngClass]="{
+              'bg-[#00a3c1]': incident.severityLevel === 'LOW',
+              'bg-yellow-500': incident.severityLevel === 'MEDIUM',
+              'bg-red-500': incident.severityLevel === 'HIGH'
+            }"></span>
+                    <span class="text-sm font-semibold text-gray-700 truncate max-w-[120px]"
+                        title="{{ incident.type.name }}">{{ incident.type.name || 'General' }}</span>
+                </div>
+                <span class="text-xs text-gray-400 font-medium">{{ incident.incidentDate | date:'MMM d, y, h:mm a'
+                    }}</span>
+            </div>
+
+            <!-- Card Body -->
+            <div class="px-5 py-4 flex-grow">
+                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{{ incident.description }}</p>
+
+                <div class="flex items-center space-x-2 mt-2">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-md border" [ngClass]="{
+              'bg-green-50 text-green-700 border-green-100': incident.status === 'RESOLVED',
+              'bg-blue-50 text-blue-700 border-blue-100': incident.status === 'IN_PROGRESS',
+              'bg-[#00a3c1]/10 text-[#00a3c1] border-[#00a3c1]/20': incident.status === 'OPEN'
+            }">
+                        {{ incident.status }}
+                    </span>
+
+                    <span class="px-2 py-1 text-xs font-semibold rounded-md border" [ngClass]="{
+              'bg-gray-100 text-gray-600 border-gray-200': incident.severityLevel === 'LOW',
+              'bg-yellow-50 text-yellow-700 border-yellow-100': incident.severityLevel === 'MEDIUM',
+              'bg-red-50 text-red-700 border-red-100': incident.severityLevel === 'HIGH'
+            }">
+                        {{ incident.severityLevel }} Priority
+                    </span>
+                </div>
+            </div>
+
+            <!-- Card Footer -->
+            <div
+                class="bg-gray-50 px-5 py-3 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
+                <span>ID #{{ incident.id }}</span>
+                <button class="text-[#00a3c1] hover:text-[#008d9e] font-medium transition-colors">View Details
+                    &rarr;</button>
+            </div>
+        </div>
+    </div>
+</div>

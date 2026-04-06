@@ -1,0 +1,78 @@
+<div class="modal-content border-0">
+    <!-- Header -->
+    <div class="modal-header border-0 pb-0 d-block">
+        <div class="p-4 rounded shadow-sm text-white"
+            [ngClass]="isEditMode ? 'bg-warning bg-gradient' : 'bg-primary bg-gradient'">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded bg-white bg-opacity-25">
+                        <i [ngClass]="isEditMode ? 'ri-pencil-line' : 'ri-add-circle-line'" class="fs-4"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold mb-0">{{ isEditMode ? 'Edit Post' : 'New Post' }}</h5>
+                </div>
+                <button type="button" (click)="onCancel()" class="btn-close btn-close-white"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <mat-dialog-content class="p-4 mt-2" style="max-height: 70vh; overflow-y: auto;">
+        <form [formGroup]="postForm" class="row g-4">
+            <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Title</mat-label>
+                    <input matInput formControlName="title" placeholder="Enter post title">
+                    <mat-error *ngIf="postForm.get('title')?.hasError('required')">Title is required</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Category</mat-label>
+                    <mat-select formControlName="categoryId">
+                        <mat-option *ngFor="let cat of categories" [value]="cat.id">
+                            {{ cat.name }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="postForm.get('categoryId')?.hasError('required')">Category is required</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Content</mat-label>
+                    <textarea matInput formControlName="content" rows="6"
+                        placeholder="Write your post content..."></textarea>
+                    <mat-error *ngIf="postForm.get('content')?.hasError('required')">Content is required</mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Tags Section -->
+            <div class="col-12">
+                <label class="form-label fw-bold small text-muted text-uppercase mb-3">Tags (Optional)</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <button *ngFor="let tag of availableTags" type="button" (click)="toggleTag(tag.id)"
+                        class="btn btn-sm rounded-pill px-3 transition-all"
+                        [ngClass]="isTagSelected(tag.id) ? 'btn-primary shadow-sm' : 'btn-light text-muted border'">
+                        <i [class]="tag.icon" class="me-1"></i>
+                        {{ tag.label }}
+                        <i *ngIf="isTagSelected(tag.id)" class="ri-check-line ms-1 small"></i>
+                    </button>
+                </div>
+                <p class="text-muted small mt-2 fst-italic">Select tags to help users find your post</p>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="p-4 pt-0 d-flex justify-content-end gap-2 border-0">
+        <button mat-button (click)="onCancel()" class="btn btn-light border px-4 rounded-pill">
+            Cancel
+        </button>
+        <button mat-raised-button [disabled]="postForm.invalid || loading" (click)="onSubmit()"
+            class="btn rounded-pill px-4" [ngClass]="isEditMode ? 'btn-warning text-dark' : 'btn-primary'">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!loading" [ngClass]="isEditMode ? 'ri-save-line' : 'ri-send-plane-line'" class="me-2"></i>
+            {{ isEditMode ? 'Save Changes' : 'Publish Post' }}
+        </button>
+    </mat-dialog-actions>
+</div>

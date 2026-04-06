@@ -1,0 +1,23 @@
+.w-full {
+    width: 100%;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.bg-rose-500 {
+    background-color: var(--primary-rose) !important;
+}
+
+.text-white {
+    color: white !important;
+}

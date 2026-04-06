@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @AllArgsConstructor
@@ -30,6 +32,9 @@ public class MedicalReport {
     private String patientName;
     @Column(name = "doctor_name")
     private String doctorName;
+
+    @Column(name = "doctor_email")
+    private String doctorEmail;
 
     @NotNull(message = "status is required")
     @Enumerated(EnumType.STRING)
@@ -53,14 +58,38 @@ public class MedicalReport {
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
+    @Column(columnDefinition = "TEXT")
+    private String diagnosis;
+
+    @Enumerated(EnumType.STRING)
+    private RiskLevel riskLevel;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "report_url", length = 500)
+    private String reportUrl;
+
+    @OneToMany(mappedBy = "medicalReport", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<File> files;
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
         if (status == null) {
             status = ReportStatus.DRAFT;
         }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
 }

@@ -1,0 +1,29 @@
+<div class="delete-modal-overlay">
+  <div class="delete-modal">
+    <div class="delete-modal-header">
+      <div class="danger-icon">
+        <i class="ri-error-warning-line"></i>
+      </div>
+      <h3 class="delete-modal-title">Confirm Deletion</h3>
+    </div>
+    
+    <div class="delete-modal-content">
+      <p class="delete-modal-message">
+        Are you sure you want to delete "<strong>{{ data.postTitle }}</strong>"?
+      </p>
+      <p class="delete-modal-warning">
+        This action cannot be undone.
+      </p>
+    </div>
+    
+    <div class="delete-modal-actions">
+      <button class="cancel-btn" (click)="onCancel()">
+        Cancel
+      </button>
+      <button class="delete-btn" (click)="onConfirm()">
+        <i class="ri-delete-bin-line"></i>
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

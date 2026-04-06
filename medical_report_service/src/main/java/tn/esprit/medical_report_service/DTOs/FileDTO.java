@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 
 @Data
 public class FileDTO {
-    private Long id;
+    private Long fileid;
     private String fileName;
     private FileType fileType;
     private String filePath;
     private Long fileSize;
-    private Long uploadedBy;
-    private LocalDateTime uploadedAt;
+    private Long caregiverid;
+    private LocalDateTime createdAt;
     private String description;
     private Long medicalReportId;
 }

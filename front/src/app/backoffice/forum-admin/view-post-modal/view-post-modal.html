@@ -1,0 +1,78 @@
+<div class="modal-content border-0">
+    <!-- Header -->
+    <div class="p-4 bg-info bg-gradient rounded-top text-white">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-2 bg-white bg-opacity-25 rounded shadow-sm">
+                    <i class="ri-eye-line fs-4"></i>
+                </div>
+                <h5 class="modal-title fw-bold mb-0">View Post</h5>
+            </div>
+            <button type="button" (click)="onClose()" class="btn-close btn-close-white" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <mat-dialog-content class="p-4" style="max-height: 70vh; overflow-y: auto;">
+        <div class="d-flex flex-column gap-4">
+            <!-- Category Badge -->
+            <div class="d-flex align-items-center gap-3">
+                <span
+                    class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-2 fw-bold small text-uppercase">
+                    {{ data.post.categoryName || 'General' }}
+                </span>
+                <span class="text-muted small d-flex align-items-center gap-1">
+                    <i class="ri-calendar-line"></i> {{ data.post.createdAt | date:'mediumDate' }}
+                </span>
+            </div>
+
+            <!-- Title -->
+            <h2 class="h4 fw-bold text-dark mb-0">{{ data.post.title }}</h2>
+
+            <!-- Author Box -->
+            <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+                <div
+                    class="avatar avatar-sm bg-primary text-white rounded-pill d-flex align-items-center justify-content-center fw-bold">
+                    {{ data.post.author ? data.post.author.charAt(0).toUpperCase() : 'U' }}
+                </div>
+                <div>
+                    <div class="fw-bold text-dark small">{{ data.post.author || 'User ' + data.post.userId }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">Member since 2023</div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-3 border rounded-3 bg-white text-muted lh-base">
+                {{ data.post.content }}
+            </div>
+
+            <!-- Stats -->
+            <div class="d-flex align-items-center gap-4 py-3 border-top border-bottom small text-muted">
+                <span class="d-flex align-items-center gap-1"><i class="ri-chat-1-line"></i> {{ data.post.commentCount
+                    || 0 }} comments</span>
+                <span class="d-flex align-items-center gap-1"><i class="ri-eye-line"></i> 124 views</span>
+                <span class="d-flex align-items-center gap-1"><i class="ri-heart-line"></i> 18 likes</span>
+            </div>
+
+            <!-- Comments Preview -->
+            <div *ngIf="(data.post.commentCount ?? 0) > 0" class="mt-2">
+                <h6 class="fw-bold text-dark d-flex align-items-center gap-2 mb-2">
+                    <i class="ri-chat-3-line text-warning"></i>
+                    Comments ({{ data.post.commentCount }})
+                </h6>
+                <p class="text-muted small fst-italic">Full discussion is available in the main forum view.</p>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="p-4 pt-0 d-flex justify-content-end gap-2 border-0">
+        <button mat-button (click)="onClose()" class="btn btn-light border px-4 rounded-pill">
+            Close
+        </button>
+        <button mat-button (click)="onEdit()" class="btn btn-outline-warning px-4 rounded-pill">
+            <i class="ri-pencil-line me-2"></i>Edit
+        </button>
+        <button mat-raised-button (click)="onDelete()" class="btn btn-danger px-4 rounded-pill shadow-sm">
+            <i class="ri-delete-bin-line me-2"></i>Delete
+        </button>
+    </mat-dialog-actions>
+</div>

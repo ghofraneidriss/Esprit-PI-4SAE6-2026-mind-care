@@ -61,6 +61,92 @@
     padding-left: 22px;
 }
 
+.header-cta-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 50px;
+    border: 2px solid #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.14s, box-shadow 0.22s;
+    white-space: nowrap;
+}
+
+.btn-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+.btn-logout:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.btn-logout svg {
+    flex-shrink: 0;
+    transition: transform 0.22s;
+}
+
+.btn-logout:hover svg {
+    transform: translateX(2px);
+}
+
+.btn-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 50px;
+    border: 2px solid #099aa7;
+    background: rgba(9, 154, 167, 0.08);
+    color: #099aa7;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.14s, box-shadow 0.22s;
+    white-space: nowrap;
+}
+
+.btn-login:hover {
+    background: #099aa7;
+    border-color: #099aa7;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(9, 154, 167, 0.35);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.btn-login svg {
+    flex-shrink: 0;
+    transition: transform 0.22s;
+}
+
+.btn-login:hover svg {
+    transform: translateX(-2px);
+}
+
 @media (max-width: 1199.98px) {
     .alzheimer-submenu {
         position: static;
@@ -74,5 +160,18 @@
 
     .alzheimer-open .alzheimer-submenu {
         transform: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .logout-label {
+        display: none;
+    }
+
+    .btn-logout,
+    .btn-login {
+        width: 40px;
+        padding: 0;
+        justify-content: center;
     }
 }

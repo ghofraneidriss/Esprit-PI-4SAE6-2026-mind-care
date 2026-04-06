@@ -29,5 +29,9 @@ export class MedicalReportService {
   delete(id: number): Observable<boolean> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(map(() => true));
   }
+
+  exportPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/export`, { responseType: 'blob' });
+  }
 }
 

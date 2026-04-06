@@ -1,0 +1,42 @@
+.comments-admin-container {
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: #64748b;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.table tbody td {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    color: #334155;
+}
+
+.avatar-xs {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: 0.4rem;
+    line-height: 1;
+}
+
+.text-truncate {
+    max-width: 400px;
+}
