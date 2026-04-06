@@ -23,6 +23,8 @@ import { MedicalEventsPage } from './medical-events/medical-events';
 import { SouvenirsPage } from './souvenirs/souvenirs';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { Sidebar } from './sidebar/sidebar';
+import { BackofficeLayoutComponent } from './backoffice-layout';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,8 @@ import { Footer } from './footer/footer';
     SouvenirsPage,
     Header,
     Footer,
+    Sidebar,
+    BackofficeLayoutComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })

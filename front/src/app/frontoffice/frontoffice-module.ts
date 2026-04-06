@@ -25,6 +25,7 @@ import { SouvenirsFrontPage } from './souvenirs/souvenirs';
 import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { FrontofficeLayoutComponent } from './frontoffice-layout';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { Footer } from './footer/footer';
     AlzheimerUnderstandingFrontPage,
     Header,
     Footer,
+    FrontofficeLayoutComponent,
   ],
   imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
 })

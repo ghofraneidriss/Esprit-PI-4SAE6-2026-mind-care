@@ -2,7 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-frontoffice-header, app-header',
   standalone: false,
   templateUrl: './header.html',
   styleUrl: './header.css',
