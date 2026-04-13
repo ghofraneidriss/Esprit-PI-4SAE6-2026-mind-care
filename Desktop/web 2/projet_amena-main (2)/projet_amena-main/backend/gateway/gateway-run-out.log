@@ -1,0 +1,58 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.6)
+
+2026-03-29T22:33:57.461+01:00  INFO 15372 --- [gateway] [           main] t.e.m.gateway.GatewayApplication         : Starting GatewayApplication v1.0.0-SNAPSHOT using Java 23.0.2 with PID 15372 (C:\Users\mouha\Downloads\app_amena\e-learn-main\backend\gateway\target\gateway-1.0.0-SNAPSHOT.jar started by mouha in C:\Users\mouha\Downloads\app_amena\e-learn-main\backend\gateway)
+2026-03-29T22:33:57.468+01:00  INFO 15372 --- [gateway] [           main] t.e.m.gateway.GatewayApplication         : No active profile set, falling back to 1 default profile: "default"
+2026-03-29T22:33:57.561+01:00  INFO 15372 --- [gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8888
+2026-03-29T22:33:57.561+01:00  INFO 15372 --- [gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=gateway, profiles=[default], label=null, version=null, state=null
+2026-03-29T22:33:59.253+01:00  INFO 15372 --- [gateway] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=48f0c57f-4729-373d-bb80-aa84d19b4aa9
+2026-03-29T22:34:01.174+01:00  INFO 15372 --- [gateway] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [After]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Before]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Between]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Cookie]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Header]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Host]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Method]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Path]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Query]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [ReadBody]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [RemoteAddr]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Weight]
+2026-03-29T22:34:01.789+01:00  INFO 15372 --- [gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-03-29T22:34:03.144+01:00  INFO 15372 --- [gateway] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-03-29T22:34:04.208+01:00  INFO 15372 --- [gateway] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-03-29T22:34:04.318+01:00  INFO 15372 --- [gateway] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoints beneath base path '/actuator'
+2026-03-29T22:34:04.682+01:00  INFO 15372 --- [gateway] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2026-03-29T22:34:04.729+01:00  WARN 15372 --- [gateway] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-29T22:34:04.808+01:00  INFO 15372 --- [gateway] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-03-29T22:34:04.839+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-03-29T22:34:04.855+01:00  INFO 15372 --- [gateway] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-03-29T22:34:04.871+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-03-29T22:34:05.359+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-03-29T22:34:05.360+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-03-29T22:34:05.365+01:00  INFO 15372 --- [gateway] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-29T22:34:05.365+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1774820045365 with initial instances count: 5
+2026-03-29T22:34:05.370+01:00  INFO 15372 --- [gateway] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application GATEWAY with eureka with status UP
+2026-03-29T22:34:05.370+01:00  INFO 15372 --- [gateway] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1774820045370, current=UP, previous=STARTING]
+2026-03-29T22:34:05.376+01:00  INFO 15372 --- [gateway] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GATEWAY/localhost:gateway:8115: registering service...
+2026-03-29T22:34:05.430+01:00  INFO 15372 --- [gateway] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GATEWAY/localhost:gateway:8115 - registration status: 204
+2026-03-29T22:34:05.602+01:00  INFO 15372 --- [gateway] [           main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 8115 (http)
+2026-03-29T22:34:05.618+01:00  INFO 15372 --- [gateway] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8115
+2026-03-29T22:34:06.625+01:00  INFO 15372 --- [gateway] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-03-29T22:34:07.638+01:00  INFO 15372 --- [gateway] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-03-29T22:34:07.702+01:00  INFO 15372 --- [gateway] [           main] t.e.m.gateway.GatewayApplication         : Started GatewayApplication in 12.824 seconds (process running for 13.881)

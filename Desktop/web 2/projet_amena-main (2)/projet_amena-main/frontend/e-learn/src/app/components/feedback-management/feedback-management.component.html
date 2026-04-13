@@ -1,0 +1,217 @@
+<section class="management-page forum-page">
+  <header class="hero-card">
+    <div class="hero-copy">
+      <p class="hero-kicker">Community Hub</p>
+      <h2>Forum - Gestion Feedback</h2>
+      <p>Collectez, moderez et partagez les retours de vos apprenants depuis une interface unique.</p>
+    </div>
+    <div class="hero-metrics">
+      <article class="metric">
+        <span>Posts</span>
+        <strong>{{ feedbacks.length }}</strong>
+      </article>
+      <article class="metric">
+        <span>Moyenne</span>
+        <strong>{{ ratingSummary.averageRating }}/5</strong>
+      </article>
+      <article class="metric">
+        <span>Dictee</span>
+        <strong [class.live]="listening">{{ listening ? 'Active' : 'Inactive' }}</strong>
+      </article>
+    </div>
+  </header>
+
+  <div class="top-grid">
+    <article class="panel-card form-card">
+      <div class="panel-title">
+        <h3>Publication Forum</h3>
+        <p>Remplissez les champs pour ajouter ou modifier un feedback.</p>
+      </div>
+
+      <form class="form-grid" (ngSubmit)="saveFeedback()">
+        <label>
+          Nom
+          <input type="text" [(ngModel)]="formModel.userName" name="feedbackUserName" />
+        </label>
+
+        <label>
+          Email
+          <input type="email" [(ngModel)]="formModel.userEmail" name="feedbackUserEmail" />
+        </label>
+
+        <label class="full">
+          Titre du cours (rating)
+          <div class="speech-input">
+            <input type="text" [(ngModel)]="formModel.title" name="feedbackTitle" />
+            <button type="button" class="secondary" (click)="startSpeechInput('title')" [disabled]="listening">
+              Dicter titre
+            </button>
+          </div>
+        </label>
+
+        <label class="full">
+          URL image
+          <input type="url" [(ngModel)]="formModel.imageUrl" name="feedbackImageUrl" placeholder="https://..." />
+        </label>
+
+        <label>
+          Note (1-5)
+          <input type="number" min="1" max="5" [(ngModel)]="formModel.rating" name="feedbackRating" />
+        </label>
+
+        <label class="full">
+          Commentaire
+          <div class="speech-input">
+            <textarea rows="3" [(ngModel)]="formModel.comment" name="feedbackComment"></textarea>
+            <button type="button" class="secondary" (click)="startSpeechInput('comment')" [disabled]="listening">
+              Dicter commentaire
+            </button>
+          </div>
+        </label>
+
+        <div class="actions full action-row">
+          <button type="submit">{{ editingId === null ? 'Ajouter' : 'Modifier' }}</button>
+          <button type="button" class="secondary" (click)="resetForm()">Nouveau</button>
+          <button type="button" class="secondary" (click)="stopSpeechInput()" [disabled]="!listening">Arreter dictee</button>
+        </div>
+      </form>
+    </article>
+
+    <aside class="panel-card utility-card">
+      <div class="panel-title compact">
+        <h3>QR du dernier post</h3>
+        <p>Partage rapide du dernier feedback.</p>
+      </div>
+
+      <div class="qr-box" *ngIf="qrPayload; else noQr">
+        <qrcode [qrdata]="qrPayload" [width]="170" [errorCorrectionLevel]="'M'"></qrcode>
+      </div>
+      <ng-template #noQr>
+        <div class="empty-state small">Aucun post a encoder.</div>
+      </ng-template>
+
+      <div class="hint-block">
+        <h4>Conseil</h4>
+        <p>Utilisez les boutons WhatsApp et Telegram pour diffuser rapidement les publications utiles.</p>
+      </div>
+
+      <div class="hint-block stats-panel">
+        <h4>Statistiques rating</h4>
+        <div class="stats-grid">
+          <article class="mini-stat">
+            <span>Moyenne</span>
+            <strong>{{ ratingSummary.averageRating }}/5</strong>
+          </article>
+          <article class="mini-stat">
+            <span>Feedbacks notes</span>
+            <strong>{{ ratingSummary.ratedFeedbackCount }} / {{ ratingSummary.feedbackCount }}</strong>
+          </article>
+          <article class="mini-stat">
+            <span>Cours classes</span>
+            <strong>{{ ratingSummary.rankedCourseCount }}</strong>
+          </article>
+        </div>
+      </div>
+
+      <div class="hint-block ranking-panel" *ngIf="courseRanking.length > 0">
+        <h4>Classement des cours</h4>
+        <ul class="ranking-list">
+          <li *ngFor="let course of courseRanking; index as i" [ngClass]="getRatingBand(course.averageRating)">
+            <div class="ranking-head">
+              <span class="rank-index">#{{ i + 1 }}</span>
+              <span class="rank-title">{{ course.courseTitle }}</span>
+              <span class="rank-score">{{ course.averageRating }}/5</span>
+            </div>
+            <div class="ranking-bar-track">
+              <div class="ranking-bar-fill" [style.width]="getRatingBarWidth(course.averageRating)"></div>
+            </div>
+            <small>{{ course.feedbackCount }} avis</small>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <div class="flash-messages">
+    <p class="status-line success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="status-line error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="status-line info" *ngIf="listening">Ecoute en cours...</p>
+    <p class="status-line info" *ngIf="loading">Chargement...</p>
+  </div>
+
+  <article class="panel-card table-card">
+    <div class="panel-title table-head">
+      <h3>Liste des Feedbacks</h3>
+      <span class="pill">{{ feedbacks.length }} element(s)</span>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && feedbacks.length === 0">
+      Aucun feedback disponible pour le moment.
+    </div>
+
+    <div class="table-wrapper" *ngIf="!loading && feedbacks.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Cours</th>
+            <th>Image</th>
+            <th>Note</th>
+            <th>Commentaire</th>
+            <th>Moderation</th>
+            <th>Score risque</th>
+            <th>Auto Reclamation</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of feedbacks">
+            <td>#{{ item.id }}</td>
+            <td>{{ item.userName }}</td>
+            <td>{{ item.userEmail }}</td>
+            <td>{{ item.title }}</td>
+            <td>
+              <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="image post" class="thumb" />
+              <span class="image-placeholder" *ngIf="!item.imageUrl">Sans image</span>
+            </td>
+            <td>
+              <span class="rating-chip">{{ item.rating }}/5</span>
+            </td>
+            <td class="comment-cell">{{ item.comment }}</td>
+            <td>
+              <span
+                class="moderation-chip"
+                [ngClass]="{
+                  approved: item.moderationStatus === 'APPROVED',
+                  rejected: item.moderationStatus === 'REJECTED',
+                  pending: item.moderationStatus === 'PENDING' || !item.moderationStatus
+                }"
+              >
+                {{ getModerationStatusLabel(item) }}
+              </span>
+            </td>
+            <td>
+              <div class="score-stack">
+                <strong>{{ getModerationScoreLabel(item) }}</strong>
+                <small>{{ getBlockedWordsLabel(item) }}</small>
+              </div>
+            </td>
+            <td>
+              <span class="auto-link-chip" [class.linked]="item.autoReclamationCreated">
+                {{ getAutoReclamationLabel(item) }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button type="button" class="secondary" (click)="startEdit(item)">Editer</button>
+              <button type="button" class="danger" (click)="deleteFeedback(item.id)">Supprimer</button>
+              <button type="button" class="secondary" (click)="shareOnWhatsapp(item)">WhatsApp</button>
+              <button type="button" class="secondary" (click)="shareOnTelegram(item)">Telegram</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>

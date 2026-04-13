@@ -1,0 +1,332 @@
+{
+  "info": {
+    "name": "E-Learn Microservices API",
+    "description": "Collection Postman pour tester les APIs via le Gateway (cours, inscriptions, feedbacks, reclamations).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8085" },
+    { "key": "coursId", "value": "" },
+    { "key": "inscriptionId", "value": "" },
+    { "key": "feedbackId", "value": "" },
+    { "key": "reclamationId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Cours",
+      "item": [
+        {
+          "name": "GET All Cours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/cours"
+          }
+        },
+        {
+          "name": "POST Create Cours",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var data = pm.response.json();",
+                  "pm.test('Cours id exists', function () {",
+                  "    pm.expect(data).to.have.property('id');",
+                  "});",
+                  "pm.collectionVariables.set('coursId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Java Spring Boot\",\n  \"description\": \"Cours complet\",\n  \"cover\": \"https://img.com/cover.png\",\n  \"video\": \"https://video.com/v1\",\n  \"category\": \"Backend\",\n  \"language\": \"FR\",\n  \"level\": \"BEGINNER\",\n  \"price\": \"99\",\n  \"duration\": \"10h\",\n  \"instructor\": \"Amena\",\n  \"status\": \"PUBLISHED\"\n}"
+            },
+            "url": "{{baseUrl}}/cours"
+          }
+        },
+        {
+          "name": "GET Cours By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/cours/{{coursId}}"
+          }
+        },
+        {
+          "name": "GET Cours Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/cours/{{coursId}}/summary"
+          }
+        },
+        {
+          "name": "PUT Update Cours",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Java Spring Boot Avance\",\n  \"description\": \"Cours mis a jour\",\n  \"cover\": \"https://img.com/cover2.png\",\n  \"video\": \"https://video.com/v2\",\n  \"category\": \"Backend\",\n  \"language\": \"FR\",\n  \"level\": \"INTERMEDIATE\",\n  \"price\": \"129\",\n  \"duration\": \"12h\",\n  \"instructor\": \"Amena\",\n  \"status\": \"PUBLISHED\"\n}"
+            },
+            "url": "{{baseUrl}}/cours/{{coursId}}"
+          }
+        },
+        {
+          "name": "DELETE Cours",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/cours/{{coursId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inscriptions",
+      "item": [
+        {
+          "name": "GET All Inscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/inscriptions"
+          }
+        },
+        {
+          "name": "POST Create Inscription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var data = pm.response.json();",
+                  "pm.test('Inscription id exists', function () {",
+                  "    pm.expect(data).to.have.property('id');",
+                  "});",
+                  "pm.collectionVariables.set('inscriptionId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Ali\",\n  \"studentEmail\": \"ali@mail.com\",\n  \"coursId\": {{coursId}}\n}"
+            },
+            "url": "{{baseUrl}}/inscriptions"
+          }
+        },
+        {
+          "name": "GET Inscription By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/inscriptions/{{inscriptionId}}"
+          }
+        },
+        {
+          "name": "GET Inscription Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/inscriptions/{{inscriptionId}}/details"
+          }
+        },
+        {
+          "name": "PUT Update Inscription",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Ali Updated\",\n  \"studentEmail\": \"ali.updated@mail.com\",\n  \"coursId\": {{coursId}}\n}"
+            },
+            "url": "{{baseUrl}}/inscriptions/{{inscriptionId}}"
+          }
+        },
+        {
+          "name": "DELETE Inscription",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/inscriptions/{{inscriptionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Feedbacks",
+      "item": [
+        {
+          "name": "GET All Feedbacks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/feedbacks"
+          }
+        },
+        {
+          "name": "POST Create Feedback",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var data = pm.response.json();",
+                  "pm.test('Feedback id exists', function () {",
+                  "    pm.expect(data).to.have.property('id');",
+                  "});",
+                  "pm.collectionVariables.set('feedbackId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Sara\",\n  \"userEmail\": \"sara@mail.com\",\n  \"title\": \"Tres bien\",\n  \"imageUrl\": \"https://img.com/fb.png\",\n  \"rating\": 5,\n  \"comment\": \"Excellent cours\"\n}"
+            },
+            "url": "{{baseUrl}}/feedbacks"
+          }
+        },
+        {
+          "name": "GET Feedback By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/feedbacks/{{feedbackId}}"
+          }
+        },
+        {
+          "name": "PUT Update Feedback",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Sara\",\n  \"userEmail\": \"sara@mail.com\",\n  \"title\": \"Bien\",\n  \"imageUrl\": \"https://img.com/fb2.png\",\n  \"rating\": 4,\n  \"comment\": \"Bon contenu\"\n}"
+            },
+            "url": "{{baseUrl}}/feedbacks/{{feedbackId}}"
+          }
+        },
+        {
+          "name": "DELETE Feedback",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/feedbacks/{{feedbackId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reclamations",
+      "item": [
+        {
+          "name": "GET All Reclamations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/reclamations"
+          }
+        },
+        {
+          "name": "POST Create Reclamation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var data = pm.response.json();",
+                  "pm.test('Reclamation id exists', function () {",
+                  "    pm.expect(data).to.have.property('id');",
+                  "});",
+                  "pm.collectionVariables.set('reclamationId', data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Karim\",\n  \"userEmail\": \"karim@mail.com\",\n  \"subject\": \"Probleme video\",\n  \"imageUrl\": \"https://img.com/rec.png\",\n  \"description\": \"La video ne demarre pas\",\n  \"status\": \"OPEN\"\n}"
+            },
+            "url": "{{baseUrl}}/reclamations"
+          }
+        },
+        {
+          "name": "GET Reclamation By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/reclamations/{{reclamationId}}"
+          }
+        },
+        {
+          "name": "PUT Update Reclamation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Karim\",\n  \"userEmail\": \"karim@mail.com\",\n  \"subject\": \"Probleme resolu\",\n  \"imageUrl\": \"https://img.com/rec2.png\",\n  \"description\": \"Le probleme est corrige\",\n  \"status\": \"RESOLVED\"\n}"
+            },
+            "url": "{{baseUrl}}/reclamations/{{reclamationId}}"
+          }
+        },
+        {
+          "name": "DELETE Reclamation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/reclamations/{{reclamationId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
