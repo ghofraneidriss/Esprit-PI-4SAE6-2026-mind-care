@@ -3,6 +3,8 @@ package tn.esprit.souvenir_service.dto.entree;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,10 +20,8 @@ import tn.esprit.souvenir_service.enums.ThemeCulturel;
 @Builder
 public class EntreeSouvenirUpdateRequest {
 
-    @NotNull(message = "doctorId is required")
     private Long doctorId;
 
-    @NotNull(message = "caregiverId is required")
     private Long caregiverId;
 
     private String infosCaregiver;
@@ -46,4 +46,8 @@ public class EntreeSouvenirUpdateRequest {
 
     @NotNull(message = "themeCulturel is required")
     private ThemeCulturel themeCulturel;
+
+    @Min(value = 1, message = "importance min is 1")
+    @Max(value = 10, message = "importance max is 10")
+    private Integer importance;
 }

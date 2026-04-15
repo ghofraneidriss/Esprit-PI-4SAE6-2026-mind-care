@@ -3,6 +3,7 @@ export enum RecommendationType {
     FLUENCY = 'FLUENCY',
     VISUOSPATIAL = 'VISUOSPATIAL',
     ATTENTION = 'ATTENTION',
+    PUZZLE = 'PUZZLE',
     MEDICATION = 'MEDICATION',
     EXERCISE = 'EXERCISE',
     DIET = 'DIET',
@@ -28,6 +29,7 @@ export enum MedicalEventType {
     FLUENCY = 'FLUENCY',
     VISUOSPATIAL = 'VISUOSPATIAL',
     ATTENTION = 'ATTENTION',
+    PUZZLE = 'PUZZLE',
     MEDICATION = 'MEDICATION',
     EXERCISE = 'EXERCISE',
     DIET = 'DIET',
@@ -159,4 +161,94 @@ export interface ParticipantRanking {
     totalScore: number;
     participations: number;
     rank: number;
+}
+
+export enum PuzzleStatus {
+    ACTIVE = 'ACTIVE',
+    COMPLETED = 'COMPLETED',
+    ARCHIVED = 'ARCHIVED',
+}
+
+export interface SouvenirSourceSummary {
+    id: number;
+    patientId: number;
+    mediaType: string;
+    mediaUrl: string;
+    mediaTitle: string;
+    texte: string;
+}
+
+export interface PuzzleCreateRequest {
+    souvenirEntryId: number;
+    patientId: number;
+    title?: string | null;
+    description?: string | null;
+    difficulty: DifficultyLevel;
+    timeLimitSeconds?: number | null;
+    maxHints?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+}
+
+export interface Puzzle {
+    id: number;
+    medicalEventId: number;
+    souvenirEntryId: number;
+    patientId: number;
+    title: string;
+    description: string;
+    difficulty: DifficultyLevel;
+    gridSize: number;
+    timeLimitSeconds: number;
+    maxHints: number;
+    status: PuzzleStatus;
+    bestScore?: number | null;
+    completedSessions?: number | null;
+    createdAt?: string;
+    updatedAt?: string;
+    souvenir: SouvenirSourceSummary;
+}
+
+export interface PuzzleLeaderboardEntry {
+    rank: number;
+    patientId: number;
+    bestScore: number;
+    bestDurationSeconds?: number | null;
+    completedSessions?: number | null;
+    lastCompletedAt?: string | null;
+}
+
+export interface PuzzleSession {
+    id: number;
+    puzzleId: number;
+    patientId: number;
+    startedAt: string;
+    finishedAt?: string | null;
+    durationSeconds?: number | null;
+    movesCount?: number | null;
+    errorsCount?: number | null;
+    hintsUsed?: number | null;
+    completionPercent?: number | null;
+    score?: number | null;
+    completed: boolean;
+    abandoned: boolean;
+    createdAt?: string;
+}
+
+export interface PuzzleSessionStartResponse {
+    sessionId: number;
+    puzzleId: number;
+    patientId: number;
+    startedAt: string;
+}
+
+export interface PuzzleSessionSubmitRequest {
+    patientId: number;
+    durationSeconds?: number;
+    movesCount?: number;
+    errorsCount?: number;
+    hintsUsed?: number;
+    completionPercent?: number;
+    completed: boolean;
+    abandoned: boolean;
 }

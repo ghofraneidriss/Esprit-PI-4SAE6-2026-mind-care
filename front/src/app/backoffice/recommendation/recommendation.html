@@ -1,353 +1,598 @@
-<div class="container-fluid p-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="h3 mb-1"><i class="fi fi-rr-comment-medical me-2 text-primary"></i>Gestion des Recommendations</h2>
-            <p class="text-muted mb-0 small">Conseils et exercices personnalises pour les patients</p>
-        </div>
-        @if (!showForm) {
-        <div class="d-flex gap-3 align-items-center">
-            <div class="input-group search-bar shadow-sm rounded">
-                <span class="input-group-text bg-white border-end-0"><i class="fi fi-rr-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0 ps-0" placeholder="Rechercher par contenu..."
-                    [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" (input)="!searchTerm && onSearch()">
-            </div>
-            <button class="btn btn-primary shadow-sm text-nowrap" (click)="openCreateForm()">
-                <i class="fi fi-rr-plus me-1"></i> Nouvelle Recommendation
-            </button>
-        </div>
-        }
+<div class="rec-layout">
+  <aside class="mr-sidebar">
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link">
+        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
+        <span class="brand-text">MindCare</span>
+      </a>
     </div>
 
+    <nav class="sidebar-nav">
+      <span class="nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="nav-link">
+        <i class="fi fi-rr-house-blank"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/medical-reports" class="nav-link">
+        <i class="fi fi-rr-document"></i>
+        <span>Medical Reports</span>
+      </a>
+      <a routerLink="/admin/recommendation" class="nav-link active">
+        <i class="fi fi-rr-comment-medical"></i>
+        <span>Recommendations</span>
+      </a>
+      <a routerLink="/admin/medical-events" class="nav-link">
+        <i class="fi fi-rr-dice"></i>
+        <span>Medical Events</span>
+      </a>
+      <a routerLink="/admin/souvenirs" class="nav-link">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Souvenirs</span>
+      </a>
+      <a routerLink="/admin/files-management" class="nav-link">
+        <i class="fi fi-rr-folder-open"></i>
+        <span>Files Management</span>
+      </a>
+      <a routerLink="/admin/activities" class="nav-link">
+        <i class="fi fi-rr-list-check"></i>
+        <span>Activities</span>
+      </a>
+      <a routerLink="/admin/forums" class="nav-link">
+        <i class="fi fi-rr-comment-alt"></i>
+        <span>Forums</span>
+      </a>
+      <a routerLink="/admin/incidents" class="nav-link">
+        <i class="fi fi-rr-shield-exclamation"></i>
+        <span>Incidents</span>
+      </a>
+      <a routerLink="/admin/movement" class="nav-link">
+        <i class="fi fi-rr-running"></i>
+        <span>Movement</span>
+      </a>
+
+      <ng-container *ngIf="authService.isAdmin()">
+        <span class="nav-heading">Management</span>
+        <a routerLink="/admin/employee" class="nav-link">
+          <i class="fi fi-rr-employee-man"></i>
+          <span>Employees</span>
+        </a>
+        <a routerLink="/admin/customers" class="nav-link">
+          <i class="fi fi-rr-review"></i>
+          <span>Customers</span>
+        </a>
+        <a routerLink="/admin/user-management" class="nav-link">
+          <i class="fi fi-rr-users"></i>
+          <span>User Management</span>
+        </a>
+      </ng-container>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="nav-link logout-link">
+        <i class="fi fi-rr-exit"></i>
+        <span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="rec-page">
+    <header class="rec-hero">
+      <div class="rec-hero-inner">
+        <div>
+          <h1 class="rec-hero-title">
+            <span class="hero-icon"><i class="fi fi-rr-comment-medical"></i></span>
+            Recommendations
+          </h1>
+          <p class="rec-hero-subtitle">Manage personalized patient guidance, linked medical events, and clinical escalations</p>
+        </div>
+
+        <div class="rec-hero-actions">
+          <div class="rec-stat-chip">
+            <span class="chip-value">{{ recommendations.length }}</span>
+            <span class="chip-label">Total</span>
+          </div>
+          <div class="rec-stat-chip">
+            <span class="chip-value">{{ countByStatus(activeStatus) }}</span>
+            <span class="chip-label">Active</span>
+          </div>
+          <div class="rec-stat-chip">
+            <span class="chip-value">{{ countByStatus(acceptedStatus) }}</span>
+            <span class="chip-label">Accepted</span>
+          </div>
+          <div class="rec-stat-chip">
+            <span class="chip-value">{{ openAlertsCount }}</span>
+            <span class="chip-label">Alerts</span>
+          </div>
+          <button type="button" class="btn-create" (click)="openCreateForm()">
+            <i class="fi fi-rr-plus"></i>New Recommendation
+          </button>
+        </div>
+      </div>
+    </header>
+
     @if (errorMessage) {
-    <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2 mb-4 shadow-sm border-0">
-        <i class="fi fi-rr-exclamation"></i>
-        <div>{{ errorMessage }}</div>
-        <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+    <div class="page-alert alert-danger">
+      <i class="fi fi-rr-triangle-warning"></i>
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
     </div>
     }
 
     @if (successMessage) {
-    <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2 mb-4 shadow-sm border-0">
-        <i class="fi fi-rr-check-circle"></i>
-        <div>{{ successMessage }}</div>
-        <button type="button" class="btn-close ms-auto" (click)="successMessage = ''"></button>
+    <div class="page-alert alert-success">
+      <i class="fi fi-rr-check-circle"></i>
+      <span>{{ successMessage }}</span>
+      <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
     </div>
     }
 
-    @if (showForm) {
-    <div class="card shadow border-0 mb-4 form-card animate__animated animate__fadeIn">
-        <div class="card-header bg-primary text-white py-3">
-            <h5 class="mb-0 fw-semibold">
-                <i class="fi {{ isEditing ? 'fi-rr-pencil' : 'fi-rr-plus' }} me-2"></i>
-                {{ isEditing ? 'Modifier la Recommendation' : 'Creer une Recommendation' }}
-            </h5>
-        </div>
-        <div class="card-body p-4">
-            <form (ngSubmit)="save()">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-uppercase">ID Patient <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" [(ngModel)]="currentRecommendation.patientId" name="patientId" (ngModelChange)="onRecommendationContextChanged()" required>
-                    </div>
+    <div class="rec-body">
+      <aside class="rec-list-panel">
+        <div class="rec-list-toolbar">
+          <div class="search-wrap">
+            <i class="fi fi-rr-search"></i>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search recommendations..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyFilters()"
+            />
+          </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-uppercase">ID Docteur <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" [(ngModel)]="currentRecommendation.doctorId" name="doctorId" required>
-                    </div>
+          <select class="form-select filter-select" [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+            <option value="">All statuses</option>
+            @for (status of recommendationStatuses; track status) {
+            <option [value]="status">{{ status }}</option>
+            }
+          </select>
 
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small text-uppercase">Type</label>
-                        <select class="form-select" [(ngModel)]="currentRecommendation.type" name="type" (ngModelChange)="onRecommendationContextChanged()">
-                            @for (type of recommendationTypes; track type) {
-                            <option [value]="type">{{ type }}</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small text-uppercase">Priorite (0-10)</label>
-                        <input type="number" min="0" max="10" class="form-control" [(ngModel)]="currentRecommendation.priority" name="priority">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small text-uppercase">Date expiration</label>
-                        <input type="date" class="form-control" [(ngModel)]="currentRecommendation.expirationDate" name="expirationDate">
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label fw-bold small text-uppercase">Contenu <span class="text-danger">*</span></label>
-                        <textarea class="form-control" [(ngModel)]="currentRecommendation.content" name="content"
-                            rows="4" required placeholder="Decrire la recommandation..."></textarea>
-                    </div>
-
-                    <div class="col-12 mt-4">
-                        <label class="form-label fw-bold small text-uppercase mb-2 d-block">Medical events compatibles</label>
-                        <p class="text-muted small mb-3">Seuls les events `ACTIVE` du meme patient et du meme type que la recommandation sont affiches.</p>
-                        <div class="row g-2">
-                            @for (event of compatibleMedicalEvents; track event.id || $index) {
-                            <div class="col-md-4">
-                                <div class="event-pill p-3 border rounded-3 d-flex align-items-center gap-2" [class.active]="isEventSelected(event)"
-                                    (click)="toggleEvent(event)">
-                                    <i class="fi fi-rr-dice fs-5"></i>
-                                    <div class="flex-grow-1 overflow-hidden">
-                                        <div class="fw-semibold text-truncate small">{{ event.title }}</div>
-                                        <div class="text-muted extremely-small">{{ event.type }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            } @empty {
-                            <div class="col-12 text-center py-3 bg-light rounded">
-                                <p class="text-muted small mb-0">Aucun medical event compatible avec ce patient et ce type.</p>
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                    <button type="button" class="btn btn-light px-4" (click)="cancel()">Annuler</button>
-                    <button type="submit" class="btn btn-primary px-4 shadow-sm" [disabled]="!currentRecommendation.content.trim() || isSaving">
-                        @if (isSaving) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        }
-                        {{ isEditing ? 'Mettre a jour' : 'Enregistrer' }}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    }
-
-    @if (!showForm) {
-    <div class="row g-4 mb-4">
-        <div class="col-xl-7">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-light py-3">
-                    <h5 class="mb-1 fw-semibold">Regles automatiques</h5>
-                    <p class="text-muted small mb-0">Generer des recommandations selon l'etat patient: age, niveau, historique et frequence.</p>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase">ID Docteur</label>
-                            <input type="number" class="form-control" [(ngModel)]="autoRecommendationForm.doctorId" name="autoDoctorId">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase">ID Patient</label>
-                            <input type="number" class="form-control" [(ngModel)]="autoRecommendationForm.patientId" name="autoPatientId" (ngModelChange)="onAutoGenerationPatientChanged()">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase">Age</label>
-                            <input type="number" min="1" max="120" class="form-control" [(ngModel)]="autoRecommendationForm.age" name="autoAge">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase">Niveau</label>
-                            <select class="form-select" [(ngModel)]="autoRecommendationForm.level" name="autoLevel">
-                                @for (level of patientLevels; track level) {
-                                <option [value]="level">{{ level }}</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small text-uppercase">Frequence / semaine</label>
-                            <input type="number" min="0" class="form-control" [(ngModel)]="autoRecommendationForm.weeklyFrequency" name="autoWeeklyFrequency">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase">Nb acceptees</label>
-                            <input type="number" min="0" class="form-control" [(ngModel)]="autoRecommendationForm.acceptedCount" name="autoAcceptedCount">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase">Nb rejetees</label>
-                            <input type="number" min="0" class="form-control" [(ngModel)]="autoRecommendationForm.rejectedCount" name="autoRejectedCount">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-bold small text-uppercase">Medical event a attacher (optionnel)</label>
-                            <select class="form-select" [(ngModel)]="autoRecommendationForm.preferredMedicalEventId" name="autoPreferredMedicalEventId">
-                                <option [ngValue]="null">Aucun event</option>
-                                @for (event of autoGenerationMedicalEvents; track event.id || $index) {
-                                <option [ngValue]="event.id">
-                                    {{ event.title }} - {{ event.type }}
-                                </option>
-                                }
-                            </select>
-                            <p class="text-muted small mb-0 mt-2">L'event doit etre `ACTIVE` et du meme patient. Il sera attache uniquement aux recommandations generees du meme type que cet event.</p>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-bold small text-uppercase d-block">Historique recent des types</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                @for (type of recommendationTypes; track type) {
-                                <button type="button" class="btn btn-sm type-chip"
-                                    [class.btn-primary]="hasRecentType(type)"
-                                    [class.btn-outline-secondary]="!hasRecentType(type)"
-                                    (click)="toggleRecentType(type)">
-                                    {{ type }}
-                                </button>
-                                }
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" [(ngModel)]="autoRecommendationForm.medicationAdherenceIssue" name="autoMedicationIssue" id="autoMedicationIssue">
-                                <label class="form-check-label" for="autoMedicationIssue">Probleme d'adherence medicamenteuse</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" [(ngModel)]="autoRecommendationForm.lowPhysicalActivity" name="autoLowActivity" id="autoLowActivity">
-                                <label class="form-check-label" for="autoLowActivity">Faible activite physique</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" [(ngModel)]="autoRecommendationForm.cognitiveDropObserved" name="autoCognitiveDrop" id="autoCognitiveDrop">
-                                <label class="form-check-label" for="autoCognitiveDrop">Baisse cognitive observee</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="button" class="btn btn-light" (click)="resetAutoRecommendationForm()">Vider</button>
-                        <button type="button" class="btn btn-primary" (click)="generateAutomaticRecommendations()" [disabled]="isGeneratingAuto">
-                            @if (isGeneratingAuto) {
-                            <span class="spinner-border spinner-border-sm me-2"></span>
-                            }
-                            Generer automatiquement
-                        </button>
-                    </div>
-                </div>
-            </div>
+          <select class="form-select filter-select" [(ngModel)]="typeFilter" (ngModelChange)="applyFilters()">
+            <option value="">All types</option>
+            @for (type of recommendationTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+            }
+          </select>
         </div>
 
-        <div class="col-xl-5">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-light py-3">
-                    <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
-                        <div>
-                            <h5 class="mb-1 fw-semibold">Escalade clinique</h5>
-                            <p class="text-muted small mb-0">Alerte le medecin si un type de recommandation est rejete X fois.</p>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
-                            <input type="number" class="form-control form-control-sm doctor-filter" [(ngModel)]="alertDoctorId" name="alertDoctorId" placeholder="ID docteur">
-                            <button type="button" class="btn btn-sm btn-outline-primary" (click)="loadAlerts()">Charger</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted extremely-small mb-3">Le panneau se filtre par medecin. Il est maintenant preselectionne automatiquement a partir des recommandations chargees.</p>
-                    @if (isLoadingAlerts) {
-                    <div class="text-center py-4">
-                        <div class="spinner-border spinner-border-sm text-primary mb-2"></div>
-                        <div class="text-muted small">Chargement des alertes...</div>
-                    </div>
-                    } @else if (!alertDoctorId) {
-                    <div class="text-muted small">Saisis un ID docteur pour consulter ses alertes cliniques.</div>
-                    } @else if (clinicalAlerts.length === 0) {
-                    <div class="text-muted small">Aucune alerte clinique pour ce medecin.</div>
-                    } @else {
-                    <div class="d-flex flex-column gap-3">
-                        @for (alert of clinicalAlerts; track alert.id) {
-                        <div class="alert-card border rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                <div>
-                                    <div class="fw-semibold">Patient #{{ alert.patientId }} - {{ alert.recommendationType }}</div>
-                                    <div class="text-muted extremely-small">Recommendation #{{ alert.recommendationId }} | {{ formatDateTime(alert.createdAt) }}</div>
-                                </div>
-                                <span class="badge" [ngClass]="{
-                                    'bg-danger-subtle text-danger': alert.status === 'OPEN',
-                                    'bg-success-subtle text-success': alert.status === 'RESOLVED'
-                                }">{{ alert.status }}</span>
-                            </div>
-                            <div class="small mb-2">{{ alert.message }}</div>
-                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                <span class="badge bg-light text-dark border">Rejets cumules: {{ alert.rejectionCount }}</span>
-                                @if (alert.status === 'OPEN') {
-                                <button type="button" class="btn btn-sm btn-outline-success" (click)="resolveAlert(alert)">
-                                    Marquer resolue
-                                </button>
-                                }
-                            </div>
-                        </div>
-                        }
-                    </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
-            @if (isLoading) {
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Chargement...</span>
-                </div>
-                <p class="text-muted">Chargement des recommandations...</p>
-            </div>
-            } @else {
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Docteur</th>
-                            <th>Patient</th>
-                            <th>Contenu</th>
-                            <th>Event</th>
-                            <th>Statut</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (rec of recommendations; track rec.id || $index) {
-                        <tr>
-                            <td><span class="fw-semibold small">{{ rec.doctorName || ('ID: ' + rec.doctorId) }}</span></td>
-                            <td><span class="small">{{ rec.patientName || ('ID: ' + rec.patientId) }}</span></td>
-                            <td style="max-width: 300px;"><p class="mb-0 text-truncate small" title="{{ rec.content }}">{{ rec.content }}</p></td>
-                            <td>
-                                @if (getEventDisplayName(rec)) {
-                                <span class="badge bg-light text-dark border">{{ getEventDisplayName(rec) }}</span>
-                                } @else if (rec.generatedMedicalEventId) {
-                                <span class="badge bg-light text-dark border">Event #{{ rec.generatedMedicalEventId }}</span>
-                                } @else {
-                                <span class="text-muted extremely-small">-</span>
-                                }
-                            </td>
-                            <td>
-                                <span class="badge" [ngClass]="{
-                                        'bg-warning-subtle text-warning': rec.status === 'ACTIVE',
-                                        'bg-success-subtle text-success': rec.status === 'ACCEPTED',
-                                        'bg-danger-subtle text-danger':  rec.status === 'REJECTED',
-                                        'bg-secondary-subtle text-secondary': rec.status === 'EXPIRED'
-                                    }">{{ rec.status }}</span>
-                            </td>
-                            <td class="text-end px-3">
-                                <div class="d-inline-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-secondary action-btn" (click)="useDoctorAlerts(rec.doctorId)">
-                                        <i class="fi fi-rr-bell me-1"></i> Alertes
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary action-btn" (click)="edit(rec)">
-                                        <i class="fi fi-rr-pencil me-1"></i> Modifier
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger action-btn" (click)="delete(rec.id)">
-                                        <i class="fi fi-rr-trash me-1"></i> Supprimer
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        } @empty {
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                Aucune recommandation trouvee.
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+        <div class="rec-list-scroll">
+          @if (isLoading) {
+          <div class="p-3">
+            @for (item of [1, 2, 3, 4]; track item) {
+            <div class="skeleton-card">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line meta"></div>
+              <div class="skeleton-line meta short"></div>
             </div>
             }
-        </div>
-    </div>
-    }
+          </div>
+          } @else if (filteredRecommendations.length > 0) {
+          @for (recommendation of filteredRecommendations; track trackRecommendation($index, recommendation)) {
+          <button
+            type="button"
+            class="rec-card"
+            [class.active]="selectedRecommendation?.id === recommendation.id"
+            (click)="selectRecommendation(recommendation)"
+          >
+            <div class="rec-card-top">
+              <span class="rec-card-title">
+                {{ recommendation.generatedMedicalEventTitle || ('Recommendation #' + (recommendation.id || $index + 1)) }}
+              </span>
+              <span [class]="getStatusBadgeClass(recommendation.status)">{{ recommendation.status }}</span>
+            </div>
 
+            <div class="rec-card-meta">
+              <i class="fi fi-rr-user"></i>
+              <span>Patient {{ recommendation.patientId }}</span>
+            </div>
+            <div class="rec-card-meta">
+              <i class="fi fi-rr-stethoscope"></i>
+              <span>Doctor {{ recommendation.doctorId }}</span>
+            </div>
+            <div class="rec-card-tags">
+              <span [class]="getTypeBadgeClass(recommendation.type)">{{ recommendation.type }}</span>
+            </div>
+            <p class="rec-card-preview">{{ recommendation.content }}</p>
+          </button>
+          }
+          } @else {
+          <div class="rec-empty">
+            <div class="empty-icon"><i class="fi fi-rr-folder-open"></i></div>
+            <p>No recommendations found</p>
+          </div>
+          }
+        </div>
+      </aside>
+
+      <main class="rec-detail-panel">
+        @if (selectedRecommendation; as recommendation) {
+        <div class="rec-detail-inner">
+          <div class="detail-header">
+            <div class="detail-header-left">
+              <div class="detail-eyebrow">Recommendation #{{ recommendation.id || '-' }}</div>
+              <h2>{{ recommendation.type }} Recommendation</h2>
+              <div class="detail-badges">
+                <span [class]="getStatusBadgeClass(recommendation.status)">{{ recommendation.status }}</span>
+                <span [class]="getTypeBadgeClass(recommendation.type)">{{ recommendation.type }}</span>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button type="button" class="btn-action btn-muted" (click)="useDoctorAlerts(recommendation.doctorId)">
+                <i class="fi fi-rr-bell"></i>Alerts
+              </button>
+              @if (recommendation.status === 'ACTIVE') {
+              <button type="button" class="btn-action btn-success" (click)="approve(recommendation.id)">
+                <i class="fi fi-rr-check"></i>Approve
+              </button>
+              <button type="button" class="btn-action btn-warning" (click)="reject(recommendation)">
+                <i class="fi fi-rr-cross-small"></i>Reject
+              </button>
+              }
+              <button type="button" class="btn-action btn-edit" (click)="edit(recommendation)">
+                <i class="fi fi-rr-pencil"></i>Edit
+              </button>
+              <button type="button" class="btn-action btn-delete" (click)="delete(recommendation.id)">
+                <i class="fi fi-rr-trash"></i>Delete
+              </button>
+            </div>
+          </div>
+
+          <div class="spotlight-card">
+            <div class="spotlight-item">
+              <span class="spotlight-label">Priority</span>
+              <strong>{{ recommendation.priority ?? 0 }}/10</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Patient</span>
+              <strong>#{{ recommendation.patientId }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Doctor</span>
+              <strong>#{{ recommendation.doctorId }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Linked Event</span>
+              <strong>{{ getEventDisplayName(recommendation) || '-' }}</strong>
+            </div>
+          </div>
+
+          <section class="info-card">
+            <div class="info-card-header">
+              <span class="card-icon icon-blue"><i class="fi fi-rr-comment-medical"></i></span>
+              <h5>Recommendation Details</h5>
+            </div>
+            <div class="info-card-body">
+              <div class="data-grid">
+                <div class="data-field">
+                  <span class="field-label">Doctor ID</span>
+                  <span class="field-value">#{{ recommendation.doctorId }}</span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Patient ID</span>
+                  <span class="field-value">#{{ recommendation.patientId }}</span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Status</span>
+                  <span class="field-value">
+                    <span [class]="getStatusBadgeClass(recommendation.status)">{{ recommendation.status }}</span>
+                  </span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Type</span>
+                  <span class="field-value">{{ recommendation.type }}</span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Created At</span>
+                  <span class="field-value">{{ formatDateTime(recommendation.createdAt) }}</span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Expiration</span>
+                  <span class="field-value">{{ formatDateTime(recommendation.expirationDate) }}</span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Linked Event</span>
+                  <span class="field-value">{{ getEventDisplayName(recommendation) || '-' }}</span>
+                </div>
+                <div class="data-field">
+                  <span class="field-label">Dismissed</span>
+                  <span class="field-value">{{ recommendation.dismissed ? 'Yes' : 'No' }}</span>
+                </div>
+                <div class="data-field full">
+                  <span class="field-label">Content</span>
+                  <div class="desc-block">{{ recommendation.content }}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="rec-detail-grid">
+            <section class="info-card">
+              <div class="info-card-header">
+                <span class="card-icon icon-teal"><i class="fi fi-rr-settings-sliders"></i></span>
+                <h5>Automatic Rules</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="mini-grid">
+                  <div class="mini-field">
+                    <label class="mini-label">Doctor ID</label>
+                    <input type="number" class="form-control" [(ngModel)]="autoRecommendationForm.doctorId" name="autoDoctorId" />
+                  </div>
+                  <div class="mini-field">
+                    <label class="mini-label">Patient ID</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      [(ngModel)]="autoRecommendationForm.patientId"
+                      name="autoPatientId"
+                      (ngModelChange)="onAutoGenerationPatientChanged()"
+                    />
+                  </div>
+                  <div class="mini-field">
+                    <label class="mini-label">Age</label>
+                    <input type="number" min="1" max="120" class="form-control" [(ngModel)]="autoRecommendationForm.age" name="autoAge" />
+                  </div>
+                  <div class="mini-field">
+                    <label class="mini-label">Level</label>
+                    <select class="form-select" [(ngModel)]="autoRecommendationForm.level" name="autoLevel">
+                      @for (level of patientLevels; track level) {
+                      <option [value]="level">{{ level }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="mini-field">
+                    <label class="mini-label">Weekly Frequency</label>
+                    <input
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      [(ngModel)]="autoRecommendationForm.weeklyFrequency"
+                      name="autoWeeklyFrequency"
+                    />
+                  </div>
+                  <div class="mini-field">
+                    <label class="mini-label">Preferred Event</label>
+                    <select class="form-select" [(ngModel)]="autoRecommendationForm.preferredMedicalEventId" name="autoPreferredMedicalEventId">
+                      <option [ngValue]="null">No event</option>
+                      @for (event of autoGenerationMedicalEvents; track event.id || $index) {
+                      <option [ngValue]="event.id">{{ event.title }} - {{ event.type }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mini-grid compact">
+                  <div class="mini-field">
+                    <label class="mini-label">Accepted</label>
+                    <input
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      [(ngModel)]="autoRecommendationForm.acceptedCount"
+                      name="autoAcceptedCount"
+                    />
+                  </div>
+                  <div class="mini-field">
+                    <label class="mini-label">Rejected</label>
+                    <input
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      [(ngModel)]="autoRecommendationForm.rejectedCount"
+                      name="autoRejectedCount"
+                    />
+                  </div>
+                </div>
+
+                <label class="mini-label d-block mt-3">Recent Types</label>
+                <div class="chip-wrap">
+                  @for (type of recommendationTypes; track type) {
+                  <button
+                    type="button"
+                    class="type-toggle"
+                    [class.active]="hasRecentType(type)"
+                    (click)="toggleRecentType(type)"
+                  >
+                    {{ type }}
+                  </button>
+                  }
+                </div>
+
+                <div class="toggle-grid">
+                  <label class="check-card">
+                    <input type="checkbox" [(ngModel)]="autoRecommendationForm.medicationAdherenceIssue" name="autoMedicationIssue" />
+                    <span>Medication adherence issue</span>
+                  </label>
+                  <label class="check-card">
+                    <input type="checkbox" [(ngModel)]="autoRecommendationForm.lowPhysicalActivity" name="autoLowActivity" />
+                    <span>Low physical activity</span>
+                  </label>
+                  <label class="check-card">
+                    <input type="checkbox" [(ngModel)]="autoRecommendationForm.cognitiveDropObserved" name="autoCognitiveDrop" />
+                    <span>Cognitive drop observed</span>
+                  </label>
+                </div>
+
+                <div class="card-actions-row">
+                  <button type="button" class="btn-action btn-muted" (click)="resetAutoRecommendationForm()">Reset</button>
+                  <button type="button" class="btn-action btn-primary" (click)="generateAutomaticRecommendations()" [disabled]="isGeneratingAuto">
+                    @if (isGeneratingAuto) {
+                    <span class="spinner-border spinner-border-sm"></span>
+                    }
+                    Generate automatically
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="info-card">
+              <div class="info-card-header">
+                <span class="card-icon icon-danger"><i class="fi fi-rr-bell-ring"></i></span>
+                <h5>Clinical Alerts</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="doctor-toolbar">
+                  <input type="number" class="form-control" [(ngModel)]="alertDoctorId" name="alertDoctorId" placeholder="Doctor ID" />
+                  <button type="button" class="btn-action btn-primary" (click)="loadAlerts()">Load</button>
+                </div>
+
+                @if (isLoadingAlerts) {
+                <div class="panel-state">
+                  <div class="spinner-border spinner-border-sm text-primary"></div>
+                  <span>Loading alerts...</span>
+                </div>
+                } @else if (!alertDoctorId) {
+                <div class="panel-state">Select a doctor to view escalations.</div>
+                } @else if (clinicalAlerts.length === 0) {
+                <div class="panel-state">No alerts for this doctor.</div>
+                } @else {
+                <div class="alerts-list">
+                  @for (alert of clinicalAlerts; track alert.id) {
+                  <article class="alert-card">
+                    <div class="alert-card-top">
+                      <div>
+                        <h6>Patient #{{ alert.patientId }} - {{ alert.recommendationType }}</h6>
+                        <p>Recommendation #{{ alert.recommendationId }} · {{ formatDateTime(alert.createdAt) }}</p>
+                      </div>
+                      <span class="mini-status" [class.open]="alert.status === 'OPEN'" [class.resolved]="alert.status === 'RESOLVED'">
+                        {{ alert.status }}
+                      </span>
+                    </div>
+                    <p class="alert-message">{{ alert.message }}</p>
+                    <div class="alert-card-footer">
+                      <span class="mini-pill">Rejections: {{ alert.rejectionCount }}</span>
+                      @if (alert.status === 'OPEN') {
+                      <button type="button" class="btn-action btn-success" (click)="resolveAlert(alert)">
+                        Resolve
+                      </button>
+                      }
+                    </div>
+                  </article>
+                  }
+                </div>
+                }
+              </div>
+            </section>
+          </div>
+        </div>
+        } @else {
+        <div class="rec-no-selection">
+          <div class="no-sel-icon"><i class="fi fi-rr-comment-medical"></i></div>
+          <p class="no-sel-title">No recommendation selected</p>
+          <p class="no-sel-sub">Choose a recommendation from the list to inspect its details and actions.</p>
+        </div>
+        }
+      </main>
+    </div>
+
+    <footer class="rec-footer">
+      <span>© 2025 MindCare — All rights reserved</span>
+      <a routerLink="/admin">Back to Dashboard</a>
+    </footer>
+  </div>
 </div>
+
+@if (showForm) {
+<div class="rec-modal-backdrop" (click)="cancel()">
+  <section class="rec-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="rec-modal-header">
+      <h3>
+        <span class="modal-header-icon"><i class="fi fi-rr-comment-medical"></i></span>
+        {{ isEditing ? 'Edit Recommendation' : 'Create Recommendation' }}
+      </h3>
+      <button type="button" class="btn-modal-close" (click)="cancel()" aria-label="Close">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="save()">
+      <div class="rec-modal-body">
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label class="modal-label">Patient ID</label>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="currentRecommendation.patientId"
+              name="patientId"
+              (ngModelChange)="onRecommendationContextChanged()"
+              required
+            />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Doctor ID</label>
+            <input type="number" class="form-control" [(ngModel)]="currentRecommendation.doctorId" name="doctorId" required />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Type</label>
+            <select
+              class="form-select"
+              [(ngModel)]="currentRecommendation.type"
+              name="type"
+              (ngModelChange)="onRecommendationContextChanged()"
+            >
+              @for (type of recommendationTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Priority</label>
+            <input type="number" min="0" max="10" class="form-control" [(ngModel)]="currentRecommendation.priority" name="priority" />
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Expiration Date</label>
+            <input type="date" class="form-control" [(ngModel)]="currentRecommendation.expirationDate" name="expirationDate" />
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Content</label>
+            <textarea
+              class="form-control"
+              [(ngModel)]="currentRecommendation.content"
+              name="content"
+              rows="4"
+              required
+              placeholder="Describe the recommendation..."
+            ></textarea>
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Compatible Medical Events</label>
+            <p class="modal-help">Only ACTIVE medical events from the same patient and same type are available.</p>
+            <div class="event-grid">
+              @for (event of compatibleMedicalEvents; track event.id || $index) {
+              <button
+                type="button"
+                class="event-pill"
+                [class.active]="isEventSelected(event)"
+                (click)="toggleEvent(event)"
+              >
+                <span class="event-title">{{ event.title }}</span>
+                <span class="event-meta">{{ event.type }}</span>
+              </button>
+              } @empty {
+              <div class="empty-block">No compatible medical event for this patient and type.</div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rec-modal-footer">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="!currentRecommendation.content.trim() || isSaving">
+          @if (isSaving) {
+          <span class="spinner-border spinner-border-sm"></span>
+          }
+          {{ isEditing ? 'Save changes' : 'Create recommendation' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+}

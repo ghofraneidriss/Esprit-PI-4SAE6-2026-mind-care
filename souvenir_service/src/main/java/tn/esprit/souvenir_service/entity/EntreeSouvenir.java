@@ -36,10 +36,10 @@ public class EntreeSouvenir {
     @Column(nullable = false)
     private Long patientId;
 
-    @Column(nullable = false)
+    @Column
     private Long doctorId;
 
-    @Column(nullable = false)
+    @Column
     private Long caregiverId;
 
     @Column(columnDefinition = "TEXT")
@@ -79,6 +79,10 @@ public class EntreeSouvenir {
     @Column(nullable = false)
     @Builder.Default
     private Boolean traitee = Boolean.FALSE;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer importance = 5;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

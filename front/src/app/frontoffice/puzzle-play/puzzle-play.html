@@ -1,0 +1,117 @@
+<app-header></app-header>
+<main class="puzzle-page">
+  <section class="puzzle-shell" *ngIf="!loading; else loadingTpl">
+    <div class="puzzle-top">
+      <div>
+        <p class="eyebrow">Puzzle Souvenir</p>
+        <h1>{{ puzzle?.title || 'Puzzle therapeutique' }}</h1>
+        <p class="lede">{{ puzzle?.description || 'Reconstituez l image souvenir du patient.' }}</p>
+      </div>
+      <div class="status-chip" [class.warning]="timeLimitExceeded">
+        {{ elapsedSeconds }}s / {{ puzzle?.timeLimitSeconds || 0 }}s
+      </div>
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="alert success" *ngIf="successMessage">{{ successMessage }}</div>
+
+    <div class="puzzle-layout" *ngIf="puzzle">
+      <section class="board-card">
+        <div class="board-toolbar">
+          <div>
+            <strong>Mouvements:</strong> {{ movesCount }}
+          </div>
+          <div>
+            <strong>Indices:</strong> {{ hintsUsed }} / {{ puzzle.maxHints }}
+          </div>
+          <div>
+            <strong>Progression:</strong> {{ completionPercent }}%
+          </div>
+        </div>
+
+        <div class="reference-preview" *ngIf="showReference">
+          <img [src]="sourceImage" [alt]="puzzle.title" />
+        </div>
+
+        <div
+          class="puzzle-board"
+          [style.gridTemplateColumns]="gridTemplateColumns"
+          [class.disabled]="!canPlay || submitting || puzzle.status !== 'ACTIVE'"
+        >
+          <button
+            type="button"
+            class="tile"
+            *ngFor="let tile of tiles; let i = index; trackBy: trackTile"
+            [class.empty]="tile.isEmpty"
+            [ngStyle]="tileStyle(tile)"
+            (click)="moveTile(i)"
+          >
+            <span *ngIf="tile.isEmpty">Vide</span>
+          </button>
+        </div>
+
+        <div class="board-actions">
+          <button type="button" class="btn secondary" (click)="useHint()" [disabled]="hintsUsed >= (puzzle.maxHints || 0)">
+            Voir l image
+          </button>
+          <button type="button" class="btn ghost" (click)="restartPuzzle()">Recommencer</button>
+        </div>
+      </section>
+
+      <aside class="info-card">
+        <div class="source-card">
+          <img [src]="sourceImage" [alt]="puzzle.souvenir.mediaTitle || puzzle.title" />
+          <div>
+            <h3>{{ puzzle.souvenir.mediaTitle || 'Souvenir source' }}</h3>
+            <p>{{ puzzle.souvenir.texte || 'Image utilisee pour construire le puzzle.' }}</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div>
+            <span>Difficulte</span>
+            <strong>{{ puzzle.difficulty }}</strong>
+          </div>
+          <div>
+            <span>Grille</span>
+            <strong>{{ puzzle.gridSize }} x {{ puzzle.gridSize }}</strong>
+          </div>
+          <div>
+            <span>Meilleur score</span>
+            <strong>{{ puzzle.bestScore ?? '-' }}</strong>
+          </div>
+          <div>
+            <span>Sessions</span>
+            <strong>{{ puzzle.completedSessions ?? 0 }}</strong>
+          </div>
+        </div>
+
+        <div class="leaderboard-card">
+          <h3>Classement</h3>
+          <div class="leaderboard-item" *ngFor="let entry of leaderboard">
+            <span>#{{ entry.rank }} Patient {{ entry.patientId }}</span>
+            <strong>{{ entry.bestScore }}</strong>
+          </div>
+          <p class="empty" *ngIf="leaderboard.length === 0">Aucune partie completee pour le moment.</p>
+        </div>
+
+        <div class="history-card">
+          <h3>Mes dernieres sessions</h3>
+          <div class="history-item" *ngFor="let session of latestSessions">
+            <span>{{ session.completed ? 'Completee' : 'Partielle' }} - {{ session.durationSeconds || 0 }}s</span>
+            <strong>{{ session.score ?? '-' }}</strong>
+          </div>
+          <p class="empty" *ngIf="latestSessions.length === 0">Aucune session enregistree.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <ng-template #loadingTpl>
+    <section class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement du puzzle souvenir...</p>
+    </section>
+  </ng-template>
+</main>
+<app-footer></app-footer>

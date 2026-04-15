@@ -1,156 +1,411 @@
-<div class="container-fluid p-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="h3 mb-1">
-                <i class="fi fi-rr-dice me-2 text-primary"></i> Jeux Medicaux
-            </h2>
-            <p class="text-muted mb-0 small">Outils d evaluation et de stimulation cognitive</p>
-        </div>
-        @if (!showForm) {
-        <div class="d-flex gap-3 align-items-center">
-            <div class="input-group search-bar shadow-sm rounded">
-                <span class="input-group-text border-end-0"><i class="fi fi-rr-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0 ps-0" placeholder="Rechercher un jeu..."
-                    [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" (input)="!searchTerm && onSearch()">
-            </div>
-            <button class="btn btn-primary shadow-sm text-nowrap" (click)="openForm()">
-                <i class="fi fi-rr-plus me-1"></i> Creer un nouveau jeu
-            </button>
-        </div>
-        }
+<div class="me-layout">
+  <aside class="mr-sidebar">
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link">
+        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
+        <span class="brand-text">MindCare</span>
+      </a>
     </div>
 
+    <nav class="sidebar-nav">
+      <span class="nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="nav-link">
+        <i class="fi fi-rr-house-blank"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/medical-reports" class="nav-link">
+        <i class="fi fi-rr-document"></i>
+        <span>Medical Reports</span>
+      </a>
+      <a routerLink="/admin/recommendation" class="nav-link">
+        <i class="fi fi-rr-comment-medical"></i>
+        <span>Recommendations</span>
+      </a>
+      <a routerLink="/admin/medical-events" class="nav-link active">
+        <i class="fi fi-rr-dice"></i>
+        <span>Medical Events</span>
+      </a>
+      <a routerLink="/admin/souvenirs" class="nav-link">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Souvenirs</span>
+      </a>
+      <a routerLink="/admin/files-management" class="nav-link">
+        <i class="fi fi-rr-folder-open"></i>
+        <span>Files Management</span>
+      </a>
+      <a routerLink="/admin/activities" class="nav-link">
+        <i class="fi fi-rr-list-check"></i>
+        <span>Activities</span>
+      </a>
+      <a routerLink="/admin/forums" class="nav-link">
+        <i class="fi fi-rr-comment-alt"></i>
+        <span>Forums</span>
+      </a>
+      <a routerLink="/admin/incidents" class="nav-link">
+        <i class="fi fi-rr-shield-exclamation"></i>
+        <span>Incidents</span>
+      </a>
+      <a routerLink="/admin/movement" class="nav-link">
+        <i class="fi fi-rr-running"></i>
+        <span>Movement</span>
+      </a>
+
+      <ng-container *ngIf="authService.isAdmin()">
+        <span class="nav-heading">Management</span>
+        <a routerLink="/admin/employee" class="nav-link">
+          <i class="fi fi-rr-employee-man"></i>
+          <span>Employees</span>
+        </a>
+        <a routerLink="/admin/customers" class="nav-link">
+          <i class="fi fi-rr-review"></i>
+          <span>Customers</span>
+        </a>
+        <a routerLink="/admin/user-management" class="nav-link">
+          <i class="fi fi-rr-users"></i>
+          <span>User Management</span>
+        </a>
+      </ng-container>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="nav-link logout-link">
+        <i class="fi fi-rr-exit"></i>
+        <span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="me-page">
+    <header class="me-hero">
+      <div class="me-hero-inner">
+        <div>
+          <h1 class="me-hero-title">
+            <span class="hero-icon"><i class="fi fi-rr-dice"></i></span>
+            Medical Events
+          </h1>
+          <p class="me-hero-subtitle">Create and manage cognitive games, activities, and therapeutic event schedules for patients</p>
+        </div>
+
+        <div class="me-hero-actions">
+          <div class="me-stat-chip">
+            <span class="chip-value">{{ events.length }}</span>
+            <span class="chip-label">Total</span>
+          </div>
+          <div class="me-stat-chip">
+            <span class="chip-value">{{ activeCount }}</span>
+            <span class="chip-label">Active</span>
+          </div>
+          <div class="me-stat-chip">
+            <span class="chip-value">{{ completedCount }}</span>
+            <span class="chip-label">Completed</span>
+          </div>
+          <div class="me-stat-chip">
+            <span class="chip-value">{{ hardCount }}</span>
+            <span class="chip-label">Hard</span>
+          </div>
+          <button type="button" class="btn-create" (click)="openForm()">
+            <i class="fi fi-rr-plus"></i>New Event
+          </button>
+        </div>
+      </div>
+    </header>
+
     @if (successMessage) {
-    <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2">
-        <i class="fi fi-rr-check-circle"></i> {{ successMessage }}
-        <button type="button" class="btn-close ms-auto" (click)="successMessage = ''"></button>
+    <div class="page-alert alert-success">
+      <i class="fi fi-rr-check-circle"></i>
+      <span>{{ successMessage }}</span>
+      <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
     </div>
     }
 
     @if (errorMessage) {
-    <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2">
-        <i class="fi fi-rr-exclamation"></i> {{ errorMessage }}
-        <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+    <div class="page-alert alert-danger">
+      <i class="fi fi-rr-triangle-warning"></i>
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
     </div>
     }
 
-    @if (showForm) {
-    <div class="card shadow border-0 mb-4 form-card">
-        <div class="card-header bg-primary text-white py-3">
-            <h5 class="mb-0 fw-semibold"><i class="fi fi-rr-add me-2"></i> Configuration d un nouveau jeu</h5>
+    <div class="me-body">
+      <aside class="me-list-panel">
+        <div class="me-list-toolbar">
+          <div class="search-wrap">
+            <i class="fi fi-rr-search"></i>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search medical events..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyFilters()"
+            />
+          </div>
+
+          <select class="form-select filter-select" [(ngModel)]="typeFilter" (ngModelChange)="applyFilters()">
+            <option value="">All types</option>
+            @for (type of typeOptions; track type) {
+            <option [value]="type">{{ type }}</option>
+            }
+          </select>
+
+          <select class="form-select filter-select" [(ngModel)]="difficultyFilter" (ngModelChange)="applyFilters()">
+            <option value="">All difficulties</option>
+            @for (difficulty of difficultyOptions; track difficulty) {
+            <option [value]="difficulty">{{ difficulty }}</option>
+            }
+          </select>
         </div>
-        <div class="card-body p-4">
-            <form (ngSubmit)="save()">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Titre du jeu <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" [(ngModel)]="newEvent.title" name="title" required
-                            placeholder="Ex: Puzzle de Memoire">
-                    </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Type</label>
-                        <select class="form-select" [(ngModel)]="newEvent.type" name="type">
-                            @for (t of typeOptions; track t) {
-                            <option [value]="t">{{ t }}</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Difficulte</label>
-                        <select class="form-select" [(ngModel)]="newEvent.difficulty" name="difficulty">
-                            @for (d of difficultyOptions; track d) {
-                            <option [value]="d">{{ d }}</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" [(ngModel)]="newEvent.description" name="description" rows="3"
-                            placeholder="Decrivez le jeu..."></textarea>
-                    </div>
-
-                </div>
-                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                    <button type="button" class="btn btn-light" (click)="cancel()">
-                        <i class="fi fi-rr-cross me-1"></i> Annuler
-                    </button>
-                    <button type="submit" class="btn btn-primary px-4"
-                        [disabled]="!newEvent.title || !newEvent.title.trim() || isSaving">
-                        @if (isSaving) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        }
-                        <i class="fi fi-rr-check me-1"></i> Enregistrer
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    }
-
-    @if (!showForm) {
-    <div class="row g-3">
-
-        @if (isLoading) {
-        <div class="col-12 text-center py-5">
-            <div class="spinner-border text-primary mb-3" role="status">
-                <span class="visually-hidden">Chargement...</span>
+        <div class="me-list-scroll">
+          @if (isLoading) {
+          <div class="p-3">
+            @for (item of [1, 2, 3, 4]; track item) {
+            <div class="skeleton-card">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line meta"></div>
+              <div class="skeleton-line meta short"></div>
             </div>
-            <p class="text-muted">Chargement des jeux medicaux...</p>
+            }
+          </div>
+          } @else if (filteredEvents.length > 0) {
+          @for (event of filteredEvents; track trackEvent($index, event)) {
+          <button
+            type="button"
+            class="me-card"
+            [class.active]="selectedEvent?.id === event.id"
+            (click)="selectEvent(event)"
+          >
+            <div class="me-card-top">
+              <span class="me-card-title">{{ event.title }}</span>
+              <span [class]="getDifficultyClass(event.difficulty)">{{ event.difficulty }}</span>
+            </div>
+            <div class="me-card-meta">
+              <i class="fi {{ getTypeIcon(event.type) }}"></i>
+              <span>{{ event.type }}</span>
+            </div>
+            <div class="me-card-meta">
+              <i class="fi fi-rr-user"></i>
+              <span>Patient {{ event.patientId || '-' }}</span>
+            </div>
+            <div class="me-card-state">
+              <span [class]="getStatusClass(event.status)">{{ getStatusLabel(event.status) }}</span>
+            </div>
+            <p class="me-card-preview">{{ event.description || 'No description provided.' }}</p>
+          </button>
+          }
+          } @else {
+          <div class="me-empty">
+            <div class="empty-icon"><i class="fi fi-rr-dice"></i></div>
+            <p>No medical events found</p>
+          </div>
+          }
         </div>
-        } @else if (events.length === 0) {
-        <div class="col-12 text-center py-5">
-            <i class="fi fi-rr-dice display-4 text-muted"></i>
-            <p class="mt-3 text-muted">Aucun jeu medical cree pour l instant.</p>
-            <button class="btn btn-primary" (click)="openForm()">
-                <i class="fi fi-rr-plus me-1"></i> Creer le premier jeu
-            </button>
+      </aside>
+
+      <main class="me-detail-panel">
+        @if (selectedEvent; as event) {
+        <div class="me-detail-inner">
+          <div class="detail-header">
+            <div class="detail-header-left">
+              <div class="detail-eyebrow">Event #{{ event.id || '-' }}</div>
+              <h2>{{ event.title }}</h2>
+              <div class="detail-badges">
+                <span class="type-chip">{{ event.type }}</span>
+                <span [class]="getDifficultyClass(event.difficulty)">{{ event.difficulty }}</span>
+                <span [class]="getStatusClass(event.status)">{{ getStatusLabel(event.status) }}</span>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button type="button" class="btn-action btn-edit" (click)="editEvent(event)">
+                <i class="fi fi-rr-pencil"></i>Edit
+              </button>
+              <button type="button" class="btn-action btn-delete" (click)="delete(event.id)">
+                <i class="fi fi-rr-trash"></i>Delete
+              </button>
+            </div>
+          </div>
+
+          <div class="spotlight-card">
+            <div class="spotlight-item">
+              <span class="spotlight-label">Patient</span>
+              <strong>#{{ event.patientId || '-' }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Family</span>
+              <strong>#{{ event.familyId || '-' }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Participations</span>
+              <strong>{{ event.participationCount ?? 0 }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Auto Generated</span>
+              <strong>{{ event.autoGenerated ? 'Yes' : 'No' }}</strong>
+            </div>
+          </div>
+
+          <div class="me-detail-grid">
+            <section class="info-card">
+              <div class="info-card-header">
+                <span class="card-icon icon-blue"><i class="fi fi-rr-dice"></i></span>
+                <h5>Event Details</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="data-grid">
+                  <div class="data-field">
+                    <span class="field-label">Start Date</span>
+                    <span class="field-value">{{ formatDateTime(event.startDate) }}</span>
+                  </div>
+                  <div class="data-field">
+                    <span class="field-label">End Date</span>
+                    <span class="field-value">{{ formatDateTime(event.endDate) }}</span>
+                  </div>
+                  <div class="data-field">
+                    <span class="field-label">Created At</span>
+                    <span class="field-value">{{ formatDateTime(event.createdAt) }}</span>
+                  </div>
+                  <div class="data-field">
+                    <span class="field-label">Updated At</span>
+                    <span class="field-value">{{ formatDateTime(event.updatedAt) }}</span>
+                  </div>
+                  <div class="data-field full">
+                    <span class="field-label">Description</span>
+                    <div class="desc-block">{{ event.description || 'No description provided.' }}</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="info-card">
+              <div class="info-card-header">
+                <span class="card-icon icon-teal"><i class="fi fi-rr-stats"></i></span>
+                <h5>Configuration Summary</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="summary-grid">
+                  <div class="summary-item">
+                    <span class="summary-label">Type</span>
+                    <strong>{{ event.type }}</strong>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Difficulty</span>
+                    <strong>{{ event.difficulty }}</strong>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Status</span>
+                    <strong>{{ getStatusLabel(event.status) }}</strong>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Patient Target</span>
+                    <strong>{{ event.patientId || '-' }}</strong>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
         } @else {
-        @for (event of events; track event.id || $index) {
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm event-card">
-                <div class="card-body">
-                    <div class="d-flex align-items-start gap-3 mb-3">
-                        <div class="event-icon bg-primary-subtle text-primary rounded-3 p-2">
-                            <i class="fi {{ getTypeIcon(event.type) }} fs-4"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 fw-bold">{{ event.title }}</h5>
-                            <div class="d-flex gap-2 mt-2">
-                                <span class="badge bg-light text-secondary border border-secondary-subtle px-2 py-1">
-                                    <i class="fi fi-rr-apps me-1"></i> {{ event.type }}
-                                </span>
-                                <span class="badge px-2 py-1" [ngClass]="getDifficultyClass(event.difficulty)">
-                                    <i class="fi fi-rr-signal-alt-1 me-1"></i> {{ event.difficulty }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-body-tertiary rounded p-3 mb-3">
-                        @if (event.description) {
-                        <p class="text-secondary small mb-0 font-monospace">{{ event.description }}</p>
-                        } @else {
-                        <p class="text-muted small mb-0 fst-italic">Aucune description fournie.</p>
-                        }
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
-                        <small class="text-muted fw-medium"><i class="fi fi-rr-fingerprint me-1"></i> Ref: #{{
-                            event.id }}</small>
-                        <button class="btn btn-sm btn-outline-danger" (click)="delete(event.id)"
-                            title="Supprimer ce jeu">
-                            <i class="fi fi-rr-trash"></i> Supprimer
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="me-no-selection">
+          <div class="no-sel-icon"><i class="fi fi-rr-dice"></i></div>
+          <p class="no-sel-title">No medical event selected</p>
+          <p class="no-sel-sub">Choose an event from the list to inspect its configuration and schedule.</p>
         </div>
         }
-        }
+      </main>
     </div>
-    }
 
+    <footer class="me-footer">
+      <span>© 2025 MindCare — All rights reserved</span>
+      <a routerLink="/admin">Back to Dashboard</a>
+    </footer>
+  </div>
 </div>
+
+@if (showForm) {
+<div class="me-modal-backdrop" (click)="cancel()">
+  <section class="me-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="me-modal-header">
+      <h3>
+        <span class="modal-header-icon"><i class="fi fi-rr-dice"></i></span>
+        {{ isEditing ? 'Edit Medical Event' : 'Create Medical Event' }}
+      </h3>
+      <button type="button" class="btn-modal-close" (click)="cancel()" aria-label="Close">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="save()">
+      <div class="me-modal-body">
+        <div class="modal-grid">
+          <div class="modal-field full">
+            <label class="modal-label">Title</label>
+            <input type="text" class="form-control" [(ngModel)]="currentEvent.title" name="title" required />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Type</label>
+            <select class="form-select" [(ngModel)]="currentEvent.type" name="type">
+              @for (type of typeOptions; track type) {
+              <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Difficulty</label>
+            <select class="form-select" [(ngModel)]="currentEvent.difficulty" name="difficulty">
+              @for (difficulty of difficultyOptions; track difficulty) {
+              <option [value]="difficulty">{{ difficulty }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Status</label>
+            <select class="form-select" [(ngModel)]="currentEvent.status" name="status">
+              @for (status of statusOptions; track status) {
+              <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Patient ID</label>
+            <input type="number" class="form-control" [(ngModel)]="currentEvent.patientId" name="patientId" />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Family ID</label>
+            <input type="number" class="form-control" [(ngModel)]="currentEvent.familyId" name="familyId" />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Start Date</label>
+            <input type="date" class="form-control" [(ngModel)]="currentEvent.startDate" name="startDate" />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">End Date</label>
+            <input type="date" class="form-control" [(ngModel)]="currentEvent.endDate" name="endDate" />
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Description</label>
+            <textarea class="form-control" [(ngModel)]="currentEvent.description" name="description" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="me-modal-footer">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="!currentEvent.title || !currentEvent.title.trim() || isSaving">
+          @if (isSaving) {
+          <span class="spinner-border spinner-border-sm"></span>
+          }
+          {{ isEditing ? 'Save changes' : 'Create event' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+}

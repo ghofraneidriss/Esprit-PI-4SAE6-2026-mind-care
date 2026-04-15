@@ -23,6 +23,7 @@ import { IncidentReportFrontPage } from './incident-report/incident-report-front
 import { RecommendationsPage } from './recommendations/recommendations';
 import { SouvenirsFrontPage } from './souvenirs/souvenirs';
 import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
+import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
 
 const routes: Routes = [
   { path: '', component: Home1 },
@@ -51,6 +52,8 @@ const routes: Routes = [
   { path: 'incidents/report', component: IncidentReportFrontPage },
   { path: 'recommendations', component: RecommendationsPage },
   { path: 'souvenirs', component: SouvenirsFrontPage },
+  { path: 'puzzle-play/:eventId', component: PuzzlePlayPage },
+  { path: 'puzzles/:eventId', component: PuzzlePlayPage },
   { path: 'alzheimer/comprendre-maladie', component: AlzheimerUnderstandingFrontPage },
   { path: '**', redirectTo: '' },
 ];

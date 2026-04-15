@@ -32,6 +32,7 @@ public class EntreeSouvenirResponse {
     private Boolean voiceRecognized;
     private ThemeCulturel themeCulturel;
     private Boolean traitee;
+    private Integer importance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

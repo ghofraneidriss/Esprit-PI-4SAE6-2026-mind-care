@@ -1,241 +1,580 @@
-<div class="container-fluid p-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <div>
-            <h2 class="h3 mb-1"><i class="fi fi-rr-book-alt me-2 text-primary"></i>Souvenirs Culturels</h2>
-            <p class="text-muted mb-0 small">Gestion des souvenirs IMAGE/AUDIO pour stimulation de memoire Alzheimer.</p>
-        </div>
-        <button class="btn btn-primary" (click)="openCreateForm()">
-            <i class="fi fi-rr-plus me-1"></i> Nouveau Souvenir
-        </button>
+<div class="sou-layout">
+  <aside class="mr-sidebar">
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link">
+        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
+        <span class="brand-text">MindCare</span>
+      </a>
     </div>
 
+    <nav class="sidebar-nav">
+      <span class="nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="nav-link">
+        <i class="fi fi-rr-house-blank"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/medical-reports" class="nav-link">
+        <i class="fi fi-rr-document"></i>
+        <span>Medical Reports</span>
+      </a>
+      <a routerLink="/admin/recommendation" class="nav-link">
+        <i class="fi fi-rr-comment-medical"></i>
+        <span>Recommendations</span>
+      </a>
+      <a routerLink="/admin/medical-events" class="nav-link">
+        <i class="fi fi-rr-dice"></i>
+        <span>Medical Events</span>
+      </a>
+      <a routerLink="/admin/souvenirs" class="nav-link active">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Souvenirs</span>
+      </a>
+      <a routerLink="/admin/files-management" class="nav-link">
+        <i class="fi fi-rr-folder-open"></i>
+        <span>Files Management</span>
+      </a>
+      <a routerLink="/admin/activities" class="nav-link">
+        <i class="fi fi-rr-list-check"></i>
+        <span>Activities</span>
+      </a>
+      <a routerLink="/admin/forums" class="nav-link">
+        <i class="fi fi-rr-comment-alt"></i>
+        <span>Forums</span>
+      </a>
+      <a routerLink="/admin/incidents" class="nav-link">
+        <i class="fi fi-rr-shield-exclamation"></i>
+        <span>Incidents</span>
+      </a>
+      <a routerLink="/admin/movement" class="nav-link">
+        <i class="fi fi-rr-running"></i>
+        <span>Movement</span>
+      </a>
+
+      <ng-container *ngIf="authService.isAdmin()">
+        <span class="nav-heading">Management</span>
+        <a routerLink="/admin/employee" class="nav-link">
+          <i class="fi fi-rr-employee-man"></i>
+          <span>Employees</span>
+        </a>
+        <a routerLink="/admin/customers" class="nav-link">
+          <i class="fi fi-rr-review"></i>
+          <span>Customers</span>
+        </a>
+        <a routerLink="/admin/user-management" class="nav-link">
+          <i class="fi fi-rr-users"></i>
+          <span>User Management</span>
+        </a>
+      </ng-container>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="nav-link logout-link">
+        <i class="fi fi-rr-exit"></i>
+        <span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="sou-page">
+    <header class="sou-hero">
+      <div class="sou-hero-inner">
+        <div>
+          <h1 class="sou-hero-title">
+            <span class="hero-icon"><i class="fi fi-rr-book-alt"></i></span>
+            Souvenirs Culturels
+          </h1>
+          <p class="sou-hero-subtitle">Manage image and audio memory cues for patients, caregivers, and therapeutic recall sessions</p>
+        </div>
+
+        <div class="sou-hero-actions">
+          <div class="sou-stat-chip">
+            <span class="chip-value">{{ totalEntrees }}</span>
+            <span class="chip-label">Total</span>
+          </div>
+          <div class="sou-stat-chip">
+            <span class="chip-value">{{ imageCount }}</span>
+            <span class="chip-label">Images</span>
+          </div>
+          <div class="sou-stat-chip">
+            <span class="chip-value">{{ audioCount }}</span>
+            <span class="chip-label">Audio</span>
+          </div>
+          <div class="sou-stat-chip">
+            <span class="chip-value">{{ treatedCount }}</span>
+            <span class="chip-label">Treated</span>
+          </div>
+          <button type="button" class="btn-create" (click)="openCreateForm()">
+            <i class="fi fi-rr-plus"></i>New Souvenir
+          </button>
+        </div>
+      </div>
+    </header>
+
     @if (errorMessage) {
-    <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2">
-        <i class="fi fi-rr-exclamation"></i>
-        <div>{{ errorMessage }}</div>
-        <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''"></button>
+    <div class="page-alert alert-danger">
+      <i class="fi fi-rr-triangle-warning"></i>
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
     </div>
     }
 
     @if (successMessage) {
-    <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2">
-        <i class="fi fi-rr-check-circle"></i>
-        <div>{{ successMessage }}</div>
-        <button type="button" class="btn-close ms-auto" (click)="successMessage = ''"></button>
+    <div class="page-alert alert-success">
+      <i class="fi fi-rr-check-circle"></i>
+      <span>{{ successMessage }}</span>
+      <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
     </div>
     }
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label">Patient ID</label>
-                    <input class="form-control" type="number" [(ngModel)]="patientFilterInput" placeholder="Ex: 4">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Theme</label>
-                    <select class="form-select" [(ngModel)]="themeFilter">
-                        <option value="">Tous les themes</option>
-                        @for (theme of themeOptions; track theme) {
-                        <option [value]="theme">{{ theme }}</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Media</label>
-                    <select class="form-select" [(ngModel)]="mediaTypeFilter">
-                        <option value="">Tous les medias</option>
-                        @for (mediaType of mediaTypeOptions; track mediaType) {
-                        <option [value]="mediaType">{{ mediaType }}</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button class="btn btn-outline-primary w-100" (click)="loadByPatient()">
-                        <i class="fi fi-rr-search me-1"></i> Charger
-                    </button>
-                </div>
-                <div class="col-12">
-                    <div class="stats-chip mt-2">
-                        <div class="fw-semibold">Total souvenirs: {{ totalEntrees }}</div>
-                    </div>
-                </div>
-            </div>
+    <div class="sou-body">
+      <aside class="sou-list-panel">
+        <div class="sou-list-toolbar">
+          <div class="search-wrap patient-wrap">
+            <i class="fi fi-rr-user"></i>
+            <input
+              class="form-control"
+              type="number"
+              [(ngModel)]="patientFilterInput"
+              placeholder="Patient ID"
+            />
+          </div>
+
+          <div class="search-wrap">
+            <i class="fi fi-rr-search"></i>
+            <input
+              class="form-control"
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyFilters()"
+              placeholder="Search souvenirs..."
+            />
+          </div>
+
+          <select class="form-select filter-select" [(ngModel)]="themeFilter">
+            <option value="">All themes</option>
+            @for (theme of themeOptions; track theme) {
+            <option [value]="theme">{{ theme }}</option>
+            }
+          </select>
+
+          <select class="form-select filter-select" [(ngModel)]="mediaTypeFilter">
+            <option value="">All media</option>
+            @for (mediaType of mediaTypeOptions; track mediaType) {
+            <option [value]="mediaType">{{ mediaType }}</option>
+            }
+          </select>
+
+          <button type="button" class="btn-action btn-primary w-100" (click)="loadByPatient()">
+            <i class="fi fi-rr-search"></i>Load souvenirs
+          </button>
         </div>
-    </div>
 
-    @if (showEntreeForm) {
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-            {{ isEditingEntree ? 'Modifier Souvenir' : 'Creer Souvenir' }}
-        </div>
-        <div class="card-body">
-            <form (ngSubmit)="saveEntree()">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Doctor ID *</label>
-                        <input class="form-control" type="number" [(ngModel)]="entreeForm.doctorId" name="doctorId" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Care giver ID *</label>
-                        <input class="form-control" type="number" [(ngModel)]="entreeForm.caregiverId" name="caregiverId" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Patient ID *</label>
-                        <input class="form-control" type="number" [(ngModel)]="entreeForm.patientId" name="patientId" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Theme culturel *</label>
-                        <select class="form-select" [(ngModel)]="entreeForm.themeCulturel" name="themeCulturel">
-                            @for (theme of themeOptions; track theme) {
-                            <option [value]="theme">{{ theme }}</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Type media *</label>
-                        <select class="form-select" [(ngModel)]="entreeForm.mediaType" name="mediaType">
-                            @for (mediaType of mediaTypeOptions; track mediaType) {
-                            <option [value]="mediaType">{{ mediaType }}</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Titre media</label>
-                        <input class="form-control" type="text" [(ngModel)]="entreeForm.mediaTitle" name="mediaTitle">
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Media URL</label>
-                        <input class="form-control" type="text" [(ngModel)]="entreeForm.mediaUrl" name="mediaUrl"
-                            placeholder="https://... (optionnel, mais recommande)">
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Infos care giver (source clinique)</label>
-                        <textarea class="form-control" rows="2" [(ngModel)]="entreeForm.infosCaregiver" name="infosCaregiver"></textarea>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label">Texte souvenir *</label>
-                        <textarea class="form-control" rows="3" [(ngModel)]="entreeForm.texte" name="texte" required></textarea>
-                    </div>
-
-                    @if (entreeForm.mediaType === 'AUDIO') {
-                    <div class="col-md-6">
-                        <label class="form-label">Nom voix attendue</label>
-                        <input class="form-control" type="text" [(ngModel)]="entreeForm.expectedSpeakerName" name="expectedSpeakerName">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Lien avec patient</label>
-                        <input class="form-control" type="text" [(ngModel)]="entreeForm.expectedSpeakerRelation" name="expectedSpeakerRelation" placeholder="Ex: Mere, Frere, Ami">
-                    </div>
-                    }
-                </div>
-
-                <div class="d-flex justify-content-end gap-2 mt-3">
-                    <button type="button" class="btn btn-light" (click)="cancelEntreeForm()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="isSavingEntree">
-                        @if (isSavingEntree) {
-                        <span class="spinner-border spinner-border-sm me-2"></span>
-                        }
-                        {{ isEditingEntree ? 'Mettre a jour' : 'Enregistrer' }}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    }
-
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Liste des souvenirs</span>
-            <small class="text-muted">Cliquez une ligne pour afficher l apercu media</small>
-        </div>
-        <div class="card-body p-0">
-            @if (isLoadingEntrees) {
-            <div class="text-center py-4">
-                <span class="spinner-border spinner-border-sm me-2"></span>Chargement...
-            </div>
-            } @else {
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Patient</th>
-                            <th>Theme</th>
-                            <th>Media</th>
-                            <th>Texte</th>
-                            <th>Etat</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (entree of entrees; track entree.id || $index) {
-                        <tr [class.row-selected]="selectedEntree?.id === entree.id" (click)="selectEntree(entree)">
-                            <td>#{{ entree.id }}</td>
-                            <td>{{ entree.patientId }}</td>
-                            <td>{{ entree.themeCulturel }}</td>
-                            <td><span class="badge bg-light text-dark border">{{ entree.mediaType }}</span></td>
-                            <td class="text-truncate-cell" title="{{ entree.texte }}">{{ entree.texte }}</td>
-                            <td>
-                                <span class="badge" [ngClass]="entree.traitee ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
-                                    {{ entree.traitee ? 'TRAITEE' : 'EN_ATTENTE' }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="d-flex gap-1">
-                                    <button class="btn btn-sm btn-outline-primary" (click)="$event.stopPropagation(); editEntree(entree)">Modifier</button>
-                                    <button class="btn btn-sm btn-outline-success" (click)="$event.stopPropagation(); markTraitee(entree)">Traiter</button>
-                                    <button class="btn btn-sm btn-outline-danger" (click)="$event.stopPropagation(); deleteEntree(entree)">Supprimer</button>
-                                </div>
-                            </td>
-                        </tr>
-                        } @empty {
-                        <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">Aucun souvenir.</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+        <div class="sou-list-scroll">
+          @if (isLoadingEntrees) {
+          <div class="p-3">
+            @for (item of [1, 2, 3, 4]; track item) {
+            <div class="skeleton-card">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line meta"></div>
+              <div class="skeleton-line meta short"></div>
             </div>
             }
-        </div>
-    </div>
-
-    @if (selectedEntree) {
-    <div class="card border-0 shadow-sm">
-        <div class="card-header">Apercu souvenir selectionne</div>
-        <div class="card-body">
-            <h5 class="mb-1">{{ selectedEntree.mediaTitle || ('Souvenir #' + selectedEntree.id) }}</h5>
-            <p class="text-muted mb-3">{{ selectedEntree.texte }}</p>
-
-            @if (selectedEntree.mediaType === 'IMAGE') {
-            @if (selectedEntree.mediaUrl) {
-            <img [src]="selectedEntree.mediaUrl || ''" alt="Souvenir" class="media-preview-image">
-            } @else {
-            <div class="small text-muted">Aucune image URL fournie pour ce souvenir.</div>
-            }
-            } @else {
-            @if (selectedEntree.mediaUrl) {
-            <audio class="w-100" controls [src]="selectedEntree.mediaUrl || ''"></audio>
-            } @else {
-            <div class="small text-muted">Aucun audio URL fourni pour ce souvenir.</div>
-            }
-            <div class="mt-3 small text-muted">
-                <div>Voix attendue: {{ selectedEntree.expectedSpeakerName || '-' }}</div>
-                <div>Lien: {{ selectedEntree.expectedSpeakerRelation || '-' }}</div>
-                <div>Reponse patient: {{ selectedEntree.patientGuessSpeakerName || '-' }}</div>
-                <div>Voix reconnue: {{ selectedEntree.voiceRecognized ? 'Oui' : 'Non' }}</div>
+          </div>
+          } @else if (filteredEntrees.length > 0) {
+          @for (entree of filteredEntrees; track trackEntree($index, entree)) {
+          <button
+            type="button"
+            class="sou-card"
+            [class.active]="selectedEntree?.id === entree.id"
+            (click)="selectEntree(entree)"
+          >
+            <div class="sou-card-top">
+              <span class="sou-card-title">{{ entree.mediaTitle || ('Souvenir #' + (entree.id || $index + 1)) }}</span>
+              <span [class]="getMediaBadgeClass(entree.mediaType)">{{ entree.mediaType }}</span>
             </div>
-            }
-        </div>
-    </div>
-    }
 
+            <div class="sou-card-meta">
+              <i class="fi fi-rr-user"></i>
+              <span>Patient {{ entree.patientId }}</span>
+            </div>
+            <div class="sou-card-meta">
+              <i class="fi fi-rr-palette"></i>
+              <span>{{ entree.themeCulturel }}</span>
+            </div>
+            <div class="sou-card-state">
+              <span [class]="getProcessingBadgeClass(entree)">{{ getProcessingLabel(entree) }}</span>
+            </div>
+            <p class="sou-card-preview">{{ entree.texte }}</p>
+          </button>
+          }
+          } @else {
+          <div class="sou-empty">
+            <div class="empty-icon"><i class="fi fi-rr-book-open-cover"></i></div>
+            <p>No souvenirs found</p>
+          </div>
+          }
+        </div>
+      </aside>
+
+      <main class="sou-detail-panel">
+        @if (selectedEntree; as entree) {
+        <div class="sou-detail-inner">
+          <div class="detail-header">
+            <div class="detail-header-left">
+              <div class="detail-eyebrow">Souvenir #{{ entree.id || '-' }}</div>
+              <h2>{{ entree.mediaTitle || 'Untitled Souvenir' }}</h2>
+              <div class="detail-badges">
+                <span [class]="getMediaBadgeClass(entree.mediaType)">{{ entree.mediaType }}</span>
+                <span class="theme-chip">{{ entree.themeCulturel }}</span>
+                <span [class]="getProcessingBadgeClass(entree)">{{ getProcessingLabel(entree) }}</span>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button type="button" class="btn-action btn-edit" (click)="editEntree(entree)">
+                <i class="fi fi-rr-pencil"></i>Edit
+              </button>
+              @if (!entree.traitee) {
+              <button type="button" class="btn-action btn-success" (click)="markTraitee(entree)">
+                <i class="fi fi-rr-check"></i>Mark treated
+              </button>
+              }
+              <button type="button" class="btn-action btn-delete" (click)="deleteEntree(entree)">
+                <i class="fi fi-rr-trash"></i>Delete
+              </button>
+            </div>
+          </div>
+
+          <div class="spotlight-card">
+            <div class="spotlight-item">
+              <span class="spotlight-label">Patient</span>
+              <strong>#{{ entree.patientId }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Doctor</span>
+              <strong>#{{ entree.doctorId }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Caregiver</span>
+              <strong>#{{ entree.caregiverId }}</strong>
+            </div>
+            <div class="spotlight-item">
+              <span class="spotlight-label">Created</span>
+              <strong>{{ formatDateTime(entree.createdAt) }}</strong>
+            </div>
+          </div>
+
+          <div class="sou-detail-grid">
+            <section class="info-card">
+              <div class="info-card-header">
+                <span class="card-icon icon-blue"><i class="fi fi-rr-book-alt"></i></span>
+                <h5>Souvenir Details</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="data-grid">
+                  <div class="data-field">
+                    <span class="field-label">Theme</span>
+                    <span class="field-value">{{ entree.themeCulturel }}</span>
+                  </div>
+                  <div class="data-field">
+                    <span class="field-label">Media Type</span>
+                    <span class="field-value">{{ entree.mediaType }}</span>
+                  </div>
+                  <div class="data-field">
+                    <span class="field-label">Media Title</span>
+                    <span class="field-value">{{ entree.mediaTitle || '-' }}</span>
+                  </div>
+                  <div class="data-field">
+                    <span class="field-label">Updated At</span>
+                    <span class="field-value">{{ formatDateTime(entree.updatedAt) }}</span>
+                  </div>
+                  <div class="data-field full">
+                    <span class="field-label">Caregiver Notes</span>
+                    <div class="desc-block">{{ entree.infosCaregiver || 'No caregiver notes provided.' }}</div>
+                  </div>
+                  <div class="data-field full">
+                    <span class="field-label">Memory Text</span>
+                    <div class="desc-block">{{ entree.texte }}</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="info-card">
+              <div class="info-card-header">
+                <span class="card-icon icon-teal"><i class="fi fi-rr-picture"></i></span>
+                <h5>Media Preview</h5>
+              </div>
+              <div class="info-card-body">
+                @if (entree.mediaType === 'IMAGE') {
+                @if (entree.mediaUrl) {
+                <img [src]="entree.mediaUrl" [alt]="entree.mediaTitle || 'Souvenir image'" class="media-preview-image" />
+                } @else {
+                <div class="panel-state">No image URL provided for this souvenir.</div>
+                }
+                } @else {
+                @if (entree.mediaUrl) {
+                <audio class="audio-player" controls [src]="entree.mediaUrl"></audio>
+                } @else {
+                <div class="panel-state">No audio URL provided for this souvenir.</div>
+                }
+
+                <div class="voice-grid">
+                  <div class="voice-card">
+                    <span class="voice-label">Expected Voice</span>
+                    <strong>{{ entree.expectedSpeakerName || '-' }}</strong>
+                  </div>
+                  <div class="voice-card">
+                    <span class="voice-label">Relation</span>
+                    <strong>{{ entree.expectedSpeakerRelation || '-' }}</strong>
+                  </div>
+                  <div class="voice-card">
+                    <span class="voice-label">Patient Guess</span>
+                    <strong>{{ entree.patientGuessSpeakerName || '-' }}</strong>
+                  </div>
+                  <div class="voice-card">
+                    <span class="voice-label">Recognized</span>
+                    <strong>{{ entree.voiceRecognized ? 'Yes' : 'No' }}</strong>
+                  </div>
+                </div>
+                }
+
+                <div class="media-link-block">
+                  <span class="field-label">Media URL</span>
+                  @if (entree.mediaUrl) {
+                  <a [href]="entree.mediaUrl" target="_blank" rel="noreferrer" class="media-link">
+                    {{ entree.mediaUrl }}
+                  </a>
+                  } @else {
+                  <span class="field-value">-</span>
+                  }
+                </div>
+
+                @if (entree.mediaType === 'IMAGE') {
+                <div class="puzzle-builder">
+                  <div class="puzzle-builder-copy">
+                    <span class="field-label">Therapeutic Puzzle</span>
+                    <p class="puzzle-builder-text">
+                      Generate a playable puzzle and its linked medical event directly from this image souvenir.
+                    </p>
+                  </div>
+
+                  <button type="button" class="btn-action btn-primary" (click)="openPuzzleForm(entree)">
+                    <i class="fi fi-rr-dice-four"></i>Create puzzle
+                  </button>
+                </div>
+                }
+              </div>
+            </section>
+          </div>
+        </div>
+        } @else {
+        <div class="sou-no-selection">
+          <div class="no-sel-icon"><i class="fi fi-rr-book-open-cover"></i></div>
+          <p class="no-sel-title">No souvenir selected</p>
+          <p class="no-sel-sub">Choose a souvenir from the list to inspect its media, context, and caregiver notes.</p>
+        </div>
+        }
+      </main>
+    </div>
+
+    <footer class="sou-footer">
+      <span>© 2025 MindCare — All rights reserved</span>
+      <a routerLink="/admin">Back to Dashboard</a>
+    </footer>
+  </div>
 </div>
+
+@if (showEntreeForm) {
+<div class="sou-modal-backdrop" (click)="cancelEntreeForm()">
+  <section class="sou-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="sou-modal-header">
+      <h3>
+        <span class="modal-header-icon"><i class="fi fi-rr-book-alt"></i></span>
+        {{ isEditingEntree ? 'Edit Souvenir' : 'Create Souvenir' }}
+      </h3>
+      <button type="button" class="btn-modal-close" (click)="cancelEntreeForm()" aria-label="Close">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="saveEntree()">
+      <div class="sou-modal-body">
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label class="modal-label">Doctor ID</label>
+            <input class="form-control" type="number" [(ngModel)]="entreeForm.doctorId" name="doctorId" required />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Caregiver ID</label>
+            <input class="form-control" type="number" [(ngModel)]="entreeForm.caregiverId" name="caregiverId" required />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Patient ID</label>
+            <input class="form-control" type="number" [(ngModel)]="entreeForm.patientId" name="patientId" required />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Theme</label>
+            <select class="form-select" [(ngModel)]="entreeForm.themeCulturel" name="themeCulturel">
+              @for (theme of themeOptions; track theme) {
+              <option [value]="theme">{{ theme }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Media Type</label>
+            <select class="form-select" [(ngModel)]="entreeForm.mediaType" name="mediaType">
+              @for (mediaType of mediaTypeOptions; track mediaType) {
+              <option [value]="mediaType">{{ mediaType }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Media Title</label>
+            <input class="form-control" type="text" [(ngModel)]="entreeForm.mediaTitle" name="mediaTitle" />
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Media URL</label>
+            <input
+              class="form-control"
+              type="text"
+              [(ngModel)]="entreeForm.mediaUrl"
+              name="mediaUrl"
+              placeholder="https://... (optional but recommended)"
+            />
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Caregiver Notes</label>
+            <textarea class="form-control" rows="2" [(ngModel)]="entreeForm.infosCaregiver" name="infosCaregiver"></textarea>
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Memory Text</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="entreeForm.texte" name="texte" required></textarea>
+          </div>
+
+          @if (entreeForm.mediaType === 'AUDIO') {
+          <div class="modal-field">
+            <label class="modal-label">Expected Speaker</label>
+            <input class="form-control" type="text" [(ngModel)]="entreeForm.expectedSpeakerName" name="expectedSpeakerName" />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Patient Relation</label>
+            <input
+              class="form-control"
+              type="text"
+              [(ngModel)]="entreeForm.expectedSpeakerRelation"
+              name="expectedSpeakerRelation"
+              placeholder="Mother, brother, friend..."
+            />
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="sou-modal-footer">
+        <button type="button" class="btn-cancel" (click)="cancelEntreeForm()">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="isSavingEntree">
+          @if (isSavingEntree) {
+          <span class="spinner-border spinner-border-sm"></span>
+          }
+          {{ isEditingEntree ? 'Save changes' : 'Create souvenir' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+}
+
+@if (showPuzzleForm) {
+<div class="sou-modal-backdrop" (click)="cancelPuzzleForm()">
+  <section class="sou-modal puzzle-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="sou-modal-header">
+      <h3>
+        <span class="modal-header-icon"><i class="fi fi-rr-dice-four"></i></span>
+        Create Puzzle
+      </h3>
+      <button type="button" class="btn-modal-close" (click)="cancelPuzzleForm()" aria-label="Close">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="createPuzzle()">
+      <div class="sou-modal-body">
+        <div class="puzzle-source-banner" *ngIf="puzzleSourceEntree as source">
+          <div>
+            <span class="field-label">Source souvenir</span>
+            <strong>{{ source.mediaTitle || ('Souvenir #' + source.id) }}</strong>
+            <p>Patient #{{ source.patientId }} · IMAGE · The medical event will be created automatically by the API.</p>
+          </div>
+        </div>
+
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label class="modal-label">Title</label>
+            <input class="form-control" type="text" [(ngModel)]="puzzleForm.title" name="puzzleTitle" />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Difficulty</label>
+            <select class="form-select" [(ngModel)]="puzzleForm.difficulty" name="puzzleDifficulty">
+              @for (difficulty of puzzleDifficultyOptions; track difficulty) {
+              <option [value]="difficulty">{{ difficulty }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Time limit (seconds)</label>
+            <input
+              class="form-control"
+              type="number"
+              min="30"
+              max="3600"
+              [(ngModel)]="puzzleForm.timeLimitSeconds"
+              name="puzzleTimeLimitSeconds"
+              required
+            />
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Max hints</label>
+            <input
+              class="form-control"
+              type="number"
+              min="0"
+              max="10"
+              [(ngModel)]="puzzleForm.maxHints"
+              name="puzzleMaxHints"
+              required
+            />
+          </div>
+
+          <div class="modal-field full">
+            <label class="modal-label">Description</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="puzzleForm.description" name="puzzleDescription"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="sou-modal-footer">
+        <button type="button" class="btn-cancel" (click)="cancelPuzzleForm()">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="isCreatingPuzzle">
+          @if (isCreatingPuzzle) {
+          <span class="spinner-border spinner-border-sm"></span>
+          }
+          Create puzzle
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+}

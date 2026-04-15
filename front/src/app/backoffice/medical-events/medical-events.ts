@@ -1,7 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RecommendationService } from '../recommendation/recommendation.service';
-import { DifficultyLevel, MedicalEvent, MedicalEventType } from '../recommendation/recommendation.model';
+import {
+    DifficultyLevel,
+    MedicalEvent,
+    MedicalEventStatus,
+    MedicalEventType
+} from '../recommendation/recommendation.model';
+import { AuthService } from '../../frontoffice/auth/auth.service';
 
 @Component({
     selector: 'app-medical-events',
@@ -11,105 +17,174 @@ import { DifficultyLevel, MedicalEvent, MedicalEventType } from '../recommendati
 })
 export class MedicalEventsPage implements OnInit {
     events: MedicalEvent[] = [];
+    filteredEvents: MedicalEvent[] = [];
+    selectedEvent: MedicalEvent | null = null;
+
     showForm = false;
+    isEditing = false;
     isLoading = true;
     isSaving = false;
+
     searchTerm = '';
+    typeFilter: MedicalEventType | '' = '';
+    difficultyFilter: DifficultyLevel | '' = '';
     errorMessage = '';
     successMessage = '';
 
-    difficultyOptions = Object.values(DifficultyLevel);
-    typeOptions = Object.values(MedicalEventType);
+    readonly difficultyOptions = Object.values(DifficultyLevel);
+    readonly typeOptions = Object.values(MedicalEventType);
+    readonly statusOptions = Object.values(MedicalEventStatus);
 
-    newEvent: MedicalEvent = this.initNew();
+    currentEvent: MedicalEvent = this.initNew();
 
-    constructor(private recommendationService: RecommendationService, private cdr: ChangeDetectorRef) { }
+    constructor(
+        private readonly recommendationService: RecommendationService,
+        public readonly authService: AuthService
+    ) { }
 
     ngOnInit(): void {
         this.loadEvents();
     }
 
-    private initNew(): MedicalEvent {
-        return { title: '', description: '', type: MedicalEventType.MEMORY, difficulty: DifficultyLevel.EASY };
+    get activeCount(): number {
+        return this.events.filter((event) => event.status === MedicalEventStatus.ACTIVE || !event.status).length;
     }
 
-    loadEvents(callback?: () => void): void {
-        this.isLoading = true;
-        const obs = this.searchTerm.trim()
-            ? this.recommendationService.searchEvents(this.searchTerm)
-            : this.recommendationService.getAllEvents();
+    get completedCount(): number {
+        return this.events.filter((event) => event.status === MedicalEventStatus.COMPLETED).length;
+    }
 
-        obs.subscribe({
-            next: (data: any) => {
-                if (Array.isArray(data)) {
-                    this.events = data;
-                } else if (data && data.content && Array.isArray(data.content)) {
-                    this.events = data.content;
-                } else {
-                    this.events = data ? (data.content || []) : [];
-                }
+    get hardCount(): number {
+        return this.events.filter((event) => event.difficulty === DifficultyLevel.HARD).length;
+    }
+
+    loadEvents(preferredSelectionId?: number | null): void {
+        this.isLoading = true;
+
+        this.recommendationService.getAllEvents().subscribe({
+            next: (data) => {
+                this.events = this.normalizeEvents(data);
+                this.applyFilters(preferredSelectionId);
                 this.isLoading = false;
-                this.cdr.detectChanges();
-                if (callback) callback();
             },
             error: (err) => {
-                console.error('Erreur de chargement des jeux medicaux:', err);
-                this.errorMessage = this.extractErrorMessage(err, 'Impossible de charger les jeux. Verifiez que le backend tourne sur le port 8085.');
+                this.errorMessage = this.extractErrorMessage(
+                    err,
+                    'Impossible de charger les jeux. Verifiez que le backend tourne sur le port 8085.'
+                );
+                this.events = [];
+                this.filteredEvents = [];
+                this.selectedEvent = null;
                 this.isLoading = false;
-                this.cdr.detectChanges();
-                if (callback) callback();
             }
         });
     }
 
-    onSearch(): void {
-        this.loadEvents();
+    applyFilters(preferredSelectionId?: number | null): void {
+        const query = this.searchTerm.trim().toLowerCase();
+        const currentSelectionId = preferredSelectionId ?? this.selectedEvent?.id ?? null;
+
+        this.filteredEvents = this.events.filter((event) => {
+            const matchesQuery =
+                !query
+                || String(event.id ?? '').includes(query)
+                || event.title.toLowerCase().includes(query)
+                || (event.description ?? '').toLowerCase().includes(query)
+                || (event.type ?? '').toLowerCase().includes(query)
+                || String(event.patientId ?? '').includes(query);
+            const matchesType = !this.typeFilter || event.type === this.typeFilter;
+            const matchesDifficulty = !this.difficultyFilter || event.difficulty === this.difficultyFilter;
+            return matchesQuery && matchesType && matchesDifficulty;
+        });
+
+        this.selectedEvent =
+            this.filteredEvents.find((event) => event.id === currentSelectionId)
+            ?? this.filteredEvents[0]
+            ?? null;
+    }
+
+    selectEvent(event: MedicalEvent): void {
+        this.selectedEvent = event;
     }
 
     openForm(): void {
-        this.newEvent = this.initNew();
+        this.isEditing = false;
+        this.currentEvent = this.initNew();
+        this.showForm = true;
+        this.successMessage = '';
+        this.errorMessage = '';
+    }
+
+    editEvent(event: MedicalEvent): void {
+        this.isEditing = true;
+        this.currentEvent = {
+            ...event,
+            startDate: this.normalizeDateForInput(event.startDate),
+            endDate: this.normalizeDateForInput(event.endDate)
+        };
         this.showForm = true;
         this.successMessage = '';
         this.errorMessage = '';
     }
 
     save(): void {
-        if (!this.newEvent.title.trim()) return;
+        if (!this.currentEvent.title.trim()) {
+            return;
+        }
 
         this.isSaving = true;
         this.errorMessage = '';
 
-        this.recommendationService.createEvent(this.newEvent).subscribe({
-            next: (created) => {
-                this.successMessage = `Jeu "${this.newEvent.title}" cree avec succes !`;
-                this.errorMessage = '';
-                this.events = [created, ...this.events];
-                this.searchTerm = '';
-                this.loadEvents(() => {
+        const payload: MedicalEvent = {
+            ...this.currentEvent,
+            title: this.currentEvent.title.trim(),
+            description: (this.currentEvent.description ?? '').trim()
+        };
+
+        if (this.isEditing && this.currentEvent.id) {
+            this.recommendationService.updateEvent(this.currentEvent.id, payload).subscribe({
+                next: (updated) => {
+                    this.successMessage = `Jeu "${updated.title}" mis a jour avec succes.`;
                     this.showForm = false;
                     this.isSaving = false;
-                });
+                    this.loadEvents(updated.id ?? null);
+                },
+                error: (err) => {
+                    this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la mise a jour du jeu.');
+                    this.isSaving = false;
+                }
+            });
+            return;
+        }
+
+        this.recommendationService.createEvent(payload).subscribe({
+            next: (created) => {
+                this.successMessage = `Jeu "${created.title}" cree avec succes.`;
+                this.showForm = false;
+                this.isSaving = false;
+                this.loadEvents(created.id ?? null);
             },
             error: (err) => {
                 this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la creation du jeu.');
-                this.successMessage = '';
                 this.isSaving = false;
             }
         });
     }
 
     delete(id: number | undefined): void {
-        if (id && confirm('Supprimer ce jeu medical ?')) {
-            this.recommendationService.deleteEvent(id).subscribe({
-                next: () => {
-                    this.successMessage = 'Jeu supprime.';
-                    this.loadEvents();
-                },
-                error: (err) => {
-                    this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la suppression.');
-                }
-            });
+        if (!id || !confirm('Supprimer ce jeu medical ?')) {
+            return;
         }
+
+        this.recommendationService.deleteEvent(id).subscribe({
+            next: () => {
+                this.successMessage = 'Jeu supprime.';
+                this.loadEvents();
+            },
+            error: (err) => {
+                this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la suppression.');
+            }
+        });
     }
 
     cancel(): void {
@@ -117,35 +192,108 @@ export class MedicalEventsPage implements OnInit {
         this.isSaving = false;
     }
 
-    getDifficultyClass(difficulty: string): string {
+    getDifficultyClass(difficulty?: string): string {
         const map: Record<string, string> = {
-            EASY: 'bg-success-subtle text-success',
-            MEDIUM: 'bg-warning-subtle text-warning',
-            HARD: 'bg-danger-subtle text-danger'
+            EASY: 'difficulty-badge badge-easy',
+            MEDIUM: 'difficulty-badge badge-medium',
+            HARD: 'difficulty-badge badge-hard'
         };
-        return map[difficulty] || 'bg-secondary-subtle text-secondary';
+        return map[difficulty || ''] || 'difficulty-badge badge-medium';
     }
 
-    getTypeIcon(type: string): string {
+    getStatusClass(status?: string): string {
+        const effectiveStatus = status || MedicalEventStatus.ACTIVE;
+        const map: Record<string, string> = {
+            ACTIVE: 'status-badge badge-active',
+            COMPLETED: 'status-badge badge-completed',
+            CANCELLED: 'status-badge badge-cancelled'
+        };
+        return map[effectiveStatus] || 'status-badge badge-active';
+    }
+
+    getStatusLabel(status?: string): string {
+        return status || MedicalEventStatus.ACTIVE;
+    }
+
+    getTypeIcon(type?: string): string {
         const map: Record<string, string> = {
             MEMORY: 'fi-rr-brain',
             FLUENCY: 'fi-rr-comment-alt',
             VISUOSPATIAL: 'fi-rr-eye',
             ATTENTION: 'fi-rr-bulb',
+            PUZZLE: 'fi-rr-dice-four',
             MEDICATION: 'fi-rr-pills',
             EXERCISE: 'fi-rr-dumbbell',
             DIET: 'fi-rr-apple-whole',
             LIFESTYLE: 'fi-rr-heart',
             OTHER: 'fi-rr-dice'
         };
-        return map[type] || 'fi-rr-square';
+        return map[type || ''] || 'fi-rr-square';
+    }
+
+    trackEvent(index: number, event: MedicalEvent): number {
+        return event.id ?? index;
+    }
+
+    formatDateTime(value?: string | null): string {
+        if (!value) {
+            return '-';
+        }
+
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+    }
+
+    private initNew(): MedicalEvent {
+        return {
+            title: '',
+            description: '',
+            type: MedicalEventType.MEMORY,
+            difficulty: DifficultyLevel.EASY,
+            status: MedicalEventStatus.ACTIVE,
+            patientId: 1,
+            familyId: null,
+            startDate: '',
+            endDate: ''
+        };
+    }
+
+    private normalizeEvents(data: unknown): MedicalEvent[] {
+        if (Array.isArray(data)) {
+            return data;
+        }
+
+        if (data && typeof data === 'object' && 'content' in data) {
+            const content = (data as { content?: MedicalEvent[] }).content;
+            return Array.isArray(content) ? content : [];
+        }
+
+        return [];
+    }
+
+    private normalizeDateForInput(value?: string | null): string {
+        if (!value) {
+            return '';
+        }
+
+        if (value.includes('T')) {
+            return value.split('T')[0];
+        }
+
+        return value;
     }
 
     private extractErrorMessage(err: unknown, fallback: string): string {
         if (err instanceof HttpErrorResponse) {
-            if (typeof err.error === 'string') return err.error;
-            if (err.error?.message) return err.error.message;
-            if (err.message) return err.message;
+            if (typeof err.error === 'string') {
+                return err.error;
+            }
+            if (err.error?.message) {
+                return err.error.message;
+            }
+            if (err.message) {
+                return err.message;
+            }
         }
         return fallback;
     }

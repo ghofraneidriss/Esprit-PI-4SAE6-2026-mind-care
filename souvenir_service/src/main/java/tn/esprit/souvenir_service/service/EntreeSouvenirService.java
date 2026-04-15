@@ -26,6 +26,7 @@ public class EntreeSouvenirService {
 
     public EntreeSouvenirResponse createEntree(EntreeSouvenirCreateRequest request) {
         validateMediaPayload(request.getMediaType(), request.getMediaUrl());
+        validateActorFields(request.getDoctorId(), request.getCaregiverId());
 
         EntreeSouvenir entree = EntreeSouvenir.builder()
                 .patientId(request.getPatientId())
@@ -41,6 +42,7 @@ public class EntreeSouvenirService {
                 .themeCulturel(request.getThemeCulturel())
                 .traitee(Boolean.FALSE)
                 .voiceRecognized(Boolean.FALSE)
+                .importance(request.getImportance() == null ? 5 : request.getImportance())
                 .build();
 
         return toResponse(entreeSouvenirRepository.save(entree));
@@ -78,6 +80,7 @@ public class EntreeSouvenirService {
 
     public EntreeSouvenirResponse updateEntree(Long entreeId, EntreeSouvenirUpdateRequest request) {
         validateMediaPayload(request.getMediaType(), request.getMediaUrl());
+        validateActorFields(request.getDoctorId(), request.getCaregiverId());
 
         EntreeSouvenir entree = getOrThrow(entreeId);
         entree.setDoctorId(request.getDoctorId());
@@ -90,6 +93,9 @@ public class EntreeSouvenirService {
         entree.setExpectedSpeakerName(request.getExpectedSpeakerName());
         entree.setExpectedSpeakerRelation(request.getExpectedSpeakerRelation());
         entree.setThemeCulturel(request.getThemeCulturel());
+        if (request.getImportance() != null) {
+            entree.setImportance(request.getImportance());
+        }
         return toResponse(entreeSouvenirRepository.save(entree));
     }
 
@@ -133,6 +139,17 @@ public class EntreeSouvenirService {
         if (mediaType == null) {
             throw new BusinessException("mediaType is required.");
         }
+        if (mediaType == MediaType.IMAGE || mediaType == MediaType.AUDIO) {
+            if (mediaUrl == null || mediaUrl.isBlank()) {
+                throw new BusinessException("mediaUrl is required for IMAGE/AUDIO souvenirs.");
+            }
+        }
+    }
+
+    private void validateActorFields(Long doctorId, Long caregiverId) {
+        if (doctorId == null && caregiverId == null) {
+            throw new BusinessException("Either doctorId or caregiverId must be provided.");
+        }
     }
 
     private EntreeSouvenirResponse toResponse(EntreeSouvenir entree) {
@@ -152,6 +169,7 @@ public class EntreeSouvenirService {
                 .voiceRecognized(entree.getVoiceRecognized())
                 .themeCulturel(entree.getThemeCulturel())
                 .traitee(entree.getTraitee())
+                .importance(entree.getImportance())
                 .createdAt(entree.getCreatedAt())
                 .updatedAt(entree.getUpdatedAt())
                 .build();

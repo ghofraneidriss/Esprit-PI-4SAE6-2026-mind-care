@@ -26,6 +26,7 @@ import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzhe
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { FrontofficeLayoutComponent } from './frontoffice-layout';
+import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { FrontofficeLayoutComponent } from './frontoffice-layout';
     Header,
     Footer,
     FrontofficeLayoutComponent,
+    PuzzlePlayPage,
   ],
   imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
 })

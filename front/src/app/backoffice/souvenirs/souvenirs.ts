@@ -6,6 +6,17 @@ import {
     ThemeCulturel
 } from './souvenirs.model';
 import { SouvenirsService } from './souvenirs.service';
+import { AuthService } from '../../frontoffice/auth/auth.service';
+import { RecommendationService } from '../recommendation/recommendation.service';
+import { DifficultyLevel, PuzzleCreateRequest } from '../recommendation/recommendation.model';
+
+interface PuzzleFormState {
+    title: string;
+    description: string;
+    difficulty: DifficultyLevel;
+    timeLimitSeconds: number;
+    maxHints: number;
+}
 
 @Component({
     selector: 'app-souvenirs',
@@ -15,35 +26,119 @@ import { SouvenirsService } from './souvenirs.service';
 })
 export class SouvenirsPage implements OnInit {
     entrees: EntreeSouvenir[] = [];
+    filteredEntrees: EntreeSouvenir[] = [];
 
     isLoadingEntrees = false;
     isSavingEntree = false;
+    isCreatingPuzzle = false;
 
     showEntreeForm = false;
+    showPuzzleForm = false;
     isEditingEntree = false;
     editingEntreeId: number | null = null;
     selectedEntree: EntreeSouvenir | null = null;
+    puzzleSourceEntree: EntreeSouvenir | null = null;
 
-    patientFilterInput = '';
+    patientFilterInput = '4';
     selectedPatientId: number | null = null;
     themeFilter: ThemeCulturel | '' = '';
     mediaTypeFilter: MediaType | '' = '';
+    searchTerm = '';
 
     totalEntrees = 0;
 
     errorMessage = '';
     successMessage = '';
 
-    themeOptions = Object.values(ThemeCulturel);
-    mediaTypeOptions = Object.values(MediaType);
+    readonly themeOptions = Object.values(ThemeCulturel);
+    readonly mediaTypeOptions = Object.values(MediaType);
+    readonly puzzleDifficultyOptions = Object.values(DifficultyLevel);
 
     entreeForm: EntreeSouvenir = this.initEntreeForm();
+    puzzleForm: PuzzleFormState = this.initPuzzleForm();
 
-    constructor(private souvenirsService: SouvenirsService) { }
+    constructor(
+        private readonly souvenirsService: SouvenirsService,
+        private readonly recommendationService: RecommendationService,
+        public readonly authService: AuthService
+    ) { }
 
     ngOnInit(): void {
-        this.patientFilterInput = '4';
         this.loadByPatient();
+    }
+
+    get imageCount(): number {
+        return this.entrees.filter((entree) => entree.mediaType === MediaType.IMAGE).length;
+    }
+
+    get audioCount(): number {
+        return this.entrees.filter((entree) => entree.mediaType === MediaType.AUDIO).length;
+    }
+
+    get treatedCount(): number {
+        return this.entrees.filter((entree) => entree.traitee).length;
+    }
+
+    loadByPatient(preferredSelectionId?: number | null): void {
+        const patientId = Number(this.patientFilterInput);
+        if (!Number.isFinite(patientId) || patientId <= 0) {
+            this.errorMessage = 'Donne un patientId valide pour charger les souvenirs.';
+            return;
+        }
+
+        this.selectedPatientId = patientId;
+        this.errorMessage = '';
+        this.isLoadingEntrees = true;
+
+        this.souvenirsService.getEntreesByPatient(
+            patientId,
+            this.themeFilter || undefined,
+            this.mediaTypeFilter || undefined
+        ).subscribe({
+            next: (data) => {
+                this.entrees = data;
+                this.applyFilters(preferredSelectionId);
+                this.isLoadingEntrees = false;
+                this.refreshCount(patientId);
+            },
+            error: (err: unknown) => {
+                this.errorMessage = this.extractErrorMessage(err, 'Erreur de chargement des souvenirs.');
+                this.entrees = [];
+                this.filteredEntrees = [];
+                this.selectedEntree = null;
+                this.isLoadingEntrees = false;
+                this.totalEntrees = 0;
+            }
+        });
+    }
+
+    applyFilters(preferredSelectionId?: number | null): void {
+        const query = this.searchTerm.trim().toLowerCase();
+        const currentSelectionId = preferredSelectionId ?? this.selectedEntree?.id ?? null;
+
+        this.filteredEntrees = this.entrees.filter((entree) => {
+            const matchesQuery =
+                !query
+                || String(entree.id ?? '').includes(query)
+                || String(entree.patientId).includes(query)
+                || String(entree.doctorId).includes(query)
+                || String(entree.caregiverId).includes(query)
+                || (entree.mediaTitle ?? '').toLowerCase().includes(query)
+                || entree.texte.toLowerCase().includes(query)
+                || (entree.themeCulturel ?? '').toLowerCase().includes(query)
+                || (entree.mediaType ?? '').toLowerCase().includes(query);
+
+            return matchesQuery;
+        });
+
+        this.selectedEntree =
+            this.filteredEntrees.find((entree) => entree.id === currentSelectionId)
+            ?? this.filteredEntrees[0]
+            ?? null;
+    }
+
+    selectEntree(entree: EntreeSouvenir): void {
+        this.selectedEntree = entree;
     }
 
     openCreateForm(): void {
@@ -86,6 +181,26 @@ export class SouvenirsPage implements OnInit {
         this.entreeForm = this.initEntreeForm();
     }
 
+    openPuzzleForm(entree: EntreeSouvenir): void {
+        if (!this.canCreatePuzzle(entree)) {
+            this.errorMessage = 'Seuls les souvenirs image peuvent etre transformes en puzzle.';
+            return;
+        }
+
+        this.showPuzzleForm = true;
+        this.puzzleSourceEntree = entree;
+        this.puzzleForm = this.initPuzzleForm(entree);
+        this.errorMessage = '';
+        this.successMessage = '';
+    }
+
+    cancelPuzzleForm(): void {
+        this.showPuzzleForm = false;
+        this.isCreatingPuzzle = false;
+        this.puzzleSourceEntree = null;
+        this.puzzleForm = this.initPuzzleForm();
+    }
+
     saveEntree(): void {
         if (!this.entreeForm.texte.trim()) {
             this.errorMessage = 'Le texte du souvenir est obligatoire.';
@@ -116,10 +231,8 @@ export class SouvenirsPage implements OnInit {
             this.showEntreeForm = false;
             this.isSavingEntree = false;
             this.patientFilterInput = String(saved.patientId);
-            this.themeFilter = '';
-            this.mediaTypeFilter = '';
             this.selectedEntree = saved;
-            this.loadByPatient();
+            this.loadByPatient(saved.id ?? null);
         };
 
         if (this.isEditingEntree && this.editingEntreeId) {
@@ -142,51 +255,46 @@ export class SouvenirsPage implements OnInit {
         });
     }
 
-    loadByPatient(): void {
-        const patientId = Number(this.patientFilterInput);
-        if (!Number.isFinite(patientId) || patientId <= 0) {
-            this.errorMessage = 'Donne un patientId valide pour charger les souvenirs.';
+    createPuzzle(): void {
+        if (!this.canCreatePuzzle(this.puzzleSourceEntree)) {
+            this.errorMessage = 'Selectionne un souvenir image valide avant de creer un puzzle.';
             return;
         }
 
-        this.selectedPatientId = patientId;
+        this.isCreatingPuzzle = true;
         this.errorMessage = '';
-        this.isLoadingEntrees = true;
 
-        this.souvenirsService.getEntreesByPatient(
-            patientId,
-            this.themeFilter || undefined,
-            this.mediaTypeFilter || undefined
-        ).subscribe({
-            next: (data) => {
-                this.entrees = data;
-                this.isLoadingEntrees = false;
-                this.totalEntrees = data.length;
-                if (this.selectedEntree?.id) {
-                    this.selectedEntree = data.find((e) => e.id === this.selectedEntree?.id) ?? null;
-                }
-                this.refreshCount(patientId);
+        const payload: PuzzleCreateRequest = {
+            souvenirEntryId: this.puzzleSourceEntree.id,
+            patientId: this.puzzleSourceEntree.patientId,
+            title: this.puzzleForm.title,
+            description: this.puzzleForm.description,
+            difficulty: this.puzzleForm.difficulty,
+            timeLimitSeconds: this.puzzleForm.timeLimitSeconds,
+            maxHints: this.puzzleForm.maxHints
+        };
+
+        this.recommendationService.createPuzzle(payload).subscribe({
+            next: (created) => {
+                this.successMessage =
+                    `Puzzle "${created.title}" cree avec succes (event #${created.medicalEventId}).`;
+                this.cancelPuzzleForm();
             },
             error: (err: unknown) => {
-                this.errorMessage = this.extractErrorMessage(err, 'Erreur de chargement des souvenirs.');
-                this.entrees = [];
-                this.isLoadingEntrees = false;
-                this.totalEntrees = 0;
-                this.selectedEntree = null;
+                this.errorMessage = this.extractErrorMessage(err, 'Erreur lors de la creation du puzzle.');
+                this.isCreatingPuzzle = false;
             }
         });
     }
 
     deleteEntree(entree: EntreeSouvenir): void {
-        if (!entree.id) return;
-        if (!confirm('Supprimer ce souvenir ?')) return;
+        if (!entree.id || !confirm('Supprimer ce souvenir ?')) {
+            return;
+        }
 
         this.souvenirsService.deleteEntree(entree.id).subscribe({
             next: () => {
                 this.successMessage = 'Souvenir supprime.';
-                if (this.selectedEntree?.id === entree.id) {
-                    this.selectedEntree = null;
-                }
                 this.loadByPatient();
             },
             error: (err: unknown) => {
@@ -196,11 +304,14 @@ export class SouvenirsPage implements OnInit {
     }
 
     markTraitee(entree: EntreeSouvenir): void {
-        if (!entree.id) return;
+        if (!entree.id) {
+            return;
+        }
+
         this.souvenirsService.markTraitee(entree.id).subscribe({
             next: () => {
                 this.successMessage = 'Souvenir marque comme traite.';
-                this.loadByPatient();
+                this.loadByPatient(entree.id);
             },
             error: (err: unknown) => {
                 this.errorMessage = this.extractErrorMessage(err, 'Erreur lors du marquage.');
@@ -208,8 +319,29 @@ export class SouvenirsPage implements OnInit {
         });
     }
 
-    selectEntree(entree: EntreeSouvenir): void {
-        this.selectedEntree = entree;
+    getMediaBadgeClass(mediaType: MediaType): string {
+        return mediaType === MediaType.IMAGE ? 'media-chip chip-image' : 'media-chip chip-audio';
+    }
+
+    getProcessingBadgeClass(entree: EntreeSouvenir): string {
+        return entree.traitee ? 'status-badge badge-treated' : 'status-badge badge-pending';
+    }
+
+    getProcessingLabel(entree: EntreeSouvenir): string {
+        return entree.traitee ? 'TRAITEE' : 'EN_ATTENTE';
+    }
+
+    trackEntree(index: number, entree: EntreeSouvenir): number {
+        return entree.id ?? index;
+    }
+
+    formatDateTime(value?: string | null): string {
+        if (!value) {
+            return '-';
+        }
+
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
     }
 
     private refreshCount(patientId: number): void {
@@ -239,11 +371,31 @@ export class SouvenirsPage implements OnInit {
         };
     }
 
+    private initPuzzleForm(entree?: EntreeSouvenir): PuzzleFormState {
+        return {
+            title: entree?.mediaTitle ? `Puzzle - ${entree.mediaTitle}` : '',
+            description: entree?.texte ?? '',
+            difficulty: DifficultyLevel.EASY,
+            timeLimitSeconds: 300,
+            maxHints: 3
+        };
+    }
+
+    private canCreatePuzzle(entree: EntreeSouvenir | null): entree is EntreeSouvenir & { id: number } {
+        return !!entree?.id && entree.mediaType === MediaType.IMAGE;
+    }
+
     private extractErrorMessage(err: unknown, fallback: string): string {
         if (err instanceof HttpErrorResponse) {
-            if (typeof err.error === 'string') return err.error;
-            if (err.error?.message) return err.error.message;
-            if (err.message) return err.message;
+            if (typeof err.error === 'string') {
+                return err.error;
+            }
+            if (err.error?.message) {
+                return err.error.message;
+            }
+            if (err.message) {
+                return err.message;
+            }
         }
         return fallback;
     }

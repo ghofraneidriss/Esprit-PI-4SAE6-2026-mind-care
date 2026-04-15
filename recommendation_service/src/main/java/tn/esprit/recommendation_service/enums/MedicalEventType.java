@@ -5,6 +5,7 @@ public enum MedicalEventType {
     FLUENCY,
     VISUOSPATIAL,
     ATTENTION,
+    PUZZLE,
     MEDICATION,
     EXERCISE,
     DIET,

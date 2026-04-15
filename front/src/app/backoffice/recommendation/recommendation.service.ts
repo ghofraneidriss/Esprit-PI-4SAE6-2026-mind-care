@@ -11,6 +11,12 @@ import {
     MedicalEventType,
     ParticipantRanking,
     ParticipantType,
+    Puzzle,
+    PuzzleCreateRequest,
+    PuzzleLeaderboardEntry,
+    PuzzleSession,
+    PuzzleSessionStartResponse,
+    PuzzleSessionSubmitRequest,
     Recommendation,
     RecommendationStats,
     RecommendationStatus,
@@ -24,6 +30,7 @@ import {
 export class RecommendationService {
     private apiUrl = 'http://localhost:8085/api/recommendations';
     private eventUrl = 'http://localhost:8085/api/events';
+    private puzzleUrl = 'http://localhost:8085/api/puzzles';
 
     constructor(private http: HttpClient) { }
 
@@ -196,6 +203,54 @@ export class RecommendationService {
 
     completeExpiredMedicalEvents(): Observable<number> {
         return this.http.post<number>(`${this.eventUrl}/complete-expired`, {});
+    }
+
+    getPuzzleById(puzzleId: number): Observable<Puzzle> {
+        return this.http.get<Puzzle>(`${this.puzzleUrl}/${puzzleId}`).pipe(timeout(15000));
+    }
+
+    createPuzzle(payload: PuzzleCreateRequest): Observable<Puzzle> {
+        return this.http.post<Puzzle>(this.puzzleUrl, {
+            ...payload,
+            title: payload.title?.trim() || null,
+            description: payload.description?.trim() || null,
+            startDate: payload.startDate || null,
+            endDate: payload.endDate || null
+        }).pipe(timeout(15000));
+    }
+
+    getPuzzlesByPatient(patientId: number): Observable<Puzzle[]> {
+        return this.http.get<Puzzle[]>(`${this.puzzleUrl}/patient/${patientId}`).pipe(timeout(15000));
+    }
+
+    getPuzzleByEvent(eventId: number): Observable<Puzzle> {
+        return this.http.get<Puzzle>(`${this.puzzleUrl}/event/${eventId}`).pipe(timeout(15000));
+    }
+
+    startPuzzleSession(puzzleId: number, patientId: number): Observable<PuzzleSessionStartResponse> {
+        return this.http
+            .post<PuzzleSessionStartResponse>(`${this.puzzleUrl}/${puzzleId}/sessions/start?patientId=${patientId}`, {})
+            .pipe(timeout(15000));
+    }
+
+    submitPuzzleSession(
+        puzzleId: number,
+        sessionId: number,
+        payload: PuzzleSessionSubmitRequest
+    ): Observable<PuzzleSession> {
+        return this.http
+            .post<PuzzleSession>(`${this.puzzleUrl}/${puzzleId}/sessions/${sessionId}/submit`, payload)
+            .pipe(timeout(15000));
+    }
+
+    getPuzzleSessions(puzzleId: number, patientId: number): Observable<PuzzleSession[]> {
+        return this.http
+            .get<PuzzleSession[]>(`${this.puzzleUrl}/${puzzleId}/sessions/patient/${patientId}`)
+            .pipe(timeout(15000));
+    }
+
+    getPuzzleLeaderboard(puzzleId: number): Observable<PuzzleLeaderboardEntry[]> {
+        return this.http.get<PuzzleLeaderboardEntry[]>(`${this.puzzleUrl}/${puzzleId}/leaderboard`).pipe(timeout(15000));
     }
 }
 

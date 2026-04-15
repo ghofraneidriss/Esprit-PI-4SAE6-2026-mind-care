@@ -494,12 +494,24 @@ public class RecommendationService {
             throw new BusinessException("Only active MedicalEvents can be attached to a recommendation.");
         }
 
-        MedicalEventType expectedType = mapToMedicalEventType(recommendationType);
-        if (event.getType() != expectedType) {
-            throw new BusinessException("MedicalEvent type must match recommendation type.");
+        if (!isCompatible(recommendationType, event.getType())) {
+            throw new BusinessException("MedicalEvent type (" + event.getType() + ") is not compatible with recommendation type (" + recommendationType + ").");
         }
 
         return event;
+    }
+
+    private boolean isCompatible(RecommendationType recType, MedicalEventType eventType) {
+        if (recType.name().equals(eventType.name())) {
+            return true;
+        }
+
+        // Specific compatibility: VISUOSPATIAL recommendations can use PUZZLE activities
+        if (recType == RecommendationType.VISUOSPATIAL && eventType == MedicalEventType.PUZZLE) {
+            return true;
+        }
+
+        return false;
     }
 
     private MedicalEvent resolvePreferredAutoEvent(Long eventId, Long patientId) {
@@ -581,6 +593,7 @@ public class RecommendationService {
                 .acceptedAt(recommendation.getAcceptedAt())
                 .generatedMedicalEventId(recommendation.getGeneratedMedicalEvent() == null ? null : recommendation.getGeneratedMedicalEvent().getId())
                 .generatedMedicalEventTitle(recommendation.getGeneratedMedicalEvent() == null ? null : recommendation.getGeneratedMedicalEvent().getTitle())
+                .generatedMedicalEventType(recommendation.getGeneratedMedicalEvent() == null ? null : recommendation.getGeneratedMedicalEvent().getType())
                 .createdAt(recommendation.getCreatedAt())
                 .updatedAt(recommendation.getUpdatedAt())
                 .build();

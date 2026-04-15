@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tn.esprit.recommendation_service.enums.RecommendationStatus;
 import tn.esprit.recommendation_service.enums.RecommendationType;
+import tn.esprit.recommendation_service.enums.MedicalEventType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class RecommendationResponse {
     private LocalDateTime acceptedAt;
     private Long generatedMedicalEventId;
     private String generatedMedicalEventTitle;
+    private MedicalEventType generatedMedicalEventType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
