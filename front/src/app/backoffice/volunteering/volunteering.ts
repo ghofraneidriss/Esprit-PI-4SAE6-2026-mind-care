@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../frontoffice/auth/auth.service';
-import { VolunteerService } from './volunteer.service';
+import { VolunteerDirectoryEntry, VolunteerService } from './volunteer.service';
 
 export type MissionStatus = 'Open' | 'Assigned' | 'Completed' | 'IN_PROGRESS' | 'OPEN' | 'COMPLETED' | 'CANCELLED';
 export type MissionPriority = 'High' | 'Medium' | 'Low';
@@ -19,19 +19,6 @@ export interface Mission {
     status: MissionStatus;
     icon?: string;
     description?: string;
-}
-
-export interface Volunteer {
-    id: number;
-    initials: string;
-    name: string;
-    city: string;
-    verified: boolean;
-    skills: string[];
-    availability: string;
-    rating: number;
-    missions: number;
-    avatarColor: string;
 }
 
 // Map backend status enum → frontend status string
@@ -98,57 +85,15 @@ export class VolunteeringPageComponent implements OnInit {
 
     missions: Mission[] = [];
 
-    // Static volunteer directory (not yet persisted in the backend)
-    volunteers: Volunteer[] = [
-        {
-            id: 1,
-            initials: 'MT',
-            name: 'Michael Torres',
-            city: 'Cambridge, MA',
-            verified: true,
-            skills: ['Transportation', 'Patient Care', 'Spanish Speaking'],
-            availability: 'Weekdays & Weekends',
-            rating: 4.9,
-            missions: 47,
-            avatarColor: '#3b6fd4',
-        },
-        {
-            id: 2,
-            initials: 'JL',
-            name: 'Jennifer Lee',
-            city: 'Boston, MA',
-            verified: true,
-            skills: ['Phone Support', 'Counseling', 'Elderly Care'],
-            availability: 'Weekends only',
-            rating: 4.7,
-            missions: 31,
-            avatarColor: '#0bbcc9',
-        },
-        {
-            id: 3,
-            initials: 'RC',
-            name: 'Robert Chen',
-            city: 'Somerville, MA',
-            verified: false,
-            skills: ['Home Visit', 'Meal Prep', 'Companionship'],
-            availability: 'Evenings',
-            rating: 4.5,
-            missions: 19,
-            avatarColor: '#7c5cbf',
-        },
-        {
-            id: 4,
-            initials: 'EP',
-            name: 'Emily Parker',
-            city: 'Brookline, MA',
-            verified: true,
-            skills: ['Workshop Help', 'Administrative', 'Social Media'],
-            availability: 'Weekdays',
-            rating: 4.8,
-            missions: 63,
-            avatarColor: '#cc7e3a',
-        },
-    ];
+    // Directory backed by the volunteers microservice
+    volunteers: VolunteerDirectoryEntry[] = [];
+    volunteerPresenceMap: Map<number, any> = new Map(); // Track online status by volunteer ID
+    selectedMissionForAssignment: Mission | null = null;
+    selectedVolunteerForAssignment: VolunteerDirectoryEntry | null = null;
+    selectedMissionIdForAssignment: number | null = null;
+    isAssignModalOpen = false;
+    assignmentLoading = false;
+    assignmentError = '';
 
     constructor(
         public readonly authService: AuthService,
@@ -157,6 +102,10 @@ export class VolunteeringPageComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadMissions();
+        this.loadVolunteerDirectory();
+        this.loadVolunteerPresence();
+        // Reload presence every 30 seconds
+        setInterval(() => this.loadVolunteerPresence(), 30000);
     }
 
     // ─── Data loading ────────────────────────────────────────────────────────────
@@ -190,6 +139,53 @@ export class VolunteeringPageComponent implements OnInit {
         });
     }
 
+    loadVolunteerDirectory(): void {
+        this.volunteerService.getVolunteerDirectory().subscribe({
+            next: (directory) => {
+                this.volunteers = directory;
+                // Load presence status for each volunteer
+                this.loadVolunteerPresence();
+            },
+            error: (err: unknown) => {
+                console.warn('Could not load volunteers directory', err);
+            },
+        });
+    }
+
+    loadVolunteerPresence(): void {
+        this.volunteerService.getPresenceStatus().subscribe({
+            next: (presenceList) => {
+                this.volunteerPresenceMap.clear();
+                presenceList.forEach(presence => {
+                    this.volunteerPresenceMap.set(presence.userId, presence);
+                });
+            },
+            error: (err: unknown) => {
+                console.warn('Could not load volunteer presence', err);
+            },
+        });
+    }
+
+    getVolunteerOnlineStatus(volunteerId: number): string {
+        const presence = this.volunteerPresenceMap.get(volunteerId);
+        if (!presence) return 'Offline';
+        const lastHeartbeat = presence.lastHeartbeat ? new Date(presence.lastHeartbeat) : null;
+        const now = new Date();
+        const diffSeconds = lastHeartbeat ? (now.getTime() - lastHeartbeat.getTime()) / 1000 : Infinity;
+        
+        // If last heartbeat was within 90 seconds, consider online
+        return diffSeconds < 90 ? 'Online' : 'Offline';
+    }
+
+    getVolunteerOnlineStatusClass(volunteerId: number): string {
+        return this.getVolunteerOnlineStatus(volunteerId) === 'Online' ? 'status-online' : 'status-offline';
+    }
+
+    getVolunteerId(volunteer: VolunteerDirectoryEntry | null | undefined): number | null {
+        if (!volunteer) return null;
+        return volunteer.userId ?? volunteer.id ?? null;
+    }
+
     // ─── Computed stats ──────────────────────────────────────────────────────────
 
     get totalMissions(): number {
@@ -219,7 +215,7 @@ export class VolunteeringPageComponent implements OnInit {
         return this.missions.filter((m) => m.status === 'Completed' && this.matchesSearch(m));
     }
 
-    get filteredVolunteers(): Volunteer[] {
+    get filteredVolunteers(): VolunteerDirectoryEntry[] {
         const q = this.volunteerSearch.toLowerCase().trim();
         return this.volunteers.filter((v) => {
             const matchesSearch =
@@ -335,37 +331,86 @@ export class VolunteeringPageComponent implements OnInit {
 
     // ─── Assign ──────────────────────────────────────────────────────────────────
 
-    assignVolunteer(volunteer: Volunteer): void {
+    openAssignModal(volunteer: VolunteerDirectoryEntry, mission?: Mission | null): void {
+        const defaultMission = mission || this.openMissions[0] || null;
+        this.selectedVolunteerForAssignment = volunteer;
+        this.selectedMissionForAssignment = defaultMission;
+        this.selectedMissionIdForAssignment = defaultMission?.id ?? null;
+        this.isAssignModalOpen = true;
+        this.assignmentError = '';
+    }
+
+    closeAssignModal(): void {
+        this.isAssignModalOpen = false;
+        this.selectedMissionForAssignment = null;
+        this.selectedVolunteerForAssignment = null;
+        this.selectedMissionIdForAssignment = null;
+        this.assignmentError = '';
+        this.assignmentLoading = false;
+    }
+
+    onAssignmentMissionChange(): void {
+        this.selectedMissionForAssignment = this.openMissions.find(
+            (mission) => mission.id === this.selectedMissionIdForAssignment
+        ) || null;
+    }
+
+    confirmAssignment(): void {
+        if (!this.selectedVolunteerForAssignment) {
+            this.assignmentError = 'No volunteer selected';
+            return;
+        }
+        this.assignMissionToVolunteer(this.selectedVolunteerForAssignment, this.selectedMissionForAssignment || undefined);
+    }
+
+    assignMissionToVolunteer(volunteer: VolunteerDirectoryEntry, mission?: Mission): void {
+        const targetMission = mission || this.selectedMissionForAssignment;
+        const volunteerId = this.getVolunteerId(volunteer);
+
+        if (!targetMission) {
+            this.assignmentError = 'No mission selected';
+            return;
+        }
+
+        if (!volunteerId) {
+            this.assignmentError = 'Volunteer ID is missing. Please refresh and try again.';
+            return;
+        }
+
+        this.assignmentLoading = true;
+        this.assignmentError = '';
+
+        // Call the backend with the mission ID and volunteer ID to trigger Twilio
+        this.volunteerService.createAssignment(targetMission.id, volunteerId).subscribe({
+            next: (assignment) => {
+                // Update mission status to reflect assignment
+                const missionIdx = this.missions.findIndex(m => m.id === targetMission.id);
+                if (missionIdx !== -1) {
+                    this.missions[missionIdx].status = 'Assigned';
+                    this.missions[missionIdx].assignee = volunteer.name;
+                }
+                this.closeAssignModal();
+                alert(`Mission assigned to ${volunteer.name}! Twilio notification sent.`);
+            },
+            error: (err) => {
+                console.error('Failed to assign mission', err);
+                const backendMessage =
+                    (typeof err?.error === 'string' ? err.error : null) ||
+                    err?.error?.message ||
+                    err?.message;
+                this.assignmentError = backendMessage || 'Failed to assign mission. Please try again.';
+                this.assignmentLoading = false;
+            },
+        });
+    }
+
+    assignVolunteer(volunteer: VolunteerDirectoryEntry): void {
         const open = this.missions.find((m) => m.status === 'Open');
         if (!open) {
             alert('No open missions available to assign.');
             return;
         }
-        this.volunteerService.assignVolunteer(open.id, volunteer.name).subscribe({
-            next: (updated) => {
-                const idx = this.missions.findIndex((m) => m.id === updated.id);
-                if (idx !== -1) {
-                    this.missions[idx] = {
-                        ...updated,
-                        status: normalizeStatus(updated.status as string),
-                        priority: normalizePriority(updated.priority as string),
-                        icon: iconForCategory(updated.category),
-                        date: updated.startDate
-                            ? new Date(updated.startDate).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                            })
-                            : '—',
-                        assignee: updated.assignee || volunteer.name,
-                    };
-                }
-            },
-            error: (err) => {
-                console.error('Failed to assign volunteer', err);
-                alert('Could not assign volunteer. Please try again.');
-            },
-        });
+        this.openAssignModal(volunteer, open);
     }
 
     // ─── UI helpers ──────────────────────────────────────────────────────────────

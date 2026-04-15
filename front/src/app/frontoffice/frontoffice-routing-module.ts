@@ -21,9 +21,10 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { PatientReportsPage } from './reports/reports';
+import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missions';
 
 const routes: Routes = [
-  { path: '', component: Home1 },
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: '404', component: Page404FrontPage },
   { path: 'about', component: AboutFrontPage },
   { path: 'appointment', component: AppointmentFrontPage },
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'auth/signup', component: RegisterCoverAuthPage },
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
   { path: 'reports', component: PatientReportsPage },
+  { path: 'my-missions', component: VolunteerMissionsComponent },
   { path: '**', redirectTo: '' },
 ];
 

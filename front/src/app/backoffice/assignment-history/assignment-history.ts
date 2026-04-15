@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { VolunteerService } from '../volunteering/volunteer.service';
-import { Mission, MissionPriority } from '../volunteering/volunteering';
 
 export interface AssignmentHistory {
     id: number;
@@ -20,6 +19,36 @@ export interface AssignmentHistory {
     statusColor: 'blue' | 'yellow' | 'red' | 'green';
 }
 
+interface CompletedMissionCard {
+    icon: string;
+    title: string;
+    category: string;
+    patientName: string;
+    patientInitial: string;
+    patientColor: string;
+    date: string;
+    rating: number;
+}
+
+interface BackendMission {
+    id?: number;
+    title?: string;
+    category?: string;
+    assignee?: string;
+    duration?: string;
+    startDate?: string;
+}
+
+interface BackendAssignment {
+    id?: number;
+    volunteerId?: number;
+    status?: string;
+    rating?: number;
+    assignedAt?: string;
+    completedAt?: string;
+    mission?: BackendMission | null;
+}
+
 @Component({
     selector: 'app-assignment-history-page',
     standalone: false,
@@ -32,177 +61,13 @@ export class AssignmentHistoryPageComponent implements OnInit {
     showVerifiedOnly = false;
 
     // Stats
-    totalAssignments = 156;
-    activeAssignments = 23;
-    completedMissions = 118;
-    averageRating = 4.8;
+    totalAssignments = 0;
+    activeAssignments = 0;
+    completedMissions = 0;
+    averageRating = 0;
 
-    assignments: AssignmentHistory[] = [
-        {
-            id: 1,
-            missionIcon: 'fi fi-rr-home',
-            missionTitle: 'Weekly Companion...',
-            volunteerName: 'James Rodriguez',
-            category: 'Home Visit',
-            patientName: 'Frank O\'S...',
-            patientInitials: 'F',
-            patientColor: '#3b82f6',
-            assignedDate: 'Mar 28, 2026',
-            missionDate: '2026-04-08',
-            duration: '2 hours',
-            status: 'Assigned',
-            statusColor: 'blue',
-        },
-        {
-            id: 2,
-            missionIcon: 'fi fi-rr-home',
-            missionTitle: 'Evening Meal Prepa...',
-            volunteerName: 'Robert Martinez',
-            category: 'Home Visit',
-            patientName: 'Dorothy Si...',
-            patientInitials: 'D',
-            patientColor: '#3b82f6',
-            assignedDate: 'Mar 25, 2026',
-            missionDate: '2026-04-05',
-            duration: '3 hours',
-            status: 'Assigned',
-            statusColor: 'blue',
-        },
-        {
-            id: 3,
-            missionIcon: 'fi fi-rr-home',
-            missionTitle: 'Respite Care - Even...',
-            volunteerName: 'Patricia Williams',
-            category: 'Home Visit',
-            patientName: 'William An...',
-            patientInitials: 'W',
-            patientColor: '#3b82f6',
-            assignedDate: 'Mar 20, 2026',
-            missionDate: '2026-04-02',
-            duration: '4 hours',
-            status: 'Assigned',
-            statusColor: 'blue',
-        },
-        {
-            id: 4,
-            missionIcon: 'fi fi-rr-car-side',
-            missionTitle: 'Transportation to M...',
-            volunteerName: 'Michael Torres',
-            category: 'Transport',
-            patientName: 'Robert Ch...',
-            patientInitials: 'R',
-            patientColor: '#3b82f6',
-            assignedDate: 'Mar 19, 2026',
-            missionDate: '2026-03-30',
-            duration: '3 hours',
-            status: 'In Progress',
-            statusColor: 'yellow',
-        },
-        {
-            id: 5,
-            missionIcon: 'fi fi-rr-shopping-bag',
-            missionTitle: 'Grocery Shopping ...',
-            volunteerName: 'Emily Chen',
-            category: 'Errands',
-            patientName: 'Patricia W...',
-            patientInitials: 'P',
-            patientColor: '#3b82f6',
-            assignedDate: 'Jan 2, 2026',
-            missionDate: '2026-01-05',
-            duration: '2 hours',
-            status: 'Cancelled',
-            statusColor: 'red',
-        },
-        {
-            id: 6,
-            missionIcon: 'fi fi-rr-users',
-            missionTitle: 'Memory Care Work...',
-            volunteerName: 'David Kumar',
-            category: 'Workshop Help',
-            patientName: 'Multiple p...',
-            patientInitials: 'M',
-            patientColor: '#3b82f6',
-            assignedDate: 'Dec 21, 2025',
-            missionDate: '2025-12-28',
-            duration: '4 hours',
-            rating: 4,
-            status: 'Completed',
-            statusColor: 'green',
-        }
-    ];
-
-    myCompletedMissions = [
-        {
-            icon: 'fi fi-rr-phone-call',
-            title: 'Weekly Phone Support Check-in',
-            category: 'Phone Support',
-            patientName: 'Elizabeth Martinez',
-            patientInitial: 'E',
-            patientColor: '#3b82f6',
-            date: 'Jan 24, 2025',
-            rating: 5
-        },
-        {
-            icon: 'fi fi-rr-home',
-            title: 'Home Visit – Medication Review',
-            category: 'Home Visit',
-            patientName: 'Margaret Thompson',
-            patientInitial: 'M',
-            patientColor: '#3b82f6',
-            date: 'Dec 15, 2025',
-            rating: 5
-        },
-        {
-            icon: 'fi fi-rr-users',
-            title: 'Memory Care Workshop Assistance',
-            category: 'Workshop Help',
-            patientName: 'Multiple participants',
-            patientInitial: 'M',
-            patientColor: '#3b82f6',
-            date: 'Dec 28, 2025',
-            rating: 4
-        },
-        {
-            icon: 'fi fi-rr-brain',
-            title: 'Cognitive Stimulation Session',
-            category: 'Workshop Help',
-            patientName: 'Harold Bennett',
-            patientInitial: 'H',
-            patientColor: '#3b82f6',
-            date: 'Nov 20, 2025',
-            rating: 5
-        },
-        {
-            icon: 'fi fi-rr-car-side',
-            title: 'Specialist Appointment Transport',
-            category: 'Transport',
-            patientName: 'George Nakamura',
-            patientInitial: 'G',
-            patientColor: '#3b82f6',
-            date: 'Oct 8, 2025',
-            rating: 4
-        },
-        {
-            icon: 'fi fi-rr-home',
-            title: 'Overnight Respite Care',
-            category: 'Home Visit',
-            patientName: 'Alice Fontaine',
-            patientInitial: 'A',
-            patientColor: '#3b82f6',
-            date: 'Sep 15, 2025',
-            rating: 5
-        },
-        {
-            icon: 'fi fi-rr-users',
-            title: 'Caregiver Training Workshop',
-            category: 'Workshop Help',
-            patientName: 'Multiple caregivers',
-            patientInitial: 'M',
-            patientColor: '#3b82f6',
-            date: 'Aug 22, 2025',
-            rating: 5
-        }
-    ];
+    assignments: AssignmentHistory[] = [];
+    myCompletedMissions: CompletedMissionCard[] = [];
 
     constructor(
         public readonly authService: AuthService,
@@ -210,8 +75,98 @@ export class AssignmentHistoryPageComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        // In a real application, fetch from the backend:
-        // this.loadAssignments();
+        this.loadAssignments();
+    }
+
+    loadAssignments(): void {
+        this.volunteerService.getAllAssignments().subscribe({
+            next: (data: BackendAssignment[]) => {
+                this.assignments = (data ?? []).map((a) => this.mapAssignment(a));
+                this.myCompletedMissions = this.assignments
+                    .filter((a) => a.status === 'Completed')
+                    .map((a) => ({
+                        icon: a.missionIcon,
+                        title: a.missionTitle,
+                        category: a.category,
+                        patientName: a.patientName,
+                        patientInitial: a.patientInitials,
+                        patientColor: a.patientColor,
+                        date: a.missionDate,
+                        rating: a.rating ?? 0,
+                    }));
+
+                this.updateStats();
+            },
+            error: (err) => {
+                console.error('Failed to load assignments', err);
+                this.assignments = [];
+                this.myCompletedMissions = [];
+                this.updateStats();
+            },
+        });
+    }
+
+    private mapAssignment(a: BackendAssignment): AssignmentHistory {
+        const mission = a.mission ?? {};
+        const status = this.normalizeStatus(a.status);
+        const volunteerLabel = a.volunteerId ? `Volunteer #${a.volunteerId}` : 'Volunteer';
+
+        return {
+            id: a.id ?? 0,
+            missionIcon: this.iconForCategory(mission.category),
+            missionTitle: mission.title || 'Untitled Mission',
+            volunteerName: mission.assignee || volunteerLabel,
+            category: mission.category || 'General',
+            patientName: 'N/A',
+            patientInitials: 'N',
+            patientColor: '#3b82f6',
+            assignedDate: this.formatDate(a.assignedAt),
+            missionDate: this.formatDate(mission.startDate),
+            duration: mission.duration || 'N/A',
+            rating: a.rating ?? undefined,
+            status: status.label,
+            statusColor: status.color,
+        };
+    }
+
+    private normalizeStatus(statusRaw?: string): { label: AssignmentHistory['status']; color: AssignmentHistory['statusColor'] } {
+        const status = (statusRaw ?? '').toUpperCase();
+        if (status === 'ASSIGNED') return { label: 'Assigned', color: 'blue' };
+        if (status === 'IN_PROGRESS') return { label: 'In Progress', color: 'yellow' };
+        if (status === 'COMPLETED') return { label: 'Completed', color: 'green' };
+        if (status === 'CANCELLED') return { label: 'Cancelled', color: 'red' };
+        return { label: 'Assigned', color: 'blue' };
+    }
+
+    private iconForCategory(category?: string): string {
+        const c = (category || '').toLowerCase();
+        if (c.includes('home') || c.includes('visit')) return 'fi fi-rr-home';
+        if (c.includes('transport') || c.includes('car')) return 'fi fi-rr-car-side';
+        if (c.includes('phone') || c.includes('support')) return 'fi fi-rr-phone-call';
+        if (c.includes('shop') || c.includes('errand') || c.includes('grocery')) return 'fi fi-rr-shopping-bag';
+        if (c.includes('workshop') || c.includes('group')) return 'fi fi-rr-users';
+        return 'fi fi-rr-checkbox';
+    }
+
+    private formatDate(value?: string): string {
+        if (!value) return 'N/A';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    private updateStats(): void {
+        this.totalAssignments = this.assignments.length;
+        this.activeAssignments = this.assignments.filter(a => a.status === 'Assigned' || a.status === 'In Progress').length;
+        this.completedMissions = this.assignments.filter(a => a.status === 'Completed').length;
+
+        const ratings = this.assignments
+            .map(a => a.rating)
+            .filter((rating): rating is number => rating !== undefined && rating > 0);
+
+        this.averageRating = ratings.length
+            ? Math.round((ratings.reduce((sum, r) => sum + r, 0) / ratings.length) * 10) / 10
+            : 0;
     }
 
     get filteredAssignments(): AssignmentHistory[] {

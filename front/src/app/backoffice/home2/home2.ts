@@ -10,4 +10,8 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
 })
 export class Home2 {
   constructor(public authService: AuthService) { }
+
+  get isVolunteer(): boolean {
+    return this.authService.isVolunteer();
+  }
 }

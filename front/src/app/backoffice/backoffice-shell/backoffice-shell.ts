@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../../frontoffice/auth/auth.service';
 
@@ -9,5 +10,17 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
   styleUrls: ['./backoffice-shell.css'],
 })
 export class BackofficeShellComponent {
-  constructor(public authService: AuthService) { }
+  constructor(
+    public authService: AuthService,
+    private readonly router: Router
+  ) { }
+
+  get isVolunteer(): boolean {
+    return this.authService.isVolunteer();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
+  }
 }

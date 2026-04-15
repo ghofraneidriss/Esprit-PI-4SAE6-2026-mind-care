@@ -68,26 +68,4 @@
     </div>
   </div>
 
-  <div class="ah-completed-section">
-    <div class="ah-completed-header">
-      <div>
-        <h2 class="ah-title">My Completed Missions</h2>
-        <p class="ah-subtitle">{{ myCompletedMissions.length }} missions successfully completed</p>
-      </div>
-      <div class="ah-completed-badge">{{ myCompletedMissions.length }} Completed</div>
-    </div>
-
-    <div class="ah-grid">
-      <div class="ah-card" *ngFor="let m of myCompletedMissions">
-        <div class="ah-card-header"><div class="ah-card-icon"><i [class]="m.icon"></i></div><span class="ah-completed-pill"><span class="ah-dot"></span> Completed</span></div>
-        <h3 class="ah-card-title">{{ m.title }}</h3>
-        <span class="ah-card-category">{{ m.category }}</span>
-        <div class="ah-card-patient"><div class="ah-patient-avatar mini">{{ m.patientInitial }}</div><span class="ah-patient-name">{{ m.patientName }}</span></div>
-        <div class="ah-card-footer">
-          <span class="ah-card-date"><i class="fi fi-rr-calendar"></i> {{ m.date }}</span>
-          <div class="ah-card-rating"><i class="fi fi-sr-star star-filled" *ngFor="let i of starsArray(m.rating); let idx = index" [class.star-empty]="!isFilledStar(idx, m.rating)"></i><span class="ah-rating-val">{{ m.rating }}</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

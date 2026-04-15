@@ -11,7 +11,7 @@ export const adminAccessGuard: CanMatchFn = (_route, _segments: UrlSegment[]) =>
     return router.createUrlTree(['/auth/login']);
   }
 
-  if (authService.isBackofficeRole(loggedUser.role)) {
+  if (authService.isBackofficeRole(loggedUser.role) || authService.isVolunteer()) {
     return true;
   }
 

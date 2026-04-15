@@ -26,6 +26,7 @@ import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { PatientReportsPage } from './reports/reports';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missions';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { Footer } from './footer/footer';
     PatientReportsPage,
     Header,
     Footer,
+    VolunteerMissionsComponent,
   ],
   imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
 })

@@ -1,3 +1,50 @@
+<ng-container *ngIf="isVolunteer; else staffDashboard">
+  <div class="volunteer-home">
+    <section class="volunteer-hero">
+      <div class="volunteer-hero__copy">
+        <span class="volunteer-hero__eyebrow">Volunteer Backoffice</span>
+        <h1>Welcome back, {{ authService.getLoggedUser()?.firstName || 'Volunteer' }}</h1>
+        <p>Track your assignments, review completed missions, and manage your volunteer work from this secure backoffice view.</p>
+        <div class="volunteer-hero__actions">
+          <a routerLink="/admin/volunteering" class="volunteer-action volunteer-action--primary">
+            <i class="fi fi-rr-people-carry-box"></i>
+            <span>Open Volunteering</span>
+          </a>
+          <a routerLink="/admin/assignment-history" class="volunteer-action">
+            <i class="fi fi-rr-time-past"></i>
+            <span>Assignment History</span>
+          </a>
+        </div>
+      </div>
+      <div class="volunteer-hero__stats">
+        <div class="volunteer-stat">
+          <span class="volunteer-stat__label">Role</span>
+          <strong>Volunteer</strong>
+        </div>
+        <div class="volunteer-stat">
+          <span class="volunteer-stat__label">Access</span>
+          <strong>Backoffice only</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="volunteer-cards">
+      <a routerLink="/admin/volunteering" class="volunteer-card">
+        <i class="fi fi-rr-people-carry-box"></i>
+        <h3>Volunteering Workspace</h3>
+        <p>Review missions, update status, and handle your volunteer tasks.</p>
+      </a>
+
+      <a routerLink="/admin/assignment-history" class="volunteer-card">
+        <i class="fi fi-rr-time-past"></i>
+        <h3>Assignment History</h3>
+        <p>See your completed work and export mission history as PDF.</p>
+      </a>
+    </section>
+  </div>
+</ng-container>
+
+<ng-template #staffDashboard>
 <div class="app-page-head d-flex align-items-center justify-content-between">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb mb-0">
@@ -146,3 +193,4 @@
     </article>
   </div>
 </section>
+</ng-template>

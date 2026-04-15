@@ -75,12 +75,20 @@
 
       <div class="volunteer-list">
         <article class="volunteer-card" *ngFor="let v of filteredVolunteers">
-          <div class="vc-head"><div class="vol-avatar" [style.background]="v.avatarColor">{{ v.initials }}</div><div class="vc-info"><div class="vc-name">{{ v.name }} <span class="verified-badge" *ngIf="v.verified" title="Verified"><i class="fi fi-sr-badge-check"></i></span></div><span class="vc-city"><i class="fi fi-rr-marker"></i> {{ v.city }}</span></div></div>
+          <div class="vc-head"><div class="vol-avatar" [style.background]="v.avatarColor">{{ v.initials }}</div><div class="vc-info"><div class="vc-name">{{ v.name }} <span class="verified-badge" *ngIf="v.verified" title="Verified"><i class="fi fi-sr-badge-check"></i></span> <span [ngClass]="getVolunteerOnlineStatusClass(getVolunteerId(v) ?? -1)" title="Online Status">{{ getVolunteerOnlineStatus(getVolunteerId(v) ?? -1) }}</span></div><span class="vc-city"><i class="fi fi-rr-marker"></i> {{ v.city }}</span></div></div>
           <div class="vc-skills"><span class="skill-chip" *ngFor="let skill of v.skills">{{ skill }}</span></div>
           <div class="vc-meta"><span class="vc-availability"><i class="fi fi-rr-calendar"></i> {{ v.availability }}</span></div>
           <div class="vc-footer">
-            <div class="vc-rating"><i class="fi fi-ss-star star-icon" *ngFor="let i of starsArray(v.rating); let idx = index" [style.color]="isFilledStar(idx, v.rating) ? '#f5a623' : '#e2e8f0'"></i><span class="rating-value">{{ v.rating }} rating</span><span class="missions-count">{{ v.missions }} missions</span></div>
-            <button type="button" class="btn-assign" (click)="assignVolunteer(v)"><i class="fi fi-rr-user-add"></i> Assign to Mission</button>
+            <div class="vc-rating">
+              <span class="vc-stars">
+                <ng-container *ngFor="let idx of starsArray(v.rating); let starIdx = index">
+                  <i class="fi fi-ss-star star-icon" [style.color]="isFilledStar(starIdx, v.rating) ? '#f5a623' : '#e2e8f0'"></i>
+                </ng-container>
+              </span>
+              <span class="rating-value">{{ v.rating }} rating</span>
+              <span class="missions-count">{{ v.missions }} missions</span>
+            </div>
+            <button type="button" class="btn-assign" (click)="openAssignModal(v, openMissions[0] || null)" [disabled]="openMissions.length === 0"><i class="fi fi-rr-user-add"></i> Assign to Mission</button>
           </div>
         </article>
 
@@ -111,6 +119,38 @@
     <div class="card-footer bg-body d-flex justify-content-end gap-2">
       <button type="button" class="btn btn-light" (click)="closeCreateModal()">Cancel</button>
       <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="saveMission()">{{ isSaving ? 'Saving...' : 'Create Mission' }}</button>
+    </div>
+  </section>
+</div>
+
+<!-- Assignment Modal -->
+<div class="vol-modal-backdrop" *ngIf="isAssignModalOpen" (click)="closeAssignModal()">
+  <section class="vol-modal card" (click)="$event.stopPropagation()">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0">Confirm Mission Assignment</h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="closeAssignModal()"><i class="fi fi-rr-cross-small"></i></button>
+    </div>
+    <div class="card-body">
+      <div *ngIf="assignmentError" class="alert alert-danger mb-3">{{ assignmentError }}</div>
+      <div *ngIf="selectedVolunteerForAssignment" class="alert alert-secondary mb-3">
+        <strong>Volunteer:</strong> {{ selectedVolunteerForAssignment.name }}
+      </div>
+      <div class="mb-3" *ngIf="openMissions.length > 0">
+        <label class="form-label">Open mission</label>
+        <select class="form-select" [(ngModel)]="selectedMissionIdForAssignment" (ngModelChange)="onAssignmentMissionChange()">
+          <option *ngFor="let mission of openMissions" [ngValue]="mission.id">{{ mission.title }} - {{ mission.priority }}</option>
+        </select>
+      </div>
+      <div *ngIf="selectedMissionForAssignment" class="alert alert-info mb-3">
+        <strong>Mission:</strong> {{ selectedMissionForAssignment.title }}<br>
+        <strong>Category:</strong> {{ selectedMissionForAssignment.category }}<br>
+        <strong>Priority:</strong> {{ selectedMissionForAssignment.priority }}<br>
+        <p class="mt-2"><i class="fi fi-rr-info"></i> A Twilio SMS or voice call notification will be sent to the volunteer.</p>
+      </div>
+    </div>
+    <div class="card-footer bg-body d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-light" (click)="closeAssignModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" [disabled]="assignmentLoading || !selectedVolunteerForAssignment || !selectedMissionForAssignment" (click)="confirmAssignment()">{{ assignmentLoading ? 'Assigning...' : 'Assign and notify' }}</button>
     </div>
   </section>
 </div>

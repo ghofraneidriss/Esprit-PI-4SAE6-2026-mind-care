@@ -28,9 +28,11 @@
         <div class="vr my-3"></div>
 
         <div class="d-flex align-items-center gap-sm-2 gap-0 px-lg-4 px-sm-2 px-1">
-          <button type="button" class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative">
+          <button type="button"
+            class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative">
             <i class="fi fi-rr-envelope"></i>
-            <span class="position-absolute top-0 end-0 p-1 mt-1 me-1 bg-primary border border-3 border-light rounded-circle">
+            <span
+              class="position-absolute top-0 end-0 p-1 mt-1 me-1 bg-primary border border-3 border-light rounded-circle">
               <span class="visually-hidden">New alerts</span>
             </span>
           </button>
@@ -50,10 +52,10 @@
           <div class="header-user__avatar">
             {{ (authService.getLoggedUser()?.firstName || 'A').charAt(0) }}
           </div>
-          <div class="header-user__meta">
-            <strong>{{ authService.getLoggedUser()?.firstName || 'Admin' }}</strong>
-            <span>{{ authService.getLoggedRole() || 'ADMIN' }}</span>
-          </div>
+        <div class="header-user__meta">
+          <strong>{{ authService.getLoggedUser()?.firstName || 'Admin' }}</strong>
+          <span>{{ isVolunteer ? 'VOLUNTEER' : (authService.getLoggedRole() || 'ADMIN') }}</span>
+        </div>
         </div>
       </div>
     </div>
@@ -69,17 +71,20 @@
     <div class="app-navbar-tabs">
       <ul class="nav" role="tablist" aria-orientation="vertical">
         <li class="nav-item">
-          <a class="menu-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" aria-label="Dashboard">
+          <a class="menu-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            aria-label="Dashboard">
             <i class="fi fi-rr-house-blank"></i>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="menu-link" routerLink="/admin/medical-reports" routerLinkActive="active" aria-label="Medical Reports">
+        <li class="nav-item" *ngIf="!isVolunteer">
+          <a class="menu-link" routerLink="/admin/medical-reports" routerLinkActive="active"
+            aria-label="Medical Reports">
             <i class="fi fi-rr-document"></i>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="menu-link" routerLink="/admin/files-management" routerLinkActive="active" aria-label="Files Management">
+        <li class="nav-item" *ngIf="!isVolunteer">
+          <a class="menu-link" routerLink="/admin/files-management" routerLinkActive="active"
+            aria-label="Files Management">
             <i class="fi fi-rr-folder-open"></i>
           </a>
         </li>
@@ -89,19 +94,26 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="menu-link" routerLink="/admin/assignment-history" routerLinkActive="active" aria-label="Assignment History">
+          <a class="menu-link" routerLink="/admin/assignment-history" routerLinkActive="active"
+            aria-label="Assignment History">
             <i class="fi fi-rr-time-past"></i>
           </a>
         </li>
         <li class="nav-item nav-item-hr"></li>
         <li class="nav-item mb-auto" *ngIf="authService.isAdmin()">
-          <a class="menu-link" routerLink="/admin/user-management" routerLinkActive="active" aria-label="User Management">
+          <a class="menu-link" routerLink="/admin/user-management" routerLinkActive="active"
+            aria-label="User Management">
             <i class="fi fi-rr-users"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="menu-link" routerLink="/" aria-label="Back to site">
             <i class="fi fi-rr-exit"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="menu-link" href="javascript:void(0)" (click)="logout()" aria-label="Logout">
+            <i class="fi fi-rr-sign-out-alt"></i>
           </a>
         </li>
       </ul>
@@ -116,18 +128,19 @@
         <ul class="side-menubar">
           <li class="menu-heading"><span>Main</span></li>
           <li class="menu-item">
-            <a class="menu-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <a class="menu-link" routerLink="/admin" routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }">
               <i class="fi fi-rr-house-blank"></i>
               <span>Dashboard</span>
             </a>
           </li>
-          <li class="menu-item">
+          <li class="menu-item" *ngIf="!isVolunteer">
             <a class="menu-link" routerLink="/admin/medical-reports" routerLinkActive="active">
               <i class="fi fi-rr-document"></i>
               <span>Medical Reports</span>
             </a>
           </li>
-          <li class="menu-item">
+          <li class="menu-item" *ngIf="!isVolunteer">
             <a class="menu-link" routerLink="/admin/files-management" routerLinkActive="active">
               <i class="fi fi-rr-folder-open"></i>
               <span>Files Management</span>
@@ -161,6 +174,12 @@
             <a class="menu-link" routerLink="/">
               <i class="fi fi-rr-exit"></i>
               <span>Back to Site</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" href="javascript:void(0)" (click)="logout()">
+              <i class="fi fi-rr-sign-out-alt"></i>
+              <span>Logout</span>
             </a>
           </li>
         </ul>

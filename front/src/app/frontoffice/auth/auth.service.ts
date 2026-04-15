@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, Subject } from 'rxjs';
 
 export interface AuthUser {
   userId: number;
@@ -32,6 +32,10 @@ export class AuthService {
   private readonly apiUrl = 'http://localhost:8082/api/users';
   private readonly storageKey = 'loggedUser';
   private readonly backofficeRoles = new Set(['ADMIN', 'DOCTOR', 'CAREGIVER']);
+  
+  // Subject to emit login events - can be used to initialize sessions/WebSocket
+  loginCompleted$ = new Subject<AuthUser>();
+  logoutCompleted$ = new Subject<void>();
 
   constructor(private readonly http: HttpClient) { }
 
@@ -42,7 +46,10 @@ export class AuthService {
   login(payload: LoginRequest): Observable<AuthUser> {
     return this.http
       .post<AuthUser>(`${this.apiUrl}/login`, payload)
-      .pipe(tap((user) => localStorage.setItem(this.storageKey, JSON.stringify(user))));
+      .pipe(tap((user) => {
+        localStorage.setItem(this.storageKey, JSON.stringify(user));
+        this.loginCompleted$.next(user);
+      }));
   }
 
   getAllUsers(): Observable<AuthUser[]> {
@@ -84,6 +91,10 @@ export class AuthService {
     return this.getLoggedRole() === 'DOCTOR';
   }
 
+  isVolunteer(): boolean {
+    return this.getLoggedRole() === 'VOLUNTEER';
+  }
+
   isBackofficeRole(role?: string | null): boolean {
     const normalizedRole = this.normalizeRole(role ?? this.getLoggedRole());
     return this.backofficeRoles.has(normalizedRole);
@@ -95,6 +106,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.storageKey);
+    this.logoutCompleted$.next();
   }
 
   normalizeRole(role: string | undefined | null): string {

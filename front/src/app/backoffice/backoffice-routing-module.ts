@@ -18,8 +18,8 @@ const routes: Routes = [
     children: [
       { path: '', component: Home2, pathMatch: 'full' },
       { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
-      { path: 'medical-reports', component: MedicalReportsPageComponent },
-      { path: 'files-management', component: FilesManagementPageComponent },
+      { path: 'medical-reports', component: MedicalReportsPageComponent, canActivate: [strictAdminGuard] },
+      { path: 'files-management', component: FilesManagementPageComponent, canActivate: [strictAdminGuard] },
       { path: 'volunteering', component: VolunteeringPageComponent },
       { path: 'assignment-history', component: AssignmentHistoryPageComponent },
       { path: '**', redirectTo: '' },

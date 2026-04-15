@@ -825,6 +825,99 @@
     font-size: 18px;
 }
 
+/* ─── Presence Status Indicators ─────────────────────── */
+
+/* Avatar wrapper for status dot positioning */
+.vol-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Status dot on avatar */
+.avatar-status-dot {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    background: #94a3b8;
+    z-index: 2;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.avatar-status-dot.status-online {
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.20);
+    animation: pulse-online 2s infinite;
+}
+
+.avatar-status-dot.status-away {
+    background: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+.avatar-status-dot.status-offline {
+    background: #94a3b8;
+}
+
+@keyframes pulse-online {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.20);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.10);
+    }
+}
+
+/* Status badge next to name */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+.badge-online {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.badge-away {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-offline {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+/* Presence summary pills */
+/* Card border accent based on status */
+.volunteer-card.status-online {
+    border-left: 3px solid #22c55e;
+}
+
+.volunteer-card.status-away {
+    border-left: 3px solid #f59e0b;
+}
+
+.volunteer-card.status-offline {
+    border-left: 3px solid #e2e8f0;
+    opacity: 0.8;
+}
+
 /* ─── Modal ──────────────────────────────────────────── */
 .vol-modal-backdrop {
     position: fixed;
@@ -883,4 +976,43 @@
         min-width: unset;
         max-width: 100%;
     }
+}
+
+/* ─── Online Status Styles ────────────────────────── */
+.status-online {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.status-online::before {
+    content: "●";
+    color: #16a34a;
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.status-offline {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #fee2e2;
+    color: #7f1d1d;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.status-offline::before {
+    content: "●";
+    color: #dc2626;
+    margin-right: 4px;
+    font-size: 14px;
 }
