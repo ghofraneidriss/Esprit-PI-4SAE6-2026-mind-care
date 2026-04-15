@@ -2,6 +2,7 @@ package tn.esprit.recommendation_service.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleNotReadable(HttpMessageNotReadableException ex) {
+        String message = ex.getMessage();
+        if (message != null && message.contains("LocalDate")) {
+            return build(HttpStatus.BAD_REQUEST, "Format de date invalide. Utilisez le format YYYY-MM-DD (ex: 2025-12-31).");
+        }
+        return build(HttpStatus.BAD_REQUEST, "Corps de la requête invalide ou mal formaté.");
     }
 
     @ExceptionHandler(Exception.class)

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import {
     Recommendation,
     RecommendationStatus,
@@ -26,7 +26,8 @@ export class RecommendationsPage implements OnInit {
 
     constructor(
         private readonly recommendationService: RecommendationService,
-        private readonly authService: AuthService
+        private readonly authService: AuthService,
+        private readonly cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -53,13 +54,20 @@ export class RecommendationsPage implements OnInit {
 
         this.recommendationService.getSortedByPatient(this.currentPatient.userId).subscribe({
             next: (data) => {
+                console.log('[Recommendations] data received:', data);
                 this.recommendations = Array.isArray(data) ? data : [];
                 this.loading = false;
+                this.cdr.detectChanges();
             },
-            error: () => {
-                this.errorMessage = 'Erreur lors du chargement de vos recommandations.';
+            error: (err) => {
+                console.error('[Recommendations] error:', err);
+                const msg = err?.error?.message || err?.message || '';
+                this.errorMessage = msg
+                    ? `Erreur: ${msg}`
+                    : 'Impossible de charger les recommandations. Vérifiez que le service est démarré (port 8085).';
                 this.recommendations = [];
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
@@ -108,6 +116,10 @@ export class RecommendationsPage implements OnInit {
         return recommendationId != null && this.actionLoadingId === recommendationId;
     }
 
+    trackById(_: number, rec: Recommendation): number {
+        return rec.id ?? _;
+    }
+
     getTypeBadgeClass(type: string): string {
         const map: Record<string, string> = {
             MEDICATION: 'bg-danger-subtle text-danger',
@@ -118,6 +130,7 @@ export class RecommendationsPage implements OnInit {
             ATTENTION: 'bg-info-subtle text-info',
             FLUENCY: 'bg-secondary-subtle text-secondary',
             VISUOSPATIAL: 'bg-dark-subtle text-dark',
+            PUZZLE: 'bg-success-subtle text-success',
             OTHER: 'bg-secondary-subtle text-secondary'
         };
         return map[type] || 'bg-secondary-subtle text-secondary';

@@ -5,7 +5,60 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/.config.kiro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/design.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/requirements.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/tasks.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/src/app/backoffice/puzzle-management/puzzle-management.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/src/app/backoffice/puzzle-management/puzzle-management.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front/src/app/backoffice/puzzle-management/puzzle-management.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_22_2026_1_09_AM_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_22_2026_1_09_AM__Changes_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-routing-module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/sidebar/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/sidebar/sidebar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.css" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/Recommendation.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/Recommendation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/RecommendationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/RecommendationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/incident_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/incident_service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/UsersServiceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/AppConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/AppointmentController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/ChatbotController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/MoodController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/NotificationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Appointment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/MoodEntry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Notification.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/AppointmentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/MoodEntryRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/NotificationRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/CustomUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/UsersServiceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/controller/UserControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/service/UserServiceTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +142,8 @@
     &quot;Maven.mind_care_server [clean].executor&quot;: &quot;Run&quot;,
     &quot;Maven.mind_care_server [compile].executor&quot;: &quot;Run&quot;,
     &quot;Maven.mind_care_server [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [org.apache.maven.plugins:maven-clean-plugin:3.3.2:clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mind_care_server [org.apache.maven.plugins:maven-install-plugin:3.1.1:install].executor&quot;: &quot;Run&quot;,
     &quot;Maven.mind_care_server [package].executor&quot;: &quot;Run&quot;,
     &quot;Maven.mind_care_server [validate].executor&quot;: &quot;Run&quot;,
     &quot;Maven.mind_care_server [verify].executor&quot;: &quot;Run&quot;,
@@ -98,6 +153,8 @@
     &quot;Maven.movement_service [package].executor&quot;: &quot;Run&quot;,
     &quot;Maven.movement_service [validate].executor&quot;: &quot;Run&quot;,
     &quot;Maven.movement_service [verify].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.souvenir_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.souvenir_service [install].executor&quot;: &quot;Run&quot;,
     &quot;Maven.users_service [clean].executor&quot;: &quot;Run&quot;,
     &quot;Maven.users_service [compile].executor&quot;: &quot;Run&quot;,
     &quot;Maven.users_service [install].executor&quot;: &quot;Run&quot;,
@@ -114,27 +171,33 @@
     &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
     &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.ForumsServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.IncidentServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.MedicalReportServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.MovementServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.SouvenirServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.VolunteerServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;recommendationns&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/IDRISS/Desktop/MindCare/mind-care&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/azizc/Esprit-PI-4SAE6-2026-mind-care-new&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\IDRISS\\Desktop\\MindCare\\mind-care\\front\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -154,8 +217,21 @@
         <option value="SpringBootApplicationConfigurationType" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="RecommendationServiceApplication" value="STOPPED" />
+              <entry key="SouvenirServiceApplication" value="STOPPED" />
+              <entry key="UsersServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.UsersServiceApplication">
+  <component name="RunManager" selected="Spring Boot.SouvenirServiceApplication">
     <configuration name="UsersServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="tn.esprit.users_service.UsersServiceApplication" />
       <module name="users_service" />
@@ -209,9 +285,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="RecommendationServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="recommendation_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.recommendation_service.RecommendationServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SouvenirServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="souvenir_service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.souvenir_service.SouvenirServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="UsersServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="17 (3)" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="users_service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="tn.esprit.users_service.UsersServiceApplication" />
@@ -249,6 +338,8 @@
     <list>
       <item itemvalue="Application.UsersServiceApplication" />
       <item itemvalue="Docker.users_service.keycloak: Compose Deployment" />
+      <item itemvalue="Spring Boot.RecommendationServiceApplication" />
+      <item itemvalue="Spring Boot.SouvenirServiceApplication" />
       <item itemvalue="Spring Boot.IncidentServiceApplication" />
       <item itemvalue="Spring Boot.MovementServiceApplication" />
       <item itemvalue="Spring Boot.ApiGatewayApplication" />
@@ -269,8 +360,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
       </set>
     </attachedChunks>
   </component>
@@ -304,6 +395,8 @@
       <workItem from="1774282430126" duration="1769000" />
       <workItem from="1774369944544" duration="618000" />
       <workItem from="1774459543372" duration="5237000" />
+      <workItem from="1776272815775" duration="2247000" />
+      <workItem from="1776275168110" duration="6545000" />
     </task>
     <servers />
   </component>

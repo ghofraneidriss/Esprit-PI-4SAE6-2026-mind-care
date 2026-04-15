@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   Puzzle,
   PuzzleLeaderboardEntry,
@@ -30,6 +30,8 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
   errorMessage = '';
   successMessage = '';
   showReference = false;
+  showSuccessOverlay = false;
+  finalScore: number | null = null;
 
   sessionId: number | null = null;
   startTimestamp = 0;
@@ -44,6 +46,7 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly recommendationService: RecommendationService,
     private readonly authService: AuthService
   ) {}
@@ -73,8 +76,8 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
 
   get completionPercent(): number {
     if (!this.tiles.length) return 0;
-    const correctTiles = this.tiles.filter((tile, index) => tile.isEmpty || tile.value === index).length;
-    return Math.round((correctTiles / this.tiles.length) * 100);
+    const correct = this.tiles.filter((t, i) => t.isEmpty || t.value === i).length;
+    return Math.round((correct / this.tiles.length) * 100);
   }
 
   get canPlay(): boolean {
@@ -87,6 +90,21 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
 
   get timeLimitExceeded(): boolean {
     return !!this.puzzle?.timeLimitSeconds && this.elapsedSeconds > this.puzzle.timeLimitSeconds;
+  }
+
+  get timeProgressPercent(): number {
+    if (!this.puzzle?.timeLimitSeconds) return 0;
+    return Math.min(100, Math.round((this.elapsedSeconds / this.puzzle.timeLimitSeconds) * 100));
+  }
+
+  get isSolvedNow(): boolean {
+    return this.tiles.length > 0 && this.isSolved(this.tiles.map(t => t.value));
+  }
+
+  get formattedTime(): string {
+    const m = Math.floor(this.elapsedSeconds / 60);
+    const s = this.elapsedSeconds % 60;
+    return m > 0 ? `${m}m ${s.toString().padStart(2, '0')}s` : `${s}s`;
   }
 
   loadPuzzle(eventId: number): void {
@@ -113,6 +131,11 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
   startSession(): void {
     if (!this.puzzle?.id || !this.currentPatient?.userId) return;
 
+    this.showSuccessOverlay = false;
+    this.finalScore = null;
+    this.successMessage = '';
+    this.errorMessage = '';
+
     this.recommendationService.startPuzzleSession(this.puzzle.id, this.currentPatient.userId).subscribe({
       next: (response) => {
         this.sessionId = response.sessionId;
@@ -133,9 +156,8 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
   generateTiles(): void {
     const gridSize = this.puzzle?.gridSize ?? 3;
     const tileCount = gridSize * gridSize;
-    const ordered = Array.from({ length: tileCount }, (_, index) => index);
+    const ordered = Array.from({ length: tileCount }, (_, i) => i);
     let shuffled = [...ordered];
-
     do {
       shuffled = [...ordered].sort(() => Math.random() - 0.5);
     } while (this.isSolved(shuffled));
@@ -144,34 +166,50 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
       value,
       isEmpty: value === tileCount - 1,
     }));
-    this.emptyIndex = this.tiles.findIndex((tile) => tile.isEmpty);
+    this.emptyIndex = this.tiles.findIndex((t) => t.isEmpty);
   }
 
   moveTile(index: number): void {
-    if (this.submitting || !this.isAdjacent(index, this.emptyIndex)) return;
+    if (this.submitting || this.submitted || !this.isAdjacent(index, this.emptyIndex)) return;
 
     [this.tiles[index], this.tiles[this.emptyIndex]] = [this.tiles[this.emptyIndex], this.tiles[index]];
     this.emptyIndex = index;
     this.movesCount++;
 
-    if (this.isSolved(this.tiles.map((tile) => tile.value))) {
+    if (this.isSolved(this.tiles.map((t) => t.value))) {
       this.submitSession(true, false);
     }
+  }
+
+  validateSolution(): void {
+    if (this.submitting || this.submitted) return;
+    this.submitSession(this.isSolvedNow, false);
   }
 
   useHint(): void {
     if (!this.puzzle || this.hintsUsed >= this.puzzle.maxHints) return;
     this.hintsUsed++;
     this.showReference = true;
-    setTimeout(() => (this.showReference = false), 1800);
+    setTimeout(() => (this.showReference = false), 2500);
   }
 
   restartPuzzle(): void {
     this.stopTimer();
+    this.showSuccessOverlay = false;
     if (this.sessionId && this.puzzle && !this.submitted) {
       this.submitSession(false, true);
+    } else {
+      this.startSession();
     }
+  }
+
+  closeOverlayAndRestart(): void {
+    this.showSuccessOverlay = false;
     this.startSession();
+  }
+
+  goToRecommendations(): void {
+    this.router.navigate(['/recommendations']);
   }
 
   trackTile(_: number, tile: PuzzleTile): number {
@@ -179,19 +217,15 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
   }
 
   tileStyle(tile: PuzzleTile): Record<string, string> {
-    if (!this.puzzle || tile.isEmpty) {
-      return {};
-    }
-
+    if (!this.puzzle || tile.isEmpty) return {};
     const gridSize = this.puzzle.gridSize;
     const row = Math.floor(tile.value / gridSize);
     const col = tile.value % gridSize;
-    const denominator = Math.max(gridSize - 1, 1);
-
+    const d = Math.max(gridSize - 1, 1);
     return {
       backgroundImage: `url(${this.sourceImage})`,
       backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
-      backgroundPosition: `${(col / denominator) * 100}% ${(row / denominator) * 100}%`,
+      backgroundPosition: `${(col / d) * 100}% ${(row / d) * 100}%`,
     };
   }
 
@@ -227,7 +261,6 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
 
   private submitSession(completed: boolean, abandoned: boolean): void {
     if (!this.puzzle?.id || !this.sessionId || !this.currentPatient?.userId) return;
-
     this.stopTimer();
     this.submitting = true;
 
@@ -245,11 +278,18 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
         next: (session) => {
           this.submitted = true;
           this.submitting = false;
-          this.successMessage = session.completed
-            ? `Puzzle termine ! Score final: ${session.score ?? 0}`
-            : 'Session enregistree.';
+          this.finalScore = session.score ?? 0;
+
+          if (!abandoned) {
+            this.showSuccessOverlay = true;
+          }
+
           this.loadLeaderboard();
           this.loadLatestSessions();
+
+          if (abandoned) {
+            this.startSession();
+          }
         },
         error: (err) => {
           this.submitting = false;
@@ -258,16 +298,12 @@ export class PuzzlePlayPage implements OnInit, OnDestroy {
       });
   }
 
-  private isAdjacent(indexA: number, indexB: number): boolean {
-    const gridSize = this.puzzle?.gridSize ?? 3;
-    const rowA = Math.floor(indexA / gridSize);
-    const colA = indexA % gridSize;
-    const rowB = Math.floor(indexB / gridSize);
-    const colB = indexB % gridSize;
-    return Math.abs(rowA - rowB) + Math.abs(colA - colB) === 1;
+  private isAdjacent(a: number, b: number): boolean {
+    const g = this.puzzle?.gridSize ?? 3;
+    return Math.abs(Math.floor(a / g) - Math.floor(b / g)) + Math.abs((a % g) - (b % g)) === 1;
   }
 
   private isSolved(values: number[]): boolean {
-    return values.every((value, index) => value === index);
+    return values.every((v, i) => v === i);
   }
 }

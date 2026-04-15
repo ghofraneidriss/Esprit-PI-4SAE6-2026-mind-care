@@ -71,7 +71,7 @@ public class Recommendation {
 
     private LocalDateTime acceptedAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "generated_medical_event_id")
     private MedicalEvent generatedMedicalEvent;
 

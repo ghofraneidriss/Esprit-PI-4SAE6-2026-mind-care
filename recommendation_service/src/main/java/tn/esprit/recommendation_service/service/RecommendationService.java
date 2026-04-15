@@ -506,9 +506,12 @@ public class RecommendationService {
             return true;
         }
 
-        // Specific compatibility: VISUOSPATIAL recommendations can use PUZZLE activities
-        if (recType == RecommendationType.VISUOSPATIAL && eventType == MedicalEventType.PUZZLE) {
-            return true;
+        // PUZZLE events are compatible with cognitive recommendation types
+        if (eventType == MedicalEventType.PUZZLE) {
+            return recType == RecommendationType.VISUOSPATIAL
+                    || recType == RecommendationType.MEMORY
+                    || recType == RecommendationType.ATTENTION
+                    || recType == RecommendationType.PUZZLE;
         }
 
         return false;
@@ -579,6 +582,8 @@ public class RecommendationService {
     }
 
     private RecommendationResponse toResponse(Recommendation recommendation) {
+        MedicalEvent event = recommendation.getGeneratedMedicalEvent();
+
         return RecommendationResponse.builder()
                 .id(recommendation.getId())
                 .content(recommendation.getContent())
@@ -591,9 +596,9 @@ public class RecommendationService {
                 .rejectionCount(recommendation.getRejectionCount())
                 .expirationDate(recommendation.getExpirationDate())
                 .acceptedAt(recommendation.getAcceptedAt())
-                .generatedMedicalEventId(recommendation.getGeneratedMedicalEvent() == null ? null : recommendation.getGeneratedMedicalEvent().getId())
-                .generatedMedicalEventTitle(recommendation.getGeneratedMedicalEvent() == null ? null : recommendation.getGeneratedMedicalEvent().getTitle())
-                .generatedMedicalEventType(recommendation.getGeneratedMedicalEvent() == null ? null : recommendation.getGeneratedMedicalEvent().getType())
+                .generatedMedicalEventId(event == null ? null : event.getId())
+                .generatedMedicalEventTitle(event == null ? null : event.getTitle())
+                .generatedMedicalEventType(event == null ? null : event.getType())
                 .createdAt(recommendation.getCreatedAt())
                 .updatedAt(recommendation.getUpdatedAt())
                 .build();

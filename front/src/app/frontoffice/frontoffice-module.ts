@@ -20,6 +20,9 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { FrontofficeActivitiesPage } from './activities/activities';
+import { PatientIncidentsComponent } from './incident-list-front/patient-incidents';
+import { PatientIncidentsHistoryComponent } from './incident-list-front/patient-incidents-history';
+import { IncidentReportFrontPage } from './incident-report/incident-report-front';
 import { RecommendationsPage } from './recommendations/recommendations';
 import { SouvenirsFrontPage } from './souvenirs/souvenirs';
 import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
@@ -55,6 +58,13 @@ import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
     FrontofficeLayoutComponent,
     PuzzlePlayPage,
   ],
-  imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    FrontofficeRoutingModule,
+    PatientIncidentsComponent,
+    PatientIncidentsHistoryComponent,
+    IncidentReportFrontPage,
+  ],
 })
 export class FrontofficeModule {}

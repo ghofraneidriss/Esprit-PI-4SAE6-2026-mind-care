@@ -1,0 +1,229 @@
+<div class="pm-layout">
+  <aside class="mr-sidebar">
+    <div class="sidebar-brand">
+      <a routerLink="/admin" class="brand-link">
+        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
+        <span class="brand-text">MindCare</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="nav-link">
+        <i class="fi fi-rr-house-blank"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/medical-reports" class="nav-link">
+        <i class="fi fi-rr-document"></i>
+        <span>Medical Reports</span>
+      </a>
+      <a routerLink="/admin/recommendation" class="nav-link">
+        <i class="fi fi-rr-comment-medical"></i>
+        <span>Recommendations</span>
+      </a>
+      <a routerLink="/admin/medical-events" class="nav-link">
+        <i class="fi fi-rr-dice"></i>
+        <span>Medical Events</span>
+      </a>
+      <a routerLink="/admin/souvenirs" class="nav-link">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Souvenirs</span>
+      </a>
+      <a routerLink="/admin/puzzle-management" class="nav-link active">
+        <i class="fi fi-rr-puzzle-piece"></i>
+        <span>Puzzle Management</span>
+      </a>
+      <a routerLink="/admin/files-management" class="nav-link">
+        <i class="fi fi-rr-folder-open"></i>
+        <span>Files Management</span>
+      </a>
+      <a routerLink="/admin/activities" class="nav-link">
+        <i class="fi fi-rr-list-check"></i>
+        <span>Activities</span>
+      </a>
+      <a routerLink="/admin/forums" class="nav-link">
+        <i class="fi fi-rr-comment-alt"></i>
+        <span>Forums</span>
+      </a>
+      <a routerLink="/admin/incidents" class="nav-link">
+        <i class="fi fi-rr-shield-exclamation"></i>
+        <span>Incidents</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="nav-link logout-link">
+        <i class="fi fi-rr-exit"></i>
+        <span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="pm-page">
+    <header class="pm-hero">
+      <div class="pm-hero-inner">
+        <div>
+          <h1 class="pm-hero-title">
+            <span class="hero-icon"><i class="fi fi-rr-puzzle-piece"></i></span>
+            Puzzle Management
+          </h1>
+          <p class="pm-hero-subtitle">Consultez les puzzles thérapeutiques et les sessions de jeu par patient</p>
+        </div>
+
+        <div class="pm-hero-actions">
+          <div class="pm-stat-chip">
+            <span class="chip-value">{{ puzzles.length }}</span>
+            <span class="chip-label">Puzzles</span>
+          </div>
+          <div class="pm-stat-chip">
+            <span class="chip-value">{{ sessions.length }}</span>
+            <span class="chip-label">Sessions</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="pm-search-bar">
+      <label class="pm-search-label">Patient ID</label>
+      <input
+        type="number"
+        class="form-control pm-patient-input"
+        [(ngModel)]="patientId"
+        placeholder="Ex: 4"
+        min="1"
+      />
+      <button type="button" class="btn-load" (click)="loadPuzzles()" [disabled]="isLoadingPuzzles">
+        <span *ngIf="isLoadingPuzzles" class="spinner-border spinner-border-sm"></span>
+        <i *ngIf="!isLoadingPuzzles" class="fi fi-rr-search"></i>
+        Charger
+      </button>
+    </div>
+
+    <div *ngIf="puzzleError" class="page-alert alert-danger">
+      <i class="fi fi-rr-triangle-warning"></i>
+      <span>{{ puzzleError }}</span>
+      <button type="button" class="btn-retry" (click)="loadPuzzles()">
+        <i class="fi fi-rr-refresh"></i> Réessayer
+      </button>
+      <button type="button" class="btn-close" (click)="puzzleError = ''" aria-label="Close"></button>
+    </div>
+
+    <div class="pm-body">
+      <!-- Puzzles panel -->
+      <section class="pm-panel">
+        <div class="pm-panel-header">
+          <span class="card-icon icon-teal"><i class="fi fi-rr-puzzle-piece"></i></span>
+          <h5>Puzzles du patient</h5>
+        </div>
+
+        <div *ngIf="isLoadingPuzzles" class="pm-loading">
+          <div class="spinner-border text-primary"></div>
+          <span>Chargement des puzzles...</span>
+        </div>
+
+        <div *ngIf="!isLoadingPuzzles && puzzles.length === 0 && !puzzleError" class="pm-empty">
+          <div class="empty-icon"><i class="fi fi-rr-puzzle-piece"></i></div>
+          <p>Aucun puzzle trouvé. Entrez un ID patient et cliquez sur Charger.</p>
+        </div>
+
+        <div *ngIf="!isLoadingPuzzles && puzzles.length > 0" class="pm-table-wrap">
+          <table class="pm-table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Difficulté</th>
+                <th>Statut</th>
+                <th>Meilleur score</th>
+                <th>Sessions complétées</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let puzzle of puzzles"
+                class="pm-row"
+                [class.active]="selectedPuzzle?.id === puzzle.id"
+                (click)="selectPuzzle(puzzle)"
+              >
+                <td class="pm-cell-title">{{ puzzle.title }}</td>
+                <td><span [class]="getDifficultyClass(puzzle.difficulty)">{{ puzzle.difficulty }}</span></td>
+                <td><span [class]="getStatusClass(puzzle.status)">{{ puzzle.status }}</span></td>
+                <td>{{ puzzle.bestScore ?? '-' }}</td>
+                <td>{{ puzzle.completedSessions ?? 0 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Sessions panel -->
+      <section class="pm-panel">
+        <div class="pm-panel-header">
+          <span class="card-icon icon-blue"><i class="fi fi-rr-stats"></i></span>
+          <h5>
+            Sessions
+            <span *ngIf="selectedPuzzle" class="pm-panel-subtitle">— {{ selectedPuzzle.title }}</span>
+          </h5>
+        </div>
+
+        <div *ngIf="!selectedPuzzle && !isLoadingSessions" class="pm-empty">
+          <div class="empty-icon"><i class="fi fi-rr-stats"></i></div>
+          <p>Sélectionnez un puzzle pour voir ses sessions.</p>
+        </div>
+
+        <div *ngIf="isLoadingSessions" class="pm-loading">
+          <div class="spinner-border text-primary"></div>
+          <span>Chargement des sessions...</span>
+        </div>
+
+        <div *ngIf="sessionError" class="page-alert alert-danger">
+          <i class="fi fi-rr-triangle-warning"></i>
+          <span>{{ sessionError }}</span>
+          <button type="button" class="btn-close" (click)="sessionError = ''" aria-label="Close"></button>
+        </div>
+
+        <div *ngIf="selectedPuzzle && !isLoadingSessions && sessions.length === 0 && !sessionError" class="pm-empty">
+          <div class="empty-icon"><i class="fi fi-rr-stats"></i></div>
+          <p>Aucune session pour ce puzzle.</p>
+        </div>
+
+        <div *ngIf="!isLoadingSessions && sessions.length > 0" class="pm-table-wrap">
+          <table class="pm-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Durée</th>
+                <th>Mouvements</th>
+                <th>Erreurs</th>
+                <th>Indices</th>
+                <th>Complétion %</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let session of sessions" class="pm-row">
+                <td>{{ formatDate(session.startedAt) }}</td>
+                <td>{{ formatDuration(session.durationSeconds) }}</td>
+                <td>{{ session.movesCount ?? '-' }}</td>
+                <td>{{ session.errorsCount ?? '-' }}</td>
+                <td>{{ session.hintsUsed ?? '-' }}</td>
+                <td>
+                  <span *ngIf="session.completionPercent != null" class="completion-bar-wrap">
+                    <span class="completion-bar" [style.width.%]="session.completionPercent"></span>
+                    <span class="completion-label">{{ session.completionPercent }}%</span>
+                  </span>
+                  <span *ngIf="session.completionPercent == null">-</span>
+                </td>
+                <td>{{ session.score ?? '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <footer class="pm-footer">
+      <span>© 2025 MindCare — All rights reserved</span>
+      <a routerLink="/admin">Back to Dashboard</a>
+    </footer>
+  </div>
+</div>

@@ -4,8 +4,10 @@
     <file url="file://$PROJECT_DIR$/api_gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/medical_report_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/movement_service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recommendation_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/server/forums_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/server/incident_service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/souvenir_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/users_service/src/main/java" charset="UTF-8" />

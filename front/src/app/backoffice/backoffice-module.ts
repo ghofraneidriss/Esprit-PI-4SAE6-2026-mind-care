@@ -21,6 +21,7 @@ import { IncidentsPage } from './incidents/incidents';
 import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalEventsPage } from './medical-events/medical-events';
 import { SouvenirsPage } from './souvenirs/souvenirs';
+import { PuzzleManagementPage } from './puzzle-management/puzzle-management';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { Sidebar } from './sidebar/sidebar';
@@ -46,6 +47,7 @@ import { BackofficeLayoutComponent } from './backoffice-layout';
     RecommendationPage,
     MedicalEventsPage,
     SouvenirsPage,
+    PuzzleManagementPage,
     Header,
     Footer,
     Sidebar,
