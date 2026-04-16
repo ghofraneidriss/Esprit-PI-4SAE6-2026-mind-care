@@ -1,0 +1,66 @@
+<div class="sudoku-management-page">
+  <div class="page-header">
+    <h2>🔢 Sudoku Thérapeutique</h2>
+    <p class="subtitle">Créez un jeu Sudoku 4×4 pour un patient.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="alert alert-success" *ngIf="successMessage">
+      ✅ {{ successMessage }}
+    </div>
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      ❌ {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="createSudoku()" #sudokuForm="ngForm">
+      <div class="form-group">
+        <label for="patientId">ID Patient <span class="required">*</span></label>
+        <input
+          id="patientId"
+          type="number"
+          class="form-control"
+          [(ngModel)]="patientId"
+          name="patientId"
+          min="1"
+          required
+          placeholder="Ex: 7"
+        />
+        <small class="form-hint">Identifiant numérique du patient.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="timeLimitSeconds">Limite de temps (secondes)</label>
+        <input
+          id="timeLimitSeconds"
+          type="number"
+          class="form-control"
+          [(ngModel)]="timeLimitSeconds"
+          name="timeLimitSeconds"
+          min="30"
+          placeholder="300"
+        />
+        <small class="form-hint">Durée maximale recommandée (défaut : 300s).</small>
+      </div>
+
+      <div class="form-group">
+        <label for="difficulty">Difficulté</label>
+        <input
+          id="difficulty"
+          type="text"
+          class="form-control readonly-field"
+          [value]="difficulty"
+          readonly
+        />
+        <small class="form-hint">Niveau fixe : grille 4×4 avec 6 cellules vides.</small>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-create"
+        [disabled]="isLoading">
+        <span class="spinner-sm" *ngIf="isLoading"></span>
+        {{ isLoading ? 'Création en cours...' : '🔢 Créer le Sudoku' }}
+      </button>
+    </form>
+  </div>
+</div>

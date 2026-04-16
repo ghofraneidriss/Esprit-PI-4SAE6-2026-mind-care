@@ -4,62 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/.config.kiro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/design.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/requirements.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/puzzle-therapy/tasks.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/app/backoffice/puzzle-management/puzzle-management.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/app/backoffice/puzzle-management/puzzle-management.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/front/src/app/backoffice/puzzle-management/puzzle-management.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_22_2026_1_09_AM_[Changes]1/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_22_2026_1_09_AM__Changes_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-routing-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/sidebar/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/sidebar/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.css" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/recommendations/recommendations.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/Recommendation.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/Recommendation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/RecommendationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/RecommendationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/incident_service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/UsersServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/AppConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/AppointmentController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/ChatbotController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/MoodController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/NotificationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Appointment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/MoodEntry.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Notification.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Role.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/AppointmentRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/MoodEntryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/NotificationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/CustomUserDetailsService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/UsersServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/controller/UserControllerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/service/UserServiceTest.java" beforeDir="false" />
-    </list>
+    <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -178,11 +123,12 @@
     &quot;Spring Boot.IncidentServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.MedicalReportServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.MovementServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.RecommendationServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.SouvenirServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.VolunteerServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;recommendationns&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;reccommendation&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -198,7 +144,7 @@
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\IDRISS\\Desktop\\MindCare\\mind-care\\front\\node_modules\\typescript\\lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\azizc\\Esprit-PI-4SAE6-2026-mind-care-new\\front\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -231,7 +177,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.SouvenirServiceApplication">
+  <component name="RunManager" selected="Spring Boot.RecommendationServiceApplication">
     <configuration name="UsersServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="tn.esprit.users_service.UsersServiceApplication" />
       <module name="users_service" />
@@ -396,7 +342,8 @@
       <workItem from="1774369944544" duration="618000" />
       <workItem from="1774459543372" duration="5237000" />
       <workItem from="1776272815775" duration="2247000" />
-      <workItem from="1776275168110" duration="6545000" />
+      <workItem from="1776275168110" duration="10027000" />
+      <workItem from="1776330592502" duration="590000" />
     </task>
     <servers />
   </component>

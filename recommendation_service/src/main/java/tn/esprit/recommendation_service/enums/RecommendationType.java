@@ -4,6 +4,7 @@ public enum RecommendationType {
     MEMORY,
     FLUENCY,
     PUZZLE,
+    SUDOKU,
     VISUOSPATIAL,
     ATTENTION,
     MEDICATION,

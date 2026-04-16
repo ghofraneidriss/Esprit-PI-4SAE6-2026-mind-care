@@ -131,6 +131,7 @@ export class RecommendationsPage implements OnInit {
             FLUENCY: 'bg-secondary-subtle text-secondary',
             VISUOSPATIAL: 'bg-dark-subtle text-dark',
             PUZZLE: 'bg-success-subtle text-success',
+            SUDOKU: 'bg-warning-subtle text-warning',
             OTHER: 'bg-secondary-subtle text-secondary'
         };
         return map[type] || 'bg-secondary-subtle text-secondary';

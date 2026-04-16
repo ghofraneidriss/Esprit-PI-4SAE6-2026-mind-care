@@ -4,6 +4,7 @@ export enum RecommendationType {
     VISUOSPATIAL = 'VISUOSPATIAL',
     ATTENTION = 'ATTENTION',
     PUZZLE = 'PUZZLE',
+    SUDOKU = 'SUDOKU',
     MEDICATION = 'MEDICATION',
     EXERCISE = 'EXERCISE',
     DIET = 'DIET',
@@ -30,6 +31,7 @@ export enum MedicalEventType {
     VISUOSPATIAL = 'VISUOSPATIAL',
     ATTENTION = 'ATTENTION',
     PUZZLE = 'PUZZLE',
+    SUDOKU = 'SUDOKU',
     MEDICATION = 'MEDICATION',
     EXERCISE = 'EXERCISE',
     DIET = 'DIET',
@@ -249,6 +251,52 @@ export interface PuzzleSessionSubmitRequest {
     errorsCount?: number;
     hintsUsed?: number;
     completionPercent?: number;
+    completed: boolean;
+    abandoned: boolean;
+}
+
+export interface SudokuGame {
+    id: number;
+    medicalEventId: number;
+    patientId: number;
+    difficulty: DifficultyLevel;
+    gridSize: number;
+    puzzle: string; // JSON string "[[1,2,0,4],...]"
+    timeLimitSeconds: number;
+    active: boolean;
+    bestScore?: number | null;
+    completedSessions?: number | null;
+    createdAt?: string;
+}
+
+export interface SudokuSessionStartResponse {
+    sessionId: number;
+    gameId: number;
+    patientId: number;
+    startedAt: string;
+}
+
+export interface SudokuSessionSubmitRequest {
+    patientId: number;
+    durationSeconds?: number;
+    errorsCount?: number;
+    hintsUsed?: number;
+    completionPercent?: number;
+    completed: boolean;
+    abandoned: boolean;
+}
+
+export interface SudokuSessionResponse {
+    id: number;
+    gameId: number;
+    patientId: number;
+    startedAt: string;
+    finishedAt?: string | null;
+    durationSeconds?: number | null;
+    errorsCount?: number | null;
+    hintsUsed?: number | null;
+    completionPercent?: number | null;
+    score?: number | null;
     completed: boolean;
     abandoned: boolean;
 }

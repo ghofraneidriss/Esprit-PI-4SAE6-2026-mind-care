@@ -6,6 +6,7 @@ public enum MedicalEventType {
     VISUOSPATIAL,
     ATTENTION,
     PUZZLE,
+    SUDOKU,
     MEDICATION,
     EXERCISE,
     DIET,

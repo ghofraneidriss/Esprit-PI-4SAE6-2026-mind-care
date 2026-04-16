@@ -22,6 +22,10 @@ import {
     RecommendationStatus,
     ScoreResponse,
     StreakResponse,
+    SudokuGame,
+    SudokuSessionStartResponse,
+    SudokuSessionSubmitRequest,
+    SudokuSessionResponse,
 } from './recommendation.model';
 
 @Injectable({
@@ -31,6 +35,7 @@ export class RecommendationService {
     private apiUrl = 'http://localhost:8085/api/recommendations';
     private eventUrl = 'http://localhost:8085/api/events';
     private puzzleUrl = 'http://localhost:8085/api/puzzles';
+    private sudokuUrl = 'http://localhost:8085/api/sudoku';
 
     constructor(private http: HttpClient) { }
 
@@ -251,6 +256,36 @@ export class RecommendationService {
 
     getPuzzleLeaderboard(puzzleId: number): Observable<PuzzleLeaderboardEntry[]> {
         return this.http.get<PuzzleLeaderboardEntry[]>(`${this.puzzleUrl}/${puzzleId}/leaderboard`).pipe(timeout(15000));
+    }
+
+    getSudokuByEvent(eventId: number): Observable<SudokuGame> {
+        return this.http.get<SudokuGame>(`${this.sudokuUrl}/event/${eventId}`).pipe(timeout(15000));
+    }
+
+    startSudokuSession(gameId: number, patientId: number): Observable<SudokuSessionStartResponse> {
+        return this.http
+            .post<SudokuSessionStartResponse>(`${this.sudokuUrl}/${gameId}/sessions/start?patientId=${patientId}`, {})
+            .pipe(timeout(15000));
+    }
+
+    submitSudokuSession(
+        gameId: number,
+        sessionId: number,
+        payload: SudokuSessionSubmitRequest
+    ): Observable<SudokuSessionResponse> {
+        return this.http
+            .post<SudokuSessionResponse>(`${this.sudokuUrl}/${gameId}/sessions/${sessionId}/submit`, payload)
+            .pipe(timeout(15000));
+    }
+
+    getSudokuSessions(gameId: number, patientId: number): Observable<SudokuSessionResponse[]> {
+        return this.http
+            .get<SudokuSessionResponse[]>(`${this.sudokuUrl}/${gameId}/sessions?patientId=${patientId}`)
+            .pipe(timeout(15000));
+    }
+
+    createSudoku(payload: { patientId: number; difficulty: string; timeLimitSeconds: number; title?: string }): Observable<SudokuGame> {
+        return this.http.post<SudokuGame>(this.sudokuUrl, payload).pipe(timeout(15000));
     }
 }
 

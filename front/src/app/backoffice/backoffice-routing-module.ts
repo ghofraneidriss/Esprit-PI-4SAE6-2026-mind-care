@@ -21,6 +21,7 @@ import { RecommendationPage } from './recommendation/recommendation';
 import { MedicalEventsPage } from './medical-events/medical-events';
 import { SouvenirsPage } from './souvenirs/souvenirs';
 import { PuzzleManagementPage } from './puzzle-management/puzzle-management';
+import { SudokuManagementPage } from './sudoku-management/sudoku-management';
 
 const routes: Routes = [
   { path: '', component: Home2 },
@@ -43,6 +44,7 @@ const routes: Routes = [
   { path: 'medical-events', component: MedicalEventsPage },
   { path: 'souvenirs', component: SouvenirsPage },
   { path: 'puzzle-management', component: PuzzleManagementPage },
+  { path: 'sudoku-management', component: SudokuManagementPage },
   { path: '**', redirectTo: '/404' },
 ];
 

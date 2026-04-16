@@ -30,6 +30,7 @@ import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { FrontofficeLayoutComponent } from './frontoffice-layout';
 import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
+import { SudokuPlayPage } from './sudoku-play/sudoku-play';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
     Footer,
     FrontofficeLayoutComponent,
     PuzzlePlayPage,
+    SudokuPlayPage,
   ],
   imports: [
     CommonModule,
