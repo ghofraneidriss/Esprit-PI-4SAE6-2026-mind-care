@@ -1,25 +1,52 @@
 server:
-  port: 8080
+  port: 8087
 
 spring:
   application:
     name: api_gateway
+
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081/realms/alzheimers-realm # Adjust realm name as configured in keycloak
+          issuer-uri: http://localhost:8080/realms/pi-app-realm
+          jwk-set-uri: http://localhost:8080/realms/pi-app-realm/protocol/openid-connect/certs
+
+      client:
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8080/realms/pi-app-realm/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/pi-app-realm/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/pi-app-realm/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/pi-app-realm/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+
+        registration:
+          users-service-client:
+            provider: keycloak
+            client-id: users-service-client
+            client-secret: B0NFYuFpz6GQfvPHS3CX0D7jeTlENC8v
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8087/login/oauth2/code/users-service-client"
+            scope: openid, profile, email
 
   cloud:
     gateway:
-      mvc:
-        routes:
-          - id: users-service
-            uri: http://localhost:8082
-            predicates:
-              - Path=/api/users/**
+      default-filters:
+        - TokenRelay
 
-          - id: medical-report-service
-            uri: http://localhost:8083
-            predicates:
-              - Path=/api/medical-reports/**, /api/mri-scans/**, /api/files/**, /api/ai-results/**
+      routes:
+        - id: users-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/users/**
+
+        - id: medical-report-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/medical-reports/**, /api/mri-scans/**, /api/files/**, /api/ai-results/**
+
+        - id: volunteer-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/volunteer/**

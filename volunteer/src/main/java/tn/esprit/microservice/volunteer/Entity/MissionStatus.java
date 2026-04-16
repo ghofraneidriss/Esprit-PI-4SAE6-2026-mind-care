@@ -1,8 +1,9 @@
-package tn.esprit.microservice.volunteer;
+package tn.esprit.microservice.volunteer.Entity;
 
 public enum MissionStatus {
     OPEN,
     IN_PROGRESS,
     COMPLETED,
-    CANCELLED
+    CANCELLED,
+    ASSIGNED
 }

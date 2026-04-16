@@ -27,6 +27,8 @@
         <module>users_service</module>
         <module>api_gateway</module>
         <module>medical_report_service</module>
+        <module>volunteer</module>
+        <module>eureka</module>
     </modules>
 
     <properties>
@@ -37,7 +39,6 @@
         <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 
-    <!-- ✅ Gestion des versions Spring Cloud -->
     <dependencyManagement>
         <dependencies>
             <dependency>

@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'      // configure in Jenkins
+        nodejs 'Node18'     // configure in Jenkins
+    }
+
+    environment {
+        BACKEND_DIR = 'backend'   // change if needed
+        FRONTEND_DIR = 'frontend'
+    }
+
+    stages {
+
+        // 🔹 1. GIT CLONE
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                url: 'hhttps://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
+            }
+        }
+
+        // 🔹 2. BUILD BACKEND
+        stage('Build Backend') {
+            steps {
+                dir("${BACKEND_DIR}") {
+                    sh 'mvn clean install -DskipTests'
+                }
+            }
+        }
+
+        // 🔹 3. TEST BACKEND (JUnit + Mockito)
+        stage('Test Backend') {
+            steps {
+                dir("${BACKEND_DIR}") {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        // 🔹 4. BUILD FRONTEND
+        stage('Build Frontend') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'npm install'
+                    sh 'npm run build --prod'
+                }
+            }
+        }
+
+        // 🔹 5. TEST FRONTEND (Karma / Jasmine)
+        stage('Test Frontend') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build & Tests Passed Successfully!'
+        }
+        failure {
+            echo '❌ Pipeline Failed!'
+        }
+    }
+}
