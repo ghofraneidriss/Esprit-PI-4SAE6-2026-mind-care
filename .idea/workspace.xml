@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="" />
+    <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/alzheimer-understanding/alzheimer-understanding.css" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/alzheimer-understanding/alzheimer-understanding.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/alzheimer-understanding/alzheimer-understanding.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/alzheimer-understanding/alzheimer-understanding.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/alzheimer-understanding/alzheimer-understanding.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/alzheimer-understanding/alzheimer-understanding.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-routing-module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/header/header.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/header/header.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/puzzle-play/puzzle-play.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,100 +62,100 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.users_service.keycloak: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [site].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [site].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [org.apache.maven.plugins:maven-clean-plugin:3.3.2:clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [org.apache.maven.plugins:maven-install-plugin:3.1.1:install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.souvenir_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.souvenir_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.ForumsServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.IncidentServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.MedicalReportServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.MovementServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.RecommendationServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.SouvenirServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.VolunteerServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;reccommendation&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/azizc/Esprit-PI-4SAE6-2026-mind-care-new&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\azizc\\Esprit-PI-4SAE6-2026-mind-care-new\\front\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.UsersServiceApplication.executor": "Run",
+    "Docker.users_service.keycloak: Compose Deployment.executor": "Run",
+    "Maven.api_gateway [clean].executor": "Run",
+    "Maven.api_gateway [compile].executor": "Run",
+    "Maven.api_gateway [install].executor": "Run",
+    "Maven.api_gateway [package].executor": "Run",
+    "Maven.api_gateway [site].executor": "Run",
+    "Maven.api_gateway [validate].executor": "Run",
+    "Maven.api_gateway [verify].executor": "Run",
+    "Maven.forums_service [clean].executor": "Run",
+    "Maven.forums_service [compile].executor": "Run",
+    "Maven.forums_service [install].executor": "Run",
+    "Maven.forums_service [package].executor": "Run",
+    "Maven.forums_service [validate].executor": "Run",
+    "Maven.forums_service [verify].executor": "Run",
+    "Maven.incident_service [clean].executor": "Run",
+    "Maven.incident_service [compile].executor": "Run",
+    "Maven.incident_service [install].executor": "Run",
+    "Maven.incident_service [package].executor": "Run",
+    "Maven.incident_service [validate].executor": "Run",
+    "Maven.incident_service [verify].executor": "Run",
+    "Maven.medical_report_service [clean].executor": "Run",
+    "Maven.medical_report_service [compile].executor": "Run",
+    "Maven.medical_report_service [install].executor": "Run",
+    "Maven.medical_report_service [package].executor": "Run",
+    "Maven.medical_report_service [site].executor": "Run",
+    "Maven.medical_report_service [validate].executor": "Run",
+    "Maven.medical_report_service [verify].executor": "Run",
+    "Maven.mind_care_server [clean].executor": "Run",
+    "Maven.mind_care_server [compile].executor": "Run",
+    "Maven.mind_care_server [install].executor": "Run",
+    "Maven.mind_care_server [org.apache.maven.plugins:maven-clean-plugin:3.3.2:clean].executor": "Run",
+    "Maven.mind_care_server [org.apache.maven.plugins:maven-install-plugin:3.1.1:install].executor": "Run",
+    "Maven.mind_care_server [package].executor": "Run",
+    "Maven.mind_care_server [validate].executor": "Run",
+    "Maven.mind_care_server [verify].executor": "Run",
+    "Maven.movement_service [clean].executor": "Run",
+    "Maven.movement_service [compile].executor": "Run",
+    "Maven.movement_service [install].executor": "Run",
+    "Maven.movement_service [package].executor": "Run",
+    "Maven.movement_service [validate].executor": "Run",
+    "Maven.movement_service [verify].executor": "Run",
+    "Maven.souvenir_service [clean].executor": "Run",
+    "Maven.souvenir_service [install].executor": "Run",
+    "Maven.users_service [clean].executor": "Run",
+    "Maven.users_service [compile].executor": "Run",
+    "Maven.users_service [install].executor": "Run",
+    "Maven.users_service [package].executor": "Run",
+    "Maven.users_service [validate].executor": "Run",
+    "Maven.users_service [verify].executor": "Run",
+    "Maven.volunteer_service [clean].executor": "Run",
+    "Maven.volunteer_service [compile].executor": "Run",
+    "Maven.volunteer_service [package].executor": "Run",
+    "Maven.volunteer_service [validate].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.ApiGatewayApplication.executor": "Run",
+    "Spring Boot.ForumsServiceApplication.executor": "Run",
+    "Spring Boot.IncidentServiceApplication.executor": "Run",
+    "Spring Boot.MedicalReportServiceApplication.executor": "Run",
+    "Spring Boot.MovementServiceApplication.executor": "Run",
+    "Spring Boot.RecommendationServiceApplication.executor": "Run",
+    "Spring Boot.SouvenirServiceApplication.executor": "Run",
+    "Spring Boot.UsersServiceApplication.executor": "Run",
+    "Spring Boot.VolunteerServiceApplication.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "aziz",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/azizc/Esprit-PI-4SAE6-2026-mind-care-new",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Users\\azizc\\Esprit-PI-4SAE6-2026-mind-care-new\\front\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\IDRISS\Desktop\MindCare\mind-care\medical_report_service\src\main\resources\gcp" />
@@ -177,7 +185,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.RecommendationServiceApplication">
+  <component name="RunManager" selected="Spring Boot.UsersServiceApplication">
     <configuration name="UsersServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="tn.esprit.users_service.UsersServiceApplication" />
       <module name="users_service" />
@@ -343,7 +351,7 @@
       <workItem from="1774459543372" duration="5237000" />
       <workItem from="1776272815775" duration="2247000" />
       <workItem from="1776275168110" duration="10027000" />
-      <workItem from="1776330592502" duration="590000" />
+      <workItem from="1776330561182" duration="3829000" />
     </task>
     <servers />
   </component>

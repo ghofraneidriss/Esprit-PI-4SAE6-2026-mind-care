@@ -1,39 +1,440 @@
-<section class="alz-page section">
+<app-header></app-header>
+
+<div class="alz-wrapper" *ngIf="activeSection">
+
+  <!-- Breadcrumb -->
   <div class="alz-breadcrumb">
     <div class="container">
-      <a routerLink="/">Home</a>
-      <span>/</span>
+      <a routerLink="/">Accueil</a>
+      <span class="sep">/</span>
       <span>LA MALADIE D'ALZHEIMER</span>
+      <span class="sep">/</span>
+      <span class="current">{{ activeSection.label }}</span>
     </div>
   </div>
 
-  <div class="container alz-content">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <div class="alz-image-card">
-          <img src="assets/frontoffice/img/health/neurology-3.webp" alt="Comprendre la maladie d'Alzheimer" class="img-fluid">
+  <div class="container alz-layout">
+
+    <!-- Sidebar navigation -->
+    <aside class="alz-sidebar">
+      <h3 class="sidebar-title">LA MALADIE D'ALZHEIMER</h3>
+      <ul class="sidebar-nav">
+        <li *ngFor="let s of sections">
+          <a [routerLink]="s.route"
+             class="sidebar-link"
+             [class.active]="activeSection.id === s.id"
+             (click)="navigateTo(s)">
+            {{ s.label }}
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="alz-main">
+
+      <!-- Hero section -->
+      <div class="alz-hero" [class.hero-overlay]="activeSection.id === 'chiffres' || activeSection.id === 'stades' || activeSection.id === 'traitements'">
+        <div class="alz-hero-text">
+          <span class="alz-kicker">{{ activeSection.kicker }}</span>
+          <h1>{{ activeSection.title }}</h1>
+          <h2>{{ activeSection.subtitle }}</h2>
+        </div>
+        <div class="alz-hero-img">
+          <div class="img-wrapper" [class.img-zoom]="activeSection.id === 'decouverte' || activeSection.id === 'causes' || activeSection.id === 'diagnostic'">
+            <img [src]="activeSection.image" [alt]="activeSection.title"
+                 loading="lazy"
+                 [class.img-rounded]="activeSection.id === 'comprendre' || activeSection.id === 'jeunes'"
+                 [class.img-full]="activeSection.id === 'chiffres' || activeSection.id === 'fin-de-vie'" />
+            <div class="img-badge" *ngIf="activeSection.id === 'chiffres'">
+              <span class="badge-num">55M</span>
+              <span class="badge-txt">personnes dans le monde</span>
+            </div>
+            <div class="img-badge" *ngIf="activeSection.id === 'stades'">
+              <span class="badge-num">3</span>
+              <span class="badge-txt">stades d'évolution</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="col-lg-6">
-        <div class="alz-copy">
-          <div class="alz-kicker">Comprendre</div>
-          <h1>COMPRENDRE LA MALADIE D'ALZHEIMER</h1>
-          <h2>Definition</h2>
-          <p>
-            La maladie d'Alzheimer est une affection neurodegenerative qui entraine une deterioration
-            progressive de la memoire, de l'orientation et de certaines fonctions cognitives. Elle
-            evolue lentement, mais elle impacte de plus en plus le quotidien du patient et de sa famille.
+      <!-- Content blocks -->
+      <div class="alz-body">
+
+        <!-- Comprendre la maladie -->
+        <ng-container *ngIf="activeSection.id === 'comprendre'">
+          <p class="alz-lead">
+            La maladie d'Alzheimer est une affection neurodégénérative. Elle entraîne une détérioration progressive
+            et définitive des cellules nerveuses, provoquant la forme la plus commune des démences. Cette maladie
+            est fréquente chez les personnes âgées mais elle touche également les personnes jeunes.
           </p>
-          <p>
-            Pour mieux accompagner la personne atteinte, il est important de comprendre ses symptomes,
-            ses stades d'evolution et les besoins concrets qu'elle cree dans la vie de tous les jours.
-            MindCare aide a structurer cet accompagnement avec des souvenirs, des recommandations et des
-            activites adaptees.
+          <div class="alz-card-grid">
+            <div class="alz-info-card">
+              <div class="card-icon">🧠</div>
+              <h4>Neurodégénérative</h4>
+              <p>Destruction progressive et irréversible des neurones du cerveau, entraînant une perte des fonctions cognitives.</p>
+            </div>
+            <div class="alz-info-card">
+              <div class="card-icon">👴</div>
+              <h4>Principale démence</h4>
+              <p>60 à 70 % des cas de démence sont liés à la maladie d'Alzheimer. Elle touche surtout les personnes de plus de 65 ans.</p>
+            </div>
+            <div class="alz-info-card">
+              <div class="card-icon">🔬</div>
+              <h4>Mécanismes biologiques</h4>
+              <p>Accumulation de plaques amyloïdes et d'enchevêtrements de protéine tau dans le cerveau.</p>
+            </div>
+          </div>
+          <p>Pour mieux comprendre et connaître cette maladie, MindCare vous accompagne avec des outils adaptés :
+            souvenirs thérapeutiques, recommandations personnalisées et activités cognitives (puzzles, sudoku).</p>
+        </ng-container>
+
+        <!-- Découverte -->
+        <ng-container *ngIf="activeSection.id === 'decouverte'">
+          <p class="alz-lead">
+            C'est en 1906 que le médecin allemand Alois Alzheimer décrit pour la première fois les symptômes
+            de cette maladie chez une patiente de 51 ans, Auguste Deter.
           </p>
-          <a routerLink="/recommendations" class="alz-cta">EN SAVOIR +</a>
+          <div class="alz-timeline">
+            <div class="timeline-item">
+              <div class="timeline-year">1906</div>
+              <div class="timeline-content">
+                <h4>Première description clinique</h4>
+                <p>Alois Alzheimer observe chez Auguste Deter des troubles de la mémoire, du langage et un comportement imprévisible. À l'autopsie, il découvre des lésions caractéristiques dans le cerveau.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">1910</div>
+              <div class="timeline-content">
+                <h4>Dénomination officielle</h4>
+                <p>Emil Kraepelin, psychiatre allemand, donne le nom "maladie d'Alzheimer" à cette affection dans son manuel de psychiatrie, en hommage à son collègue.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">1984</div>
+              <div class="timeline-content">
+                <h4>Identification de la protéine amyloïde</h4>
+                <p>Les chercheurs identifient la protéine bêta-amyloïde comme composant principal des plaques séniles, ouvrant la voie à de nouvelles pistes thérapeutiques.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">Aujourd'hui</div>
+              <div class="timeline-content">
+                <h4>Recherche active</h4>
+                <p>Des milliers de chercheurs dans le monde travaillent à comprendre les mécanismes de la maladie et à développer des traitements curatifs.</p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Chiffres -->
+        <ng-container *ngIf="activeSection.id === 'chiffres'">
+          <p class="alz-lead">
+            La maladie d'Alzheimer est un enjeu de santé publique mondial. Voici les chiffres clés pour mieux
+            comprendre l'ampleur de cette épidémie silencieuse.
+          </p>
+          <div class="alz-stats-grid">
+            <div class="stat-card">
+              <div class="stat-number">55M</div>
+              <div class="stat-label">personnes atteintes de démence dans le monde</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">60-70%</div>
+              <div class="stat-label">des démences sont dues à Alzheimer</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">1,2M</div>
+              <div class="stat-label">personnes atteintes en France</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">225 000</div>
+              <div class="stat-label">nouveaux cas diagnostiqués chaque année en France</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">2x</div>
+              <div class="stat-label">plus de femmes que d'hommes touchées</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">139M</div>
+              <div class="stat-label">personnes atteintes prévues en 2050</div>
+            </div>
+          </div>
+          <div class="alz-highlight-box">
+            <strong>Un nouveau cas toutes les 3 minutes</strong> est diagnostiqué en France. L'âge est le principal
+            facteur de risque : 1 personne sur 4 est atteinte après 85 ans.
+          </div>
+        </ng-container>
+
+        <!-- Stades -->
+        <ng-container *ngIf="activeSection.id === 'stades'">
+          <p class="alz-lead">
+            La maladie d'Alzheimer évolue progressivement en plusieurs stades. Chaque stade correspond à un
+            niveau de dépendance et nécessite une prise en charge adaptée.
+          </p>
+          <div class="alz-stages">
+            <div class="stage-card stage-mild">
+              <div class="stage-badge">Stade 1</div>
+              <h4>Stade léger (MCI)</h4>
+              <ul>
+                <li>Oublis fréquents d'événements récents</li>
+                <li>Difficultés à trouver ses mots</li>
+                <li>Légère désorientation dans le temps</li>
+                <li>La personne reste autonome au quotidien</li>
+                <li>Besoin d'aide pour les tâches complexes</li>
+              </ul>
+            </div>
+            <div class="stage-card stage-moderate">
+              <div class="stage-badge">Stade 2</div>
+              <h4>Stade modéré</h4>
+              <ul>
+                <li>Difficultés à reconnaître ses proches</li>
+                <li>Problèmes pour s'habiller, cuisiner</li>
+                <li>Troubles du comportement (agitation, dépression)</li>
+                <li>Désorientation dans l'espace</li>
+                <li>Aide quotidienne nécessaire</li>
+              </ul>
+            </div>
+            <div class="stage-card stage-severe">
+              <div class="stage-badge">Stade 3</div>
+              <h4>Stade sévère</h4>
+              <ul>
+                <li>Perte de la reconnaissance des proches</li>
+                <li>Incapacité à marcher et à parler</li>
+                <li>Dépendance totale pour tous les actes</li>
+                <li>Troubles de la déglutition</li>
+                <li>Soins palliatifs nécessaires</li>
+              </ul>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Symptômes -->
+        <ng-container *ngIf="activeSection.id === 'symptomes'">
+          <p class="alz-lead">
+            La maladie d'Alzheimer est connue essentiellement pour la perte de mémoire. Mais d'autres signes
+            peuvent alerter. Si vous constatez plusieurs de ces signes, consultez un spécialiste.
+          </p>
+          <div class="alz-symptoms-grid">
+            <div class="symptom-item" *ngFor="let s of symptoms">
+              <div class="symptom-icon">{{ s.icon }}</div>
+              <div>
+                <h4>{{ s.title }}</h4>
+                <p>{{ s.desc }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="alz-highlight-box warning">
+            <strong>⚠️ Quand consulter ?</strong> Si vous observez plusieurs de ces signes chez vous ou un proche,
+            consultez un neurologue, gériatre ou psychiatre pour des examens approfondis.
+          </div>
+        </ng-container>
+
+        <!-- Causes -->
+        <ng-container *ngIf="activeSection.id === 'causes'">
+          <p class="alz-lead">
+            La maladie d'Alzheimer est causée par l'accumulation anormale de deux protéines dans le cerveau,
+            entraînant la mort progressive des neurones.
+          </p>
+          <div class="alz-causes-layout">
+            <div class="cause-block">
+              <div class="cause-icon">🔵</div>
+              <h4>Plaques amyloïdes</h4>
+              <p>La protéine bêta-amyloïde s'accumule en plaques entre les neurones, perturbant la communication
+              entre les cellules nerveuses et déclenchant une réaction inflammatoire.</p>
+            </div>
+            <div class="cause-block">
+              <div class="cause-icon">🟠</div>
+              <h4>Enchevêtrements tau</h4>
+              <p>La protéine tau se modifie et forme des enchevêtrements neurofibrillaires à l'intérieur des
+              cellules. Ces lésions entraînent la mort des neurones et la réduction du volume cérébral.</p>
+            </div>
+          </div>
+          <h3 class="alz-section-title">Facteurs de risque</h3>
+          <div class="alz-risk-grid">
+            <div class="risk-item modifiable">
+              <h4>Facteurs modifiables</h4>
+              <ul>
+                <li>Hypertension artérielle</li>
+                <li>Diabète de type 2</li>
+                <li>Obésité</li>
+                <li>Sédentarité</li>
+                <li>Tabagisme</li>
+                <li>Dépression</li>
+                <li>Isolement social</li>
+                <li>Faible niveau d'éducation</li>
+              </ul>
+            </div>
+            <div class="risk-item non-modifiable">
+              <h4>Facteurs non modifiables</h4>
+              <ul>
+                <li>Âge (principal facteur)</li>
+                <li>Sexe féminin</li>
+                <li>Antécédents familiaux</li>
+                <li>Gène APOE ε4</li>
+                <li>Syndrome de Down</li>
+              </ul>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Diagnostic -->
+        <ng-container *ngIf="activeSection.id === 'diagnostic'">
+          <p class="alz-lead">
+            Le diagnostic de la maladie d'Alzheimer repose sur un bilan clinique complet. Un diagnostic précoce
+            est essentiel pour mettre en place rapidement une prise en charge adaptée.
+          </p>
+          <div class="alz-steps">
+            <div class="step-item" *ngFor="let step of diagnosticSteps; let i = index">
+              <div class="step-number">{{ i + 1 }}</div>
+              <div class="step-content">
+                <h4>{{ step.title }}</h4>
+                <p>{{ step.desc }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="alz-highlight-box">
+            <strong>🏥 Qui consulter ?</strong> Médecin généraliste, neurologue, gériatre ou psychiatre.
+            Des consultations mémoire spécialisées existent dans la plupart des hôpitaux.
+          </div>
+        </ng-container>
+
+        <!-- Traitements -->
+        <ng-container *ngIf="activeSection.id === 'traitements'">
+          <p class="alz-lead">
+            Il n'existe pas encore de traitement curatif de la maladie d'Alzheimer. Cependant, des traitements
+            médicamenteux et non médicamenteux permettent d'améliorer la qualité de vie.
+          </p>
+          <div class="alz-treatment-grid">
+            <div class="treatment-block medical">
+              <h4>💊 Traitements médicamenteux</h4>
+              <ul>
+                <li><strong>Inhibiteurs de la cholinestérase</strong> (donépézil, rivastigmine, galantamine) : ralentissent temporairement les symptômes aux stades léger et modéré.</li>
+                <li><strong>Mémantine</strong> : utilisée aux stades modéré et sévère, protège les neurones de l'excès de glutamate.</li>
+                <li><strong>Lecanemab (2023)</strong> : premier traitement modifiant l'évolution de la maladie, approuvé aux États-Unis.</li>
+              </ul>
+            </div>
+            <div class="treatment-block non-medical">
+              <h4>🧩 Thérapies non médicamenteuses</h4>
+              <ul>
+                <li><strong>Stimulation cognitive</strong> : puzzles, jeux de mémoire, sudoku thérapeutique</li>
+                <li><strong>Thérapie par réminiscence</strong> : utilisation de souvenirs pour stimuler la mémoire</li>
+                <li><strong>Musicothérapie</strong> : la musique active des zones cérébrales préservées</li>
+                <li><strong>Activité physique adaptée</strong> : marche, gym douce, danse</li>
+                <li><strong>Soutien psychologique</strong> : pour le patient et les aidants</li>
+              </ul>
+            </div>
+          </div>
+          <div class="alz-highlight-box mindcare">
+            <strong>🌟 MindCare intègre ces approches :</strong> puzzles basés sur les souvenirs du patient,
+            jeux de Sudoku thérapeutiques, recommandations personnalisées par le médecin.
+          </div>
+        </ng-container>
+
+        <!-- Jeunes -->
+        <ng-container *ngIf="activeSection.id === 'jeunes'">
+          <p class="alz-lead">
+            La maladie d'Alzheimer à début précoce touche des personnes de moins de 65 ans. Elle représente
+            environ 5 % de l'ensemble des cas et son diagnostic est souvent retardé.
+          </p>
+          <div class="alz-card-grid">
+            <div class="alz-info-card">
+              <div class="card-icon">📊</div>
+              <h4>5% des cas</h4>
+              <p>Environ 5 % des personnes atteintes d'Alzheimer ont moins de 65 ans. En France, cela représente environ 30 000 personnes.</p>
+            </div>
+            <div class="alz-info-card">
+              <div class="card-icon">⚠️</div>
+              <h4>Diagnostic tardif</h4>
+              <p>Les médecins ne pensent pas spontanément à Alzheimer chez des patients jeunes. Le délai entre les premiers symptômes et le diagnostic est souvent de 3 à 5 ans.</p>
+            </div>
+            <div class="alz-info-card">
+              <div class="card-icon">👨‍👩‍👧</div>
+              <h4>Impact familial</h4>
+              <p>Les personnes jeunes ont souvent des enfants à charge et une activité professionnelle. L'impact sur la vie familiale et sociale est particulièrement important.</p>
+            </div>
+          </div>
+          <h3 class="alz-section-title">Symptômes spécifiques chez les jeunes</h3>
+          <p>Contrairement à la forme tardive, les troubles du langage, les difficultés visuospatiales ou les
+          changements de comportement peuvent précéder les troubles de la mémoire. Une vigilance particulière
+          est nécessaire face à ces signes atypiques.</p>
+        </ng-container>
+
+        <!-- Héréditaire -->
+        <ng-container *ngIf="activeSection.id === 'hereditaire'">
+          <p class="alz-lead">
+            La grande majorité des cas d'Alzheimer sont sporadiques. Cependant, environ 5 % des cas sont liés
+            à des mutations génétiques rares transmissibles.
+          </p>
+          <div class="alz-genetic-grid">
+            <div class="genetic-card">
+              <h4>🧬 Forme familiale (5%)</h4>
+              <p>Mutations des gènes <strong>APP</strong>, <strong>PSEN1</strong> et <strong>PSEN2</strong>.
+              Transmission autosomique dominante : 50 % de risque de transmission à chaque enfant.
+              Début précoce, souvent avant 60 ans.</p>
+            </div>
+            <div class="genetic-card">
+              <h4>🔬 Gène APOE ε4</h4>
+              <p>Principal facteur de risque génétique de la forme tardive. Une copie multiplie le risque par 3,
+              deux copies le multiplient par 8 à 12. Mais posséder ce gène ne signifie pas que la maladie
+              se développera.</p>
+            </div>
+          </div>
+          <div class="alz-highlight-box warning">
+            <strong>⚕️ Conseil génétique</strong> : La réalisation d'un test génétique doit être encadrée par
+            un conseil génétique. La décision de se faire tester est personnelle et doit être mûrement réfléchie
+            avec un professionnel de santé.
+          </div>
+        </ng-container>
+
+        <!-- Fin de vie -->
+        <ng-container *ngIf="activeSection.id === 'fin-de-vie'">
+          <p class="alz-lead">
+            Au stade avancé de la maladie, les soins palliatifs visent à assurer le confort et la dignité
+            du patient, en soulageant la douleur et en maintenant une qualité de vie maximale.
+          </p>
+          <div class="alz-endoflife-grid">
+            <div class="endoflife-card">
+              <h4>🤝 Soins palliatifs</h4>
+              <p>Les soins palliatifs ne visent pas à guérir mais à soulager. Ils comprennent la gestion de la
+              douleur, le confort physique, le soutien émotionnel et spirituel du patient et de sa famille.</p>
+            </div>
+            <div class="endoflife-card">
+              <h4>💙 Accompagnement des aidants</h4>
+              <p>Les proches font face à un deuil anticipé. Un soutien psychologique, des groupes de parole
+              et des solutions de répit sont essentiels pour prévenir l'épuisement des aidants.</p>
+            </div>
+            <div class="endoflife-card">
+              <h4>📋 Directives anticipées</h4>
+              <p>Permettent à la personne d'exprimer ses souhaits concernant sa fin de vie avant de perdre
+              sa capacité de décision. Il est important d'en parler tôt dans l'évolution de la maladie.</p>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Glossaire -->
+        <ng-container *ngIf="activeSection.id === 'glossaire'">
+          <p class="alz-lead">
+            Bêta-amyloïde, Tau, synapse, biomarqueur… Retrouvez tous les mots à connaître pour mieux
+            comprendre les mécanismes impliqués dans la maladie d'Alzheimer.
+          </p>
+          <div class="alz-glossary">
+            <div class="glossary-item" *ngFor="let term of glossaryTerms">
+              <dt>{{ term.word }}</dt>
+              <dd>{{ term.def }}</dd>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- CTA navigation -->
+        <div class="alz-nav-cta" *ngIf="nextSection">
+          <a [routerLink]="nextSection.route" class="alz-cta" (click)="navigateTo(nextSection)">
+            {{ nextSection.label }} →
+          </a>
         </div>
+
       </div>
-    </div>
+    </main>
   </div>
-</section>
+</div>
+
+<app-footer></app-footer>

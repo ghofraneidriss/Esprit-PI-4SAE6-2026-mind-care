@@ -138,12 +138,12 @@
       <aside class="info-card">
         <div class="source-card">
           <div class="source-img-wrap">
-            <img [src]="sourceImage" [alt]="puzzle.souvenir?.mediaTitle || puzzle.title" />
+            <img [src]="sourceImage" [alt]="puzzle.souvenir.mediaTitle || puzzle.title" />
             <span class="source-badge">Image source</span>
           </div>
           <div class="source-meta">
-            <h3>{{ puzzle.souvenir?.mediaTitle || 'Souvenir' }}</h3>
-            <p>{{ puzzle.souvenir?.texte || '' }}</p>
+            <h3>{{ puzzle.souvenir.mediaTitle || 'Souvenir' }}</h3>
+            <p>{{ puzzle.souvenir.texte || '' }}</p>
           </div>
         </div>
 

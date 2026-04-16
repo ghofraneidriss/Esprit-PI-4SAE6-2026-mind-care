@@ -1,113 +1,577 @@
-.alz-page {
-    background:
-        radial-gradient(circle at top left, rgba(18, 148, 166, 0.08), transparent 30%),
-        linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
-    min-height: calc(100vh - 120px);
-    padding-bottom: 5rem;
+/* ── Wrapper ── */
+.alz-wrapper {
+  background: #f8fbfc;
+  min-height: calc(100vh - 80px);
+  padding-top: 80px;
 }
 
+/* ── Breadcrumb ── */
 .alz-breadcrumb {
-    background: #f4f4f4;
-    border-top: 1px solid rgba(0, 0, 0, 0.04);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    font-size: 0.92rem;
-    padding: 0.85rem 0;
+  background: #fff;
+  border-bottom: 1px solid #e8eef2;
+  font-size: 0.88rem;
+  padding: 0.75rem 0;
 }
 
 .alz-breadcrumb .container {
-    color: #5d6670;
-    display: flex;
-    gap: 0.45rem;
-    align-items: center;
+  color: #6b7a85;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.alz-breadcrumb a {
-    color: #0f8ca0;
-    text-decoration: none;
+.alz-breadcrumb a { color: #0f8ca0; text-decoration: none; }
+.alz-breadcrumb a:hover { text-decoration: underline; }
+.alz-breadcrumb .sep { color: #b0bec5; }
+.alz-breadcrumb .current { color: #1a2a35; font-weight: 600; }
+
+/* ── Layout ── */
+.alz-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2.5rem;
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+  align-items: start;
 }
 
-.alz-content {
-    padding-top: 3.5rem;
+/* ── Sidebar ── */
+.alz-sidebar {
+  position: sticky;
+  top: 100px;
+  background: #fff;
+  border: 1px solid #e2eaee;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 140, 160, 0.06);
 }
 
-.alz-image-card {
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 20px 45px rgba(11, 46, 59, 0.12);
+.sidebar-title {
+  background: #0f8ca0;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.9rem 1.2rem;
+  margin: 0;
 }
 
-.alz-image-card img {
-    display: block;
-    width: 100%;
-    min-height: 360px;
-    object-fit: cover;
+.sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
 }
 
-.alz-copy {
-    text-align: center;
-    padding-inline: 1rem;
+.sidebar-link {
+  display: block;
+  padding: 0.65rem 1.2rem;
+  color: #3d5060;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.18s;
+}
+
+.sidebar-link:hover {
+  background: #f0f8fa;
+  color: #0f8ca0;
+  border-left-color: #0f8ca0;
+}
+
+.sidebar-link.active {
+  background: #e6f6f8;
+  color: #0f8ca0;
+  font-weight: 700;
+  border-left-color: #0f8ca0;
+}
+
+/* ── Main ── */
+.alz-main {
+  min-width: 0;
+}
+
+/* ── Hero ── */
+.alz-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(15, 140, 160, 0.07);
 }
 
 .alz-kicker {
-    color: #0f8ca0;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
+  color: #0f8ca0;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.75rem;
 }
 
-.alz-copy h1 {
-    color: #0f8ca0;
-    font-size: clamp(2.2rem, 4vw, 3.4rem);
-    font-weight: 900;
-    line-height: 1.05;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
+.alz-hero-text h1 {
+  color: #0f8ca0;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
 }
 
-.alz-copy h2 {
-    color: #19212a;
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    font-weight: 800;
-    margin-bottom: 1.5rem;
+.alz-hero-text h2 {
+  color: #1a2a35;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 800;
+  margin: 0;
 }
 
-.alz-copy p {
-    color: #3f4952;
-    font-size: 1rem;
-    line-height: 1.75;
-    margin-bottom: 1rem;
+.alz-hero-img img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: 260px;
+  box-shadow: 0 12px 32px rgba(15, 140, 160, 0.12);
+}
+
+/* ── Body ── */
+.alz-body {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(15, 140, 160, 0.07);
+}
+
+.alz-lead {
+  font-size: 1.05rem;
+  color: #2c3e4a;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e8eef2;
+}
+
+.alz-section-title {
+  color: #0f8ca0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 2rem 0 1rem;
+}
+
+/* ── Info cards ── */
+.alz-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.alz-info-card {
+  background: #f4fbfc;
+  border: 1px solid #d0edf2;
+  border-radius: 12px;
+  padding: 1.2rem;
+  text-align: center;
+}
+
+.card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.alz-info-card h4 { color: #0f8ca0; font-size: 0.95rem; font-weight: 700; margin: 0 0 0.5rem; }
+.alz-info-card p { color: #4a5e6a; font-size: 0.88rem; line-height: 1.6; margin: 0; }
+
+/* ── Timeline ── */
+.alz-timeline { display: flex; flex-direction: column; gap: 0; }
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e8eef2;
+  align-items: start;
+}
+
+.timeline-item:last-child { border-bottom: none; }
+
+.timeline-year {
+  background: #0f8ca0;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  align-self: start;
+  margin-top: 0.2rem;
+}
+
+.timeline-content h4 { color: #1a2a35; font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; }
+.timeline-content p { color: #4a5e6a; font-size: 0.92rem; line-height: 1.7; margin: 0; }
+
+/* ── Stats ── */
+.alz-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #0f8ca0, #0bbcc9);
+  color: #fff;
+  border-radius: 14px;
+  padding: 1.4rem 1rem;
+  text-align: center;
+}
+
+.stat-number { font-size: 2rem; font-weight: 900; line-height: 1; margin-bottom: 0.4rem; }
+.stat-label { font-size: 0.82rem; opacity: 0.88; line-height: 1.4; }
+
+/* ── Highlight box ── */
+.alz-highlight-box {
+  background: #e6f6f8;
+  border-left: 4px solid #0f8ca0;
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.2rem;
+  color: #1a3a45;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-top: 1.5rem;
+}
+
+.alz-highlight-box.warning {
+  background: #fff8e1;
+  border-left-color: #f9a825;
+  color: #4a3800;
+}
+
+.alz-highlight-box.mindcare {
+  background: #e8f5e9;
+  border-left-color: #43a047;
+  color: #1b3a1e;
+}
+
+/* ── Stages ── */
+.alz-stages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stage-card {
+  border-radius: 14px;
+  padding: 1.4rem;
+  position: relative;
+}
+
+.stage-mild { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.stage-moderate { background: #fff8e1; border: 1px solid #ffe082; }
+.stage-severe { background: #fce4ec; border: 1px solid #f48fb1; }
+
+.stage-badge {
+  display: inline-block;
+  background: rgba(0,0,0,0.1);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stage-card h4 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.75rem; color: #1a2a35; }
+.stage-card ul { margin: 0; padding-left: 1.2rem; font-size: 0.88rem; line-height: 1.8; color: #3d5060; }
+
+/* ── Symptoms ── */
+.alz-symptoms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.symptom-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  background: #f8fbfc;
+  border: 1px solid #e2eaee;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.symptom-icon { font-size: 1.6rem; flex-shrink: 0; }
+.symptom-item h4 { font-size: 0.9rem; font-weight: 700; color: #1a2a35; margin: 0 0 0.25rem; }
+.symptom-item p { font-size: 0.85rem; color: #4a5e6a; margin: 0; line-height: 1.5; }
+
+/* ── Causes ── */
+.alz-causes-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cause-block {
+  background: #f4fbfc;
+  border: 1px solid #d0edf2;
+  border-radius: 14px;
+  padding: 1.4rem;
+  text-align: center;
+}
+
+.cause-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.cause-block h4 { color: #0f8ca0; font-weight: 700; margin: 0 0 0.5rem; }
+.cause-block p { color: #3d5060; font-size: 0.9rem; line-height: 1.7; margin: 0; }
+
+.alz-risk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.risk-item {
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+
+.risk-item.modifiable { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.risk-item.non-modifiable { background: #fce4ec; border: 1px solid #f48fb1; }
+.risk-item h4 { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.75rem; color: #1a2a35; }
+.risk-item ul { margin: 0; padding-left: 1.2rem; font-size: 0.88rem; line-height: 1.9; color: #3d5060; }
+
+/* ── Diagnostic steps ── */
+.alz-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 1.5rem; }
+
+.step-item {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 1rem;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid #e8eef2;
+  align-items: start;
+}
+
+.step-item:last-child { border-bottom: none; }
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background: #0f8ca0;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.step-content h4 { color: #1a2a35; font-size: 0.95rem; font-weight: 700; margin: 0 0 0.3rem; }
+.step-content p { color: #4a5e6a; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+
+/* ── Treatments ── */
+.alz-treatment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.treatment-block {
+  border-radius: 14px;
+  padding: 1.4rem;
+}
+
+.treatment-block.medical { background: #e3f2fd; border: 1px solid #90caf9; }
+.treatment-block.non-medical { background: #e8f5e9; border: 1px solid #a5d6a7; }
+.treatment-block h4 { font-size: 1rem; font-weight: 700; margin: 0 0 1rem; color: #1a2a35; }
+.treatment-block ul { margin: 0; padding-left: 1.2rem; font-size: 0.9rem; line-height: 2; color: #3d5060; }
+
+/* ── Genetic ── */
+.alz-genetic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.genetic-card {
+  background: #f4fbfc;
+  border: 1px solid #d0edf2;
+  border-radius: 14px;
+  padding: 1.4rem;
+}
+
+.genetic-card h4 { color: #0f8ca0; font-weight: 700; margin: 0 0 0.75rem; }
+.genetic-card p { color: #3d5060; font-size: 0.9rem; line-height: 1.7; margin: 0; }
+
+/* ── End of life ── */
+.alz-endoflife-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.endoflife-card {
+  background: #f4fbfc;
+  border: 1px solid #d0edf2;
+  border-radius: 14px;
+  padding: 1.2rem;
+}
+
+.endoflife-card h4 { color: #0f8ca0; font-size: 0.95rem; font-weight: 700; margin: 0 0 0.5rem; }
+.endoflife-card p { color: #4a5e6a; font-size: 0.88rem; line-height: 1.6; margin: 0; }
+
+/* ── Glossary ── */
+.alz-glossary {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.glossary-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e8eef2;
+}
+
+.glossary-item:last-child { border-bottom: none; }
+
+.glossary-item dt {
+  color: #0f8ca0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.glossary-item dd {
+  color: #4a5e6a;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── CTA ── */
+.alz-nav-cta {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e8eef2;
+  text-align: right;
 }
 
 .alz-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1rem;
-    min-width: 170px;
-    padding: 0.95rem 1.6rem;
-    border-radius: 999px;
-    background: #0f8ca0;
-    color: #ffffff;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  background: #0f8ca0;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .alz-cta:hover {
-    background: #0b7687;
-    box-shadow: 0 16px 30px rgba(15, 140, 160, 0.22);
-    transform: translateY(-2px);
+  background: #0b7687;
+  box-shadow: 0 12px 28px rgba(15, 140, 160, 0.22);
+  transform: translateY(-2px);
 }
 
-@media (max-width: 991.98px) {
-    .alz-content {
-        padding-top: 2rem;
-    }
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .alz-layout { grid-template-columns: 220px 1fr; gap: 1.5rem; }
+}
 
-    .alz-copy {
-        text-align: left;
-        padding-inline: 0;
-    }
+@media (max-width: 768px) {
+  .alz-layout { grid-template-columns: 1fr; }
+  .alz-sidebar { position: static; }
+  .alz-hero { grid-template-columns: 1fr; }
+  .alz-hero-img { display: none; }
+  .alz-card-grid, .alz-stats-grid, .alz-stages, .alz-treatment-grid,
+  .alz-genetic-grid, .alz-endoflife-grid, .alz-risk-grid,
+  .alz-causes-layout { grid-template-columns: 1fr; }
+  .alz-symptoms-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Dynamic image effects ── */
+.img-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.img-wrapper img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+  box-shadow: 0 12px 32px rgba(15, 140, 160, 0.12);
+}
+
+.img-zoom img:hover {
+  transform: scale(1.04);
+}
+
+.img-rounded img {
+  border-radius: 50% 30% 50% 30% / 30% 50% 30% 50%;
+  box-shadow: 0 16px 40px rgba(15, 140, 160, 0.18);
+}
+
+.img-full img {
+  max-height: 300px;
+  border-radius: 16px;
+}
+
+/* Badge overlay on image */
+.img-badge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: rgba(15, 140, 160, 0.92);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.5s ease;
+}
+
+.badge-num {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.badge-txt {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.88;
+  margin-top: 2px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero with overlay for stats/stages/treatments */
+.hero-overlay .alz-hero-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15,140,160,0.08) 0%, transparent 60%);
+  border-radius: 12px;
+  pointer-events: none;
 }

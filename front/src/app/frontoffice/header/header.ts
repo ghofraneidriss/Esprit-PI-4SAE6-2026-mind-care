@@ -12,17 +12,17 @@ export class Header {
 
   readonly alzheimerSections: Array<{ label: string; route?: string }> = [
     { label: 'Comprendre la maladie', route: '/alzheimer/comprendre-maladie' },
-    { label: 'Decouverte de la maladie' },
-    { label: 'Alzheimer en chiffres' },
-    { label: 'Les stades' },
-    { label: 'Les symptomes' },
-    { label: 'Les causes' },
-    { label: 'Le diagnostic' },
-    { label: 'Les traitements' },
-    { label: 'Alzheimer chez les jeunes' },
-    { label: 'La forme hereditaire' },
-    { label: 'La fin de vie' },
-    { label: 'Glossaire' }
+    { label: 'Découverte de la maladie', route: '/alzheimer/decouverte' },
+    { label: 'Alzheimer en chiffres', route: '/alzheimer/chiffres' },
+    { label: 'Les stades', route: '/alzheimer/stades' },
+    { label: 'Les symptômes', route: '/alzheimer/symptomes' },
+    { label: 'Les causes', route: '/alzheimer/causes' },
+    { label: 'Le diagnostic', route: '/alzheimer/diagnostic' },
+    { label: 'Les traitements', route: '/alzheimer/traitements' },
+    { label: 'Alzheimer chez les jeunes', route: '/alzheimer/jeunes' },
+    { label: 'La forme héréditaire', route: '/alzheimer/hereditaire' },
+    { label: 'La fin de vie', route: '/alzheimer/fin-de-vie' },
+    { label: 'Glossaire', route: '/alzheimer/glossaire' }
   ];
 
   constructor(private readonly router: Router) {}

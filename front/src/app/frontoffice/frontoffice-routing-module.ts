@@ -57,6 +57,17 @@ const routes: Routes = [
   { path: 'puzzles/:eventId', component: PuzzlePlayPage },
   { path: 'sudoku-play/:eventId', component: SudokuPlayPage },
   { path: 'alzheimer/comprendre-maladie', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/decouverte', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/chiffres', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/stades', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/symptomes', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/causes', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/diagnostic', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/traitements', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/jeunes', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/hereditaire', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/fin-de-vie', component: AlzheimerUnderstandingFrontPage },
+  { path: 'alzheimer/glossaire', component: AlzheimerUnderstandingFrontPage },
   { path: '**', redirectTo: '' },
 ];
 
