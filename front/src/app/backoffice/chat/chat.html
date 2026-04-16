@@ -1,0 +1,124 @@
+<div class="container-fluid p-4" style="height: calc(100vh - 70px); display: flex; flex-direction: column;">
+
+  <!-- Header -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:22px">
+          <i class="ri-robot-2-line"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold mb-0">MindCare assistant</h5>
+          <span class="badge bg-success bg-opacity-25 text-success small">
+            <i class="ri-checkbox-blank-circle-fill me-1" style="font-size:8px"></i>Powered by Groq Llama 3
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="card border-0 shadow-sm flex-grow-1 d-flex flex-column overflow-hidden">
+
+    <!-- Messages -->
+    <div #messagesContainer class="flex-grow-1 overflow-auto p-4" style="background:#f8f9fa">
+
+      <div *ngFor="let msg of messages" class="mb-3 d-flex" [class.justify-content-end]="msg.role === 'user'">
+
+        <!-- Bot -->
+        <div *ngIf="msg.role === 'bot'" class="d-flex align-items-start gap-2" style="max-width:75%">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+               style="width:34px;height:34px;font-size:16px;margin-top:4px">
+            <i class="ri-robot-2-line"></i>
+          </div>
+          <div>
+            <div class="card border-0 shadow-sm px-3 py-2" style="background:white;border-radius:0 12px 12px 12px !important">
+              <p class="mb-0 small" style="white-space:pre-wrap;line-height:1.6">{{ msg.content }}</p>
+            </div>
+            <span class="text-muted" style="font-size:11px">{{ msg.time }}</span>
+          </div>
+        </div>
+
+        <!-- User -->
+        <div *ngIf="msg.role === 'user'" class="d-flex align-items-start gap-2 flex-row-reverse" style="max-width:75%">
+          <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+               style="width:34px;height:34px;font-size:16px;margin-top:4px">
+            <i class="ri-user-line"></i>
+          </div>
+          <div>
+            <div class="card border-0 px-3 py-2 bg-primary text-white" style="border-radius:12px 0 12px 12px !important">
+              <p class="mb-0 small" style="white-space:pre-wrap;line-height:1.6">{{ msg.content }}</p>
+            </div>
+            <span class="text-muted d-block text-end" style="font-size:11px">{{ msg.time }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Typing indicator -->
+      <div *ngIf="loading" class="d-flex align-items-center gap-2 mb-3">
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+             style="width:34px;height:34px;font-size:16px">
+          <i class="ri-robot-2-line"></i>
+        </div>
+        <div class="card border-0 shadow-sm px-3 py-2" style="background:white;border-radius:0 12px 12px 12px !important">
+          <div class="d-flex gap-1 align-items-center" style="height:20px">
+            <span class="rounded-circle bg-secondary chat-dot"></span>
+            <span class="rounded-circle bg-secondary chat-dot" style="animation-delay:0.2s"></span>
+            <span class="rounded-circle bg-secondary chat-dot" style="animation-delay:0.4s"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Suggestions (shown only on first load) -->
+    <div *ngIf="messages.length <= 1" class="px-4 pt-2">
+      <p class="text-muted small mb-2">Quick questions:</p>
+      <div class="d-flex flex-wrap gap-2">
+        <button *ngFor="let s of suggestions"
+                (click)="useSuggestion(s)"
+                class="btn btn-outline-primary btn-sm rounded-pill">
+          {{ s }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-3 border-top bg-white">
+      <div class="input-group">
+        <textarea
+          class="form-control border-end-0"
+          rows="1"
+          style="resize:none;border-radius:8px 0 0 8px"
+          placeholder="Ask about Alzheimer care, symptoms, patient management..."
+          [(ngModel)]="userInput"
+          (keydown)="onEnter($event)"
+          [disabled]="loading">
+        </textarea>
+        <button class="btn btn-primary px-4"
+                style="border-radius:0 8px 8px 0"
+                (click)="send()"
+                [disabled]="loading || !userInput.trim()">
+          <i class="ri-send-plane-fill"></i>
+        </button>
+      </div>
+      <p class="text-muted mb-0 mt-1" style="font-size:11px">
+        <i class="ri-information-line"></i> Always consult a medical professional for clinical decisions.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.chat-dot {
+  width: 7px;
+  height: 7px;
+  animation: chatBounce 1s infinite;
+}
+@keyframes chatBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+}
+</style>

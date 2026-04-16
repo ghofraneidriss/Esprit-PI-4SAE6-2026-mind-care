@@ -1,0 +1,28 @@
+﻿:host {
+  display: block;
+}
+
+.app-page-head .page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--bs-heading-color, #1e293b);
+}
+
+.table thead th {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  border-bottom-width: 1px;
+}
+
+.table tbody td {
+  vertical-align: middle;
+  font-size: 0.9375rem;
+}
+
+.card-header h5 {
+  font-size: 1.05rem;
+}

@@ -1,0 +1,126 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <div class="cvp-page-header page-header">
+      <div>
+        <h1>
+          <i class="ri-file-pdf-2-line cvp-title-ico" aria-hidden="true"></i>
+          PDF reports
+        </h1>
+        <p>Generate PDF reports with history, performance, and recommendations</p>
+      </div>
+    </div>
+
+    <div class="error-state" *ngIf="error">
+    <span>⚠️</span> {{ error }}
+    <button type="button" class="dismiss-btn" (click)="error = ''">✕</button>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+      <p>Loading patients…</p>
+    </div>
+
+    <ng-container *ngIf="!loading">
+      <div class="table-card" *ngIf="patients.length">
+        <div class="table-toolbar">
+          <div class="table-toolbar__filters">
+            <input
+              type="search"
+              name="rsearch"
+              [(ngModel)]="reportSearch"
+              (ngModelChange)="onReportSearchChange()"
+              placeholder="Search by name…"
+              autocomplete="off"
+            />
+          </div>
+          <div class="table-toolbar__actions">
+            <button type="button" class="btn-ghost" (click)="resetReportSearch()">Reset</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Patient</th>
+                <th>Quizzes</th>
+                <th>Score</th>
+                <th>Level</th>
+                <th>Themes</th>
+                <th>Rec.</th>
+                <th class="actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="filteredPatients.length">
+                <ng-container *ngFor="let p of reportTableRows; let i = index">
+                  <tr *ngIf="p !== null">
+                    <td>{{ reportRowNumber(i) }}</td>
+                    <td>
+                      <strong>{{ p.patientName || 'Patient #' + p.patientId }}</strong>
+                    </td>
+                    <td>{{ p.totalQuizzes }}</td>
+                    <td>
+                      <strong [style.color]="getScoreColor(p.globalScore)">{{ p.globalScore | number : '1.0-0' }}%</strong>
+                    </td>
+                    <td>
+                      <span class="rc-level" [ngClass]="getLevelClass(p.globalScore)">{{ getLevelLabel(p.globalScore) }}</span>
+                    </td>
+                    <td>{{ p.themeScores.length || 0 }}</td>
+                    <td>{{ p.recommendations.length || 0 }}</td>
+                    <td class="actions">
+                      <button
+                        type="button"
+                        class="btn-download btn-download--table"
+                        (click)="downloadPdf(p)"
+                        [disabled]="downloadingId === p.patientId"
+                        [class.downloading]="downloadingId === p.patientId"
+                      >
+                        <span class="dl-icon" *ngIf="downloadingId !== p.patientId">📥</span>
+                        <span class="dl-spinner" *ngIf="downloadingId === p.patientId"></span>
+                        {{ downloadingId === p.patientId ? 'Generating…' : 'Download PDF' }}
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="p === null" class="row--placeholder">
+                    <td colspan="8" class="td-placeholder">&nbsp;</td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <tr *ngIf="!filteredPatients.length">
+                <td colspan="8" class="empty">No patients match your search</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mgmt-pagination" *ngIf="filteredPatients.length">
+          <span class="mgmt-pagination__info">{{ reportRangeLabel }}</span>
+          <span>Page {{ reportPageIndex + 1 }} / {{ reportTotalPages }}</span>
+          <button type="button" (click)="reportPrevPage()" [disabled]="reportPageIndex === 0">Previous</button>
+          <button type="button" (click)="reportNextPage()" [disabled]="reportPageIndex >= reportTotalPages - 1">Next</button>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!patients.length">
+        <div class="empty-icon">📄</div>
+        <p>No patients with results yet</p>
+        <span>Reports appear when patients complete quizzes.</span>
+      </div>
+    </ng-container>
+
+    <div class="info-card" *ngIf="!loading && patients.length">
+      <div class="ic-icon">ℹ️</div>
+      <div class="ic-content">
+        <strong>PDF contents</strong>
+        <ul>
+          <li>Patient information and global score</li>
+          <li>Performance by cognitive theme (memory, focus, logic…)</li>
+          <li>Full quiz history</li>
+          <li>Personalized recommendations and suggested quizzes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <a routerLink="/" class="back-home">← Mind Care</a>
+    <div class="auth-header">
+      <div class="auth-icon">🧠</div>
+      <h2>Sign in</h2>
+      <p>Access your Mind Care space</p>
+    </div>
+    <div *ngIf="error" class="alert error">⚠️ {{ error }}</div>
+    <form (ngSubmit)="submit()">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" placeholder="you@email.com" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="pwd-wrap">
+          <input [type]="showPwd?'text':'password'" [(ngModel)]="password" name="password" placeholder="••••••" />
+          <button type="button" class="eye" (click)="showPwd=!showPwd">{{showPwd?'🙈':'👁️'}}</button>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        <span *ngIf="!loading">Sign in</span><span *ngIf="loading" class="spin"></span>
+      </button>
+    </form>
+    <p class="switch-link">No account yet? <a routerLink="/officiel/register">Create an account</a></p>
+    <div class="quick-fill">
+      <span>Quick test:</span>
+      <button (click)="fill('admin@mindcare.com','admin123')">👑 Admin</button>
+      <button (click)="fill('doctor@mindcare.com','doctor123')">🩺 Doctor</button>
+      <button (click)="fill('patient@mindcare.com','patient123')">🧑 Patient</button>
+    </div>
+  </div>
+</div>

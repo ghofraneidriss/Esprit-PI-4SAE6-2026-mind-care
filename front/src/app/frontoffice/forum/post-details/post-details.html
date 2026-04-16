@@ -1,0 +1,464 @@
+<!-- Post Details Page - Header and Footer are provided by ForumLayout -->
+
+<div class="post-details-wrapper">
+    <div
+        *ngIf="reportToast"
+        class="report-toast"
+        [class.report-toast--error]="reportToast.kind === 'error'"
+        role="status"
+    >
+        <i class="ri-checkbox-circle-line" *ngIf="reportToast.kind === 'success'" aria-hidden="true"></i>
+        <i class="ri-error-warning-line" *ngIf="reportToast.kind === 'error'" aria-hidden="true"></i>
+        {{ reportToast.text }}
+    </div>
+
+    <div *ngIf="forumBanNotice" class="forum-ban-notice-overlay" role="alert">
+        <div class="forum-ban-notice-overlay__panel">
+            <i class="ri-forbid-line" aria-hidden="true"></i>
+            <p>{{ forumBanNotice }}</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading && !post" class="loading-container">
+        <div class="custom-spinner"></div>
+        <p class="loading-text">One moment, loading this discussion…</p>
+        <button (click)="navigateBack()" class="back-btn-loading">
+            <i class="ri-arrow-left-line"></i> Back
+        </button>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !post && !loading" class="error-container">
+        <div class="error-icon">
+            <i class="ri-error-warning-fill"></i>
+        </div>
+        <h2>Oops! Discussion not found</h2>
+        <p class="error-message">{{ error }}</p>
+        <button (click)="navigateBack()" class="back-btn-error">
+            <i class="ri-home-4-line"></i> Back to forum
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="post-details-container" *ngIf="post">
+        <!-- Back Button -->
+        <button (click)="navigateBack()" class="back-floating-btn" title="Back">
+            <i class="ri-arrow-left-line"></i>
+        </button>
+
+        <div
+            class="forum-ban-banner forum-ban-banner--alert"
+            *ngIf="currentUserId > 0 && forumBan?.banned && remainingBanSeconds() > 0"
+            role="alert"
+        >
+            <div class="forum-ban-banner__icon"><i class="ri-shield-flash-fill" aria-hidden="true"></i></div>
+            <div class="forum-ban-banner__text">
+                <strong>You are banned from the forum</strong>
+                <span>Comments and reactions are disabled for now. Time remaining:</span>
+            </div>
+            <div class="forum-ban-banner__countdown" aria-live="polite">{{ banCountdownLabel() }}</div>
+        </div>
+
+        <!-- Une seule carte : post à gauche + commentaires à droite (même hauteur en desktop) -->
+        <div class="post-details-unified">
+            <div class="post-details-col post-details-col--main">
+        <!-- Contenu post (panneau gauche dans la carte fusionnée) -->
+        <article class="post-card post-card--fb post-card--unified-pane">
+            <div class="fb-post-author">
+                <div class="fb-post-author__avatar" aria-hidden="true">
+                    {{ displayNameInitial(post.author) }}
+                </div>
+                <div class="fb-post-author__meta">
+                    <span class="fb-post-author__name">{{ post.author || ('User ' + post.userId) }}</span>
+                    <span class="fb-post-author__when">
+                        <i class="ri-earth-line" aria-hidden="true"></i>
+                        {{ post.createdAt | date:'mediumDate' }} · {{ post.categoryName }}
+                    </span>
+                </div>
+            </div>
+
+            <h1 class="fb-post-heading">{{ post.title }}</h1>
+
+            <div class="post-body">
+                <p class="post-content">{{ post.content }}</p>
+            </div>
+
+            <div class="fb-media-wrap" *ngIf="postImageUrls.length > 0">
+                <div class="fb-media-stage">
+                    <img
+                        class="fb-media-img"
+                        [src]="postImageUrls[currentImageIndex]"
+                        [alt]="'Image ' + (currentImageIndex + 1) + ' — ' + post.title"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <button
+                        type="button"
+                        class="fb-media-nav fb-media-nav--prev"
+                        *ngIf="postImageUrls.length > 1"
+                        (click)="prevPostImage()"
+                        aria-label="Previous image"
+                    >
+                        <i class="ri-arrow-left-s-line" aria-hidden="true"></i>
+                    </button>
+                    <button
+                        type="button"
+                        class="fb-media-nav fb-media-nav--next"
+                        *ngIf="postImageUrls.length > 1"
+                        (click)="nextPostImage()"
+                        aria-label="Next image"
+                    >
+                        <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="fb-media-meta" *ngIf="postImageUrls.length > 1">
+                    <span class="fb-media-counter">{{ currentImageIndex + 1 }} / {{ postImageUrls.length }}</span>
+                </div>
+            </div>
+
+            <!-- Summary line (Facebook) -->
+            <div class="fb-engagement-summary" *ngIf="totalReactionCount() > 0 || (post.viewCount ?? 0) > 0 || post.commentCount > 0">
+                <div class="fb-engagement-summary__left" *ngIf="totalReactionCount() > 0">
+                    <span class="fb-reaction-stack" aria-hidden="true">
+                        <span
+                            *ngFor="let rt of topReactionTypesForPreview(); let i = index"
+                            class="fb-reaction-stack__icon"
+                            [style.zIndex]="10 - i">
+                            <i [class]="reactionIconFor(rt)"></i>
+                        </span>
+                    </span>
+                    <span class="fb-engagement-summary__count">{{ totalReactionCount() }}</span>
+                </div>
+                <div class="fb-engagement-summary__right">
+                    <span *ngIf="post.commentCount > 0">{{ post.commentCount }} comments</span>
+                    <span *ngIf="(post.viewCount ?? 0) > 0" class="fb-engagement-summary__views">
+                        {{ post.viewCount }} views
+                    </span>
+                </div>
+            </div>
+
+            <div class="fb-action-bar" *ngIf="currentUserId > 0">
+                <div class="fb-like-wrap">
+                    <button
+                        type="button"
+                        [ngClass]="[
+                            'fb-like-btn',
+                            'fb-like-btn--' + (post.myReaction || 'like').toLowerCase(),
+                            post.myReaction ? 'fb-like-btn--active' : ''
+                        ]"
+                        [disabled]="reactionBusy"
+                        (click)="primaryReactionClick()"
+                        [attr.aria-label]="currentReactionLabel()">
+                        <i [class]="reactionIconFor(post.myReaction)"></i>
+                        <span>{{ currentReactionLabel() }}</span>
+                    </button>
+                    <div class="fb-reaction-picker" role="menu" aria-label="Reactions">
+                        <button
+                            type="button"
+                            *ngFor="let r of facebookReactions"
+                            class="fb-reaction-option"
+                            [class.fb-reaction-option--on]="myReactionIs(r.type)"
+                            [disabled]="reactionBusy"
+                            (click)="pickReaction(r.type); $event.stopPropagation()"
+                            [title]="r.label">
+                            <i [class]="r.icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="fb-action-btn" (click)="scrollToComments()">
+                    <i class="ri-chat-3-line"></i>
+                    <span>Comment</span>
+                </button>
+                <button type="button" class="fb-action-btn" (click)="sharePost()">
+                    <i class="ri-share-forward-line"></i>
+                    <span>Share</span>
+                </button>
+                <button
+                    type="button"
+                    class="fb-action-btn"
+                    [class.fb-action-btn--follow-on]="post.following"
+                    [disabled]="followBusy"
+                    (click)="toggleFollow()"
+                    [title]="post.following ? 'Unsubscribe from notifications' : 'Notify me of new comments'">
+                    <i [class]="post.following ? 'ri-notification-3-fill' : 'ri-notification-3-line'"></i>
+                    <span>{{ post.following ? 'Following' : 'Follow' }}</span>
+                </button>
+            </div>
+
+            <div class="fb-action-bar fb-action-bar--guest" *ngIf="currentUserId <= 0">
+                <a routerLink="/login-cover" class="link-login fb-action-btn--full">Sign in to react and comment</a>
+            </div>
+
+            <div class="rating-section" *ngIf="currentUserId > 0">
+                <p class="reactions-label">Your rating (1–5)</p>
+                <div class="stars-row">
+                    <button
+                        type="button"
+                        *ngFor="let s of starOptions"
+                        class="star-btn"
+                        [class.star-btn--on]="(post.myRating ?? 0) >= s"
+                        [disabled]="ratingBusy"
+                        (click)="setStarRating(s)"
+                        [attr.aria-label]="'Rate ' + s + ' out of 5'">
+                        <i class="ri-star-fill"></i>
+                    </button>
+                </div>
+            </div>
+
+            <p class="guest-hint" *ngIf="currentUserId <= 0">
+                <a routerLink="/login-cover" class="link-login">Sign in</a> to react, rate, and record a view.
+            </p>
+
+            <div class="engagement-bar engagement-bar--inline">
+                <div class="engagement-rating" *ngIf="(post.ratingCount ?? 0) > 0 && post.averageRating != null">
+                    <i class="ri-star-fill"></i>
+                    <span>{{ post.averageRating | number:'1.1-1' }}</span>
+                    <span class="engagement-muted">({{ post.ratingCount ?? 0 }} ratings)</span>
+                </div>
+            </div>
+        </article>
+            </div>
+
+            <aside class="post-details-col post-details-col--comments" aria-label="Comments">
+        <!-- Commentaires (panneau droit, même carte) -->
+        <section class="comments-thread comments-thread--modern comments-thread--unified-pane" id="forum-comments-thread">
+            <header class="comments-thread__head">
+                <div class="comments-thread__head-icon" aria-hidden="true">
+                    <i class="ri-chat-smile-3-fill"></i>
+                </div>
+                <div class="comments-thread__head-text">
+                    <h3 class="comments-thread__title">Comments</h3>
+                    <p class="comments-thread__subtitle">
+                        <span class="comments-thread__count">{{ comments.length }}</span>
+                        {{ comments.length === 1 ? 'reply' : 'replies' }} · share thoughtfully
+                    </p>
+                </div>
+            </header>
+
+            <div class="comments-scroll-wrap comments-scroll-wrap--modern">
+                <div class="comments-list comments-list--modern" *ngIf="comments.length > 0">
+                    <article *ngFor="let comment of comments" class="thread-card">
+                        <div class="thread-card__avatar-wrap" aria-hidden="true">
+                            <div class="thread-card__avatar">{{ displayNameInitial(commentAuthorLabel(comment)) }}</div>
+                        </div>
+                        <div class="thread-card__main">
+                            <div class="thread-card__meta">
+                                <div class="thread-card__meta-start">
+                                    <span class="thread-card__name">{{ commentAuthorLabel(comment) }}</span>
+                                    <span *ngIf="comment.bestAnswer" class="thread-card__best" title="Automatic at +7 likes">
+                                        <i class="ri-star-fill" aria-hidden="true"></i> Best answer
+                                    </span>
+                                </div>
+                                <time class="thread-card__time thread-card__time--header" [attr.datetime]="comment.createdAt">
+                                    {{ comment.createdAt | date:'short' }}
+                                </time>
+                            </div>
+
+                            <div *ngIf="editingCommentId !== comment.id" class="thread-card__body">
+                                <div
+                                    *ngIf="isModeratedCommentContent(comment.content)"
+                                    class="thread-card__moderation"
+                                    role="status"
+                                    aria-live="polite">
+                                    <div class="thread-card__moderation-icon-wrap" aria-hidden="true">
+                                        <i class="ri-shield-flash-fill"></i>
+                                    </div>
+                                    <div class="thread-card__moderation-copy">
+                                        <span class="thread-card__moderation-kicker">Moderated content</span>
+                                        <p class="thread-card__moderation-title">Comment removed</p>
+                                        <p class="thread-card__moderation-desc">
+                                            This message was hidden because it does not follow our community guidelines.
+                                        </p>
+                                    </div>
+                                </div>
+                                <p *ngIf="!isModeratedCommentContent(comment.content)" class="thread-card__text">
+                                    {{ comment.content }}
+                                </p>
+                            </div>
+
+                            <div *ngIf="editingCommentId === comment.id" class="thread-card__edit">
+                                <textarea [(ngModel)]="editCommentContent" class="thread-card__textarea"></textarea>
+                                <div class="thread-card__edit-actions">
+                                    <button type="button" (click)="saveEditComment(comment)" class="thread-btn thread-btn--primary">Save</button>
+                                    <button type="button" (click)="cancelEditComment()" class="thread-btn thread-btn--ghost">Cancel</button>
+                                </div>
+                            </div>
+
+                            <!-- Edit/Delete à gauche · like/dislike/report à droite (date/heure en tête avec le nom) -->
+                            <div class="thread-card__footer-bar" *ngIf="editingCommentId !== comment.id && currentUserId > 0">
+                                <div
+                                    class="thread-card__footer-start"
+                                    *ngIf="currentUserId > 0 && isCommentOwner(comment) && !isModeratedCommentContent(comment.content)">
+                                    <button type="button" (click)="startEditComment(comment)" class="thread-link">Edit</button>
+                                    <span class="thread-card__dot" aria-hidden="true">·</span>
+                                    <button type="button" (click)="deleteComment(comment.id)" class="thread-link thread-link--danger">Delete</button>
+                                </div>
+                                <div class="thread-card__footer-end">
+                                    <div class="thread-card__reactions">
+                                        <button
+                                            type="button"
+                                            class="thread-pill thread-pill--like"
+                                            [class.thread-pill--active]="comment.likedByMe"
+                                            [disabled]="commentBusyId === comment.id"
+                                            (click)="toggleCommentLike(comment)"
+                                            title="Like">
+                                            <i [class]="comment.likedByMe ? 'ri-thumb-up-fill' : 'ri-thumb-up-line'"></i>
+                                            <span *ngIf="(comment.likeCount ?? 0) > 0">{{ comment.likeCount }}</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="thread-pill thread-pill--dislike"
+                                            [class.thread-pill--active]="comment.dislikedByMe"
+                                            [disabled]="commentBusyId === comment.id"
+                                            (click)="toggleCommentDislike(comment)"
+                                            title="Dislike">
+                                            <i [class]="comment.dislikedByMe ? 'ri-thumb-down-fill' : 'ri-thumb-down-line'"></i>
+                                            <span *ngIf="(comment.dislikeCount ?? 0) > 0">{{ comment.dislikeCount }}</span>
+                                        </button>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="thread-pill thread-pill--report"
+                                        *ngIf="!isCommentOwner(comment)"
+                                        (click)="openReportModal(comment)"
+                                        title="Report">
+                                        <i class="ri-flag-line"></i>
+                                        Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div *ngIf="comments.length === 0" class="thread-empty">
+                    <div class="thread-empty__icon"><i class="ri-discuss-line"></i></div>
+                    <p class="thread-empty__title">No comments yet</p>
+                    <p class="thread-empty__hint">Be the first to share your thoughts.</p>
+                </div>
+            </div>
+
+            <div
+                class="composer composer--modern"
+                [class.composer--disabled]="forumBan?.banned && remainingBanSeconds() > 0"
+                [class.composer--posting]="commentSubmitting"
+                [attr.aria-busy]="commentSubmitting">
+                <div class="composer__avatar" aria-hidden="true">
+                    <i class="ri-user-smile-fill"></i>
+                </div>
+                <div class="composer__fields">
+                    <textarea
+                        id="forum-comment-input"
+                        [(ngModel)]="newCommentContent"
+                        rows="3"
+                        placeholder="Write a comment…"
+                        class="composer__input"
+                        [disabled]="commentSubmitting || !!(forumBan?.banned && remainingBanSeconds() > 0)"></textarea>
+                    <div class="composer__footer">
+                        <span class="composer__hint" [class.composer__hint--posting]="commentSubmitting">
+                            <ng-container *ngIf="commentSubmitting; else composerHintDefault">
+                                <i class="ri-loader-4-line composer__hint-spin" aria-hidden="true"></i>
+                                Posting your comment…
+                            </ng-container>
+                            <ng-template #composerHintDefault>Be kind and respectful</ng-template>
+                        </span>
+                        <button
+                            type="button"
+                            (click)="addComment()"
+                            [disabled]="
+                                commentSubmitting ||
+                                !newCommentContent.trim() ||
+                                !!(forumBan?.banned && remainingBanSeconds() > 0)
+                            "
+                            [attr.aria-busy]="commentSubmitting"
+                            class="composer__send">
+                            <span *ngIf="!commentSubmitting">Post</span>
+                            <span *ngIf="commentSubmitting">Posting…</span>
+                            <i
+                                [class]="commentSubmitting ? 'ri-loader-4-line composer__send-icon--spin' : 'ri-send-plane-2-fill'"
+                                aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+            </aside>
+        </div>
+        <!-- /post-details-unified -->
+    </div>
+
+    <!-- Report comment (in-app modal — no browser prompt) -->
+    <div
+        *ngIf="reportModalOpen"
+        class="report-modal-backdrop"
+        (click)="onReportBackdropClick($event)"
+        role="presentation"
+    >
+        <div
+            class="report-modal-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="report-modal-title"
+            (click)="$event.stopPropagation()"
+        >
+            <div class="report-modal-panel__head">
+                <h2 id="report-modal-title" class="report-modal-panel__title">
+                    <i class="ri-flag-line" aria-hidden="true"></i>
+                    Report comment
+                </h2>
+                <button
+                    type="button"
+                    class="report-modal-panel__close"
+                    (click)="closeReportModal()"
+                    aria-label="Close"
+                >
+                    <i class="ri-close-line" aria-hidden="true"></i>
+                </button>
+            </div>
+            <p class="report-modal-panel__lead">Why are you reporting this comment?</p>
+
+            <ul class="report-modal-reasons">
+                <li *ngFor="let r of reportReasons" class="report-modal-reasons__item">
+                    <label class="report-modal-reasons__label">
+                        <input
+                            type="radio"
+                            name="forumReportReason"
+                            [value]="r.id"
+                            [(ngModel)]="reportReasonKey"
+                        />
+                        <span>{{ r.label }}</span>
+                    </label>
+                </li>
+            </ul>
+
+            <div *ngIf="reportReasonKey === 'other'" class="report-modal-other">
+                <label class="report-modal-other__label" for="report-other-detail">Describe the issue</label>
+                <textarea
+                    id="report-other-detail"
+                    class="report-modal-other__input"
+                    [(ngModel)]="reportOtherDetail"
+                    rows="3"
+                    placeholder="Type your reason here…"
+                ></textarea>
+            </div>
+
+            <p *ngIf="reportInlineError" class="report-modal-error">{{ reportInlineError }}</p>
+
+            <div class="report-modal-panel__actions">
+                <button type="button" class="report-modal-btn report-modal-btn--ghost" (click)="closeReportModal()">
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    class="report-modal-btn report-modal-btn--primary"
+                    (click)="submitReport()"
+                    [disabled]="reportSubmitting"
+                >
+                    <span *ngIf="!reportSubmitting">Submit report</span>
+                    <span *ngIf="reportSubmitting">Sending…</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

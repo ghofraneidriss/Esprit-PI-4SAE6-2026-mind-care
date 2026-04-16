@@ -1,0 +1,452 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <!-- ========== Patient / aidant : cartes (pas de tableau) ========== -->
+    <ng-container *ngIf="useModernResultsLayout">
+      <div class="cvp-page-header page-header">
+        <div>
+          <h1>
+            <i class="ri-pulse-line cvp-title-ico" aria-hidden="true"></i>
+            <ng-container *ngIf="isFamilyCaretakerView; else resTitlePatient">Care results</ng-container>
+            <ng-template #resTitlePatient>Your results</ng-template>
+          </h1>
+          <p *ngIf="!loading && results.length">
+            <span class="header-sub">{{ activityGroups.length }} activit{{ activityGroups.length === 1 ? 'y' : 'ies' }}</span>
+            <span class="header-dot" aria-hidden="true">·</span>
+            <span class="header-sub">{{ results.length }} session(s)</span>
+            <span class="header-dot" aria-hidden="true">·</span>
+            <span class="header-sub">Overall average <strong>{{ patientOverallAvg }}%</strong></span>
+            <span *ngIf="patientAttentionSessions && isPatientPersonalView" class="header-alert header-alert--self">
+              <i class="ri-focus-3-line" aria-hidden="true"></i>
+              {{ patientAttentionSessions }} session(s) to discuss with your care team
+            </span>
+          </p>
+          <p *ngIf="isFamilyCaretakerView && !loading && !results.length" class="header-sub">
+            No sessions linked to your care recipients yet.
+          </p>
+        </div>
+      </div>
+
+      <div class="loading patient-modern-loading" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading your results…</p>
+      </div>
+
+      <div class="patient-results-modern" *ngIf="!loading">
+        <div class="empty-state empty-state--card" *ngIf="!results.length">
+          <div class="empty-icon"><i class="ri-gamepad-line" aria-hidden="true"></i></div>
+          <p>No sessions yet</p>
+          <span>Complete a quiz to see scores and charts here.</span>
+        </div>
+
+        <ng-container *ngIf="results.length && activityGroups.length">
+          <section class="prm-step" aria-labelledby="pick-activity-heading">
+            <h2 id="pick-activity-heading" class="prm-section-title">
+              <i class="ri-filter-3-line" aria-hidden="true"></i>
+              Choose an activity
+            </h2>
+            <p class="prm-section-lead">
+              Pick a quiz or photo discrimination session you have already completed. Then review scores and trends (summary).
+            </p>
+            <div class="prm-activity-grid">
+              <button
+                type="button"
+                class="prm-activity-card"
+                *ngFor="let g of activityGroups"
+                [class.prm-activity-card--active]="g.key === selectedActivityKey"
+                (click)="selectActivity(g.key)"
+              >
+                <span class="prm-ac-title">{{ g.title }}</span>
+                <span class="prm-ac-type">{{ activityTypeLabel(g.activityType) }}</span>
+                <span class="prm-ac-meta">{{ g.sessionCount }} session(s)</span>
+                <div class="prm-ac-stats">
+                  <span class="prm-ac-pill">Avg {{ g.avgScore }}%</span>
+                  <span class="prm-ac-pill prm-ac-pill--best">Best {{ g.bestScore }}%</span>
+                </div>
+                <span class="prm-ac-date">Last: {{ g.lastDate | date:'dd/MM/yyyy HH:mm' }}</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="prm-detail" *ngIf="selectedGroup as g">
+            <h2 class="prm-section-title">
+              <i class="ri-bar-chart-grouped-line" aria-hidden="true"></i>
+              {{ g.title }}
+            </h2>
+
+            <div class="prm-kpi-row">
+              <div class="prm-kpi">
+                <span class="prm-kpi-val">{{ g.avgScore }}%</span>
+                <span class="prm-kpi-lbl">Average score</span>
+              </div>
+              <div class="prm-kpi">
+                <span class="prm-kpi-val">{{ g.bestScore }}%</span>
+                <span class="prm-kpi-lbl">Best score</span>
+              </div>
+              <div class="prm-kpi">
+                <span class="prm-kpi-val">{{ g.sessionCount }}</span>
+                <span class="prm-kpi-lbl">Sessions</span>
+              </div>
+            </div>
+
+            <div class="prm-chart-block">
+              <h3 class="prm-chart-title">Score trend</h3>
+              <div class="prm-chart-area" *ngIf="chartSessions.length">
+                <div class="prm-bar-wrap" *ngFor="let s of chartSessions">
+                  <div
+                    class="prm-bar"
+                    [style.height.%]="s.weightedScore ?? 0"
+                    [attr.title]="(s.weightedScore | number:'1.0-0') + '%'"
+                  ></div>
+                  <span class="prm-bar-label">{{ s.completedAt | date:'dd/MM' }}</span>
+                  <span class="prm-bar-score">{{ s.weightedScore | number:'1.0-0' }}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prm-chart-block" *ngIf="riskCounts(g).length">
+              <h3 class="prm-chart-title">Risk distribution (sessions)</h3>
+              <div class="prm-risk-bar">
+                <div
+                  *ngFor="let rc of riskCounts(g)"
+                  class="prm-risk-seg"
+                  [style.flex-grow]="rc.count"
+                  [ngClass]="getRiskClass(rc.level)"
+                  [title]="rc.level + ': ' + rc.count"
+                ></div>
+              </div>
+              <ul class="prm-risk-legend">
+                <li *ngFor="let rc of riskCounts(g)">
+                  <span class="prm-dot" [ngClass]="getRiskClass(rc.level)"></span>
+                  {{ rc.level }} — {{ rc.count }} ({{ riskPct(rc.count, g.sessionCount) }}%)
+                </li>
+              </ul>
+            </div>
+
+            <div class="prm-sessions">
+              <h3 class="prm-chart-title">Sessions</h3>
+              <p class="prm-sessions-hint">Select a run to see correct vs missed questions (aggregate).</p>
+              <div class="prm-session-list">
+                <button
+                  type="button"
+                  class="prm-session-card"
+                  *ngFor="let s of g.sessions"
+                  [class.prm-session-card--active]="selectedSession === s"
+                  (click)="selectSession(s)"
+                >
+                  <div class="prm-sc-main">
+                    <span class="prm-sc-score">{{ s.weightedScore | number:'1.0-0' }}%</span>
+                    <span class="badge" [ngClass]="getRiskClass(s.riskLevel || '')">{{ s.riskLevel }}</span>
+                    <span class="badge diff-{{ s.difficulty?.toLowerCase() }}">{{ s.difficulty }}</span>
+                  </div>
+                  <div class="prm-sc-meta">
+                    <span><i class="ri-calendar-line" aria-hidden="true"></i> {{ s.completedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    <span><i class="ri-checkbox-circle-line" aria-hidden="true"></i> {{ s.correctAnswers }}/{{ s.totalQuestions }}</span>
+                    <span><i class="ri-close-circle-line" aria-hidden="true"></i> {{ mistakeCount(s) }} missed</span>
+                    <span><i class="ri-timer-line" aria-hidden="true"></i> {{ s.timeSpentSeconds }}s</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div class="prm-session-focus" *ngIf="selectedSession as sess">
+              <h3 class="prm-chart-title">Session insight</h3>
+              <div class="prm-focus-card">
+                <div class="prm-focus-ring">
+                  <svg viewBox="0 0 120 120" class="prm-focus-svg" aria-hidden="true">
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" stroke-width="10" />
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="52"
+                      fill="none"
+                      stroke="url(#prmGrad)"
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      [attr.stroke-dasharray]="326.73"
+                      [attr.stroke-dashoffset]="326.73 - (326.73 * correctPct(sess) / 100)"
+                      transform="rotate(-90 60 60)"
+                    />
+                    <defs>
+                      <linearGradient id="prmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#059669" />
+                        <stop offset="100%" style="stop-color:#10b981" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div class="prm-focus-center">
+                    <span class="prm-focus-pct">{{ correctPct(sess) }}%</span>
+                    <span class="prm-focus-lbl">correct</span>
+                  </div>
+                </div>
+                <div class="prm-focus-stats">
+                  <div class="prm-fs prm-fs--ok">
+                    <i class="ri-checkbox-circle-fill" aria-hidden="true"></i>
+                    <div>
+                      <span class="prm-fs-val">{{ sess.correctAnswers }}</span>
+                      <span class="prm-fs-lbl">Correct answers</span>
+                    </div>
+                  </div>
+                  <div class="prm-fs prm-fs--miss">
+                    <i class="ri-indeterminate-circle-fill" aria-hidden="true"></i>
+                    <div>
+                      <span class="prm-fs-val">{{ mistakeCount(sess) }}</span>
+                      <span class="prm-fs-lbl">Missed (to review)</span>
+                    </div>
+                  </div>
+                  <div class="prm-fs prm-fs--neutral">
+                    <i class="ri-file-list-3-line" aria-hidden="true"></i>
+                    <div>
+                      <span class="prm-fs-val">{{ sess.totalQuestions }}</span>
+                      <span class="prm-fs-lbl">Total questions</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="prm-focus-note">
+                  Per-question wording is not stored on the server yet; this view shows the score breakdown for this attempt.
+                </p>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- ========== STAFF VIEW (admin / doctor): table + filters ========== -->
+    <ng-container *ngIf="isStaffResultsView">
+      <div class="cvp-page-header page-header">
+        <div>
+          <h1>
+            <i class="ri-line-chart-line cvp-title-ico" aria-hidden="true"></i>
+            Results &amp; risk analysis
+          </h1>
+          <p>
+            {{ filtered.length }} result(s) — Average score: {{ avgScore }}%
+            <span *ngIf="criticalPatients" class="header-alert">
+              <i class="ri-alarm-warning-fill" aria-hidden="true"></i> {{ criticalPatients }} patient(s) at high risk
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'results'" (click)="activeTab = 'results'">
+          <i class="ri-table-line" aria-hidden="true"></i> Results
+        </button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'risk'" (click)="activeTab = 'risk'">
+          <i class="ri-pulse-line" aria-hidden="true"></i> Patient risk view
+        </button>
+      </div>
+
+      <div *ngIf="activeTab === 'results'">
+        <div class="filters">
+          <div class="filter-search">
+            <i class="ri-search-line" aria-hidden="true"></i>
+            <input
+              class="filter-input"
+              [(ngModel)]="searchText"
+              (ngModelChange)="applyFilter()"
+              placeholder="Search patient or activity…"
+            />
+          </div>
+          <select class="filter-select" [(ngModel)]="filterRisk" (ngModelChange)="applyFilter()">
+            <option value="">All risk levels</option>
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+            <option value="CRITICAL">Critical</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="filterDiff" (ngModelChange)="applyFilter()">
+            <option value="">All difficulties</option>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Activity</th>
+                  <th>Score</th>
+                  <th>Correct</th>
+                  <th>Time</th>
+                  <th>Difficulty</th>
+                  <th>Risk</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="!loading && filtered.length">
+                  <tr *ngFor="let r of staffResultsTableRows" [class.row--placeholder]="r === null">
+                    <ng-container *ngIf="r !== null; else staffResultsEmptyRow">
+                      <td>
+                        <strong>{{ r.patientName || 'N/A' }}</strong><br /><small class="muted">{{ r.patientEmail }}</small>
+                      </td>
+                      <td>
+                        <span class="activity-cell-wrap">
+                          <span class="activity-main">{{ r.activityTitle || activityTypeLabel(r.activityType) }}</span>
+                          <small class="muted">{{ activityTypeLabel(r.activityType) }}</small>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="score-val" [class.low]="r.weightedScore !== undefined && r.weightedScore < 50">{{
+                          r.weightedScore | number:'1.0-0'
+                        }}%</span>
+                      </td>
+                      <td>{{ r.correctAnswers }}/{{ r.totalQuestions }}</td>
+                      <td>
+                        {{ r.timeSpentSeconds }}s<br /><small class="muted">~{{ r.avgResponseTime | number:'1.1-1' }}s/q</small>
+                      </td>
+                      <td><span class="badge diff-{{ r.difficulty?.toLowerCase() }}">{{ r.difficulty }}</span></td>
+                      <td><span class="badge" [ngClass]="getRiskClass(r.riskLevel || '')">{{ r.riskLevel }}</span></td>
+                      <td>{{ r.completedAt | date:'dd/MM HH:mm' }}</td>
+                      <td class="actions-cell">
+                        <button
+                          type="button"
+                          class="btn-send-mail"
+                          (click)="sendAlert(r.id!)"
+                          [disabled]="sendingEmail[r.id!]"
+                          [title]="r.alertSent ? 'Resend email' : 'Send alert email'"
+                        >
+                          <i class="ri-loader-4-line" *ngIf="sendingEmail[r.id!]" class="spin"></i>
+                          <i class="ri-mail-send-line" *ngIf="!sendingEmail[r.id!]"></i>
+                        </button>
+                        <span class="email-status" *ngIf="r.alertSent && !emailMsg[r.id!]" title="Email already sent"
+                          ><i class="ri-checkbox-circle-fill"></i
+                        ></span>
+                        <span class="email-feedback" *ngIf="emailMsg[r.id!]">{{ emailMsg[r.id!] }}</span>
+                        <button type="button" *ngIf="isAdminRole" class="btn-icon del" (click)="delete(r.id!)" title="Delete">
+                          <i class="ri-delete-bin-line"></i>
+                        </button>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+                <tr *ngIf="!loading && !filtered.length">
+                  <td colspan="9" class="empty">No results</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mgmt-pagination" *ngIf="!loading && filtered.length">
+            <span class="mgmt-pagination__info">{{ staffResultsRangeLabel }}</span>
+            <span>Page {{ staffResultsPageIndex + 1 }} / {{ staffResultsTotalPages }}</span>
+            <button type="button" (click)="staffResultsPrevPage()" [disabled]="staffResultsPageIndex === 0">Previous</button>
+            <button type="button" (click)="staffResultsNextPage()" [disabled]="staffResultsPageIndex >= staffResultsTotalPages - 1">Next</button>
+          </div>
+          <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <ng-template #staffResultsEmptyRow>
+        <td colspan="9" class="td-placeholder">&nbsp;</td>
+      </ng-template>
+
+      <div *ngIf="activeTab === 'risk'">
+        <div class="risk-stats-row">
+          <div class="stat-card st-total">
+            <i class="ri-team-line st-ico" aria-hidden="true"></i>
+            <div><div class="st-val">{{ patientSummaries.length }}</div><div class="st-lbl">Patients</div></div>
+          </div>
+          <div class="stat-card st-critical">
+            <i class="ri-heart-pulse-line st-ico" aria-hidden="true"></i>
+            <div><div class="st-val">{{ criticalPatients }}</div><div class="st-lbl">At high risk</div></div>
+          </div>
+          <div class="stat-card st-avg">
+            <i class="ri-percent-line st-ico" aria-hidden="true"></i>
+            <div><div class="st-val">{{ avgScore }}%</div><div class="st-lbl">Overall average score</div></div>
+          </div>
+          <div class="stat-card st-total">
+            <i class="ri-stack-line st-ico" aria-hidden="true"></i>
+            <div><div class="st-val">{{ results.length }}</div><div class="st-lbl">Total sessions</div></div>
+          </div>
+        </div>
+
+        <div class="patient-grid" *ngIf="patientSummaries.length">
+          <div
+            class="patient-card"
+            *ngFor="let p of patientSummaries"
+            [class.card-critical]="p.lastRisk === 'CRITICAL'"
+            [class.card-high]="p.lastRisk === 'HIGH'"
+          >
+            <div class="pc-header">
+              <div class="pc-avatar" [ngClass]="getRiskClass(p.lastRisk)">{{ (p.patientName || '?')[0] }}</div>
+              <div class="pc-info">
+                <div class="pc-name">{{ p.patientName }}</div>
+                <div class="pc-email">{{ p.patientEmail }}</div>
+              </div>
+              <span class="badge badge--inline" [ngClass]="getRiskClass(p.lastRisk)">
+                <i [ngClass]="getRiskIconClass(p.lastRisk)" aria-hidden="true"></i> {{ p.lastRisk }}
+              </span>
+            </div>
+            <div class="pc-stats">
+              <div class="pc-stat"><span class="pc-stat-val">{{ p.avgScore }}%</span><span class="pc-stat-lbl">Avg. score</span></div>
+              <div class="pc-stat"><span class="pc-stat-val">{{ p.totalGames }}</span><span class="pc-stat-lbl">Sessions</span></div>
+              <div class="pc-stat">
+                <span class="pc-stat-val"><i [ngClass]="getTrendIconClass(p.trend)" aria-hidden="true"></i></span>
+                <span class="pc-stat-lbl">{{ getTrendLabel(p.trend) }}</span>
+              </div>
+              <div class="pc-stat"><span class="pc-stat-val">{{ p.criticalCount }}</span><span class="pc-stat-lbl">Critical</span></div>
+            </div>
+            <div class="pc-bar">
+              <div class="pc-bar-fill" [style.width.%]="p.avgScore" [ngClass]="getRiskClass(p.lastRisk)"></div>
+            </div>
+            <div class="pc-footer">
+              <small class="muted">Last session: {{ p.lastDate | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!patientSummaries.length && !loading">
+          <p>No patient results available</p>
+        </div>
+        <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+      </div>
+    </ng-container>
+
+    <!-- Fallback: other roles (e.g. mixed data) -->
+    <ng-container *ngIf="!isStaffResultsView && !useModernResultsLayout">
+      <div class="cvp-page-header page-header">
+        <div>
+          <h1><i class="ri-line-chart-line cvp-title-ico" aria-hidden="true"></i> Results</h1>
+          <p>{{ filtered.length }} result(s) — Average: {{ avgScore }}%</p>
+        </div>
+      </div>
+      <div class="filters">
+        <div class="filter-search">
+          <i class="ri-search-line" aria-hidden="true"></i>
+          <input class="filter-input" [(ngModel)]="searchText" (ngModelChange)="applyFilter()" placeholder="Search…" />
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Activity</th>
+                <th>Score</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of filtered">
+                <td><strong>{{ r.patientName }}</strong></td>
+                <td>
+                  <strong>{{ r.activityTitle || '—' }}</strong><br />
+                  <small class="muted">{{ activityTypeLabel(r.activityType) }}</small>
+                </td>
+                <td>{{ r.weightedScore | number:'1.0-0' }}%</td>
+                <td>{{ r.completedAt | date:'dd/MM HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+      </div>
+    </ng-container>
+  </div>
+</div>

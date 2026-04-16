@@ -1,0 +1,191 @@
+<header id="header" class="header alzcare-header d-flex align-items-center fixed-top">
+  <div class="container-fluid alzcare-header-container position-relative">
+    <div class="alzcare-header-row d-flex align-items-center flex-wrap flex-xl-nowrap gap-2 gap-xl-3">
+
+      <a routerLink="/" class="logo d-flex align-items-center gap-2 flex-shrink-0 text-decoration-none alzcare-header-brand">
+        <img src="assets/branding/alzcare-logo-3d.png" alt="MindCare" class="navbar-logo-3d" width="44" height="44" />
+        <span class="sitename mb-0 text-dark">Mind<span class="text-primary">Care</span></span>
+      </a>
+
+      <nav id="navmenu" class="navmenu alzcare-header-nav flex-grow-1 flex-xl-grow-1">
+        <ul>
+          <li>
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+          </li>
+          <li>
+            <a routerLink="/forum" routerLinkActive="active">Forum</a>
+          </li>
+          <li [class.active]="isActivitiesNavActive">
+            <a [routerLink]="activitiesNavLink">Activities</a>
+          </li>
+          <li *ngIf="authService.isLoggedIn() && showMovementLink">
+            <a routerLink="/patient-movement" routerLinkActive="active">Movement</a>
+          </li>
+          <li *ngIf="authService.isLoggedIn() && showSafeZonesLink">
+            <a routerLink="/safe-zones" routerLinkActive="active">Safe zones</a>
+          </li>
+          <li *ngIf="!authService.isLoggedIn() || !isCaregiverVolunteerIncidentsMenu">
+            <a routerLink="/incidents/history" routerLinkActive="active">Incidents</a>
+          </li>
+          <li *ngIf="authService.isLoggedIn() && isCaregiverVolunteerIncidentsMenu" class="dropdown" [class.active]="isIncidentsDropdownActive">
+            <a href="#"><span>Incidents</span> <i class="ri-arrow-down-s-line toggle-dropdown"></i></a>
+            <ul>
+              <li>
+                <a routerLink="/incidents/report"><i class="ri-error-warning-line me-2"></i>Report</a>
+              </li>
+              <li>
+                <a routerLink="/incidents/history"><i class="ri-draft-line me-2"></i>My reports</a>
+              </li>
+            </ul>
+          </li>
+          <li *ngIf="authService.isLoggedIn()">
+            <a routerLink="/profile" routerLinkActive="active">Profile</a>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none ri-menu-line"></i>
+      </nav>
+
+      <div class="alzcare-header-end d-flex align-items-center gap-2 flex-shrink-0 ms-xl-auto">
+        <ng-container *ngIf="!authService.isLoggedIn()">
+          <a class="btn btn-outline-secondary btn-sm" routerLink="/login-cover">Log in</a>
+          <a class="btn btn-primary btn-sm" routerLink="/register-cover">Sign up</a>
+        </ng-container>
+
+        <!-- Notifications (Instagram-style inbox) -->
+        <div *ngIf="authService.isLoggedIn()" class="alzcare-notif-wrap position-relative">
+          <button
+            type="button"
+            class="alzcare-notif-bell"
+            (click)="toggleNotifPanel(); $event.stopPropagation()"
+            [attr.aria-expanded]="showNotifPanel"
+            aria-label="Notifications"
+            title="Notifications">
+            <i class="ri-notification-3-fill" aria-hidden="true"></i>
+            <span *ngIf="unreadCount > 0" class="alzcare-notif-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+          </button>
+
+          <div *ngIf="showNotifPanel" class="alzcare-notif-panel" role="dialog" aria-label="Notifications list" (click)="$event.stopPropagation()">
+            <div class="alzcare-notif-panel__head">
+              <span class="alzcare-notif-panel__title">
+                Notifications
+                <span *ngIf="unreadCount > 0" class="alzcare-notif-panel__count">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+              </span>
+              <div class="alzcare-notif-panel__actions">
+                <button
+                  *ngIf="unreadCount > 0"
+                  type="button"
+                  class="alzcare-notif-panel__markall"
+                  (click)="markAllRead()">
+                  Mark all as read
+                </button>
+                <button
+                  *ngIf="notifications.length > 0"
+                  type="button"
+                  class="alzcare-notif-panel__deleteall"
+                  (click)="deleteAll()">
+                  Delete all
+                </button>
+              </div>
+            </div>
+            <div class="alzcare-notif-panel__body">
+              <div *ngIf="notifications.length === 0" class="alzcare-notif-empty">
+                <i class="ri-notification-off-line" aria-hidden="true"></i>
+                <p>Nothing new yet</p>
+                <span class="alzcare-notif-empty__hint">
+                  <strong>Post authors</strong> (doctors, staff): alerts for likes, comments, reactions, ratings, and new followers.
+                  <strong>Thread subscribers</strong>: alerts when someone else comments.
+                  You never get a notification for your own actions.
+                </span>
+              </div>
+              <div
+                *ngFor="let n of notifications"
+                class="alzcare-notif-item"
+                [class.alzcare-notif-item--unread]="!n.read">
+                <div class="alzcare-notif-item__body">
+                  <button
+                    type="button"
+                    class="alzcare-notif-item__main"
+                    (click)="onNotificationActivate(n, $event)">
+                    <span
+                      class="alzcare-notif-item__icon"
+                      [ngClass]="eventIconClass(n)"
+                      [class.alzcare-notif-item__icon--warn]="n.type === 'WARNING'"
+                      [class.alzcare-notif-item__icon--crit]="n.type === 'CRITICAL'">
+                      <i [class]="eventIconFor(n)" aria-hidden="true"></i>
+                    </span>
+                    <span class="alzcare-notif-item__text">
+                      <ng-container *ngIf="showActorHighlight(n); else plainNotifMsg">
+                        <span class="alzcare-notif-item__msg alzcare-notif-item__msg--rich">
+                          <span class="alzcare-notif-actor">{{ n.actorName }}</span>
+                          <span class="alzcare-notif-tail"> · {{ messageTail(n) }}</span>
+                        </span>
+                      </ng-container>
+                      <ng-template #plainNotifMsg>
+                        <span class="alzcare-notif-item__msg">{{ plainNotificationMessage(n) }}</span>
+                      </ng-template>
+                      <p *ngIf="n.snippet && n.eventKind !== 'PATIENT_LOCATION_SHARED'" class="alzcare-notif-snippet">
+                        {{ n.snippet }}
+                      </p>
+                      <span class="alzcare-notif-item__meta">
+                        <span class="alzcare-notif-item__time">{{ relativeTimeEn(n.createdAt) }}</span>
+                        <span *ngIf="n.eventKind === 'PATIENT_LOCATION_SHARED'" class="alzcare-notif-item__chip">Location</span>
+                        <span *ngIf="n.postId" class="alzcare-notif-item__chip">Forum</span>
+                        <span class="alzcare-notif-item__chip alzcare-notif-item__chip--type">{{ n.type }}</span>
+                      </span>
+                    </span>
+                    <span *ngIf="!n.read" class="alzcare-notif-item__dot" aria-hidden="true"></span>
+                  </button>
+                  <a
+                    *ngIf="n.eventKind === 'PATIENT_LOCATION_SHARED' && mapsUrl(n)"
+                    class="alzcare-notif-maps-btn"
+                    [href]="mapsUrl(n) ?? '#'"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    (click)="onLocationMapsLinkClick(n, $event)">
+                    <span class="alzcare-notif-maps-btn__shine" aria-hidden="true"></span>
+                    <span class="alzcare-notif-maps-btn__inner">
+                      <i class="ri-google-fill alzcare-notif-maps-btn__brand" aria-hidden="true"></i>
+                      <span class="alzcare-notif-maps-btn__label">Open in Google Maps</span>
+                      <i class="ri-arrow-right-up-line alzcare-notif-maps-btn__arrow" aria-hidden="true"></i>
+                    </span>
+                  </a>
+                </div>
+                <button
+                  type="button"
+                  class="alzcare-notif-item__dismiss"
+                  (click)="deleteOne(n, $event)"
+                  title="Remove"
+                  aria-label="Remove notification">
+                  <i class="ri-close-line" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <p class="alzcare-notif-panel__foot" *ngIf="notifications.length > 0">
+              {{ notifications.length }} recent · your actions are excluded
+            </p>
+          </div>
+        </div>
+
+        <div *ngIf="authService.isLoggedIn()" class="alzcare-user-cluster alzcare-user-cluster--after-notif">
+          <a routerLink="/profile"
+             class="alzcare-profile-btn d-inline-flex align-items-center justify-content-center text-decoration-none"
+             title="Profile"
+             [attr.aria-label]="'Open profile'">
+            <span class="alzcare-profile-initials">{{ profileInitials }}</span>
+          </a>
+          <span class="alzcare-user-name d-none d-lg-inline">{{ authService.getDisplayName() }}</span>
+          <a
+            *ngIf="authService.hasStaffDashboardAccess()"
+            class="btn btn-outline-primary btn-sm alzcare-btn-admin"
+            routerLink="/admin"
+            >Staff</a
+          >
+          <button type="button" class="alzcare-btn-logout" (click)="logout()" title="Log out" aria-label="Log out">
+            <i class="ri-logout-box-r-line" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline">Log out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

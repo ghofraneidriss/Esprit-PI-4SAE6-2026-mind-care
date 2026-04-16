@@ -1,0 +1,158 @@
+/* Modal container class for Angular Material */
+::ng-deep .delete-modal-container .mat-dialog-container {
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Delete Modal Overlay */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* Delete Modal */
+.delete-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal Header */
+.delete-modal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.danger-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #FAF5FF, #F3E8FF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: #8B5CF6;
+  font-size: 1.8rem;
+}
+
+.delete-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+/* Modal Content */
+.delete-modal-content {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.delete-modal-message {
+  font-size: 1rem;
+  color: #4A5568;
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+}
+
+.delete-modal-warning {
+  font-size: 0.875rem;
+  color: #E53E3E;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Modal Actions */
+.delete-modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.cancel-btn {
+  background: #F7FAFC;
+  color: #4A5568;
+  border: 1px solid #E2E8F0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #EDF2F7;
+  border-color: #CBD5E0;
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #FED7D7, #FEB2B2);
+  color: #C53030;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #FEB2B2, #FC8181);
+  transform: translateY(-1px);
+}
+
+.delete-btn i {
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .delete-modal {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .delete-modal-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-btn,
+  .delete-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,28 @@
+<div class="cd-shell" [class.cd-shell--danger]="variant === 'danger'" [class.cd-shell--warning]="variant === 'warning'">
+  <div class="cd-head">
+    <div class="cd-head__icon" aria-hidden="true">
+      <i class="ri-question-line" *ngIf="variant === 'default'"></i>
+      <i class="ri-error-warning-line" *ngIf="variant === 'warning'"></i>
+      <i class="ri-delete-bin-6-line" *ngIf="variant === 'danger'"></i>
+    </div>
+    <div class="cd-head__text">
+      <h2 class="cd-title">{{ data.title }}</h2>
+    </div>
+    <button type="button" class="cd-close" (click)="cancel()" aria-label="Close">
+      <i class="ri-close-line" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <mat-dialog-content class="cd-body">
+    <p class="cd-message">{{ data.message }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="cd-actions" align="end">
+    <button type="button" mat-stroked-button class="cd-btn cd-btn--ghost" (click)="cancel()">
+      {{ cancelLabel }}
+    </button>
+    <button type="button" mat-flat-button class="cd-btn cd-btn--primary" [class.cd-btn--danger]="variant === 'danger'" (click)="confirm()">
+      {{ confirmLabel }}
+    </button>
+  </mat-dialog-actions>
+</div>

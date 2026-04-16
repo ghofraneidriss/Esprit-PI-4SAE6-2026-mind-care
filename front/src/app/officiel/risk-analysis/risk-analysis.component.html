@@ -1,0 +1,103 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <div class="cvp-page-header">
+      <div>
+        <h1>
+          <i class="ri-microscope-line cvp-title-ico" aria-hidden="true"></i>
+          Risk analysis
+        </h1>
+        <p>Cognitive risk assessment from activity results</p>
+      </div>
+    </div>
+
+    <div class="mgmt-filter-strip">
+    <div class="table-toolbar">
+      <div class="table-toolbar__filters">
+        <div>
+          <span class="filter-label">Patient ID</span>
+          <input type="number" [(ngModel)]="patientId" min="1" name="pid" placeholder="e.g. 1" />
+        </div>
+      </div>
+      <div class="table-toolbar__actions">
+        <button type="button" class="btn-primary" (click)="analyze()" [disabled]="loading">
+          {{ loading ? '⏳ Analyzing…' : '🔍 Run analysis' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert error" *ngIf="error">⚠️ {{ error }}</div>
+
+  <div class="analysis-grid" *ngIf="analysis">
+    <div class="risk-card">
+      <div class="risk-icon" [style.color]="riskColor">{{ getRiskIcon(analysis.currentRiskLevel) }}</div>
+      <div class="risk-level" [style.color]="riskColor">{{ analysis.currentRiskLevel }}</div>
+      <div class="risk-label">Current risk level</div>
+      <div class="risk-bar">
+        <div class="risk-fill" [style.width.%]="100 - scorePercent" [style.background]="riskColor"></div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">🎯</div>
+      <div class="info-val">{{ analysis.averageScore | number : '1.1-1' }}%</div>
+      <div class="info-lbl">Weighted average score</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">📊</div>
+      <div class="info-val">{{ analysis.totalResults }}</div>
+      <div class="info-lbl">Results analyzed</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">{{ analysis.trend === 'IMPROVING' ? '📈' : analysis.trend === 'DECLINING' ? '📉' : '➡️' }}</div>
+      <div class="info-val trend" [ngClass]="analysis.trend?.toLowerCase()">{{ analysis.trend }}</div>
+      <div class="info-lbl">Trend</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">{{ analysis.alertSent ? '📧' : '📭' }}</div>
+      <div class="info-val">{{ analysis.alertSent ? 'Sent' : 'Not sent' }}</div>
+      <div class="info-lbl">Email alert</div>
+    </div>
+  </div>
+
+  <div class="reco-card" *ngIf="analysis?.recommendations?.length">
+    <h3>💡 Recommendations</h3>
+    <ul>
+      <li *ngFor="let r of analysis.recommendations">{{ r }}</li>
+    </ul>
+  </div>
+
+  <div class="detail-card" *ngIf="analysis?.recentResults?.length">
+    <h3>📋 Recent patient results</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Activity</th>
+            <th>Score</th>
+            <th>Correct</th>
+            <th>Time</th>
+            <th>Difficulty</th>
+            <th>Risk</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of analysis.recentResults">
+            <td>{{ r.activityTitle }}</td>
+            <td><strong>{{ r.weightedScore | number : '1.0-0' }}%</strong></td>
+            <td>{{ r.correctAnswers }}/{{ r.totalQuestions }}</td>
+            <td>{{ r.timeSpentSeconds }}s</td>
+            <td><span class="badge diff-{{ r.difficulty?.toLowerCase() }}">{{ r.difficulty }}</span></td>
+            <td><span class="badge" [ngClass]="getRiskClass(r.riskLevel)">{{ r.riskLevel }}</span></td>
+            <td>{{ r.completedAt | date : 'dd/MM HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/GHAITH/OneDrive/Bureau/WORK1/alzheimer-app -name \"*.md\" ! -path \"*/node_modules/*\" ! -path \"*/.git/*\" -delete)",
+      "Bash(chmod:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(done)",
+      "Bash(mysql -u root -e \"USE incident_db; UPDATE incident_type SET points = 10 WHERE points IS NULL; SELECT id, name, points, default_severity FROM incident_type;\")"
+    ]
+  }
+}

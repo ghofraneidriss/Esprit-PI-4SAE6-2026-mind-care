@@ -1,0 +1,245 @@
+<div class="cvp-page cvp-page--performance" [class.admin-mgmt-root]="isAdminOrDoctor">
+  <div class="page page--performance mgmt-page">
+    <ng-container *ngIf="isAdminOrDoctor && !selectedPatient">
+      <div class="cvp-page-header page-header">
+        <div>
+          <h1>
+            <i class="ri-trophy-line cvp-title-ico" aria-hidden="true"></i>
+            Performance analysis
+          </h1>
+          <p>Cognitive performance for all patients by theme</p>
+        </div>
+      </div>
+
+      <div class="perf-loading-panel" *ngIf="loading">
+        <div class="loading-state loading-state--centered">
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Loading analyses...</p>
+          <span class="loading-hint">Connecting to the activities service</span>
+        </div>
+      </div>
+
+      <div class="error-state error-state--card" *ngIf="error && !loading">
+        <i class="ri-error-warning-line error-state__ico" aria-hidden="true"></i>
+        <p class="error-state__text">{{ error }}</p>
+        <button type="button" class="btn-retry" (click)="retryLoad()">
+          <i class="ri-refresh-line" aria-hidden="true"></i> Retry
+        </button>
+      </div>
+
+      <div class="patients-grid" *ngIf="!loading && !error">
+        <div class="patient-perf-card" *ngFor="let p of allPerformances" (click)="selectPatient(p)">
+          <div class="ppc-header">
+            <div class="ppc-avatar">{{ p.patientName.charAt(0) || '?' }}</div>
+            <div class="ppc-info">
+              <strong>{{ p.patientName || 'Patient #' + p.patientId }}</strong>
+              <span class="ppc-meta">{{ p.totalQuizzes }} quizzes · Overall score: {{ p.globalScore }}%</span>
+            </div>
+            <div class="ppc-score-ring" [style.--score-color]="getScoreColor(p.globalScore)">
+              <span>{{ p.globalScore | number:'1.0-0' }}%</span>
+            </div>
+          </div>
+          <div class="ppc-themes">
+            <div class="ppc-theme-bar" *ngFor="let ts of p.themeScores">
+              <div class="ptb-label">
+                <span class="ptb-icon"><i [ngClass]="getThemeIconClass(ts.label)" aria-hidden="true"></i></span>
+                <span class="ptb-name">{{ ts.label }}</span>
+                <span class="ptb-score">{{ ts.avgScore | number:'1.0-0' }}%</span>
+              </div>
+              <div class="ptb-bar">
+                <div class="ptb-fill" [style.width.%]="ts.avgScore" [style.background]="getScoreColor(ts.avgScore)"></div>
+              </div>
+            </div>
+            <div class="ppc-empty" *ngIf="!p.themeScores.length">No quizzes completed</div>
+          </div>
+          <div class="ppc-footer" *ngIf="p.recommendations.length">
+            <span class="ppc-rec-badge" [ngClass]="getPriorityClass(p.recommendations[0].priority)">
+              {{ p.recommendations.length }} recommendation(s)
+            </span>
+            <span class="ppc-arrow" aria-hidden="true"><i class="ri-arrow-right-s-line"></i></span>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="!allPerformances.length">
+          <div class="empty-icon"><i class="ri-bar-chart-grouped-line" aria-hidden="true"></i></div>
+          <p>No performance data available</p>
+          <span>Analyses will appear once patients have completed quizzes.</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="isAdminOrDoctor && selectedPatient">
+      <div class="cvp-page-header page-header">
+        <div>
+          <button type="button" class="btn-back" (click)="closeDetail()">
+            <i class="ri-arrow-left-line" aria-hidden="true"></i> Back
+          </button>
+          <h1>
+            <i class="ri-pulse-line cvp-title-ico" aria-hidden="true"></i>
+            {{ selectedPatient.patientName }}'s performance
+          </h1>
+          <p>{{ selectedPatient.totalQuizzes }} quizzes completed · Overall score: {{ selectedPatient.globalScore }}%</p>
+        </div>
+      </div>
+
+      <ng-container *ngTemplateOutlet="perfDetail; context: { $implicit: selectedPatient, showReco: true }"></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="!isAdminOrDoctor">
+      <div class="perf-patient-block">
+        <div class="cvp-page-header page-header">
+          <div>
+            <h1>
+              <i class="ri-user-star-line cvp-title-ico" aria-hidden="true"></i>
+              My performance
+            </h1>
+            <p *ngIf="myPerformance && !loading && !error">{{ myPerformance.totalQuizzes }} quizzes completed</p>
+          </div>
+        </div>
+
+        <div class="perf-loading-panel" *ngIf="loading">
+          <div class="loading-state loading-state--centered">
+            <div class="spinner" aria-hidden="true"></div>
+            <p>Analyzing...</p>
+            <span class="loading-hint">Fetching your results</span>
+          </div>
+        </div>
+
+        <div class="error-state error-state--card" *ngIf="error && !loading">
+          <i class="ri-error-warning-line error-state__ico" aria-hidden="true"></i>
+          <p class="error-state__text">{{ error }}</p>
+          <button type="button" class="btn-retry" (click)="retryLoad()">
+            <i class="ri-refresh-line" aria-hidden="true"></i> Retry
+          </button>
+        </div>
+
+        <ng-container *ngIf="myPerformance && !loading && !error && myPerformance.totalQuizzes > 0">
+          <ng-container *ngTemplateOutlet="perfDetail; context: { $implicit: myPerformance, showReco: true }"></ng-container>
+        </ng-container>
+
+        <div class="empty-state empty-state--card" *ngIf="!loading && !error && myPerformance && myPerformance.totalQuizzes === 0">
+          <div class="empty-icon"><i class="ri-gamepad-line" aria-hidden="true"></i></div>
+          <p>No quizzes completed</p>
+          <span>Play a few quizzes to see your performance analysis.</span>
+          <a routerLink="/officiel/quiz-list" class="btn-primary mt-3 d-inline-flex align-items-center gap-2">
+            <i class="ri-play-circle-line" aria-hidden="true"></i> Go to quizzes
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #perfDetail let-perf let-showReco="showReco">
+      <div class="global-score-card">
+        <div class="gsc-left">
+          <div class="gsc-ring" [style.--score-color]="getScoreColor(perf.globalScore)">
+            <svg viewBox="0 0 36 36" class="gsc-svg">
+              <path class="gsc-bg" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831"/>
+              <path class="gsc-fill" [style.stroke]="getScoreColor(perf.globalScore)"
+                    [attr.stroke-dasharray]="perf.globalScore + ', 100'"
+                    d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831"/>
+            </svg>
+            <div class="gsc-value">{{ perf.globalScore | number:'1.0-0' }}%</div>
+          </div>
+        </div>
+        <div class="gsc-right">
+          <h3>Overall score</h3>
+          <p>Weighted average across all cognitive themes</p>
+          <div class="gsc-stats">
+            <div class="gsc-stat">
+              <span class="gsc-stat-value">{{ perf.totalQuizzes }}</span>
+              <span class="gsc-stat-label">Quizzes</span>
+            </div>
+            <div class="gsc-stat">
+              <span class="gsc-stat-value">{{ perf.themeScores?.length || 0 }}</span>
+              <span class="gsc-stat-label">Themes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-label">
+        <i class="ri-pie-chart-2-line me-2" aria-hidden="true"></i>Performance by theme
+      </h2>
+      <div class="themes-grid">
+        <div class="theme-card" *ngFor="let ts of perf.themeScores" [ngClass]="getLevelClass(ts.level)">
+          <div class="tc-header">
+            <span class="tc-icon"><i [ngClass]="getThemeIconClass(ts.label)" aria-hidden="true"></i></span>
+            <span class="tc-name">{{ ts.label }}</span>
+            <span class="tc-level-badge" [ngClass]="getLevelClass(ts.level)">{{ getLevelLabel(ts.level) }}</span>
+          </div>
+          <div class="tc-score">
+            <span class="tc-score-value" [style.color]="getScoreColor(ts.avgScore)">{{ ts.avgScore | number:'1.0-0' }}%</span>
+          </div>
+          <div class="tc-bar">
+            <div class="tc-bar-fill" [style.width.%]="ts.avgScore" [style.background]="getScoreColor(ts.avgScore)"></div>
+          </div>
+          <div class="tc-meta">
+            <div class="tc-meta-item">
+              <i class="ri-file-list-3-line tc-meta-ico" aria-hidden="true"></i>
+              <span>{{ ts.quizCount }} quiz(es)</span>
+            </div>
+            <div class="tc-meta-item">
+              <i class="ri-timer-line tc-meta-ico" aria-hidden="true"></i>
+              <span>{{ ts.avgResponseTime }}s/q</span>
+            </div>
+            <div class="tc-meta-item">
+              <i [ngClass]="getTrendIconClass(ts.trend)" aria-hidden="true"></i>
+              <span>{{ getTrendLabel(ts.trend) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-section" *ngIf="showReco && perf.recommendations?.length">
+        <h2 class="section-label">
+          <i class="ri-lightbulb-line me-2" aria-hidden="true"></i>Personalized recommendations
+        </h2>
+
+        <div class="reco-intro reco-intro--self" *ngIf="isPatientRole">
+          <div class="ri-avatar ri-avatar--icon" aria-hidden="true">
+            <i class="ri-lightbulb-flash-line"></i>
+          </div>
+          <p>
+            Based on your recent sessions, here are tailored ideas to keep your mind active — pick what feels right for you.
+          </p>
+        </div>
+        <div class="reco-intro" *ngIf="isAdminOrDoctor">
+          <div class="ri-avatar">{{ perf.patientName?.charAt(0) || '?' }}</div>
+          <p>
+            Recommendations for <strong>{{ perf.patientName }}</strong> based on {{ perf.totalQuizzes }} quiz(es):
+          </p>
+        </div>
+        <div class="reco-intro reco-intro--neutral" *ngIf="!isPatientRole && !isAdminOrDoctor">
+          <div class="ri-avatar ri-avatar--icon" aria-hidden="true"><i class="ri-lightbulb-line"></i></div>
+          <p>Recommendations based on recent activity:</p>
+        </div>
+
+        <div class="reco-list">
+          <div class="reco-card" *ngFor="let rec of perf.recommendations" [ngClass]="getPriorityClass(rec.priority)">
+            <div class="rc-priority-bar"></div>
+            <div class="rc-content">
+              <div class="rc-header">
+                <span class="rc-priority-badge" [ngClass]="getPriorityClass(rec.priority)">
+                  <i [ngClass]="getPriorityRemixIcon(rec.priority)" aria-hidden="true"></i>
+                  {{ rec.priority }}
+                </span>
+                <span class="rc-theme" *ngIf="rec.themeLabel">{{ rec.themeLabel }}</span>
+              </div>
+              <p class="rc-message">{{ rec.message }}</p>
+              <div class="rc-quizzes" *ngIf="rec.suggestedQuizTitles?.length">
+                <span class="rc-quizzes-label">Suggested quizzes:</span>
+                <div class="rc-quiz-chips">
+                  <a *ngFor="let title of rec.suggestedQuizTitles; let i = index"
+                     class="rc-quiz-chip"
+                     [routerLink]="isPatientRole ? ['/officiel/play', 'quiz', rec.suggestedQuizIds[i]] : null">
+                    <i class="ri-gamepad-line me-1" aria-hidden="true"></i>{{ title }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+/* Admin Dashboard Specifics */
+.bg-rose-light {
+    background-color: var(--rose-light);
+}
+
+.text-rose {
+    color: var(--primary-rose);
+}
+
+.bg-amber-light {
+    background-color: var(--amber-light);
+}
+
+.text-amber {
+    color: var(--secondary-amber);
+}
+
+.bg-emerald-light {
+    background-color: var(--emerald-light);
+}
+
+.text-emerald {
+    color: var(--accent-emerald);
+}
+
+.bg-violet-light {
+    background-color: var(--violet-light);
+}
+
+.text-violet {
+    color: var(--accent-violet);
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+.overflow-x-auto {
+    overflow-x: auto;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+.divide-y> :not([hidden])~ :not([hidden]) {
+    border-top-width: 1px;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.max-w-xs {
+    max-width: 20rem;
+}
+
+@media (min-width: 768px) {
+    .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .lg\:grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}

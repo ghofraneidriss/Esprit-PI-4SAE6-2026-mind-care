@@ -1,0 +1,50 @@
+<div class="layout" [class.collapsed]="!sidebarOpen">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a routerLink="/officiel/dashboard" class="brand-link" *ngIf="sidebarOpen">
+        <img class="brand-mark" src="assets/branding/alzcare-logo-3d.png" width="40" height="40" alt="MindCare">
+        <span class="brand-text">
+          <span class="brand-name">MindCare</span>
+          <span class="brand-tag">CVP</span>
+        </span>
+      </a>
+      <a routerLink="/officiel/dashboard" class="brand-link brand-link--collapsed" *ngIf="!sidebarOpen" title="MindCare">
+        <img class="brand-mark" src="assets/branding/alzcare-logo-3d.png" width="40" height="40" alt="MindCare">
+      </a>
+      <button type="button" class="toggle-btn" (click)="toggleSidebar()">{{ sidebarOpen ? '◀' : '▶' }}</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a *ngFor="let item of navItems"
+         [routerLink]="item.link"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: item.link==='/officiel/dashboard'}"
+         class="nav-item">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label" *ngIf="sidebarOpen">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" *ngIf="sidebarOpen">
+        <div class="avatar">{{ initials }}</div>
+        <div class="user-info">
+          <div class="uname">{{ user?.firstname }} {{ user?.lastname }}</div>
+          <div class="urole">{{ roleBadge }}</div>
+        </div>
+      </div>
+      <div class="avatar-only" *ngIf="!sidebarOpen">
+        <div class="avatar sm">{{ initials }}</div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <span>🚪</span><span *ngIf="sidebarOpen"> Log out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

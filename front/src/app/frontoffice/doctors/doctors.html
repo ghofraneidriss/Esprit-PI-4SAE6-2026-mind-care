@@ -1,0 +1,319 @@
+﻿<app-header></app-header>
+
+<section id="find-a-doctor" class="find-a-doctor section">
+
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Find A Doctor</h2>
+    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+  </div><!-- End Section Title -->
+
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="200">
+      <div class="col-lg-10">
+        <div class="search-header">
+          <h2>Discover Your Ideal Medical Specialist</h2>
+          <p>Connect with our network of certified healthcare professionals across all medical disciplines</p>
+        </div>
+
+        <div class="advanced-search-container">
+          <form class="search-form" action="forms/doctor-search.php" method="get">
+            <div class="search-row">
+              <div class="search-field">
+                <label>Practitioner Name</label>
+                <div class="input-group">
+                  <i class="bi bi-search"></i>
+                  <input type="text" class="form-control" name="doctor_name" placeholder="Search by name...">
+                </div>
+              </div>
+              <div class="search-field">
+                <label>Medical Specialty</label>
+                <div class="select-group">
+                  <i class="bi bi-plus-circle"></i>
+                  <select class="form-select" name="specialty">
+                    <option value="">Select specialty</option>
+                    <option value="cardiology">Cardiovascular Medicine</option>
+                    <option value="neurology">Neurological Sciences</option>
+                    <option value="orthopedics">Orthopedic Surgery</option>
+                    <option value="pediatrics">Pediatric Medicine</option>
+                    <option value="dermatology">Dermatological Care</option>
+                    <option value="oncology">Oncological Treatment</option>
+                  </select>
+                </div>
+              </div>
+              <div class="search-field">
+                <label>Location</label>
+                <div class="select-group">
+                  <i class="bi bi-geo-alt"></i>
+                  <select class="form-select" name="location">
+                    <option value="">All locations</option>
+                    <option value="downtown">Downtown Medical Center</option>
+                    <option value="northside">Northside Clinic</option>
+                    <option value="westend">West End Hospital</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="search-submit">
+                <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="specialists-showcase" data-aos="fade-up" data-aos-delay="300">
+      <div class="specialist-card featured" data-aos="slide-up" data-aos-delay="100">
+        <div class="card-content">
+          <div class="specialist-info">
+            <div class="profile-section">
+              <div class="profile-image">
+                <div
+                  class="profile-icon-placeholder d-flex align-items-center justify-content-center bg-primary rounded-circle"
+                  style="width: 80px; height: 80px;">
+                  <i class="fas fa-user-md fa-2x text-white"></i>
+                </div>
+                <div class="online-status active"></div>
+              </div>
+              <div class="specialist-data">
+                <h3>Dr. Jennifer Morgan</h3>
+                <p class="specialty">Senior Cardiologist</p>
+                <div class="credentials">
+                  <span class="badge">MD, FACC</span>
+                  <span class="experience">18 years</span>
+                </div>
+              </div>
+            </div>
+            <div class="rating-info">
+              <div class="stars-display">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <span class="score">4.9</span>
+              <small>(142 patients)</small>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <a href="#" class="action-btn outline">Profile</a>
+            <a href="#" class="action-btn primary">Consult</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="specialist-card" data-aos="slide-up" data-aos-delay="200">
+        <div class="card-content">
+          <div class="specialist-info">
+            <div class="profile-section">
+              <div class="profile-image">
+                <div
+                  class="profile-icon-placeholder d-flex align-items-center justify-content-center bg-secondary rounded-circle"
+                  style="width: 80px; height: 80px;">
+                  <i class="fas fa-user-md fa-2x text-white"></i>
+                </div>
+                <div class="online-status busy"></div>
+              </div>
+              <div class="specialist-data">
+                <h3>Dr. Robert Kim</h3>
+                <p class="specialty">Neurosurgeon</p>
+                <div class="credentials">
+                  <span class="badge">MD, PhD</span>
+                  <span class="experience">24 years</span>
+                </div>
+              </div>
+            </div>
+            <div class="rating-info">
+              <div class="stars-display">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+              </div>
+              <span class="score">4.8</span>
+              <small>(98 patients)</small>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <a href="#" class="action-btn outline">Profile</a>
+            <a href="#" class="action-btn primary">Schedule</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="specialist-card" data-aos="slide-up" data-aos-delay="300">
+        <div class="card-content">
+          <div class="specialist-info">
+            <div class="profile-section">
+              <div class="profile-image">
+                <div
+                  class="profile-icon-placeholder d-flex align-items-center justify-content-center bg-info rounded-circle"
+                  style="width: 80px; height: 80px;">
+                  <i class="fas fa-user-md fa-2x text-white"></i>
+                </div>
+                <div class="online-status active"></div>
+              </div>
+              <div class="specialist-data">
+                <h3>Dr. Sarah Thompson</h3>
+                <p class="specialty">Pediatric Specialist</p>
+                <div class="credentials">
+                  <span class="badge">MD, FAAP</span>
+                  <span class="experience">12 years</span>
+                </div>
+              </div>
+            </div>
+            <div class="rating-info">
+              <div class="stars-display">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <span class="score">5.0</span>
+              <small>(156 patients)</small>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <a href="#" class="action-btn outline">Profile</a>
+            <a href="#" class="action-btn primary">Book Now</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="specialist-card" data-aos="slide-up" data-aos-delay="400">
+        <div class="card-content">
+          <div class="specialist-info">
+            <div class="profile-section">
+              <div class="profile-image">
+                <div
+                  class="profile-icon-placeholder d-flex align-items-center justify-content-center bg-success rounded-circle"
+                  style="width: 80px; height: 80px;">
+                  <i class="fas fa-user-md fa-2x text-white"></i>
+                </div>
+                <div class="online-status offline"></div>
+              </div>
+              <div class="specialist-data">
+                <h3>Dr. Michael Rivera</h3>
+                <p class="specialty">Orthopedic Surgeon</p>
+                <div class="credentials">
+                  <span class="badge">MD, FAAOS</span>
+                  <span class="experience">20 years</span>
+                </div>
+              </div>
+            </div>
+            <div class="rating-info">
+              <div class="stars-display">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+              </div>
+              <span class="score">4.7</span>
+              <small>(134 patients)</small>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <a href="#" class="action-btn outline">Profile</a>
+            <a href="#" class="action-btn primary">Request</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="specialist-card" data-aos="slide-up" data-aos-delay="500">
+        <div class="card-content">
+          <div class="specialist-info">
+            <div class="profile-section">
+              <div class="profile-image">
+                <div
+                  class="profile-icon-placeholder d-flex align-items-center justify-content-center bg-warning rounded-circle"
+                  style="width: 80px; height: 80px;">
+                  <i class="fas fa-user-md fa-2x text-white"></i>
+                </div>
+                <div class="online-status active"></div>
+              </div>
+              <div class="specialist-data">
+                <h3>Dr. Lisa Garcia</h3>
+                <p class="specialty">Dermatologist</p>
+                <div class="credentials">
+                  <span class="badge">MD, FAAD</span>
+                  <span class="experience">15 years</span>
+                </div>
+              </div>
+            </div>
+            <div class="rating-info">
+              <div class="stars-display">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star"></i>
+              </div>
+              <span class="score">4.6</span>
+              <small>(89 patients)</small>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <a href="#" class="action-btn outline">Profile</a>
+            <a href="#" class="action-btn primary">Consult</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="specialist-card" data-aos="slide-up" data-aos-delay="600">
+        <div class="card-content">
+          <div class="specialist-info">
+            <div class="profile-section">
+              <div class="profile-image">
+                <div
+                  class="profile-icon-placeholder d-flex align-items-center justify-content-center bg-danger rounded-circle"
+                  style="width: 80px; height: 80px;">
+                  <i class="fas fa-user-md fa-2x text-white"></i>
+                </div>
+                <div class="online-status active"></div>
+              </div>
+              <div class="specialist-data">
+                <h3>Dr. Daniel Wong</h3>
+                <p class="specialty">Oncology Expert</p>
+                <div class="credentials">
+                  <span class="badge">MD, FASCO</span>
+                  <span class="experience">21 years</span>
+                </div>
+              </div>
+            </div>
+            <div class="rating-info">
+              <div class="stars-display">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <span class="score">4.9</span>
+              <small>(211 patients)</small>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <a href="#" class="action-btn outline">Profile</a>
+            <a href="#" class="action-btn primary">Appointment</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="700">
+      <a href="specialists.html" class="view-all-link">
+        Browse Complete Directory
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </div>
+
+  </div>
+
+</section><!-- /Find A Doctor Section -->
+<app-footer></app-footer>

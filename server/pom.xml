@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ✅ Spring Boot comme parent -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.2</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.example</groupId>
+    <artifactId>mind_care_server</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Alzheimer App - Parent</name>
+    <description>Multi-module project for Alzheimer detection application</description>
+
+    <!--
+      Microservices : users, forums, incident, activities, localization, movement + Eureka + API Gateway.
+      Ports : Eureka 8761 | Gateway 8080 | users 8081 | forums 8082 | incident 8083 | activities 8084 |
+      localization 8085 | movement 8086
+    -->
+    <modules>
+        <module>eureka_server</module>
+        <module>users_service</module>
+        <module>forums_service</module>
+        <module>incident_service</module>
+        <module>activities_service</module>
+        <module>localization_service</module>
+        <module>movement_service</module>
+        <module>api_gateway</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+    </properties>
+
+    <!-- ✅ Spring Cloud BOM — gère les versions de toutes les dépendances Spring Cloud -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

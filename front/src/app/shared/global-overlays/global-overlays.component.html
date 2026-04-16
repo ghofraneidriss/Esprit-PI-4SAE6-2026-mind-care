@@ -1,0 +1,36 @@
+<app-movement-alert-assistant />
+
+<div class="toast-stack" *ngIf="toasts$ | async as toastList">
+  <div
+    *ngFor="let t of toastList"
+    class="cvp-toast"
+    [ngClass]="'cvp-toast--' + t.kind"
+    role="status"
+  >
+    <span class="cvp-toast__text">{{ t.message }}</span>
+    <button type="button" class="cvp-toast__close" (click)="dismissToast(t.id)" aria-label="Dismiss">×</button>
+  </div>
+</div>
+
+<ng-container *ngIf="confirm$ | async as dlg">
+  <div class="confirm-overlay" (click)="confirm.close(false)">
+    <div class="confirm-modal" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true">
+      <h3 class="confirm-modal__title">{{ dlg.title }}</h3>
+      <p class="confirm-modal__msg">{{ dlg.message }}</p>
+      <div class="confirm-modal__actions">
+        <button type="button" class="confirm-btn confirm-btn--ghost" (click)="confirm.close(false)">
+          {{ dlg.cancelText }}
+        </button>
+        <button
+          type="button"
+          [class.confirm-btn]="true"
+          [class.confirm-btn--danger]="dlg.danger"
+          [class.confirm-btn--primary]="!dlg.danger"
+          (click)="confirm.close(true)"
+        >
+          {{ dlg.confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

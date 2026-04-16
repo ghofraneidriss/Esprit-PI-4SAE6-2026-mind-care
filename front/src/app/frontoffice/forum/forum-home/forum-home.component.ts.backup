@@ -1,0 +1,115 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ForumService, Category, Post } from '../../../core/services/forum.service';
+
+@Component({
+  selector: 'app-forum-home',
+  templateUrl: './forum-home.html',
+  styleUrls: ['./forum-home.component.css'],
+  standalone: false
+})
+export class ForumHomeComponent implements OnInit {
+  categories: Category[] = [];
+  recentPosts: any[] = [];
+  loading: boolean = false;
+  loadingPosts: boolean = false;
+  searchQuery: string = '';
+  totalMembers: number = 1234;
+  totalDiscussions: number = 567;
+
+  constructor(
+    private forumService: ForumService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCategories();
+    this.loadRecentPosts();
+  }
+
+  loadCategories(): void {
+    this.loading = true;
+    this.forumService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories.slice(0, 6);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.loading = false;
+      }
+    });
+  }
+
+  loadRecentPosts(): void {
+    this.loadingPosts = true;
+    this.forumService.getAllPosts().subscribe({
+      next: (posts) => {
+        this.recentPosts = posts.slice(0, 6);
+        this.loadingPosts = false;
+      },
+      error: (err) => {
+        console.error('Error loading posts:', err);
+        this.loadingPosts = false;
+      }
+    });
+  }
+
+  onSearchChange(event: any): void {
+    this.searchQuery = event.target.value;
+  }
+
+  navigateToCategory(cat: Category): void {
+    this.router.navigate(['/forum/category', cat.id]);
+  }
+
+  navigateToPost(post: Post): void {
+    this.router.navigate(['/forum/post', post.id]);
+  }
+
+  getCategoryIcon(i: number): string {
+    const icons = [
+      'ri-heart-pulse-line',
+      'ri-microscope-line', 
+      'ri-discuss-line',
+      'ri-newspaper-line',
+      'ri-folder-line',
+      'ri-question-line'
+    ];
+    return icons[i] || 'ri-folder-line';
+  }
+
+  getCategoryGradient(i: number): string {
+    const gradients = [
+      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      'linear-gradient(135deg, #30cfd0 0%, #330867 100%)'
+    ];
+    return gradients[i] || gradients[0];
+  }
+
+  getPostCount(i: number): number {
+    return Math.floor(Math.random() * 50) + 10;
+  }
+
+  getMemberCount(i: number): number {
+    return Math.floor(Math.random() * 100) + 20;
+  }
+
+  formatDate(date: any): string {
+    const dateObj = new Date(date);
+    return dateObj.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric'
+    });
+  }
+
+  navigateToCategories(): void {
+    this.router.navigate(['/forum/categories']);
+  }
+}

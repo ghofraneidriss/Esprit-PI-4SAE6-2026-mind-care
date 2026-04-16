@@ -1,0 +1,25 @@
+<div class="szm-root">
+  <p class="szm-help">
+    Click the map or drag the pin to set the center. Use the slider to set the radius in meters. Uses OpenStreetMap (free), same idea as movement tracking.
+  </p>
+  <p *ngIf="tileError" class="szm-tile-warn" role="alert">
+    Map tiles could not load. Check your network or try again later (some networks block tile servers).
+  </p>
+  <div class="szm-canvas" #mapEl role="application" aria-label="Safe zone map"></div>
+
+  <div class="szm-toolbar">
+    <label class="szm-label" for="szm-radius">Radius (meters)</label>
+    <div class="szm-range-row">
+      <input
+        id="szm-radius"
+        type="range"
+        min="20"
+        max="5000"
+        step="10"
+        [(ngModel)]="radiusModel"
+        (ngModelChange)="onRadiusSliderInput($event)"
+      />
+      <span class="szm-radius-val">{{ radiusModel }} m</span>
+    </div>
+  </div>
+</div>

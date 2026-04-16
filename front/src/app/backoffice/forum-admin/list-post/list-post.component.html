@@ -1,0 +1,163 @@
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="app-page-head d-flex align-items-center justify-content-between">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a routerLink="/admin">
+            <i class="fi fi-rr-home"></i> Home
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Forum Posts</li>
+      </ol>
+    </nav>
+    <div class="d-flex gap-2">
+      <button (click)="createNewPost()" class="btn btn-primary d-flex align-items-center gap-2">
+        <i class="ri-add-line"></i>
+        New Post
+      </button>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="search-section">
+    <div class="search-container">
+      <div class="search-box">
+        <i class="ri-search-line search-icon"></i>
+        <input type="text" class="search-input" placeholder="Search posts..." [(ngModel)]="searchTerm">
+      </div>
+      <button class="filter-btn" (click)="toggleFilters()">
+        <i class="ri-filter-3-line"></i>
+        Filters
+      </button>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel" *ngIf="showFilters">
+      <div class="filter-group">
+        <label class="filter-label">Category</label>
+        <select class="filter-select" [(ngModel)]="selectedCategory">
+          <option value="">All Categories</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #E6F3FF; color: #008080;">
+        <i class="ri-article-line"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ totalPosts }}</div>
+        <div class="stat-label">Total Posts</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #F0FDF4; color: #10B981;">
+        <i class="ri-check-double-line"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ publishedPosts }}</div>
+        <div class="stat-label">Published</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #FAF5FF; color: #8B5CF6;">
+        <i class="ri-draft-line"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ draftPosts }}</div>
+        <div class="stat-label">Drafts</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background-color: #F0F9FF; color: #0EA5E9;">
+        <i class="ri-folder-line"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ totalCategories }}</div>
+        <div class="stat-label">Categories</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts List -->
+  <div class="posts-container">
+    <!-- Loading State -->
+    <div *ngIf="loading && posts.length === 0" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3" role="status"></div>
+      <h5>Retrieving Posts...</h5>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && posts.length === 0" class="alert alert-danger mx-4">
+      {{ error }}
+      <button (click)="loadData()" class="btn btn-sm btn-outline-danger ms-2">Retry</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state text-center py-5" *ngIf="!loading && getFilteredPosts().length === 0 && !error">
+      <i class="ri-inbox-line empty-icon fs-1 text-muted mb-3 d-block"></i>
+      <h3>No posts found</h3>
+      <p class="text-muted">Try adjusting your search or filters, or create a new post below.</p>
+      <button (click)="createNewPost()" class="btn btn-primary rounded-pill px-4 mt-2">
+        <i class="ri-add-line me-2"></i> Create Your First Post
+      </button>
+    </div>
+
+    <!-- Posts Cards -->
+    <div class="posts-list" *ngIf="getFilteredPosts().length > 0">
+      <div class="post-card" *ngFor="let post of getFilteredPosts()"
+        [style.borderColor]="getCategoryColor(getCategoryName(post.categoryId))">
+        <div class="post-header">
+          <div class="post-title-section">
+            <h3 class="post-title">{{ post.title }}</h3>
+            <div class="post-meta">
+              <span class="category-badge" [style.backgroundColor]="getCategoryColor(getCategoryName(post.categoryId))"
+                [style.color]="'white'">
+                {{ getCategoryName(post.categoryId) }}
+              </span>
+              <span class="status-badge" [style.backgroundColor]="getStatusColor(post.status || 'PUBLISHED')"
+                [style.color]="'white'">
+                {{ getStatusText(post.status || 'PUBLISHED') }}
+              </span>
+            </div>
+          </div>
+          <div class="post-actions">
+            <button class="action-btn edit-btn" (click)="editPost(post)">
+              <i class="ri-edit-line"></i>
+            </button>
+            <button class="action-btn delete-btn" (click)="deletePost(post)">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="post-content">
+          <p class="post-excerpt">{{ post.content | slice:0:150 }}{{ post.content.length > 150 ? '...' : '' }}</p>
+        </div>
+
+        <div class="post-footer">
+          <div class="post-info">
+            <span class="post-date">
+              <i class="ri-time-line"></i>
+              {{ formatDate(post.createdAt) }}
+            </span>
+            <span class="post-author">
+              <i class="ri-user-line"></i>
+              User {{ post.userId }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

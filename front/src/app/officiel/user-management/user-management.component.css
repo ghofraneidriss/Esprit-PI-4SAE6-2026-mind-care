@@ -1,0 +1,221 @@
+@import '../cvp-officiel-shell.css';
+
+.page {
+  max-width: none;
+}
+
+.role-admin { background: rgba(248,113,113,.15); color: #f87171; }
+.role-doctor { background: rgba(96,165,250,.15); color: #60a5fa; }
+.role-patient { background: rgba(167,139,250,.15); color: #a78bfa; }
+.role-care { background: rgba(52,211,153,.15); color: #34d399; }
+
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.text-critical {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* Limit button */
+.btn-icon.limit {
+  background: rgba(102,126,234,0.12) !important;
+  border: 1px solid rgba(102,126,234,0.25) !important;
+  color: #667eea !important;
+}
+.btn-icon.limit:hover {
+  background: rgba(102,126,234,0.25) !important;
+}
+
+/* ===== LIMIT MODAL OVERLAY ===== */
+.limit-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.limit-modal {
+  background: #161822;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  width: 480px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.limit-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.limit-header h2 {
+  font-size: 18px !important; font-weight: 700 !important;
+  color: #fff !important; margin: 0 !important;
+}
+
+.limit-patient-info {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 24px;
+  background: rgba(102,126,234,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.lp-avatar {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(167,139,250,0.12);
+  border: 1px solid rgba(167,139,250,0.2);
+  border-radius: 12px; font-size: 20px;
+}
+.limit-patient-info strong {
+  display: block; color: #fff; font-size: 15px;
+}
+.lp-email {
+  display: block; color: #8892b0; font-size: 13px; margin-top: 2px;
+}
+
+.limit-loading {
+  text-align: center; padding: 40px 24px;
+}
+.limit-loading p { color: #8892b0; font-size: 13px; margin-top: 12px; }
+
+.limit-body { padding: 20px 24px 24px; }
+
+/* Status grid */
+.limit-status-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.ls-card {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: 16px 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px; text-align: center;
+}
+.ls-icon { font-size: 22px; }
+.ls-value {
+  font-size: 24px; font-weight: 800;
+  background: linear-gradient(135deg, #667eea, #a78bfa);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.ls-label { font-size: 11px; color: #8892b0; font-weight: 500; }
+
+/* Progress bar */
+.limit-progress {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.lp-bar {
+  flex: 1; height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px; overflow: hidden;
+}
+.lp-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, #667eea, #a78bfa);
+  transition: width 0.5s ease;
+}
+.lp-fill.lp-warning { background: linear-gradient(90deg, #f6ad55, #ed8936); }
+.lp-fill.lp-full { background: linear-gradient(90deg, #fc8181, #e53e3e); }
+.lp-text { font-size: 13px; color: #8892b0; font-weight: 600; white-space: nowrap; }
+
+.limit-no-limit {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  background: rgba(102,126,234,0.06);
+  border: 1px solid rgba(102,126,234,0.12);
+  border-radius: 10px;
+  font-size: 13px; color: #8892b0;
+  margin-bottom: 20px;
+}
+
+/* Limit form */
+.limit-form {
+  margin-bottom: 24px;
+}
+.limit-form label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: #cbd5e1; margin-bottom: 10px;
+}
+.limit-input-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.limit-btn {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: #fff; font-size: 20px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.limit-btn:hover {
+  background: rgba(102,126,234,0.15);
+  border-color: rgba(102,126,234,0.3);
+}
+.limit-input {
+  flex: 1; height: 40px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: #fff; font-size: 18px; font-weight: 700;
+  text-align: center; outline: none;
+  transition: border-color 0.2s;
+}
+.limit-input:focus { border-color: #667eea; }
+
+.limit-presets {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.preset-chip {
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: #8892b0; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.preset-chip:hover {
+  background: rgba(102,126,234,0.1);
+  border-color: rgba(102,126,234,0.2);
+  color: #a78bfa;
+}
+.preset-chip.active {
+  background: rgba(102,126,234,0.15);
+  border-color: #667eea;
+  color: #667eea;
+}
+
+/* Actions */
+.limit-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.limit-actions-right {
+  display: flex; gap: 10px;
+}
+.btn-danger {
+  padding: 8px 16px;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 10px;
+  color: #f87171; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-danger:hover {
+  background: rgba(239,68,68,0.2);
+}
+.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }

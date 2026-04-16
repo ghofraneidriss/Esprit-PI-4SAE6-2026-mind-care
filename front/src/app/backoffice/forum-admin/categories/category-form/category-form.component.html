@@ -1,0 +1,103 @@
+<div class="category-form-container">
+  <div class="category-form-card">
+    <div class="form-header">
+      <h2 class="form-title">{{ isEditMode ? 'Edit Category' : 'Create Category' }}</h2>
+      <button type="button" class="close-btn" (click)="onCancel()">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="categoryForm" (ngSubmit)="onSave()" class="category-form">
+      <div class="form-group">
+        <label for="name" class="form-label">Category Name *</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="form-input"
+          placeholder="Enter category name"
+          required
+        />
+        <div class="error-message" *ngIf="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+          Category name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="form-label">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-textarea"
+          placeholder="Short description (optional)"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <span class="form-label">Look &amp; feel</span>
+        <p class="form-hint">Choose a preset or set icon class + color (same style as the public forum).</p>
+        <div class="preset-row">
+          <button
+            type="button"
+            class="preset-chip"
+            *ngFor="let p of presets"
+            (click)="applyPreset(p)"
+            [title]="p.label"
+          >
+            <span class="preset-chip__swatch" [style.background]="p.color"></span>
+            <i [class]="p.icon" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="icon" class="form-label">Icon (Remix class)</label>
+          <input
+            id="icon"
+            type="text"
+            formControlName="icon"
+            class="form-input"
+            placeholder="e.g. ri-heart-pulse-line"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-group">
+          <label for="color" class="form-label">Color</label>
+          <div class="color-row">
+            <input id="color" type="color" formControlName="color" class="form-color" title="Pick accent color" />
+            <span class="color-hex">{{ categoryForm.value.color }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-preview" *ngIf="categoryForm.value.name">
+        <span class="form-preview__label">Preview</span>
+        <div
+          class="form-preview__card"
+          [style.borderColor]="categoryForm.value.color || '#6366f1'"
+        >
+          <div
+            class="form-preview__icon"
+            [style.backgroundColor]="(categoryForm.value.color || '#6366f1') + '22'"
+          >
+            <i [class]="categoryForm.value.icon || 'ri-folder-line'" [style.color]="categoryForm.value.color"></i>
+          </div>
+          <div>
+            <div class="form-preview__name">{{ categoryForm.value.name }}</div>
+            <div class="form-preview__desc">{{ categoryForm.value.description || 'Description' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="save-btn" [disabled]="categoryForm.invalid">
+          <i class="ri-save-line"></i>
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
