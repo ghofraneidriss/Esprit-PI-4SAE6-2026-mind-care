@@ -242,6 +242,18 @@ export class VolunteerService {
         return this.http.put<any>(`${this.assignmentUrl}/${id}`, assignment);
     }
 
+    acceptAssignment(id: number): Observable<any> {
+        return this.http.post<any>(`${this.assignmentUrl}/${id}/accept`, {});
+    }
+
+    refuseAssignment(id: number): Observable<any> {
+        return this.http.post<any>(`${this.assignmentUrl}/${id}/refuse`, {});
+    }
+
+    completeAssignment(id: number): Observable<any> {
+        return this.http.post<any>(`${this.assignmentUrl}/${id}/complete`, {});
+    }
+
     // Create manual assignment - triggers Twilio notification
     createAssignment(missionId: number, volunteerId: number, notes?: string): Observable<any> {
         const legacyAssignmentBody = {

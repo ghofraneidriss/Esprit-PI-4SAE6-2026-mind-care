@@ -712,6 +712,237 @@
     gap: 18px;
 }
 
+.volunteer-history {
+    display: grid;
+    gap: 18px;
+}
+
+.volunteer-section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.volunteer-section-head h2 {
+    margin: 10px 0 6px;
+    font-size: 1.4rem;
+    color: #0f172a;
+}
+
+.volunteer-section-head p {
+    margin: 0;
+    color: #64748b;
+}
+
+.volunteer-history-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #dbe7f7;
+    color: #1d4ed8;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.volunteer-history-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.volunteer-history-card {
+    position: relative;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #dbe7f7;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+}
+
+.volunteer-history-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.volunteer-history-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 18px;
+}
+
+.volunteer-history-card__pdf {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #fee2e2;
+    background: #fff5f5;
+    color: #dc2626;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+}
+
+.volunteer-history-card__title {
+    margin: 14px 0 6px;
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+.volunteer-history-card__category {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+.volunteer-history-card__patient {
+    margin: 10px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0f172a;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 7px 10px;
+    background: #f8fbff;
+    border: 1px solid #dbe7f7;
+    border-radius: 999px;
+}
+
+.volunteer-history-card__patient i {
+    color: #1d4ed8;
+}
+
+.volunteer-history-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-top: 14px;
+    color: #475569;
+    font-size: 0.84rem;
+}
+
+.volunteer-history-card__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.volunteer-history-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #edf2f7;
+}
+
+.volunteer-history-card__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.history-action {
+    flex: 1;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.history-action:disabled {
+    opacity: 0.72;
+    cursor: wait;
+}
+
+.history-action--accept {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+}
+
+.history-action--complete {
+    background: linear-gradient(135deg, #16a34a, #059669);
+    color: #fff;
+}
+
+.history-action--refuse {
+    background: #fff1f2;
+    color: #be123c;
+    border: 1px solid #fecdd3;
+}
+
+.history-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.history-status--blue {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.history-status--yellow {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.history-status--green {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.history-status--red {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.volunteer-history-card__rating {
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.volunteer-history-empty,
+.volunteer-history-state {
+    min-height: 180px;
+    border-radius: 20px;
+    border: 1px dashed #dbe7f7;
+    background: #f8fbff;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 28px;
+    color: #64748b;
+}
+
+.volunteer-history-state--error {
+    border-style: solid;
+    background: #fff1f2;
+    color: #b91c1c;
+}
+
+.volunteer-history-empty i {
+    font-size: 1.6rem;
+    color: #1d4ed8;
+}
+
 .volunteer-card {
     display: block;
     padding: 24px;
@@ -747,6 +978,10 @@
 @media (max-width: 900px) {
     .volunteer-hero,
     .volunteer-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .volunteer-history-grid {
         grid-template-columns: 1fr;
     }
 }

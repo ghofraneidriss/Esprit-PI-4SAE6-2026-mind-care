@@ -4,13 +4,9 @@
       <div class="volunteer-hero__copy">
         <span class="volunteer-hero__eyebrow">Volunteer Backoffice</span>
         <h1>Welcome back, {{ authService.getLoggedUser()?.firstName || 'Volunteer' }}</h1>
-        <p>Track your assignments, review completed missions, and manage your volunteer work from this secure backoffice view.</p>
+        <p>Track your assignments, review completed missions, and export any mission history as a PDF from this secure backoffice view.</p>
         <div class="volunteer-hero__actions">
-          <a routerLink="/admin/volunteering" class="volunteer-action volunteer-action--primary">
-            <i class="fi fi-rr-people-carry-box"></i>
-            <span>Open Volunteering</span>
-          </a>
-          <a routerLink="/admin/assignment-history" class="volunteer-action">
+          <a routerLink="/admin/assignment-history" class="volunteer-action volunteer-action--primary">
             <i class="fi fi-rr-time-past"></i>
             <span>Assignment History</span>
           </a>
@@ -28,18 +24,66 @@
       </div>
     </section>
 
-    <section class="volunteer-cards">
-      <a routerLink="/admin/volunteering" class="volunteer-card">
-        <i class="fi fi-rr-people-carry-box"></i>
-        <h3>Volunteering Workspace</h3>
-        <p>Review missions, update status, and handle your volunteer tasks.</p>
-      </a>
+    <section class="volunteer-history">
+      <div class="volunteer-section-head">
+        <div>
+          <span class="volunteer-hero__eyebrow">Recent History</span>
+          <h2>Your mission cards</h2>
+          <p>These are your latest assignments, with direct PDF export on each card.</p>
+        </div>
+        <a routerLink="/admin/assignment-history" class="volunteer-history-link">Open full history</a>
+      </div>
 
-      <a routerLink="/admin/assignment-history" class="volunteer-card">
-        <i class="fi fi-rr-time-past"></i>
-        <h3>Assignment History</h3>
-        <p>See your completed work and export mission history as PDF.</p>
-      </a>
+      <div *ngIf="historyLoading" class="volunteer-history-state">Loading your assignment history...</div>
+      <div *ngIf="historyError" class="volunteer-history-state volunteer-history-state--error">{{ historyError }}</div>
+
+      <div class="volunteer-history-grid" *ngIf="!historyLoading && recentAssignments.length > 0; else noAssignments">
+        <article class="volunteer-history-card" *ngFor="let card of recentAssignments">
+          <div class="volunteer-history-card__top">
+            <div class="volunteer-history-card__icon"><i [class]="card.icon"></i></div>
+            <button *ngIf="card.status === 'Completed'" type="button" class="volunteer-history-card__pdf" (click)="downloadCardPdf(card)" title="Download PDF">
+              <i class="fi fi-rr-file-pdf"></i>
+            </button>
+          </div>
+
+          <h3 class="volunteer-history-card__title">{{ card.missionTitle }}</h3>
+          <p class="volunteer-history-card__category">{{ card.category }}</p>
+          <p class="volunteer-history-card__patient"><i class="fi fi-rr-user"></i> {{ card.patientName }}</p>
+
+          <div class="volunteer-history-card__meta">
+            <span><i class="fi fi-rr-calendar"></i> {{ card.assignedDate }}</span>
+            <span><i class="fi fi-rr-clock"></i> {{ card.duration }}</span>
+          </div>
+
+          <div class="volunteer-history-card__footer">
+            <span class="history-status" [ngClass]="'history-status--' + card.statusColor">{{ card.status }}</span>
+            <span class="volunteer-history-card__rating" *ngIf="card.rating">{{ card.rating }}/5</span>
+          </div>
+
+          <div class="volunteer-history-card__actions" *ngIf="card.status === 'Assigned'">
+            <button type="button" class="history-action history-action--refuse" (click)="refuseMission(card)" [disabled]="actionLoadingId === card.id">
+              {{ actionLoadingId === card.id ? 'Updating...' : 'Refuse' }}
+            </button>
+            <button type="button" class="history-action history-action--accept" (click)="acceptMission(card)" [disabled]="actionLoadingId === card.id">
+              {{ actionLoadingId === card.id ? 'Updating...' : 'Accept' }}
+            </button>
+          </div>
+
+          <div class="volunteer-history-card__actions" *ngIf="card.status === 'In Progress'">
+            <button type="button" class="history-action history-action--complete" (click)="completeMission(card)" [disabled]="actionLoadingId === card.id">
+              {{ actionLoadingId === card.id ? 'Updating...' : 'Mark Completed' }}
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #noAssignments>
+        <div class="volunteer-history-empty">
+          <i class="fi fi-rr-inbox"></i>
+          <h3>No assignments yet</h3>
+          <p>Your mission history will appear here once assignments are created.</p>
+        </div>
+      </ng-template>
     </section>
   </div>
 </ng-container>

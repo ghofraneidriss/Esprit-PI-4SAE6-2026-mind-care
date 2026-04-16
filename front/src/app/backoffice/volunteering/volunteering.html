@@ -28,7 +28,10 @@
     <section class="mission-board-section">
       <div class="section-header">
         <h2 class="section-title">Mission Board</h2>
-        <button type="button" class="btn-create" (click)="openCreateModal()"><i class="fi fi-rr-plus"></i> Create Mission</button>
+        <button *ngIf="isAdmin" type="button" class="btn-create" (click)="openCreateModal()"><i class="fi fi-rr-plus"></i> Create Mission</button>
+        <div *ngIf="!isAdmin" class="mission-readonly-note">
+          Mission creation is reserved for admins. Use Assignment History to review volunteer work.
+        </div>
       </div>
 
       <div class="kanban-columns">
@@ -37,8 +40,8 @@
           <div class="kanban-cards" *ngIf="openMissions.length > 0; else emptyOpen">
             <article class="mission-card" *ngFor="let m of openMissions">
               <div class="mc-top"><div class="mc-icon-wrap icon-blue"><i [class]="m.icon"></i></div><div class="mc-title-area"><h4 class="mc-title" [title]="m.title">{{ m.title }}</h4><span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority }}</span></div></div>
-              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
-              <button type="button" class="btn-delete-mission" (click)="deleteMission(m)"><i class="fi fi-rr-trash"></i></button>
+              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.patientName || 'Patient not set' }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
+              <button *ngIf="isAdmin" type="button" class="btn-delete-mission" (click)="deleteMission(m)"><i class="fi fi-rr-trash"></i></button>
             </article>
           </div>
           <ng-template #emptyOpen><div class="kanban-empty"><i class="fi fi-rr-inbox"></i><p>No open missions</p></div></ng-template>
@@ -49,7 +52,7 @@
           <div class="kanban-cards" *ngIf="assignedMissions.length > 0; else emptyAssigned">
             <article class="mission-card" *ngFor="let m of assignedMissions">
               <div class="mc-top"><div class="mc-icon-wrap icon-orange"><i [class]="m.icon"></i></div><div class="mc-title-area"><h4 class="mc-title" [title]="m.title">{{ m.title }}</h4><span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority }}</span></div></div>
-              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
+              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.patientName || 'Patient not set' }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
             </article>
           </div>
           <ng-template #emptyAssigned><div class="kanban-empty"><i class="fi fi-rr-inbox"></i><p>No assigned missions</p></div></ng-template>
@@ -60,7 +63,7 @@
           <div class="kanban-cards" *ngIf="completedMissions.length > 0; else emptyCompleted">
             <article class="mission-card" *ngFor="let m of completedMissions">
               <div class="mc-top"><div class="mc-icon-wrap icon-green"><i [class]="m.icon"></i></div><div class="mc-title-area"><h4 class="mc-title" [title]="m.title">{{ m.title }}</h4><span class="priority-chip" [ngClass]="priorityClass(m.priority)">{{ m.priority }}</span></div></div>
-              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
+              <ul class="mc-meta"><li><i class="fi fi-rr-bookmark"></i> {{ m.category }}</li><li><i class="fi fi-rr-marker"></i> {{ m.location }}</li><li><i class="fi fi-rr-calendar"></i> {{ m.date }}</li><li><i class="fi fi-rr-clock"></i> {{ m.duration }}</li><li><i class="fi fi-rr-user"></i> {{ m.patientName || 'Patient not set' }}</li><li><i class="fi fi-rr-user"></i> {{ m.assignee }}</li></ul>
             </article>
           </div>
           <ng-template #emptyCompleted><div class="kanban-empty"><i class="fi fi-rr-inbox"></i><p>No completed missions</p></div></ng-template>
@@ -88,7 +91,7 @@
               <span class="rating-value">{{ v.rating }} rating</span>
               <span class="missions-count">{{ v.missions }} missions</span>
             </div>
-            <button type="button" class="btn-assign" (click)="openAssignModal(v, openMissions[0] || null)" [disabled]="openMissions.length === 0"><i class="fi fi-rr-user-add"></i> Assign to Mission</button>
+            <button *ngIf="isAdmin" type="button" class="btn-assign" (click)="openAssignModal(v, openMissions[0] || null)" [disabled]="openMissions.length === 0"><i class="fi fi-rr-user-add"></i> Assign to Mission</button>
           </div>
         </article>
 
@@ -110,7 +113,40 @@
         <div class="col-12"><label class="form-label">Mission Title <span class="text-danger">*</span></label><input type="text" class="form-control" [(ngModel)]="newMission.title" placeholder="Enter mission title" /></div>
         <div class="col-md-6"><label class="form-label">Category <span class="text-danger">*</span></label><input type="text" class="form-control" [(ngModel)]="newMission.category" placeholder="e.g. Home Visit" /></div>
         <div class="col-md-6"><label class="form-label">Priority</label><select class="form-select" [(ngModel)]="newMission.priority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
-        <div class="col-12"><label class="form-label">Location</label><input type="text" class="form-control" [(ngModel)]="newMission.location" placeholder="Enter location" /></div>
+        <div class="col-md-6">
+          <label class="form-label">Patient <span class="text-danger">*</span></label>
+          <select class="form-select" [(ngModel)]="newMission.patientId">
+            <option [ngValue]="null">Select patient</option>
+            <option *ngFor="let patient of patients" [ngValue]="patient.userId">{{ getPatientLabel(patient) }}</option>
+          </select>
+          <small class="text-muted" *ngIf="patientsLoading">Loading patients...</small>
+          <small class="text-danger" *ngIf="patientsError">{{ patientsError }}</small>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Location</label>
+          <div class="location-autocomplete">
+            <input
+              type="text"
+              class="form-control"
+              [ngModel]="newMission.location"
+              (ngModelChange)="onLocationInput($event)"
+              placeholder="Type a city, street, hospital, or landmark"
+              autocomplete="off"
+            />
+            <div class="location-helper" *ngIf="locationLoading">Searching real places...</div>
+            <div class="location-suggestions" *ngIf="locationSuggestions.length > 0">
+              <button
+                type="button"
+                class="location-suggestion"
+                *ngFor="let suggestion of locationSuggestions; trackBy: trackByLocationSuggestion"
+                (click)="chooseLocationSuggestion(suggestion)"
+              >
+                <i class="fi fi-rr-marker"></i>
+                <span>{{ suggestion.displayName }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
         <div class="col-md-6"><label class="form-label">Date &amp; Time</label><input type="text" class="form-control" [(ngModel)]="newMission.date" placeholder="e.g. 2025-02-01 at 10:00 AM" /></div>
         <div class="col-md-6"><label class="form-label">Duration</label><input type="text" class="form-control" [(ngModel)]="newMission.duration" placeholder="e.g. 2 hours" /></div>
         <div class="col-12"><label class="form-label">Assign to Volunteer</label><input type="text" class="form-control" [(ngModel)]="newMission.assignee" placeholder="Volunteer name (optional)" /></div>

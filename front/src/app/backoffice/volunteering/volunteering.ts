@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { VolunteerDirectoryEntry, VolunteerService } from './volunteer.service';
 
@@ -19,6 +20,22 @@ export interface Mission {
     status: MissionStatus;
     icon?: string;
     description?: string;
+    patientName?: string;
+    patientId?: number;
+}
+
+interface PatientOption {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    role?: string;
+}
+
+interface LocationSuggestion {
+    displayName: string;
+    lat: string;
+    lon: string;
 }
 
 // Map backend status enum → frontend status string
@@ -71,6 +88,13 @@ export class VolunteeringPageComponent implements OnInit {
     formError = '';
     isLoading = false;
     errorMessage = '';
+    patients: PatientOption[] = [];
+    patientsLoading = false;
+    patientsError = '';
+    locationSuggestions: LocationSuggestion[] = [];
+    locationLoading = false;
+    locationSearchTimeout: ReturnType<typeof setTimeout> | null = null;
+    selectedLocationSuggestion: LocationSuggestion | null = null;
 
     newMission: Partial<Mission> = {
         title: '',
@@ -79,6 +103,7 @@ export class VolunteeringPageComponent implements OnInit {
         date: '',
         duration: '',
         assignee: '',
+        patientId: undefined,
         priority: 'Medium',
         status: 'Open',
     };
@@ -97,12 +122,18 @@ export class VolunteeringPageComponent implements OnInit {
 
     constructor(
         public readonly authService: AuthService,
+        private readonly http: HttpClient,
         private readonly volunteerService: VolunteerService
     ) { }
+
+    get isAdmin(): boolean {
+        return this.authService.isAdmin();
+    }
 
     ngOnInit(): void {
         this.loadMissions();
         this.loadVolunteerDirectory();
+        this.loadPatients();
         this.loadVolunteerPresence();
         // Reload presence every 30 seconds
         setInterval(() => this.loadVolunteerPresence(), 30000);
@@ -120,6 +151,7 @@ export class VolunteeringPageComponent implements OnInit {
                     status: normalizeStatus(m.status as string),
                     priority: normalizePriority(m.priority as string),
                     icon: iconForCategory(m.category),
+                    patientName: this.extractPatientName(m.description),
                     date: m.startDate
                         ? new Date(m.startDate).toLocaleDateString('en-US', {
                             year: 'numeric',
@@ -150,6 +182,72 @@ export class VolunteeringPageComponent implements OnInit {
                 console.warn('Could not load volunteers directory', err);
             },
         });
+    }
+
+    loadPatients(): void {
+        this.patientsLoading = true;
+        this.patientsError = '';
+        this.http.get<PatientOption[]>('http://localhost:8082/api/users').subscribe({
+            next: (users) => {
+                this.patients = (users ?? [])
+                    .filter((user) => (user.role || '').toUpperCase() === 'PATIENT')
+                    .sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+                this.patientsLoading = false;
+            },
+            error: (err) => {
+                console.warn('Could not load patients list', err);
+                this.patients = [];
+                this.patientsError = 'Could not load patients from users service.';
+                this.patientsLoading = false;
+            },
+        });
+    }
+
+    onLocationInput(value: string): void {
+        this.newMission.location = value;
+        this.selectedLocationSuggestion = null;
+        this.locationSuggestions = [];
+
+        if (this.locationSearchTimeout) {
+            clearTimeout(this.locationSearchTimeout);
+            this.locationSearchTimeout = null;
+        }
+
+        const query = value.trim();
+        if (query.length < 3) {
+            return;
+        }
+
+        this.locationSearchTimeout = setTimeout(() => {
+            this.searchLocations(query);
+        }, 300);
+    }
+
+    searchLocations(query: string): void {
+        this.locationLoading = true;
+        this.http.get<any[]>(
+            `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&q=${encodeURIComponent(query)}`
+        ).subscribe({
+            next: (results) => {
+                this.locationSuggestions = (results ?? []).map((result) => ({
+                    displayName: result.display_name,
+                    lat: result.lat,
+                    lon: result.lon,
+                }));
+                this.locationLoading = false;
+            },
+            error: (err) => {
+                console.warn('Could not load location suggestions', err);
+                this.locationSuggestions = [];
+                this.locationLoading = false;
+            },
+        });
+    }
+
+    chooseLocationSuggestion(suggestion: LocationSuggestion): void {
+        this.newMission.location = suggestion.displayName;
+        this.selectedLocationSuggestion = suggestion;
+        this.locationSuggestions = [];
     }
 
     loadVolunteerPresence(): void {
@@ -235,13 +333,18 @@ export class VolunteeringPageComponent implements OnInit {
             m.title.toLowerCase().includes(q) ||
             (m.category || '').toLowerCase().includes(q) ||
             (m.location || '').toLowerCase().includes(q) ||
-            (m.assignee || '').toLowerCase().includes(q)
+            (m.assignee || '').toLowerCase().includes(q) ||
+            (m.patientName || '').toLowerCase().includes(q)
         );
     }
 
     // ─── Modal ───────────────────────────────────────────────────────────────────
 
     openCreateModal(): void {
+        if (!this.isAdmin) {
+            this.formError = 'Only admins can create missions.';
+            return;
+        }
         this.formError = '';
         this.submitAttempted = false;
         this.isSaving = false;
@@ -252,17 +355,30 @@ export class VolunteeringPageComponent implements OnInit {
             date: '',
             duration: '',
             assignee: '',
+            patientId: undefined,
             priority: 'Medium',
             status: 'Open',
         };
+        this.locationSuggestions = [];
+        this.selectedLocationSuggestion = null;
         this.isCreateModalOpen = true;
     }
 
     closeCreateModal(): void {
         this.isCreateModalOpen = false;
+        this.locationSuggestions = [];
+        this.selectedLocationSuggestion = null;
+        if (this.locationSearchTimeout) {
+            clearTimeout(this.locationSearchTimeout);
+            this.locationSearchTimeout = null;
+        }
     }
 
     saveMission(): void {
+        if (!this.isAdmin) {
+            this.formError = 'Only admins can create missions.';
+            return;
+        }
         this.submitAttempted = true;
         this.formError = '';
 
@@ -274,8 +390,14 @@ export class VolunteeringPageComponent implements OnInit {
             this.formError = 'Category is required.';
             return;
         }
+        if (!this.newMission.patientId) {
+            this.formError = 'Patient is required.';
+            return;
+        }
 
         this.isSaving = true;
+        const selectedPatient = this.patients.find((patient) => patient.userId === this.newMission.patientId);
+        const patientName = selectedPatient ? `${selectedPatient.firstName} ${selectedPatient.lastName}`.trim() : '';
 
         const payload = {
             title: this.newMission.title!.trim(),
@@ -283,6 +405,7 @@ export class VolunteeringPageComponent implements OnInit {
             location: this.newMission.location?.trim() || 'TBD',
             duration: this.newMission.duration?.trim() || '',
             assignee: this.newMission.assignee?.trim() || 'Unassigned',
+            description: this.buildMissionDescription(patientName),
             priority: (this.newMission.priority || 'Medium').toUpperCase() as any,
             status: 'OPEN' as MissionStatus,
         };
@@ -294,6 +417,7 @@ export class VolunteeringPageComponent implements OnInit {
                     status: normalizeStatus(created.status as string),
                     priority: normalizePriority(created.priority as string),
                     icon: iconForCategory(created.category),
+                    patientName: patientName || this.extractPatientName(created.description),
                     date: created.startDate
                         ? new Date(created.startDate).toLocaleDateString('en-US', {
                             year: 'numeric',
@@ -317,6 +441,10 @@ export class VolunteeringPageComponent implements OnInit {
     // ─── Delete ──────────────────────────────────────────────────────────────────
 
     deleteMission(mission: Mission): void {
+        if (!this.isAdmin) {
+            alert('Only admins can delete missions.');
+            return;
+        }
         if (!confirm(`Delete mission "${mission.title}"?`)) return;
         this.volunteerService.delete(mission.id).subscribe({
             next: () => {
@@ -332,6 +460,9 @@ export class VolunteeringPageComponent implements OnInit {
     // ─── Assign ──────────────────────────────────────────────────────────────────
 
     openAssignModal(volunteer: VolunteerDirectoryEntry, mission?: Mission | null): void {
+        if (!this.isAdmin) {
+            return;
+        }
         const defaultMission = mission || this.openMissions[0] || null;
         this.selectedVolunteerForAssignment = volunteer;
         this.selectedMissionForAssignment = defaultMission;
@@ -364,6 +495,10 @@ export class VolunteeringPageComponent implements OnInit {
     }
 
     assignMissionToVolunteer(volunteer: VolunteerDirectoryEntry, mission?: Mission): void {
+        if (!this.isAdmin) {
+            this.assignmentError = 'Only admins can assign missions.';
+            return;
+        }
         const targetMission = mission || this.selectedMissionForAssignment;
         const volunteerId = this.getVolunteerId(volunteer);
 
@@ -405,6 +540,9 @@ export class VolunteeringPageComponent implements OnInit {
     }
 
     assignVolunteer(volunteer: VolunteerDirectoryEntry): void {
+        if (!this.isAdmin) {
+            return;
+        }
         const open = this.missions.find((m) => m.status === 'Open');
         if (!open) {
             alert('No open missions available to assign.');
@@ -427,5 +565,29 @@ export class VolunteeringPageComponent implements OnInit {
 
     isFilledStar(index: number, rating: number): boolean {
         return index < Math.floor(rating);
+    }
+
+    getPatientLabel(patient: PatientOption): string {
+        return `${patient.firstName} ${patient.lastName}`.trim();
+    }
+
+    private extractPatientName(description?: string): string {
+        if (!description) {
+            return 'Unassigned';
+        }
+
+        const match = description.match(/patient\s*:\s*([^|]+)/i);
+        return match?.[1]?.trim() || 'Unassigned';
+    }
+
+    private buildMissionDescription(patientName: string): string {
+        if (!patientName) {
+            return '';
+        }
+        return `Patient: ${patientName}`;
+    }
+
+    trackByLocationSuggestion(_index: number, suggestion: LocationSuggestion): string {
+        return suggestion.displayName;
     }
 }
