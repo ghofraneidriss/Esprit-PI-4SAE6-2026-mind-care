@@ -20,6 +20,9 @@ import { AdminDashboard } from './forum-admin/admin-dashboard/admin-dashboard';
 import { PostList } from './forum-admin/post-list/post-list';
 import { CommentList } from './forum-admin/comment-list/comment-list';
 import { ForumReports } from './forum-admin/forum-reports/forum-reports';
+import { MedicalEventsPage } from './medical-events/medical-events';
+import { RecommendationPage } from './recommendation/recommendation';
+import { SouvenirsPage } from './souvenirs/souvenirs';
 
 import { BackofficeLayoutComponent } from './backoffice-layout/backoffice-layout';
 import { MoodTrackerComponent } from './mood-tracker/mood-tracker';
@@ -115,6 +118,9 @@ const routes: Routes = [
       { path: 'calendar', component: CalendarPage },
       { path: 'chat', component: ChatPage },
       { path: 'mood-tracker', component: MoodTrackerComponent },
+      { path: 'medical-events', component: MedicalEventsPage },
+      { path: 'recommendations', component: RecommendationPage },
+      { path: 'souvenirs', component: SouvenirsPage },
       { path: 'customers', component: CustomersPage },
       { path: 'deals', component: DealsPage },
       { path: 'employee', component: EmployeePage },

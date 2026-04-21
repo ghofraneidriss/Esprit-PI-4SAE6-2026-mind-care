@@ -15,6 +15,12 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot-password-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
+import { FrontofficeActivitiesPage } from './activities/activities';
+import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
+import { RecommendationsPage } from './recommendations/recommendations';
+import { SouvenirsFrontPage } from './souvenirs/souvenirs';
+import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
+import { SudokuPlayPage } from './sudoku-play/sudoku-play';
 
 /**
  * CVP / activity routes: same as the source project (officiel/quiz-list, officiel/play/...).
@@ -65,6 +71,83 @@ const routes: Routes = [
           import('../officiel/localization-management/localization-management.component').then(
             (m) => m.LocalizationManagementComponent
           ),
+      },
+      {
+        path: 'community-activities',
+        component: FrontofficeActivitiesPage,
+      },
+      {
+        path: 'recommendations',
+        component: RecommendationsPage,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'souvenirs',
+        component: SouvenirsFrontPage,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'puzzle-play/:eventId',
+        component: PuzzlePlayPage,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'puzzles/:eventId',
+        component: PuzzlePlayPage,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'sudoku-play/:eventId',
+        component: SudokuPlayPage,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'alzheimer/comprendre-maladie',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/decouverte',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/chiffres',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/stades',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/symptomes',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/causes',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/diagnostic',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/traitements',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/jeunes',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/hereditaire',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/fin-de-vie',
+        component: AlzheimerUnderstandingFrontPage,
+      },
+      {
+        path: 'alzheimer/glossaire',
+        component: AlzheimerUnderstandingFrontPage,
       },
 
       // --- Aliases → officiel (CVP) paths ---

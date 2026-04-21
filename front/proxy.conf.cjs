@@ -61,6 +61,20 @@ module.exports = [
     logLevel: 'debug',
   },
   {
+    context: ['/api/recommendations', '/api/events', '/api/puzzles', '/api/sudoku'],
+    target: 'http://localhost:8080',
+    secure: false,
+    changeOrigin: true,
+    logLevel: 'debug',
+  },
+  {
+    context: ['/api/souvenirs', '/api/reminiscence-activities'],
+    target: 'http://localhost:8080',
+    secure: false,
+    changeOrigin: true,
+    logLevel: 'debug',
+  },
+  {
     context: ['/api'],
     target: 'http://localhost:8080',
     secure: false,

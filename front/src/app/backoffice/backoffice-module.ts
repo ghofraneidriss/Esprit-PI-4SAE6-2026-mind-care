@@ -42,6 +42,9 @@ import { DeletePostModal } from './forum-admin/delete-post-modal/delete-post-mod
 import { ViewPostModal } from './forum-admin/view-post-modal/view-post-modal';
 import { PostForm } from './forum-admin/post-form/post-form';
 import { MoodTrackerComponent } from './mood-tracker/mood-tracker';
+import { MedicalEventsPage } from './medical-events/medical-events';
+import { RecommendationPage } from './recommendation/recommendation';
+import { SouvenirsPage } from './souvenirs/souvenirs';
 
 @NgModule({
   declarations: [
@@ -67,7 +70,10 @@ import { MoodTrackerComponent } from './mood-tracker/mood-tracker';
     DeletePostModal,
     ViewPostModal,
     PostForm,
-    MoodTrackerComponent
+    MoodTrackerComponent,
+    MedicalEventsPage,
+    RecommendationPage,
+    SouvenirsPage
   ],
   imports: [
     CommonModule,

@@ -41,6 +41,24 @@
                 <span class="menu-label">Results &amp; risk</span>
               </a>
             </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/recommendations" routerLinkActive="active" role="button">
+                <i class="ri-magic-line"></i>
+                <span class="menu-label">Recommendations</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/souvenirs" routerLinkActive="active" role="button">
+                <i class="ri-book-open-line"></i>
+                <span class="menu-label">Souvenirs</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/medical-events" routerLinkActive="active" role="button">
+                <i class="ri-calendar-event-line"></i>
+                <span class="menu-label">Medical events</span>
+              </a>
+            </li>
             <li class="menu-item">
               <a class="menu-link" routerLink="/admin/reports" routerLinkActive="active" role="button">
                 <i class="ri-file-pdf-2-line"></i>

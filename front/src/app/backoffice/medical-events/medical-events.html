@@ -1,0 +1,277 @@
+<div class="page med-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">
+        <i class="ri-calendar-event-line page-title-icon" aria-hidden="true"></i>
+        Medical Events
+      </h1>
+      <p>Manage cognitive games, therapeutic activities, and patient event schedules.</p>
+    </div>
+    <button type="button" class="btn-primary" (click)="openCreateForm()">+ New medical event</button>
+  </div>
+
+  @if (errorMessage) {
+  <div class="alert error med-alert">
+    <span>{{ errorMessage }}</span>
+    <button type="button" class="med-inline-close" (click)="errorMessage = ''" aria-label="Close">
+      <i class="ri-close-line" aria-hidden="true"></i>
+    </button>
+  </div>
+  }
+
+  @if (successMessage) {
+  <div class="alert success med-alert">
+    <span>{{ successMessage }}</span>
+    <button type="button" class="med-inline-close" (click)="successMessage = ''" aria-label="Close">
+      <i class="ri-close-line" aria-hidden="true"></i>
+    </button>
+  </div>
+  }
+
+  <div class="med-summary-grid">
+    <article class="med-summary-card">
+      <span class="med-summary-card__label">Total</span>
+      <strong>{{ events.length }}</strong>
+    </article>
+    <article class="med-summary-card">
+      <span class="med-summary-card__label">Active</span>
+      <strong>{{ activeCount }}</strong>
+    </article>
+    <article class="med-summary-card">
+      <span class="med-summary-card__label">Completed</span>
+      <strong>{{ completedCount }}</strong>
+    </article>
+    <article class="med-summary-card">
+      <span class="med-summary-card__label">Hard</span>
+      <strong>{{ hardCount }}</strong>
+    </article>
+  </div>
+
+  <div class="med-workspace">
+    <section class="table-card med-list-card">
+      <div class="table-toolbar">
+        <div class="table-toolbar__filters">
+          <input
+            type="search"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilters()"
+            placeholder="Search medical events..."
+            autocomplete="off"
+          />
+          <div>
+            <span class="filter-label">Type</span>
+            <select [(ngModel)]="typeFilter" (ngModelChange)="applyFilters()">
+              <option value="">All</option>
+              @for (type of typeOptions; track type) {
+              <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <span class="filter-label">Difficulty</span>
+            <select [(ngModel)]="difficultyFilter" (ngModelChange)="applyFilters()">
+              <option value="">All</option>
+              @for (difficulty of difficultyOptions; track difficulty) {
+              <option [value]="difficulty">{{ difficulty }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="med-list-body">
+        @if (isLoading) {
+        <div class="loading"><div class="spinner"></div></div>
+        } @else if (filteredEvents.length > 0) {
+        <div class="med-list">
+          @for (event of filteredEvents; track trackEvent($index, event)) {
+          <button
+            type="button"
+            class="med-list-item"
+            [class.med-list-item--active]="selectedEvent?.id === event.id"
+            (click)="selectEvent(event)"
+          >
+            <div class="med-list-item__head">
+              <strong>{{ event.title }}</strong>
+              <span [class]="getDifficultyBadgeClass(event.difficulty)">{{ event.difficulty }}</span>
+            </div>
+            <div class="med-list-item__meta">
+              <span>Patient #{{ event.patientId || '-' }}</span>
+              <span [class]="getTypeBadgeClass(event.type)">{{ event.type }}</span>
+            </div>
+            <div class="med-list-item__status">
+              <span [class]="getStatusBadgeClass(event.status)">{{ getStatusLabel(event.status) }}</span>
+            </div>
+            <p>{{ event.description || 'No description provided.' }}</p>
+          </button>
+          }
+        </div>
+        } @else {
+        <div class="empty">No medical events match your filters.</div>
+        }
+      </div>
+    </section>
+
+    <div class="med-detail-stack">
+      @if (selectedEvent; as event) {
+      <section class="form-card med-primary-card">
+        <div class="med-card-head">
+          <div>
+            <span class="med-kicker">Medical event #{{ event.id || '-' }}</span>
+            <h2>{{ event.title }}</h2>
+            <div class="med-detail-badges">
+              <span [class]="getTypeBadgeClass(event.type)">{{ event.type }}</span>
+              <span [class]="getDifficultyBadgeClass(event.difficulty)">{{ event.difficulty }}</span>
+              <span [class]="getStatusBadgeClass(event.status)">{{ getStatusLabel(event.status) }}</span>
+            </div>
+          </div>
+          <div class="med-head-actions">
+            <button type="button" class="btn-ghost" (click)="editEvent(event)">Edit</button>
+            <button type="button" class="btn-danger-soft" (click)="delete(event.id)">Delete</button>
+          </div>
+        </div>
+
+        <div class="med-highlight-grid">
+          <div class="med-highlight-item">
+            <span>Patient</span>
+            <strong>#{{ event.patientId || '-' }}</strong>
+          </div>
+          <div class="med-highlight-item">
+            <span>Family</span>
+            <strong>#{{ event.familyId || '-' }}</strong>
+          </div>
+          <div class="med-highlight-item">
+            <span>Participations</span>
+            <strong>{{ event.participationCount ?? 0 }}</strong>
+          </div>
+          <div class="med-highlight-item">
+            <span>Auto generated</span>
+            <strong>{{ event.autoGenerated ? 'Yes' : 'No' }}</strong>
+          </div>
+        </div>
+
+        <div class="med-data-grid">
+          <div class="med-data-field">
+            <label>Type</label>
+            <span>{{ event.type }}</span>
+          </div>
+          <div class="med-data-field">
+            <label>Difficulty</label>
+            <span>{{ event.difficulty }}</span>
+          </div>
+          <div class="med-data-field">
+            <label>Start date</label>
+            <span>{{ formatDateTime(event.startDate) }}</span>
+          </div>
+          <div class="med-data-field">
+            <label>End date</label>
+            <span>{{ formatDateTime(event.endDate) }}</span>
+          </div>
+          <div class="med-data-field">
+            <label>Created at</label>
+            <span>{{ formatDateTime(event.createdAt) }}</span>
+          </div>
+          <div class="med-data-field">
+            <label>Updated at</label>
+            <span>{{ formatDateTime(event.updatedAt) }}</span>
+          </div>
+          <div class="med-data-field med-data-field--full">
+            <label>Description</label>
+            <div class="med-rich-text">{{ event.description || 'No description provided.' }}</div>
+          </div>
+        </div>
+      </section>
+      } @else {
+      <section class="table-card med-empty-card">
+        <div class="empty">Select a medical event from the list to inspect its schedule and configuration.</div>
+      </section>
+      }
+    </div>
+  </div>
+</div>
+
+@if (showForm) {
+<div class="med-modal-backdrop" (click)="cancel()">
+  <section class="med-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="med-modal-header">
+      <h3>{{ isEditing ? 'Edit medical event' : 'Create medical event' }}</h3>
+      <button type="button" class="btn-modal-close" (click)="cancel()" aria-label="Close">
+        <i class="ri-close-line" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="save()">
+      <div class="med-modal-body">
+        <div class="med-form-grid">
+          <div class="med-form-field med-form-field--full">
+            <label>Title</label>
+            <input type="text" [(ngModel)]="currentEvent.title" name="title" required />
+          </div>
+
+          <div class="med-form-field">
+            <label>Type</label>
+            <select [(ngModel)]="currentEvent.type" name="type">
+              @for (type of typeOptions; track type) {
+              <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="med-form-field">
+            <label>Difficulty</label>
+            <select [(ngModel)]="currentEvent.difficulty" name="difficulty">
+              @for (difficulty of difficultyOptions; track difficulty) {
+              <option [value]="difficulty">{{ difficulty }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="med-form-field">
+            <label>Status</label>
+            <select [(ngModel)]="currentEvent.status" name="status">
+              @for (status of statusOptions; track status) {
+              <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="med-form-field">
+            <label>Patient ID</label>
+            <input type="number" min="1" [(ngModel)]="currentEvent.patientId" name="patientId" />
+          </div>
+
+          <div class="med-form-field">
+            <label>Family ID</label>
+            <input type="number" min="1" [(ngModel)]="currentEvent.familyId" name="familyId" />
+          </div>
+
+          <div class="med-form-field">
+            <label>Start date</label>
+            <input type="date" [(ngModel)]="currentEvent.startDate" name="startDate" />
+          </div>
+
+          <div class="med-form-field">
+            <label>End date</label>
+            <input type="date" [(ngModel)]="currentEvent.endDate" name="endDate" />
+          </div>
+
+          <div class="med-form-field med-form-field--full">
+            <label>Description</label>
+            <textarea rows="4" [(ngModel)]="currentEvent.description" name="description"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="med-modal-footer">
+        <button type="button" class="btn-ghost" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="!currentEvent.title.trim() || isSaving">
+          @if (isSaving) {
+          <span class="spinner-border spinner-border-sm"></span>
+          }
+          {{ isEditing ? 'Save changes' : 'Create event' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+}

@@ -23,6 +23,12 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
+import { FrontofficeActivitiesPage } from './activities/activities';
+import { AlzheimerUnderstandingFrontPage } from './alzheimer-understanding/alzheimer-understanding';
+import { RecommendationsPage } from './recommendations/recommendations';
+import { SouvenirsFrontPage } from './souvenirs/souvenirs';
+import { PuzzlePlayPage } from './puzzle-play/puzzle-play';
+import { SudokuPlayPage } from './sudoku-play/sudoku-play';
 import { SharedModule } from '../shared/shared.module';
 import { GlobalOverlaysComponent } from '../shared/global-overlays/global-overlays.component';
 
@@ -51,6 +57,12 @@ import { FrontofficeLayoutComponent } from './frontoffice-layout';
     LoginCoverAuthPage,
     NewPasswordCoverAuthPage,
     RegisterCoverAuthPage,
+    FrontofficeActivitiesPage,
+    AlzheimerUnderstandingFrontPage,
+    RecommendationsPage,
+    SouvenirsFrontPage,
+    PuzzlePlayPage,
+    SudokuPlayPage,
   ],
   imports: [CommonModule, FrontofficeRoutingModule, FormsModule, SharedModule, GlobalOverlaysComponent],
 })

@@ -105,6 +105,10 @@ export class AuthService {
     return this.getRole() === 'ADMIN';
   }
 
+  isPatient(): boolean {
+    return this.getRole() === 'PATIENT';
+  }
+
   /** Forum posts (création / édition / suppression) : réservé aux médecins. */
   isDoctor(): boolean {
     return this.getRole() === 'DOCTOR';

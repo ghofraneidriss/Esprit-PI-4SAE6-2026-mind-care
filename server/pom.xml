@@ -35,6 +35,8 @@
         <module>activities_service</module>
         <module>localization_service</module>
         <module>movement_service</module>
+        <module>recommendation_service/recommendation_service</module>
+        <module>souvenir_service/souvenir_service</module>
         <module>api_gateway</module>
     </modules>
 

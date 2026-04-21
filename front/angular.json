@@ -68,12 +68,16 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.cjs"
+          },
           "configurations": {
             "production": {
               "buildTarget": "mind_care:build:production"
             },
             "development": {
-              "buildTarget": "mind_care:build:development"
+              "buildTarget": "mind_care:build:development",
+              "proxyConfig": "proxy.conf.cjs"
             }
           },
           "defaultConfiguration": "development"

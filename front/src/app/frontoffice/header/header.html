@@ -18,6 +18,15 @@
           <li [class.active]="isActivitiesNavActive">
             <a [routerLink]="activitiesNavLink">Activities</a>
           </li>
+          <li *ngIf="authService.isLoggedIn() && authService.isPatient()">
+            <a routerLink="/recommendations" routerLinkActive="active">Recommendations</a>
+          </li>
+          <li *ngIf="authService.isLoggedIn() && authService.isPatient()">
+            <a routerLink="/souvenirs" routerLinkActive="active">Souvenirs</a>
+          </li>
+          <li>
+            <a routerLink="/alzheimer/comprendre-maladie" routerLinkActive="active">Alzheimer Guide</a>
+          </li>
           <li *ngIf="authService.isLoggedIn() && showMovementLink">
             <a routerLink="/patient-movement" routerLinkActive="active">Movement</a>
           </li>

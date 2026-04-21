@@ -1,0 +1,16 @@
+<app-header></app-header>
+<main class="fo-page">
+  <section class="fo-hero">
+    <h1>Community Activities</h1>
+    <p>Join educational sessions, support groups, and wellness events.</p>
+  </section>
+
+  <section class="fo-list">
+    <article class="fo-card" *ngFor="let item of items">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.date }}</p>
+      <small>{{ item.location }}</small>
+    </article>
+  </section>
+</main>
+<app-footer></app-footer>
