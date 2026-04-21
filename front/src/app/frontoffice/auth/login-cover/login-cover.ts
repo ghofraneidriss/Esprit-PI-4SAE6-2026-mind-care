@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { NotificationService } from '../../../shared/notification.service';
 
 @Component({
   selector: 'app-auth-login-cover',
@@ -9,7 +10,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login-cover.css'],
 })
 export class LoginCoverAuthPage {
-  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
+  roles = ['PATIENT', 'VOLUNTEER', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
 
   credentials = {
     email: '',
@@ -22,7 +23,8 @@ export class LoginCoverAuthPage {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly notificationService: NotificationService
   ) {}
 
   onSubmit(): void {
@@ -38,10 +40,28 @@ export class LoginCoverAuthPage {
       next: (user) => {
         this.isLoading = false;
         const loggedRole = this.authService.normalizeRole(user.role || this.credentials.role);
+
+        if (loggedRole === 'VOLUNTEER') {
+          // Register FCM token + start foreground listener
+          this.notificationService.initForUser(user.userId);
+          this.notificationService.startListening();
+        }
+
         if (this.authService.isBackofficeRole(loggedRole)) {
           this.router.navigateByUrl('/admin');
           return;
         }
+
+        if (loggedRole === 'VOLUNTEER') {
+          this.router.navigateByUrl('/admin');
+          return;
+        }
+
+        if (loggedRole === 'PATIENT') {
+          this.router.navigateByUrl('/reports');
+          return;
+        }
+
         this.router.navigateByUrl('/');
       },
       error: (error) => {

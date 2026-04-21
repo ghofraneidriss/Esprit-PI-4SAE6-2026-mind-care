@@ -3,39 +3,28 @@ import { RouterModule, Routes } from '@angular/router';
 import { strictAdminGuard } from '../guards/strict-admin.guard';
 
 import { Home2 } from './home2/home2';
-import { CalendarPage } from './calendar/calendar';
-import { ChatPage } from './chat/chat';
-import { CustomersPage } from './customers/customers';
-import { EmployeePage } from './employee/employee';
-import { ProfilePage } from './profile/profile';
-import { ReviewPage } from './review/review';
-import { SalesPage } from './sales/sales';
-import { SettingsPage } from './settings/settings';
-import { TaskManagementPage } from './task-management/task-management';
-import { TeamManagementPage } from './team-management/team-management';
+import { BackofficeShellComponent } from './backoffice-shell/backoffice-shell';
+
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
-import { IncidentsPage } from './incidents/incidents';
+import { VolunteeringPageComponent } from './volunteering/volunteering';
+import { AssignmentHistoryPageComponent } from './assignment-history/assignment-history';
 
 const routes: Routes = [
-  { path: '', component: Home2 },
-  { path: 'reports', component: Home2 },
-  { path: 'calendar', component: CalendarPage },
-  { path: 'chat', component: ChatPage },
-  { path: 'customers', component: CustomersPage },
-  { path: 'employee', component: EmployeePage },
-  { path: 'profile', component: ProfilePage },
-  { path: 'review', component: ReviewPage },
-  { path: 'sales', component: SalesPage },
-  { path: 'settings', component: SettingsPage },
-  { path: 'task-management', component: TaskManagementPage },
-  { path: 'team-management', component: TeamManagementPage },
-  { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
-  { path: 'medical-reports', component: MedicalReportsPageComponent },
-  { path: 'files-management', component: FilesManagementPageComponent },
-  { path: 'incidents', component: IncidentsPage },
-  { path: '**', redirectTo: '/404' },
+  {
+    path: '',
+    component: BackofficeShellComponent,
+    children: [
+      { path: '', component: Home2, pathMatch: 'full' },
+      { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
+      { path: 'medical-reports', component: MedicalReportsPageComponent, canActivate: [strictAdminGuard] },
+      { path: 'files-management', component: FilesManagementPageComponent, canActivate: [strictAdminGuard] },
+      { path: 'volunteering', component: VolunteeringPageComponent },
+      { path: 'assignment-history', component: AssignmentHistoryPageComponent },
+      { path: '**', redirectTo: '' },
+    ],
+  },
 ];
 
 @NgModule({

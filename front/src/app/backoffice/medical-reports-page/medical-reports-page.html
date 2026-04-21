@@ -1,420 +1,256 @@
-﻿<div class="mr-layout">
+<div class="mr-page">
+  <div class="mr-hero">
+    <div class="mr-hero-inner">
+      <div>
+        <h1 class="mr-hero-title">
+          <span class="hero-icon"><i class="fi fi-rr-document"></i></span>
+          Medical Reports
+        </h1>
+        <p class="mr-hero-subtitle">Manage, review and approve patient medical reports</p>
+      </div>
 
-  <!-- ══════════════════════════════════════
-       Sidebar Navigation
-  ══════════════════════════════════════ -->
-  <aside class="mr-sidebar">
-    <div class="sidebar-brand">
-      <a routerLink="/admin" class="brand-link">
-        <span class="brand-icon"><i class="fi fi-rr-heart-rate"></i></span>
-        <span class="brand-text">MindCare</span>
-      </a>
-    </div>
-    <nav class="sidebar-nav">
-      <span class="nav-heading">Main Menu</span>
-      <a routerLink="/admin" class="nav-link">
-        <i class="fi fi-rr-house-blank"></i>
-        <span>Dashboard</span>
-      </a>
-      <a routerLink="/admin/medical-reports" class="nav-link active">
-        <i class="fi fi-rr-document"></i>
-        <span>Medical Reports</span>
-      </a>
-      <a routerLink="/admin/files-management" class="nav-link">
-        <i class="fi fi-rr-folder-open"></i>
-        <span>Files Management</span>
-      </a>
-      <a routerLink="/admin/activities" class="nav-link">
-        <i class="fi fi-rr-list-check"></i>
-        <span>Activities</span>
-      </a>
-      <a routerLink="/admin/forums" class="nav-link">
-        <i class="fi fi-rr-comment-alt"></i>
-        <span>Forums</span>
-      </a>
-      <a routerLink="/admin/incidents" class="nav-link">
-        <i class="fi fi-rr-shield-exclamation"></i>
-        <span>Incidents</span>
-      </a>
-      <a routerLink="/admin/movement" class="nav-link">
-        <i class="fi fi-rr-running"></i>
-        <span>Movement</span>
-      </a>
-
-      <ng-container *ngIf="authService.isAdmin()">
-        <span class="nav-heading">Management</span>
-        <a routerLink="/admin/employee" class="nav-link">
-          <i class="fi fi-rr-employee-man"></i>
-          <span>Employees</span>
-        </a>
-        <a routerLink="/admin/customers" class="nav-link">
-          <i class="fi fi-rr-review"></i>
-          <span>Customers</span>
-        </a>
-        <a routerLink="/admin/user-management" class="nav-link">
-          <i class="fi fi-rr-users"></i>
-          <span>User Management</span>
-        </a>
-      </ng-container>
-    </nav>
-    <div class="sidebar-footer">
-      <a routerLink="/" class="nav-link logout-link">
-        <i class="fi fi-rr-exit"></i>
-        <span>Back to Site</span>
-      </a>
-    </div>
-  </aside>
-
-  <!-- ══════════════════════════════════════
-       Main Content
-  ══════════════════════════════════════ -->
-  <div class="mr-page">
-
-
-    <div class="mr-hero">
-      <div class="mr-hero-inner">
-        <div>
-          <h1 class="mr-hero-title">
-            <span class="hero-icon"><i class="fi fi-rr-document"></i></span>
-            Medical Reports
-          </h1>
-          <p class="mr-hero-subtitle">Manage, review and approve patient medical reports</p>
-        </div>
-
-        <div class="d-flex align-items-center gap-3 flex-wrap">
-          <!-- Live stat chips -->
-          <div class="mr-hero-stats">
-            <div class="mr-stat-chip">
-              <span class="chip-value">{{ reports.length }}</span>
-              <span class="chip-label">Total</span>
-            </div>
-            <div class="mr-stat-chip">
-              <span class="chip-value">{{ countByStatus('APPROVED') }}</span>
-              <span class="chip-label">Approved</span>
-            </div>
-            <div class="mr-stat-chip">
-              <span class="chip-value">{{ countByStatus('DRAFT') }}</span>
-              <span class="chip-label">Draft</span>
-            </div>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="mr-hero-stats">
+          <div class="mr-stat-chip">
+            <span class="chip-value">{{ reports.length }}</span>
+            <span class="chip-label">Total</span>
           </div>
-
-          <button type="button" class="btn-create" id="btn-create-report" (click)="openCreateModal()">
-            <i class="fi fi-rr-plus"></i>New Report
-          </button>
+          <div class="mr-stat-chip">
+            <span class="chip-value">{{ countByStatus('APPROVED') }}</span>
+            <span class="chip-label">Approved</span>
+          </div>
+          <div class="mr-stat-chip">
+            <span class="chip-value">{{ countByStatus('DRAFT') }}</span>
+            <span class="chip-label">Draft</span>
+          </div>
         </div>
+
+        <button type="button" class="btn-create" id="btn-create-report" (click)="openCreateModal()">
+          <i class="fi fi-rr-plus"></i>New Report
+        </button>
       </div>
     </div>
-
-
-    <div class="mr-body">
-
-
-      <aside class="mr-list-panel">
-
-        <!-- Toolbar -->
-        <div class="mr-list-toolbar">
-          <div class="search-wrap">
-            <i class="fi fi-rr-search"></i>
-            <input id="report-search" type="text" class="form-control" placeholder="Search reports…"
-              [(ngModel)]="filters.query" (ngModelChange)="applyFilters()" />
-          </div>
-          <select id="report-status-filter" class="form-select filter-select" [(ngModel)]="filters.status"
-            (ngModelChange)="applyFilters()">
-            <option value="">All statuses</option>
-            <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
-          </select>
-        </div>
-
-        <!-- Report cards -->
-        <div class="mr-list-scroll">
-          <div *ngIf="isLoading" class="p-3">
-            <div class="skeleton-card mb-2" *ngFor="let i of [1,2,3,4]">
-              <div class="skeleton-line title"></div>
-              <div class="skeleton-line meta"></div>
-              <div class="skeleton-line meta"></div>
-            </div>
-          </div>
-
-          <ng-container *ngIf="!isLoading && filteredReports.length > 0; else emptyListOrLoading">
-            <button type="button" class="report-card" *ngFor="let report of filteredReports; trackBy: trackByReportId"
-              [class.active]="selectedReport?.reportid === report.reportid" (click)="selectReport(report)"
-              [id]="'report-card-' + report.reportid">
-              <div class="rc-row">
-                <span class="rc-title">{{ report.title || ('Report #' + report.reportid) }}</span>
-                <span class="status-badge" [ngClass]="getStatusBadgeClass(report.status)">
-                  {{ getStatusLabel(report.status) }}
-                </span>
-              </div>
-              <div class="rc-meta">
-                <i class="fi fi-rr-user"></i>
-                <span>{{ getPatientName(report) || '—' }}</span>
-              </div>
-              <div class="rc-meta">
-                <i class="fi fi-rr-stethoscope"></i>
-                <span>{{ getDoctorName(report) || '—' }}</span>
-              </div>
-              <div class="rc-desc">{{ report.description || 'No description provided' }}</div>
-            </button>
-          </ng-container>
-
-          <ng-template #emptyListOrLoading>
-            <div *ngIf="!isLoading" class="mr-empty">
-              <i class="fi fi-rr-folder-open"></i>
-              <p class="mb-0">No reports found</p>
-            </div>
-          </ng-template>
-        </div>
-      </aside>
-
-      <!-- ──────────────────────────────────
-         Right panel — details
-    ────────────────────────────────── -->
-      <main class="mr-detail-panel">
-
-        <!-- Report selected -->
-        <ng-container *ngIf="selectedReport as report">
-          <div class="mr-detail-inner">
-
-            <!-- Detail page header -->
-            <div class="detail-header">
-              <div class="detail-header-left">
-                <div class="report-eyebrow">Report #{{ report.reportid }}</div>
-                <h2>{{ report.title || 'Untitled Report' }}</h2>
-                <span class="status-badge" [ngClass]="getStatusBadgeClass(report.status)">
-                  {{ getStatusLabel(report.status) }}
-                </span>
-              </div>
-              <div class="detail-actions">
-                <button id="btn-edit-report" type="button" class="btn-action btn-edit" (click)="openEditModal()">
-                  <i class="fi fi-rr-edit"></i>Edit
-                </button>
-                <button id="btn-export-report" type="button" class="btn-action btn-export" (click)="exportPdf(report)">
-                  <i class="fi fi-rr-download"></i>Export PDF
-                </button>
-                <button id="btn-delete-report" type="button" class="btn-action btn-delete"
-                  (click)="deleteReport(report)">
-                  <i class="fi fi-rr-trash"></i>Delete
-                </button>
-              </div>
-            </div>
-
-            <!-- Stepper card -->
-            <div class="stepper-card">
-              <h5>Report Progress</h5>
-              <div class="stepper">
-                <!-- Step 1: Draft -->
-                <div class="stepper-step" [class.done]="getStepState(1) === 'done'"
-                  [class.active]="getStepState(1) !== 'done'">
-                  <div class="step-dot">
-                    <i class="fi fi-rr-edit" *ngIf="getStepState(1) !== 'done'"></i>
-                    <i class="fi fi-rr-check" *ngIf="getStepState(1) === 'done'"></i>
-                  </div>
-                  <span class="step-label">Draft</span>
-                </div>
-                <div class="stepper-line" [class.done]="getStepState(2) === 'done'"></div>
-
-                <!-- Step 2: Reviewed -->
-                <div class="stepper-step" [class.done]="getStepState(2) === 'done'"
-                  [class.active]="getStepState(1) === 'done' && getStepState(2) !== 'done'">
-                  <div class="step-dot">
-                    <i class="fi fi-rr-eye" *ngIf="getStepState(2) !== 'done'"></i>
-                    <i class="fi fi-rr-check" *ngIf="getStepState(2) === 'done'"></i>
-                  </div>
-                  <span class="step-label">Reviewed</span>
-                </div>
-                <div class="stepper-line" [class.done]="getStepState(3) === 'done'"></div>
-
-                <!-- Step 3: Approved -->
-                <div class="stepper-step" [class.done]="getStepState(3) === 'done'"
-                  [class.active]="getStepState(2) === 'done' && getStepState(3) !== 'done'">
-                  <div class="step-dot">
-                    <i class="fi fi-rr-shield-check" *ngIf="getStepState(3) !== 'done'"></i>
-                    <i class="fi fi-rr-check" *ngIf="getStepState(3) === 'done'"></i>
-                  </div>
-                  <span class="step-label">Approved</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Report data card -->
-            <div class="info-card">
-              <div class="info-card-header">
-                <span class="card-icon icon-blue"><i class="fi fi-rr-document"></i></span>
-                <h5>Report Information</h5>
-              </div>
-              <div class="info-card-body">
-                <div class="data-grid">
-                  <div class="data-field">
-                    <span class="field-label">Report ID</span>
-                    <span class="field-value">#{{ report.reportid }}</span>
-                  </div>
-                  <div class="data-field">
-                    <span class="field-label">Status</span>
-                    <span class="field-value">
-                      <span class="status-badge" [ngClass]="getStatusBadgeClass(report.status)">
-                        {{ getStatusLabel(report.status) }}
-                      </span>
-                    </span>
-                  </div>
-                  <div class="data-field">
-                    <span class="field-label">Patient</span>
-                    <span class="field-value" [class.muted]="!getPatientName(report)">
-                      {{ getPatientName(report) || '—' }}
-                    </span>
-                  </div>
-                  <div class="data-field">
-                    <span class="field-label">Doctor</span>
-                    <span class="field-value" [class.muted]="!getDoctorName(report)">
-                      {{ getDoctorName(report) || '—' }}
-                    </span>
-                  </div>
-                  <div class="data-field">
-                    <span class="field-label">Doctor Email</span>
-                    <span class="field-value" [class.muted]="!report.doctorEmail">
-                      {{ report.doctorEmail || '—' }}
-                    </span>
-                  </div>
-                  <div class="data-field" *ngIf="report.reportUrl">
-                    <span class="field-label">Download Link</span>
-                    <span class="field-value">
-                      <a [href]="report.reportUrl" target="_blank" class="download-link">
-                        <i class="fi fi-rr-cloud-download me-1"></i> Cloudinary PDF
-                      </a>
-                    </span>
-                  </div>
-                  <div class="data-field">
-                    <span class="field-label">Created At</span>
-                    <span class="field-value" [class.muted]="!report.createdAt">
-                      {{ report.createdAt || '—' }}
-                    </span>
-                  </div>
-                  <div class="data-field">
-                    <span class="field-label">Approved At</span>
-                    <span class="field-value" [class.muted]="!report.approvedAt">
-                      {{ report.approvedAt || '—' }}
-                    </span>
-                  </div>
-                  <div class="data-field full">
-                    <span class="field-label">Description</span>
-                    <div class="desc-block">{{ report.description || 'No description provided.' }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Attached Files Card -->
-            <div class="info-card mt-4" *ngIf="report.files && report.files.length > 0">
-              <div class="info-card-header">
-                <span class="card-icon icon-green"><i class="fi fi-rr-folder-open"></i></span>
-                <h5>Attached Files ({{ report.files.length }})</h5>
-              </div>
-              <div class="info-card-body">
-                <div class="attached-files-list">
-                  <div class="file-item" *ngFor="let file of report.files">
-                    <div class="file-icon">
-                      <i class="fi fi-rr-file-pdf" *ngIf="file.fileType === 'PDF'"></i>
-                      <i class="fi fi-rr-picture" *ngIf="file.fileType !== 'PDF'"></i>
-                    </div>
-                    <div class="file-details">
-                      <span class="file-name">{{ file.fileName }}</span>
-                      <span class="file-meta">{{ file.fileType }} • {{ file.createdAt | date }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </ng-container>
-
-        <!-- No report selected -->
-        <ng-container *ngIf="!selectedReport">
-          <div class="mr-no-selection">
-            <div class="no-sel-icon"><i class="fi fi-rr-document"></i></div>
-            <p class="no-sel-title">No report selected</p>
-            <p class="no-sel-sub">Choose a report from the list to view its details here.</p>
-          </div>
-        </ng-container>
-
-      </main>
-    </div>
-
-    <!-- ══════════════════════════════════════
-       Footer
-  ══════════════════════════════════════ -->
-    <footer class="mr-footer">
-      <span>© 2025 MindCare — All rights reserved</span>
-      <a routerLink="/admin">Back to Dashboard</a>
-    </footer>
-
   </div>
 
-  <!-- ══════════════════════════════════════
-     Create / Edit Modal
-══════════════════════════════════════ -->
+  <div class="mr-body">
+    <aside class="mr-list-panel">
+      <div class="mr-list-toolbar">
+        <div class="search-wrap">
+          <i class="fi fi-rr-search"></i>
+          <input id="report-search" type="text" class="form-control" placeholder="Search reports..."
+            [(ngModel)]="filters.query" (ngModelChange)="applyFilters()" />
+        </div>
+        <select id="report-status-filter" class="form-select filter-select" [(ngModel)]="filters.status"
+          (ngModelChange)="applyFilters()">
+          <option value="">All statuses</option>
+          <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <div class="mr-list-scroll">
+        <div *ngIf="isLoading" class="p-3">
+          <div class="skeleton-card mb-2" *ngFor="let i of [1,2,3,4]">
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line meta"></div>
+            <div class="skeleton-line meta"></div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!isLoading && filteredReports.length > 0; else emptyListOrLoading">
+          <button type="button" class="report-card" *ngFor="let report of filteredReports; trackBy: trackByReportId"
+            [class.active]="selectedReport?.reportid === report.reportid" (click)="selectReport(report)"
+            [id]="'report-card-' + report.reportid">
+            <div class="rc-row">
+              <span class="rc-title">{{ report.title || ('Report #' + report.reportid) }}</span>
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(report.status)">
+                {{ getStatusLabel(report.status) }}
+              </span>
+            </div>
+            <div class="rc-meta">
+              <i class="fi fi-rr-user"></i>
+              <span>{{ getPatientName(report) || '-' }}</span>
+            </div>
+            <div class="rc-meta">
+              <i class="fi fi-rr-stethoscope"></i>
+              <span>{{ getDoctorName(report) || '-' }}</span>
+            </div>
+            <div class="rc-desc">{{ report.description || 'No description provided' }}</div>
+          </button>
+        </ng-container>
+
+        <ng-template #emptyListOrLoading>
+          <div *ngIf="!isLoading" class="mr-empty">
+            <i class="fi fi-rr-folder-open"></i>
+            <p class="mb-0">No reports found</p>
+          </div>
+        </ng-template>
+      </div>
+    </aside>
+
+    <main class="mr-detail-panel">
+      <ng-container *ngIf="selectedReport as report">
+        <div class="mr-detail-inner">
+          <div class="detail-header">
+            <div class="detail-header-left">
+              <div class="report-eyebrow">Report #{{ report.reportid }}</div>
+              <h2>{{ report.title || 'Untitled Report' }}</h2>
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(report.status)">
+                {{ getStatusLabel(report.status) }}
+              </span>
+            </div>
+            <div class="detail-actions">
+              <button id="btn-edit-report" type="button" class="btn-action btn-edit" (click)="openEditModal()">
+                <i class="fi fi-rr-edit"></i>Edit
+              </button>
+              <button id="btn-export-report" type="button" class="btn-action btn-export" (click)="exportPdf(report)">
+                <i class="fi fi-rr-download"></i>Export PDF
+              </button>
+              <button id="btn-delete-report" type="button" class="btn-action btn-delete" (click)="deleteReport(report)">
+                <i class="fi fi-rr-trash"></i>Delete
+              </button>
+            </div>
+          </div>
+
+          <div class="stepper-card">
+            <h5>Report Progress</h5>
+            <div class="stepper">
+              <div class="stepper-step" [class.done]="getStepState(1) === 'done'" [class.active]="getStepState(1) !== 'done'">
+                <div class="step-dot">
+                  <i class="fi fi-rr-edit" *ngIf="getStepState(1) !== 'done'"></i>
+                  <i class="fi fi-rr-check" *ngIf="getStepState(1) === 'done'"></i>
+                </div>
+                <span class="step-label">Draft</span>
+              </div>
+              <div class="stepper-line" [class.done]="getStepState(2) === 'done'"></div>
+
+              <div class="stepper-step" [class.done]="getStepState(2) === 'done'"
+                [class.active]="getStepState(1) === 'done' && getStepState(2) !== 'done'">
+                <div class="step-dot">
+                  <i class="fi fi-rr-eye" *ngIf="getStepState(2) !== 'done'"></i>
+                  <i class="fi fi-rr-check" *ngIf="getStepState(2) === 'done'"></i>
+                </div>
+                <span class="step-label">Reviewed</span>
+              </div>
+              <div class="stepper-line" [class.done]="getStepState(3) === 'done'"></div>
+
+              <div class="stepper-step" [class.done]="getStepState(3) === 'done'"
+                [class.active]="getStepState(2) === 'done' && getStepState(3) !== 'done'">
+                <div class="step-dot">
+                  <i class="fi fi-rr-shield-check" *ngIf="getStepState(3) !== 'done'"></i>
+                  <i class="fi fi-rr-check" *ngIf="getStepState(3) === 'done'"></i>
+                </div>
+                <span class="step-label">Approved</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-card-header">
+              <span class="card-icon icon-blue"><i class="fi fi-rr-document"></i></span>
+              <h5>Report Information</h5>
+            </div>
+            <div class="info-card-body">
+              <div class="data-grid">
+                <div class="data-field"><span class="field-label">Report ID</span><span class="field-value">#{{ report.reportid }}</span></div>
+                <div class="data-field">
+                  <span class="field-label">Status</span>
+                  <span class="field-value"><span class="status-badge" [ngClass]="getStatusBadgeClass(report.status)">{{ getStatusLabel(report.status) }}</span></span>
+                </div>
+                <div class="data-field"><span class="field-label">Patient</span><span class="field-value" [class.muted]="!getPatientName(report)">{{ getPatientName(report) || '-' }}</span></div>
+                <div class="data-field"><span class="field-label">Doctor</span><span class="field-value" [class.muted]="!getDoctorName(report)">{{ getDoctorName(report) || '-' }}</span></div>
+                <div class="data-field"><span class="field-label">Doctor Email</span><span class="field-value" [class.muted]="!report.doctorEmail">{{ report.doctorEmail || '-' }}</span></div>
+                <div class="data-field" *ngIf="report.reportUrl">
+                  <span class="field-label">Download Link</span>
+                  <span class="field-value">
+                    <a [href]="report.reportUrl" target="_blank" class="download-link">
+                      <i class="fi fi-rr-cloud-download me-1"></i> Cloudinary PDF
+                    </a>
+                  </span>
+                </div>
+                <div class="data-field"><span class="field-label">Created At</span><span class="field-value" [class.muted]="!report.createdAt">{{ report.createdAt || '-' }}</span></div>
+                <div class="data-field"><span class="field-label">Approved At</span><span class="field-value" [class.muted]="!report.approvedAt">{{ report.approvedAt || '-' }}</span></div>
+                <div class="data-field full"><span class="field-label">Description</span><div class="desc-block">{{ report.description || 'No description provided.' }}</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card mt-4" *ngIf="report.files && report.files.length > 0">
+            <div class="info-card-header">
+              <span class="card-icon icon-green"><i class="fi fi-rr-folder-open"></i></span>
+              <h5>Attached Files ({{ report.files.length }})</h5>
+            </div>
+            <div class="info-card-body">
+              <div class="attached-files-list">
+                <div class="file-item" *ngFor="let file of report.files">
+                  <div class="file-icon">
+                    <i class="fi fi-rr-file-pdf" *ngIf="file.fileType === 'PDF'"></i>
+                    <i class="fi fi-rr-picture" *ngIf="file.fileType !== 'PDF'"></i>
+                  </div>
+                  <div class="file-details">
+                    <span class="file-name">{{ file.fileName }}</span>
+                    <span class="file-meta">{{ file.fileType }} • {{ file.createdAt | date }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!selectedReport">
+        <div class="mr-no-selection">
+          <div class="no-sel-icon"><i class="fi fi-rr-document"></i></div>
+          <p class="no-sel-title">No report selected</p>
+          <p class="no-sel-sub">Choose a report from the list to view its details here.</p>
+        </div>
+      </ng-container>
+    </main>
+  </div>
+
   <div class="mr-modal-backdrop" *ngIf="isFormOpen" (click)="closeFormModal()">
     <section class="mr-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
-
       <div class="mr-modal-header">
         <h3>
-          <span class="modal-header-icon">
-            <i class="fi fi-rr-document"></i>
-          </span>
+          <span class="modal-header-icon"><i class="fi fi-rr-document"></i></span>
           {{ formMode === 'create' ? '📝 Create New Medical Report & Attach Files' : 'Edit Report' }}
         </h3>
-        <button id="btn-modal-close" type="button" class="btn-modal-close" (click)="closeFormModal()"
-          aria-label="Close modal">
+        <button id="btn-modal-close" type="button" class="btn-modal-close" (click)="closeFormModal()" aria-label="Close modal">
           <i class="fi fi-rr-cross-small"></i>
         </button>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="validateAndSave()">
         <div class="mr-modal-body">
-
           <div *ngIf="formError" class="alert alert-danger mb-3 rounded-3">
             <i class="fi fi-rr-triangle-warning me-2"></i>{{ formError }}
           </div>
 
           <div class="row g-3">
-
-            <!-- Title -->
             <div class="col-12">
               <label class="form-label" for="modal-title">Report Title</label>
-              <input id="modal-title" type="text" class="form-control" formControlName="title"
-                placeholder="e.g. Annual Brain MRI Evaluation" />
+              <input id="modal-title" type="text" class="form-control" formControlName="title" placeholder="e.g. Annual Brain MRI Evaluation" />
               <small class="text-danger" *ngIf="controlHasError('title')">Title is required (min 2 chars).</small>
             </div>
 
-            <!-- Patient -->
             <div class="col-md-6">
               <label class="form-label" for="modal-patient">Patient</label>
               <select id="modal-patient" class="form-select" formControlName="patientid">
                 <option [ngValue]="null">Select patient…</option>
-                <option *ngFor="let p of patients" [ngValue]="p.userId">
-                  {{ p.firstName }} {{ p.lastName }}
-                </option>
+                <option *ngFor="let p of patients" [ngValue]="p.userId">{{ p.firstName }} {{ p.lastName }}</option>
               </select>
               <small class="text-danger" *ngIf="controlHasError('patientid')">Patient is required.</small>
             </div>
 
-            <!-- Doctor -->
             <div class="col-md-6">
               <label class="form-label" for="modal-doctor">Doctor</label>
-              <!-- Doctor is logged in: show read-only name -->
-              <input *ngIf="authService.isDoctor() && formMode === 'create'" type="text" class="form-control" readonly
-                [value]="loggedDoctorName" />
-              <!-- Admin or edit mode: show dropdown -->
-              <select *ngIf="!(authService.isDoctor() && formMode === 'create')" id="modal-doctor" class="form-select"
-                formControlName="doctorid">
+              <input *ngIf="authService.isDoctor() && formMode === 'create'" type="text" class="form-control" readonly [value]="loggedDoctorName" />
+              <select *ngIf="!(authService.isDoctor() && formMode === 'create')" id="modal-doctor" class="form-select" formControlName="doctorid">
                 <option [ngValue]="null">Select doctor…</option>
-                <option *ngFor="let d of doctors" [ngValue]="d.userId">
-                  {{ d.firstName }} {{ d.lastName }}
-                </option>
+                <option *ngFor="let d of doctors" [ngValue]="d.userId">{{ d.firstName }} {{ d.lastName }}</option>
               </select>
               <small class="text-danger" *ngIf="controlHasError('doctorid')">Doctor is required.</small>
             </div>
 
-            <!-- Status -->
             <div class="col-md-6">
               <label class="form-label" for="modal-status">Status</label>
               <select id="modal-status" class="form-select" formControlName="status">
@@ -422,13 +258,11 @@
               </select>
             </div>
 
-            <!-- Approved At -->
             <div class="col-md-6">
               <label class="form-label" for="modal-approved-at">Approved At</label>
               <input id="modal-approved-at" type="datetime-local" class="form-control" formControlName="approvedAt" />
             </div>
 
-            <!-- Existing Files Selection -->
             <div class="col-12">
               <div class="file-selector-card shadow-sm border p-3 rounded-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -436,32 +270,24 @@
                     <i class="fi fi-rr-folder-open me-1"></i> Attach Existing Records
                   </label>
                   <div class="search-mini position-relative d-inline-block">
-                    <input type="text" class="form-control form-control-sm ps-4 rounded-pill"
-                      placeholder="Filter files..." [(ngModel)]="fileQuery" [ngModelOptions]="{standalone: true}">
-                    <i class="fi fi-rr-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"
-                      style="font-size: 0.7rem;"></i>
+                    <input type="text" class="form-control form-control-sm ps-4 rounded-pill" placeholder="Filter files..."
+                      [(ngModel)]="fileQuery" [ngModelOptions]="{standalone: true}">
+                    <i class="fi fi-rr-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted" style="font-size: 0.7rem;"></i>
                   </div>
-                  <span class="badge bg-light text-primary border rounded-pill">{{ getFilteredFiles().length }} / {{
-                    allFiles.length }}</span>
+                  <span class="badge bg-light text-primary border rounded-pill">{{ getFilteredFiles().length }} / {{ allFiles.length }}</span>
                 </div>
 
-                <div class="file-selection-container"
-                  style="max-height: 200px; overflow-y: auto; background: #fafbfc; border-radius: 12px; border: 1px solid #eee; padding: 10px;">
+                <div class="file-selection-container" style="max-height: 200px; overflow-y: auto; background: #fafbfc; border-radius: 12px; border: 1px solid #eee; padding: 10px;">
                   <div *ngIf="getFilteredFiles().length === 0" class="text-center py-3 text-muted">
-                    <small>{{ allFiles.length > 0 ? 'No files match your filter.' : 'No files found in system
-                      repository.' }}</small>
+                    <small>{{ allFiles.length > 0 ? 'No files match your filter.' : 'No files found in system repository.' }}</small>
                   </div>
 
-                  <div class="form-check border-bottom mb-2 pb-2 last-border-none" *ngFor="let f of getFilteredFiles()"
-                    [id]="'file-check-' + f.fileid">
+                  <div class="form-check border-bottom mb-2 pb-2 last-border-none" *ngFor="let f of getFilteredFiles()" [id]="'file-check-' + f.fileid">
                     <input class="form-check-input" type="checkbox" [value]="f.fileid" [id]="'f' + f.fileid"
                       (change)="onFileCheck($event, f.fileid)" [checked]="isFileSelected(f.fileid)">
-                    <label class="form-check-label d-flex justify-content-between align-items-center w-100"
-                      [for]="'f' + f.fileid">
+                    <label class="form-check-label d-flex justify-content-between align-items-center w-100" [for]="'f' + f.fileid">
                       <span class="text-truncate" style="max-width: 250px;">{{ f.fileName }}</span>
-                      <span class="badge rounded-pill"
-                        [ngClass]="f.fileType === 'PDF' ? 'bg-danger-subtle text-danger' : 'bg-info-subtle text-info'"
-                        style="font-size: 0.65rem;">
+                      <span class="badge rounded-pill" [ngClass]="f.fileType === 'PDF' ? 'bg-danger-subtle text-danger' : 'bg-info-subtle text-info'" style="font-size: 0.65rem;">
                         {{ f.fileType }}
                       </span>
                     </label>
@@ -471,15 +297,11 @@
               </div>
             </div>
 
-            <!-- Description -->
             <div class="col-12 mt-3">
               <label class="form-label" for="modal-description">Detailed Findings & Observations</label>
-              <textarea id="modal-description" class="form-control" rows="4" formControlName="description"
-                placeholder="Describe the medical findings, observations, and recommendations…"></textarea>
-              <small class="text-danger" *ngIf="controlHasError('description')">Description is required (min 2
-                chars).</small>
+              <textarea id="modal-description" class="form-control" rows="4" formControlName="description" placeholder="Describe the medical findings, observations, and recommendations..."></textarea>
+              <small class="text-danger" *ngIf="controlHasError('description')">Description is required (min 2 chars).</small>
             </div>
-
           </div>
         </div>
 
@@ -491,8 +313,6 @@
           </button>
         </div>
       </form>
-
     </section>
   </div>
-
-</div> <!-- end .mr-layout -->
+</div>

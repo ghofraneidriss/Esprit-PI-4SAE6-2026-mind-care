@@ -16,13 +16,11 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
-import { FrontofficeActivitiesPage } from './activities/activities';
-import { PatientIncidentsComponent } from './incident-list-front/patient-incidents';
-import { PatientIncidentsHistoryComponent } from './incident-list-front/patient-incidents-history';
-import { IncidentReportFrontPage } from './incident-report/incident-report-front';
+import { PatientReportsPage } from './reports/reports';
+import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missions';
 
 const routes: Routes = [
-  { path: '', component: Home1 },
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: '404', component: Page404FrontPage },
   { path: 'about', component: AboutFrontPage },
   { path: 'contact', component: ContactFrontPage },
@@ -40,12 +38,8 @@ const routes: Routes = [
   { path: 'auth/new-password-cover', component: NewPasswordCoverAuthPage },
   { path: 'auth/signup', component: RegisterCoverAuthPage },
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
-  { path: 'activities', component: FrontofficeActivitiesPage },
-  { path: 'incidents', component: PatientIncidentsHistoryComponent },
-  { path: 'incident-list-front', component: PatientIncidentsComponent },
-  { path: 'incident-report', component: IncidentReportFrontPage },
-  { path: 'incidents/history', component: PatientIncidentsHistoryComponent },
-  { path: 'incidents/report', component: IncidentReportFrontPage },
+  { path: 'reports', component: PatientReportsPage },
+  { path: 'my-missions', component: VolunteerMissionsComponent },
   { path: '**', redirectTo: '' },
 ];
 

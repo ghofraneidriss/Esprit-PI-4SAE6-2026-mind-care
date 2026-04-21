@@ -17,9 +17,11 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
-import { IncidentsPage } from './incidents/incidents';
+import { VolunteeringPageComponent } from './volunteering/volunteering';
+import { AssignmentHistoryPageComponent } from './assignment-history/assignment-history';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { BackofficeShellComponent } from './backoffice-shell/backoffice-shell';
 
 @NgModule({
   declarations: [
@@ -38,10 +40,12 @@ import { Footer } from './footer/footer';
     UserManagementPage,
     MedicalReportsPageComponent,
     FilesManagementPageComponent,
-    IncidentsPage,
+    VolunteeringPageComponent,
+    AssignmentHistoryPageComponent,
     Header,
     Footer,
+    BackofficeShellComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })
-export class BackofficeModule {}
+export class BackofficeModule { }

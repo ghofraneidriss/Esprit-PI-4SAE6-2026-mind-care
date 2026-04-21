@@ -9,7 +9,7 @@ import { AuthService, RegisterRequest } from '../auth.service';
   styleUrls: ['./register-cover.css'],
 })
 export class RegisterCoverAuthPage {
-  roles = ['PATIENT', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
+  roles = ['PATIENT', 'VOLUNTEER', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
 
   model: RegisterRequest = {
     firstName: '',

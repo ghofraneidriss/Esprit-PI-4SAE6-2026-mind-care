@@ -1,0 +1,206 @@
+<div class="ah-page">
+    <header class="ah-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="ah-title">My Mission History</h1>
+                <p class="ah-subtitle">Track your assigned missions and completed volunteer tasks</p>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 14px; margin-bottom: 8px;">
+                    <strong>Session Status:</strong> 
+                    <span [style.color]="isSessionActive ? '#16a34a' : '#dc2626'">
+                        {{ getSessionStatus() }}
+                    </span>
+                    <button style="margin-left: 8px; padding: 2px 8px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px;" 
+                            (click)="refreshSessionStatus()">
+                        🔄 Refresh
+                    </button>
+                </div>
+                <div style="font-size: 12px; color: #666;">
+                    Last heartbeat: <span [style.fontWeight]="isSessionActive ? 'bold' : 'normal'">{{ getLastHeartbeat() }}</span>
+                </div>
+                <div *ngIf="onlineVolunteers.length > 0" style="font-size: 12px; color: #666; margin-top: 4px;">
+                    {{ onlineVolunteers.length }} volunteers online
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="ah-stats-grid">
+        <div class="ah-stat-card card-blue">
+            <div class="ah-stat-content">
+                <span class="ah-stat-label">Total Assignments</span>
+                <h2 class="ah-stat-val">{{ totalAssignments }}</h2>
+            </div>
+            <div class="ah-stat-icon icon-blue"><i class="fi fi-rr-chart-pie-alt"></i></div>
+        </div>
+        <div class="ah-stat-card card-yellow">
+            <div class="ah-stat-content">
+                <span class="ah-stat-label">Active Missions</span>
+                <h2 class="ah-stat-val">{{ activeAssignments }}</h2>
+            </div>
+            <div class="ah-stat-icon icon-yellow"><i class="fi fi-rr-rotate-right"></i></div>
+        </div>
+        <div class="ah-stat-card card-green">
+            <div class="ah-stat-content">
+                <span class="ah-stat-label">Completed</span>
+                <h2 class="ah-stat-val">{{ completedMissionsCount }}</h2>
+            </div>
+            <div class="ah-stat-icon icon-green"><i class="fi fi-rr-check-circle"></i></div>
+        </div>
+        <div class="ah-stat-card card-red">
+            <div class="ah-stat-content">
+                <span class="ah-stat-label">My Avg Rating</span>
+                <h2 class="ah-stat-val">{{ averageRating }}<span class="ah-stat-small">/5</span></h2>
+            </div>
+            <div class="ah-stat-icon icon-red"><i class="fi fi-sr-star"></i></div>
+        </div>
+    </section>
+
+    <div class="ah-content-box">
+        <div class="ah-toolbar">
+            <div class="ah-search-wrap">
+                <i class="fi fi-rr-search ah-search-icon"></i>
+                <input type="text" class="ah-search-input" placeholder="Search mission or patient..."
+                    [(ngModel)]="searchQuery" />
+            </div>
+            <div class="ah-filters">
+                <button class="ah-filter-btn" [class.active]="activeFilter === 'All'"
+                    (click)="setFilter('All')">All</button>
+                <button class="ah-filter-btn" [class.active]="activeFilter === 'Assigned'"
+                    (click)="setFilter('Assigned')">Assigned</button>
+                <button class="ah-filter-btn" [class.active]="activeFilter === 'In Progress'"
+                    (click)="setFilter('In Progress')">In Progress</button>
+                <button class="ah-filter-btn" [class.active]="activeFilter === 'Completed'"
+                    (click)="setFilter('Completed')">Completed</button>
+            </div>
+            <button class="ah-btn-export" (click)="downloadHistoryPdf()">
+                <i class="fi fi-rr-download"></i> Download PDF
+            </button>
+            <div class="ah-sort">
+                <i class="fi fi-rr-sort-amount-down-alt"></i>
+                <select class="ah-sort-select">
+                    <option value="latest">Latest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="ah-list-meta">
+            <span class="ah-showing">Showing <strong>{{ filteredAssignments.length }}</strong> assignments</span>
+            <span class="ah-hint"><i class="fi fi-rr-info"></i> Your recent missions are listed below</span>
+        </div>
+
+        <div class="ah-table-wrap">
+            <table class="ah-table">
+                <thead>
+                    <tr>
+                        <th>MISSION</th>
+                        <th>CATEGORY</th>
+                        <th>PATIENT</th>
+                        <th>DATE ASSIGNED</th>
+                        <th>SCHEDULED</th>
+                        <th>DURATION</th>
+                        <th>RATING</th>
+                        <th>STATUS</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let a of filteredAssignments">
+                        <td>
+                            <div class="ah-td-mission">
+                                <div class="ah-td-icon"><i [class]="a.missionIcon"></i></div>
+                                <div class="ah-td-title">
+                                    <div class="ah-td-name">{{ a.missionTitle }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="ah-td-category">{{ a.category }}</span></td>
+                        <td>
+                            <div class="ah-td-patient">
+                                <div class="ah-patient-avatar bg-{{ a.patientColor }}">{{ a.patientInitials }}</div>
+                                <span class="ah-patient-name">{{ a.patientName }}</span>
+                            </div>
+                        </td>
+                        <td><span class="ah-td-date">{{ a.assignedDate }}</span></td>
+                        <td><span class="ah-td-date">{{ a.missionDate }}</span></td>
+                        <td><span class="ah-td-duration">{{ a.duration }}</span></td>
+                        <td>
+                            <div class="ah-td-rating" *ngIf="a.rating; else noRating">
+                                <i class="fi fi-sr-star star-filled"
+                                    *ngFor="let i of starsArray(a.rating); let idx = index"
+                                    [class.star-empty]="!isFilledStar(idx, a.rating)"></i>
+                                <span class="ah-rating-val">{{ a.rating }}</span>
+                            </div>
+                            <ng-template #noRating><span class="ah-td-dash">-</span></ng-template>
+                        </td>
+                        <td><span class="ah-pill ah-pill-{{ a.statusColor }}"><span class="ah-dot"></span> {{ a.status
+                                }}</span></td>
+                        <td>
+                            <div class="ah-actions">
+                                <button class="ah-btn-details">View</button>
+                                <button *ngIf="a.status === 'Assigned'" class="ah-btn-start"
+                                    (click)="startMission(a.id)">Start</button>
+                                <button *ngIf="a.status === 'In Progress'" class="ah-btn-complete"
+                                    (click)="completeMission(a.id)">Complete</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="ah-loading" *ngIf="loading">
+                <p>Loading your assignments...</p>
+            </div>
+
+            <div class="ah-empty" *ngIf="!loading && filteredAssignments.length === 0">
+                <i class="fi fi-rr-inbox"></i>
+                <p>No assignments found matching your criteria</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ah-completed-section" *ngIf="myCompletedMissions.length > 0">
+        <div class="ah-completed-header">
+            <div>
+                <h2 class="ah-title">Achieved Goals</h2>
+                <p class="ah-subtitle">Missions you have successfully completed</p>
+            </div>
+            <div class="ah-completed-badge">{{ myCompletedMissions.length }} Completed</div>
+        </div>
+
+        <div class="ah-grid">
+            <div class="ah-card" *ngFor="let m of myCompletedMissions">
+                <div class="ah-card-header">
+                    <div class="ah-card-icon"><i [class]="m.missionIcon"></i></div>
+                    <div class="ah-card-actions">
+                        <button
+                            type="button"
+                            class="ah-btn-pdf"
+                            (click)="downloadAchievementPdf(m)"
+                            [attr.aria-label]="'Download PDF for ' + m.missionTitle"
+                            title="Download PDF">
+                            <i class="fi fi-rr-file-pdf"></i>
+                        </button>
+                        <span class="ah-completed-pill"><span class="ah-dot"></span> Completed</span>
+                    </div>
+                </div>
+                <h3 class="ah-card-title">{{ m.missionTitle }}</h3>
+                <span class="ah-card-category">{{ m.category }}</span>
+                <div class="ah-card-patient">
+                    <div class="ah-patient-avatar mini bg-{{ m.patientColor }}">{{ m.patientInitials }}</div>
+                    <span class="ah-patient-name">{{ m.patientName }}</span>
+                </div>
+                <div class="ah-card-footer">
+                    <span class="ah-card-date"><i class="fi fi-rr-calendar"></i> {{ m.missionDate }}</span>
+                    <div class="ah-card-rating" *ngIf="m.rating">
+                        <i class="fi fi-sr-star star-filled" *ngFor="let i of starsArray(m.rating); let idx = index"
+                            [class.star-empty]="!isFilledStar(idx, m.rating)"></i>
+                        <span class="ah-rating-val">{{ m.rating }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
