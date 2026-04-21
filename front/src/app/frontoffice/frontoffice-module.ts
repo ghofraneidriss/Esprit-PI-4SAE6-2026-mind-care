@@ -19,10 +19,14 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
-import { FrontofficeActivitiesPage } from './activities/activities';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missions';
+import { PatientReportsPage } from './reports/reports';
+import { PatientProfile } from './patient-profile/patient-profile';
+import { PatientPrescriptions } from './patient-prescriptions/patient-prescriptions.component';
+import { PatientPrescriptionDetail } from './patient-prescription-detail/patient-prescription-detail.component';
+import { AppointmentComponent } from './appointment/appointment';
 
 @NgModule({
   declarations: [
@@ -42,10 +46,14 @@ import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missi
     LoginCoverAuthPage,
     NewPasswordCoverAuthPage,
     RegisterCoverAuthPage,
-    FrontofficeActivitiesPage,
     Header,
     Footer,
     VolunteerMissionsComponent,
+    PatientReportsPage,
+    PatientProfile,
+    PatientPrescriptions,
+    PatientPrescriptionDetail,
+    AppointmentComponent,
   ],
   imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
 })

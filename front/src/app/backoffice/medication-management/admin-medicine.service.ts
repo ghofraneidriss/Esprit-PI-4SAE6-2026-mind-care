@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class AdminMedicineService {
   private apiUrl = 'http://localhost:8083/api/admin/medicines';
+  private readonly medicamentsApiUrl = 'http://localhost:8083/api/medicaments';
 
   constructor(private http: HttpClient) { }
 
@@ -38,5 +39,13 @@ export class AdminMedicineService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(`${this.apiUrl}/import`, formData, { responseType: 'text' });
+  }
+
+  suggestNames(query: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.medicamentsApiUrl}/suggest-names?query=${query}`);
+  }
+
+  suggestCategories(query: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.medicamentsApiUrl}/suggest-categories?query=${query}`);
   }
 }

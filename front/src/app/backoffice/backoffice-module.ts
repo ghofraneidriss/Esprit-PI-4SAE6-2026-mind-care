@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -22,11 +22,19 @@ import { AssignmentHistoryPageComponent } from './assignment-history/assignment-
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { BackofficeShellComponent } from './backoffice-shell/backoffice-shell';
+import { IncidentsPage } from './incidents/incidents';
+import { DoctorConsultations } from './doctor-consultations/doctor-consultations';
+import { PatientFollowUpComponent } from './patient-follow-up/patient-follow-up';
+import { DoctorPrescriptionCreate } from './doctor-prescriptions/doctor-prescription-create.component';
+import { DoctorPrescriptionDetail } from './doctor-prescriptions/doctor-prescription-detail.component';
+import { DoctorPrescriptionHistory } from './doctor-prescriptions/doctor-prescription-history.component';
+import { MedicationManagement } from './medication-management/medication-management.component';
+import { DoctorAppointments } from './doctor-appointments/doctor-appointments';
+import { DoctorAppointmentDetail } from './doctor-appointment-detail/doctor-appointment-detail';
 
 @NgModule({
   declarations: [
     Home2,
-   
     CalendarPage,
     ChatPage,
     CustomersPage,
@@ -45,6 +53,15 @@ import { BackofficeShellComponent } from './backoffice-shell/backoffice-shell';
     Header,
     Footer,
     BackofficeShellComponent,
+    IncidentsPage,
+    DoctorConsultations,
+    PatientFollowUpComponent,
+    DoctorPrescriptionCreate,
+    DoctorPrescriptionDetail,
+    DoctorPrescriptionHistory,
+    MedicationManagement,
+    DoctorAppointments,
+    DoctorAppointmentDetail,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })

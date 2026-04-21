@@ -286,6 +286,13 @@ export class PatientProfile implements OnInit {
     this.router.navigate(['/']);
   }
 
+  viewPrescriptions(): void {
+    const patientId = this.profile.userId || this.accountUser?.userId || 0;
+    if (patientId) {
+      this.router.navigate(['/patient-prescriptions', patientId]);
+    }
+  }
+
   get patientAge(): number | null {
     if (!this.profile.dateOfBirth) return null;
     const dob = new Date(this.profile.dateOfBirth);

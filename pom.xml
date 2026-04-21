@@ -31,8 +31,8 @@
         <module>server/forums_service</module>
         <module>movement_service</module>
         <module>traitement_et_consultation</module>
-        <module>eureka</module>
-        <module>volunteer</module>
+        <module>server/eureka_server</module>
+        <module>ordonnance_et_medicaments</module>
     </modules>
 
     <properties>

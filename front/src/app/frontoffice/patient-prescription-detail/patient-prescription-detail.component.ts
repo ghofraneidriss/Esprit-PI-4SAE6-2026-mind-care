@@ -1,8 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrescriptionService } from '../prescription.service';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 /**
  * Composant affichant le détail d'une prescription.
@@ -27,7 +25,7 @@ import jsPDF from 'jspdf';
                   style="background: linear-gradient(135deg,#1e696a,#2a9d8f); color:white; border:none; box-shadow:0 4px 12px rgba(30,105,106,.3);"
                   (click)="exportToPdf()">
             <i class="bi bi-file-earmark-pdf-fill"></i>
-            {{ isExporting ? 'Generating PDF...' : 'Download as PDF' }}
+            {{ isExporting ? 'Preparing print view...' : 'Print / Save as PDF' }}
           </button>
         </div>
 
@@ -338,8 +336,7 @@ export class PatientPrescriptionDetail implements OnInit {
   }
 
   /**
-   * Exporte le document de prescription en PDF via html2canvas + jsPDF.
-   * Capture le rendu HTML du document médical et le convertit en PDF A4.
+   * Open the browser print dialog so the user can save the prescription as PDF.
    */
   async exportToPdf(): Promise<void> {
     if (this.isExporting) return;
@@ -347,48 +344,7 @@ export class PatientPrescriptionDetail implements OnInit {
     this.cdr.detectChanges();
 
     try {
-      const element = document.getElementById('prescriptionDocument');
-      if (!element) {
-        this.isExporting = false;
-        this.cdr.detectChanges();
-        return;
-      }
-
-      const canvas = await html2canvas(element, {
-        scale: 2,           // haute résolution
-        useCORS: true,      // autorise les images externes (signature)
-        backgroundColor: '#ffffff',
-        logging: false,
-      });
-
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
-
-      const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
-      const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * pageWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      // Première page
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // Pages supplémentaires si le contenu dépasse une page A4
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`Prescription_PR-${this.prescription.id}_MindCare.pdf`);
+      window.print();
     } catch (err) {
       console.error('[PatientPrescriptionDetail] PDF export error:', err);
     } finally {

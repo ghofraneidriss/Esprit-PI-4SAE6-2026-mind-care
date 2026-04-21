@@ -1,8 +1,7 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Home1 } from './home1/home1';
 import { Page404FrontPage } from './404/404';
-import { AboutFrontPage } from './about/about';
 import { ContactFrontPage } from './contact/contact';
 import { DoctorsFrontPage } from './doctors/doctors';
 import { FaqFrontPage } from './faq/faq';
@@ -18,11 +17,14 @@ import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { PatientReportsPage } from './reports/reports';
 import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missions';
+import { PatientProfile } from './patient-profile/patient-profile';
+import { PatientPrescriptions } from './patient-prescriptions/patient-prescriptions.component';
+import { PatientPrescriptionDetail } from './patient-prescription-detail/patient-prescription-detail.component';
+import { AppointmentComponent } from './appointment/appointment';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: '', component: Home1 },
   { path: '404', component: Page404FrontPage },
-  { path: 'about', component: AboutFrontPage },
   { path: 'contact', component: ContactFrontPage },
   { path: 'doctors', component: DoctorsFrontPage },
   { path: 'faq', component: FaqFrontPage },
@@ -40,6 +42,10 @@ const routes: Routes = [
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
   { path: 'reports', component: PatientReportsPage },
   { path: 'my-missions', component: VolunteerMissionsComponent },
+  { path: 'patient-profile', component: PatientProfile },
+  { path: 'appointment', component: AppointmentComponent },
+  { path: 'patient-prescriptions/:patientId', component: PatientPrescriptions },
+  { path: 'patient-prescription-detail/:id', component: PatientPrescriptionDetail },
   { path: '**', redirectTo: '' },
 ];
 

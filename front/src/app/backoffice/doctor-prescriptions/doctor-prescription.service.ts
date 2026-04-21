@@ -11,6 +11,8 @@ import { Observable } from 'rxjs';
 })
 export class DoctorPrescriptionService {
   private apiUrl = 'http://localhost:8083/api/doctor';
+  private readonly adminMedicineApiUrl = 'http://localhost:8083/api/admin/medicines';
+  private readonly suggestionApiUrl = 'http://localhost:8083/api/medicaments';
 
   constructor(private http: HttpClient) { }
 
@@ -20,7 +22,15 @@ export class DoctorPrescriptionService {
   }
 
   getAllMedicines(): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:8083/api/admin/medicines`);
+    return this.http.get<any[]>(this.adminMedicineApiUrl);
+  }
+
+  suggestMedicineNames(query: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.suggestionApiUrl}/suggest-names?query=${query}`);
+  }
+
+  suggestMedicineCategories(query: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.suggestionApiUrl}/suggest-categories?query=${query}`);
   }
 
   // Gestion des prescriptions
@@ -55,8 +65,26 @@ export class DoctorPrescriptionService {
     return this.http.get<any[]>(`${this.apiUrl}/prescriptions/check-doctor-shopping?${params}`);
   }
 
+  checkDrugSafety(
+    patientId: number,
+    medicineId: number,
+    startDate: string,
+    endDate: string,
+    currentPrescriptionId: number = 0
+  ): Observable<any[]> {
+    const params =
+      `patientId=${patientId}&medicineId=${medicineId}` +
+      `&startDate=${startDate}&endDate=${endDate}` +
+      `&currentPrescriptionId=${currentPrescriptionId}`;
+    return this.http.get<any[]>(`${this.apiUrl}/prescriptions/check-drug-safety?${params}`);
+  }
+
   createPrescription(prescription: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/prescriptions`, prescription);
+  }
+
+  saveDraftPrescription(prescription: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/prescriptions/draft`, prescription);
   }
 
   updatePrescription(id: number, prescription: any): Observable<any> {

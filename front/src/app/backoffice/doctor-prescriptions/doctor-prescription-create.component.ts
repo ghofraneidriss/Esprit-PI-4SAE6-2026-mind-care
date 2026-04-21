@@ -192,6 +192,45 @@ import { PatientProfileService } from '../../frontoffice/patient-profile/patient
                           </div>
                         </div>
 
+                        <div *ngIf="drugSafetyWarnings[i] && drugSafetyWarnings[i].length > 0"
+                             class="d-flex align-items-start gap-3 rounded-3 p-3 mb-2"
+                             style="background:#eff6ff; border:1px solid #3b82f6; border-left:5px solid #1d4ed8;">
+                          <i class="bi bi-shield-check fs-4" style="color:#1d4ed8; margin-top:2px; flex-shrink:0;"></i>
+                          <div style="width:100%;">
+                            <p class="fw-bold mb-2" style="color:#1e3a8a; font-size:.95rem;">
+                              Advanced Drug Safety Check
+                            </p>
+                            <div *ngFor="let alert of drugSafetyWarnings[i]" class="mb-2 p-2 rounded-2"
+                                 style="background:#f8fbff; border:1px solid #bfdbfe;">
+                              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                <div>
+                                  <span class="fw-bold text-primary">{{ alert.alertLabel || alert.alertType }}</span>
+                                  <span class="text-muted small ms-2" *ngIf="alert.conflictingMedicineName">
+                                    {{ alert.conflictingMedicineName }}
+                                  </span>
+                                </div>
+                                <span class="badge rounded-pill px-3 py-2" style="background:#dbeafe; color:#1e3a8a; font-size:.78rem;">
+                                  {{ alert.alertType }}
+                                </span>
+                              </div>
+                              <p class="mb-0 mt-2 small text-primary" *ngIf="alert.contraindicationDetail">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                {{ alert.contraindicationDetail }}
+                              </p>
+                              <p class="mb-0 mt-2 small text-primary" *ngIf="alert.conflictingPrescriptionId">
+                                <i class="bi bi-calendar-range me-1"></i>
+                                Conflict #{{ alert.conflictingPrescriptionId }}
+                                <span *ngIf="alert.conflictStartDate && alert.conflictEndDate">
+                                  : {{ alert.conflictStartDate }} to {{ alert.conflictEndDate }}
+                                </span>
+                              </p>
+                            </div>
+                            <p class="text-muted small mb-0 mt-2">
+                              Review the alerts carefully before issuing the prescription.
+                            </p>
+                          </div>
+                        </div>
+
                         <div *ngIf="allergyWarnings[i] && allergyWarnings[i].length > 0"
                              class="d-flex align-items-start gap-3 rounded-3 p-3 mb-2"
                              style="background:#fff7ed; border:1px solid #fb923c; border-left:5px solid #ea580c;">
@@ -277,6 +316,16 @@ import { PatientProfileService } from '../../frontoffice/patient-profile/patient
                   </p>
                 </div>
 
+                <div *ngIf="hasAnyDrugSafetyWarning()"
+                     class="d-flex align-items-center gap-3 rounded-3 p-3 mb-4"
+                     style="background:#eff6ff; border:1px solid #3b82f6;">
+                  <i class="bi bi-shield-check fs-5 text-primary"></i>
+                  <p class="mb-0 small fw-medium text-primary">
+                    <strong>Advanced drug safety check detected conflicts.</strong>
+                    Review same medicine, INN, family, and contraindication alerts before issuing.
+                  </p>
+                </div>
+
                 <div *ngIf="errorMessage" class="alert alert-danger mb-4">
                     <i class="bi bi-exclamation-octagon-fill me-2"></i> {{ errorMessage }}
                 </div>
@@ -325,6 +374,7 @@ export class DoctorPrescriptionCreate implements OnInit {
   allergyWarnings: string[][] = [];
   /** Alertes de chevauchement de prescription par index de ligne */
   overlapWarnings: any[][] = [];
+  drugSafetyWarnings: any[][] = [];
   /**
    * Alertes de "doctor shopping" par index de ligne.
    * Déclenché si le patient a déjà une prescription active pour ce médicament
@@ -395,7 +445,7 @@ export class DoctorPrescriptionCreate implements OnInit {
   loadPatientAllergies(): void {
     this.profileService.getProfileByUserId(this.patientId).subscribe({
       next: (profile) => {
-        this.patientAllergies = profile?.allergies || [];
+        this.patientAllergies = (profile?.['allergies'] as string[] | undefined) || [];
         console.log('[AllergyCheck] Allergies loaded for patient', this.patientId, ':', this.patientAllergies);
         this.cdr.detectChanges();
       },
@@ -421,6 +471,9 @@ export class DoctorPrescriptionCreate implements OnInit {
     this.rxForm.patchValue({ status: draft.status || 'PENDING' });
     while (this.lines.length !== 0) this.lines.removeAt(0);
     this.allergyWarnings = [];
+    this.overlapWarnings = [];
+    this.drugSafetyWarnings = [];
+    this.doctorShoppingWarnings = [];
 
     (draft.lines || []).forEach((l: any) => {
       this.lines.push(this.fb.group({
@@ -430,6 +483,9 @@ export class DoctorPrescriptionCreate implements OnInit {
         endDate: [l.endDate, Validators.required]
       }));
       this.allergyWarnings.push([]);
+      this.overlapWarnings.push([]);
+      this.drugSafetyWarnings.push([]);
+      this.doctorShoppingWarnings.push([]);
     });
   }
 
@@ -438,17 +494,39 @@ export class DoctorPrescriptionCreate implements OnInit {
     this.hasDraft = false;
     while (this.lines.length !== 0) this.lines.removeAt(0);
     this.allergyWarnings = [];
+    this.overlapWarnings = [];
+    this.drugSafetyWarnings = [];
+    this.doctorShoppingWarnings = [];
     this.addLine();
   }
 
   goToManageMedications(): void {
-    this.rxService.saveDraft({
+    const draft = {
       patientId: this.patientId,
       patientName: this.patientName,
       consultationId: this.consultationId,
       status: this.rxForm.value.status,
       lines: this.rxForm.value.prescriptionLines
+    };
+
+    this.rxService.saveDraft(draft);
+
+    const currentUser = this.authService.getLoggedUser();
+    this.rxService.saveDraftPrescription({
+      consultationId: this.consultationId,
+      patientId: this.patientId,
+      doctorId: currentUser?.userId || 0,
+      status: this.rxForm.value.status,
+      prescriptionLines: (this.rxForm.value.prescriptionLines || []).map((l: any) => ({
+        medicine: { id: l.medicineId },
+        dosage: l.dosage,
+        startDate: l.startDate,
+        endDate: l.endDate
+      }))
+    }).subscribe({
+      error: (err) => console.warn('[Draft] Backend draft save failed, local draft kept:', err)
     });
+
     this.router.navigate(['/admin/medications']);
   }
 
@@ -476,6 +554,7 @@ export class DoctorPrescriptionCreate implements OnInit {
     this.allergyWarnings.push([]);
     this.overlapWarnings.push([]);
     this.doctorShoppingWarnings.push([]);
+    this.drugSafetyWarnings.push([]);
   }
 
   removeLine(index: number): void {
@@ -484,6 +563,7 @@ export class DoctorPrescriptionCreate implements OnInit {
       this.allergyWarnings.splice(index, 1);
       this.overlapWarnings.splice(index, 1);
       this.doctorShoppingWarnings.splice(index, 1);
+      this.drugSafetyWarnings.splice(index, 1);
     }
   }
 
@@ -499,6 +579,7 @@ export class DoctorPrescriptionCreate implements OnInit {
     this.allergyWarnings[lineIndex] = [];
     this.overlapWarnings[lineIndex] = [];
     this.doctorShoppingWarnings[lineIndex] = [];
+    this.drugSafetyWarnings[lineIndex] = [];
 
     if (!medicineId) { this.cdr.detectChanges(); return; }
     const med = this.medicines.find(m => m.id === medicineId);
@@ -521,6 +602,9 @@ export class DoctorPrescriptionCreate implements OnInit {
     // --- Vérification de chevauchement (JPQL backend) — déclenchée si les dates sont déjà remplies ---
     this.triggerOverlapCheck(lineIndex);
 
+    // --- Vérification de sécurité médicamenteuse complète ---
+    this.triggerDrugSafetyCheck(lineIndex, medicineId);
+
     // --- Détection du doctor shopping (JPQL backend) ---
     // Vérifie si ce patient a une prescription active pour ce médicament chez un autre médecin
     this.triggerDoctorShoppingCheck(lineIndex, medicineId);
@@ -534,6 +618,7 @@ export class DoctorPrescriptionCreate implements OnInit {
    */
   onDateChange(lineIndex: number): void {
     this.triggerOverlapCheck(lineIndex);
+    this.triggerDrugSafetyCheck(lineIndex, +(this.lines.at(lineIndex)?.value?.medicineId || 0));
   }
 
   /**
@@ -565,8 +650,38 @@ export class DoctorPrescriptionCreate implements OnInit {
     });
   }
 
+  /**
+   * Appelle le backend pour exécuter le contrôle de sécurité complet.
+   * Renvoie les alertes SAME_MEDICINE / SAME_INN / SAME_FAMILY / CONTRAINDICATION.
+   */
+  triggerDrugSafetyCheck(lineIndex: number, medicineId: number): void {
+    const line = this.lines.at(lineIndex)?.value;
+    if (!line || !line.medicineId || !line.startDate || !line.endDate) return;
+    if (!this.patientId) return;
+
+    this.rxService.checkDrugSafety(
+      this.patientId,
+      medicineId,
+      line.startDate,
+      line.endDate,
+      0
+    ).subscribe({
+      next: (alerts: any[]) => {
+        this.drugSafetyWarnings[lineIndex] = alerts;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.drugSafetyWarnings[lineIndex] = [];
+      }
+    });
+  }
+
   hasAnyAllergyWarning(): boolean {
     return this.allergyWarnings.some(w => w && w.length > 0);
+  }
+
+  hasAnyDrugSafetyWarning(): boolean {
+    return this.drugSafetyWarnings.some(w => w && w.length > 0);
   }
 
   /**
