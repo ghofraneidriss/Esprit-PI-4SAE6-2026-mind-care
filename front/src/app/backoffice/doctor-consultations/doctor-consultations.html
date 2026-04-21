@@ -1,0 +1,397 @@
+<style>
+    .nav-icon-link {
+        transition: all 0.2s ease;
+    }
+
+    .nav-icon-link:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        transform: translateY(-2px);
+    }
+</style>
+
+<!-- FLOATING SIDEBAR NAVIGATION -->
+<nav class="floating-sidebar d-flex flex-column align-items-center py-4 position-fixed z-3 h-100 bg-white shadow-sm"
+    style="width: 80px; top: 0; left: 0; gap: 1.5rem; border-right: 1px solid rgba(0,0,0,0.05);">
+
+    <!-- Logo - Updated to Teal -->
+    <a routerLink="/admin" class="mb-4 d-flex justify-content-center align-items-center rounded-circle shadow-sm"
+        style="width: 45px; height: 45px; background: #2D9A9B; color: white; text-decoration: none;">
+        <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
+    </a>
+
+    <!-- Home -->
+    <a routerLink="/admin"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-house"></i>
+    </a>
+
+    <!-- Appointments -->
+    <a routerLink="/admin/appointments"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-calendar-check" style="stroke-width: 1px;"></i>
+    </a>
+
+    <!-- Consultations (ACTIVE - Teal) -->
+    <a routerLink="/admin/consultations"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none shadow-sm"
+        style="width: 48px; height: 48px; color: #1e293b; background: #e0f2f1; border: 1px solid #2D9A9B; font-size: 1.3rem;">
+        <i class="bi bi-clipboard-plus" style="color: #2D9A9B;"></i>
+    </a>
+
+    <!-- Patient Follow-up -->
+    <a routerLink="/admin/patient-follow-up"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-heart-pulse"></i>
+    </a>
+
+    <div style="border-bottom: 2px solid #f1f5f9; width: 30px; margin: 0.5rem 0;"></div>
+
+    <!-- Add New Action -->
+    <a (click)="openAddModal()"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none shadow-sm cursor-pointer"
+        style="width: 46px; height: 46px; color: #2D9A9B; border: 2px solid #B2DFDB; background: white;">
+        <i class="bi bi-plus-lg fw-bold" style="font-size: 1.2rem;"></i>
+    </a>
+
+    <!-- Logout -->
+    <a routerLink="/auth/login"
+        class="nav-icon-link d-flex justify-content-center align-items-center text-decoration-none mt-auto"
+        style="width: 48px; height: 48px; color: #475569; font-size: 1.4rem;">
+        <i class="bi bi-box-arrow-left"></i>
+    </a>
+</nav>
+
+<div class="glass-dashboard-wrapper" style="margin-left: 80px; background: #F4F7F7; min-height: 100vh; padding: 20px;">
+    <!-- PAGE HEADER - Solid Teal as in screenshot -->
+    <div class="glass-header d-flex align-items-center mb-4"
+        style="background: #2D9A9B; border-radius: 16px; padding: 25px; border: none; box-shadow: 0 4px 20px rgba(45,154,155,0.25);">
+        <div class="glass-avatar me-3 shadow-sm bg-white d-flex justify-content-center align-items-center"
+            style="color: #2D9A9B; width: 60px; height: 60px; border-radius: 12px;">
+            <i class="bi bi-file-earmark-medical fs-2"></i>
+        </div>
+        <div>
+            <div class="d-flex gap-2 mb-1">
+                <button class="glass-btn-sm"
+                    style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;"
+                    routerLink="/admin">
+                    <i class="bi bi-house-door me-1"></i> Dashboard
+                </button>
+                <button class="glass-btn-sm"
+                    style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;"
+                    (click)="loadConsultations()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                </button>
+                <button class="glass-btn-sm" style="background: white; border: none; color: #2D9A9B; font-weight: 700;"
+                    (click)="openAddModal()">
+                    <i class="bi bi-plus-lg me-1"></i> New Consultation
+                </button>
+            </div>
+            <h3 class="fw-bold mb-0 text-white" style="letter-spacing: 0.5px; font-size: 1.75rem;">
+                Consultation Management
+            </h3>
+            <p class="mb-0 text-white opacity-75 small mt-1">
+                Track, add and manage patient consultations and Alzheimer's progression.
+            </p>
+        </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="row g-3 mb-4">
+        <!-- Total -->
+        <div class="col-6 col-md-3">
+            <div class="glass-stat stat-total">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="stat-icon-box"><i class="bi bi-clipboard2-pulse"></i></div>
+                        <div>
+                            <div class="stat-label"><i class="bi bi-grid-fill me-1 text-secondary"></i>TOTAL</div>
+                            <div class="stat-value">{{ consultations.length }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-pill">{{ consultations.length }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preclinical -->
+        <div class="col-6 col-md-3">
+            <div class="glass-stat stat-preclinical">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="stat-icon-box"><i class="bi bi-activity"></i></div>
+                        <div>
+                            <div class="stat-label"><i class="bi bi-circle me-1 text-secondary"></i>PRECLINICAL</div>
+                            <div class="stat-value">{{ countByStage('PRECLINICAL') }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-pill">{{ countByStage('PRECLINICAL') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moderate -->
+        <div class="col-6 col-md-3">
+            <div class="glass-stat stat-moderate">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="stat-icon-box"><i class="bi bi-exclamation-triangle"></i></div>
+                        <div>
+                            <div class="stat-label"><i class="bi bi-dash-circle me-1 text-secondary"></i>MODERATE</div>
+                            <div class="stat-value">{{ countByStage('MODERATE') }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-pill">{{ countByStage('MODERATE') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Severe -->
+        <div class="col-6 col-md-3">
+            <div class="glass-stat stat-severe">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="stat-icon-box"><i class="bi bi-exclamation-octagon"></i></div>
+                        <div>
+                            <div class="stat-label"><i class="bi bi-x-circle me-1 text-secondary"></i>SEVERE</div>
+                            <div class="stat-value">{{ countByStage('SEVERE') }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-pill">{{ countByStage('SEVERE') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ERROR & LOADING -->
+    <div *ngIf="loadError" class="alert glass-alert mb-3">
+        <i class="bi bi-exclamation-triangle me-2"></i> {{ loadError }}
+    </div>
+
+    <div *ngIf="isLoading" class="text-center text-white py-5">
+        <div class="spinner-border text-white" role="status"></div>
+        <div class="mt-2">Loading consultations...</div>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="glass-table-wrapper" *ngIf="!isLoading">
+
+        <!-- Tabs + Search bar -->
+        <div class="glass-tabs-bar d-flex justify-content-between align-items-center">
+            <div class="glass-tabs">
+                <button class="glass-tab" [class.active]="stageFilter === 'all'" (click)="setStageFilter('all')">
+                    <i class="bi bi-clipboard2-pulse"></i> All
+                </button>
+                <button class="glass-tab preclinical-tab" [class.active]="stageFilter === 'PRECLINICAL'"
+                    (click)="setStageFilter('PRECLINICAL')">
+                    <i class="bi bi-activity"></i> Preclinical
+                </button>
+                <button class="glass-tab mild-tab" [class.active]="stageFilter === 'MILD'"
+                    (click)="setStageFilter('MILD')">
+                    <i class="bi bi-bar-chart"></i> Mild
+                </button>
+                <button class="glass-tab moderate-tab" [class.active]="stageFilter === 'MODERATE'"
+                    (click)="setStageFilter('MODERATE')">
+                    <i class="bi bi-exclamation-triangle"></i> Moderate
+                </button>
+                <button class="glass-tab severe-tab" [class.active]="stageFilter === 'SEVERE'"
+                    (click)="setStageFilter('SEVERE')">
+                    <i class="bi bi-exclamation-octagon"></i> Severe
+                </button>
+            </div>
+
+            <!-- Inline search -->
+            <div class="glass-search me-3">
+                <i class="bi bi-search text-muted me-2"></i>
+                <input type="text" placeholder="Search by notes, pressure, stage..." [(ngModel)]="searchTerm"
+                    (input)="applyFilter()">
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table custom-glass-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">#</th>
+                        <th>APPT</th>
+                        <th>DATE</th>
+                        <th>BLOOD PRESSURE</th>
+                        <th>WEIGHT</th>
+                        <th>MMSE SCORE</th>
+                        <th>ALZHEIMER STAGE</th>
+                        <th>MEETING</th>
+                        <th class="text-end pe-4">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Empty state -->
+                    <tr *ngIf="filteredConsultations.length === 0">
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-clipboard2-x fs-2 mb-2 d-block opacity-50"></i>
+                            No consultations found.
+                        </td>
+                    </tr>
+
+                    <tr *ngFor="let c of filteredConsultations; let i = index">
+                        <td class="ps-4 text-dark fw-bold" style="font-size:0.8rem;">{{ i + 1 }}</td>
+
+                        <!-- Appointment badge -->
+                        <td>
+                            <span class="pill outline-pill inperson">
+                                <i class="bi bi-calendar-check me-1"></i> #{{ c.appointmentId }}
+                            </span>
+                        </td>
+
+                        <!-- Consultation date -->
+                        <td>
+                            <div class="fw-semibold text-dark" style="font-size:0.85rem;">
+                                {{ getAppointmentDate(c.appointmentId) | date:'MMM dd, yyyy' }}
+                            </div>
+                        </td>
+
+                        <!-- Blood pressure -->
+                        <td>
+                            <span class="fw-bold text-teal font-monospace">{{ c.bloodPressure }}</span>
+                        </td>
+
+                        <!-- Weight -->
+                        <td>
+                            <span class="text-dark">{{ c.currentWeight }} <small class="text-muted">kg</small></span>
+                        </td>
+
+                        <!-- MMSE score — coloured by severity -->
+                        <td>
+                            <span class="fw-bold" [ngClass]="{
+                                'text-success': c.mmseScore >= 24,
+                                'text-warning': c.mmseScore >= 18 && c.mmseScore < 24,
+                                'text-danger':  c.mmseScore < 18
+                            }">{{ c.mmseScore }}</span>
+                            <span class="text-muted"> / 30</span>
+                        </td>
+
+                        <!-- Alzheimer stage pill -->
+                        <td>
+                            <span class="pill status-pill" [ngClass]="getStagePillClass(c.alzheimerStage)">
+                                <i class="bi me-1" [ngClass]="{
+                                    'bi-circle':              c.alzheimerStage === 'PRECLINICAL',
+                                    'bi-bar-chart':           c.alzheimerStage === 'MILD',
+                                    'bi-exclamation-triangle':c.alzheimerStage === 'MODERATE',
+                                    'bi-exclamation-octagon': c.alzheimerStage === 'SEVERE'
+                                }"></i>
+                                {{ c.alzheimerStage | titlecase }}
+                            </span>
+                        </td>
+
+                        <!-- Google Meet Link -->
+                        <td>
+                            <a *ngIf="getMeetLink(c.appointmentId)" [href]="getMeetLink(c.appointmentId)"
+                                target="_blank" class="btn-glass-action border-teal text-teal"
+                                style="background: #e0f2f1; border-color: #2D9A9B;">
+                                <i class="bi bi-camera-video"></i> Join Meet
+                            </a>
+                            <span *ngIf="!getMeetLink(c.appointmentId)" class="text-muted small">
+                                <i class="bi bi-geo-alt"></i> In-person
+                            </span>
+                        </td>
+
+                        <!-- Row actions -->
+                        <td class="text-end pe-4">
+                            <button class="btn-glass-action btn-confirm me-2" title="Edit" (click)="openEditModal(c)">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </button>
+                            <button class="btn-glass-action text-danger" title="Delete"
+                                (click)="deleteConsultation(c.id!)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table footer -->
+        <div class="glass-footer">
+            Showing {{ filteredConsultations.length }} of {{ consultations.length }} consultations
+        </div>
+    </div>
+</div>
+
+<!-- ============================== MODAL FORM ============================== -->
+<div class="glass-modal-backdrop" [class.show]="isModalOpen">
+    <div class="glass-modal shadow-lg">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-clipboard2-plus me-2 text-teal"></i>
+                {{ modalMode === 'add' ? 'New Consultation' : 'Edit Consultation #' + currentConsultationId }}
+            </h5>
+            <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+
+        <form [formGroup]="consultationForm" (ngSubmit)="saveConsultation()">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-muted small">Select Appointment</label>
+                    <select class="form-select" formControlName="appointmentId">
+                        <option value="" disabled selected>Choose an appointment...</option>
+                        <option *ngFor="let apt of availableAppointments" [value]="apt.id">
+                            Appt #{{ apt.id }} — Patient #{{ apt.patientId }} ({{ apt.appointmentDate | date:'short' }})
+                        </option>
+                    </select>
+                    <small class="text-muted d-block mt-1" style="font-size:0.73rem;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Only appointments without a consultation are shown.
+                    </small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-muted small">Blood Pressure</label>
+                    <input type="text" class="form-control" formControlName="bloodPressure" placeholder="e.g. 120/80">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-muted small">Current Weight (kg)</label>
+                    <input type="number" class="form-control" formControlName="currentWeight">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-muted small">MMSE Score (0–30)</label>
+                    <input type="number" class="form-control" formControlName="mmseScore" min="0" max="30">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold text-muted small">Alzheimer Stage</label>
+                    <select class="form-select" formControlName="alzheimerStage">
+                        <option *ngFor="let stage of alzheimerStages" [value]="stage">{{ stage }}</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold text-muted small">Clinical Notes</label>
+                    <textarea class="form-control" formControlName="clinicalNotes" rows="4"
+                        placeholder="Detailed medical observations..."></textarea>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <!-- Backend error: appointment already linked to a consultation -->
+                <div *ngIf="saveError" class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>{{ saveError }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-danger" *ngIf="consultationForm.invalid && consultationForm.touched">
+                        <i class="bi bi-exclamation-circle me-1"></i> Please fill out all required fields correctly.
+                    </small>
+                    <div class="d-flex gap-2 ms-auto">
+                        <button type="button" class="btn btn-light fw-semibold" (click)="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-teal fw-bold px-4" [disabled]="consultationForm.invalid">
+                            <i class="bi bi-save me-1"></i>
+                            {{ modalMode === 'add' ? 'Save Consultation' : 'Update Consultation' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

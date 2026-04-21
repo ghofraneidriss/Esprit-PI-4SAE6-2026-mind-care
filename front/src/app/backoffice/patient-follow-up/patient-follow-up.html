@@ -1,0 +1,210 @@
+<style>
+    .nav-icon-link {
+        transition: all 0.2s ease;
+    }
+
+    .nav-icon-link:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        transform: translateY(-2px);
+    }
+</style>
+
+<!-- FLOATING SIDEBAR NAVIGATION -->
+<nav class="floating-sidebar d-flex flex-column align-items-center py-4 position-fixed z-3 h-100 bg-white shadow-sm"
+    style="width: 80px; top: 0; left: 0; gap: 1.5rem; border-right: 1px solid rgba(0,0,0,0.05);">
+
+    <!-- Logo - Updated to Teal -->
+    <a routerLink="/admin" class="mb-4 d-flex justify-content-center align-items-center rounded-circle shadow-sm"
+        style="width: 45px; height: 45px; background: #2D9A9B; color: white; text-decoration: none;">
+        <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
+    </a>
+
+    <!-- Home -->
+    <a routerLink="/admin"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-house"></i>
+    </a>
+
+    <!-- Appointments -->
+    <a routerLink="/admin/appointments"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-calendar-check" style="stroke-width: 1px;"></i>
+    </a>
+
+    <!-- Consultations -->
+    <a routerLink="/admin/consultations"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-clipboard-plus"></i>
+    </a>
+
+    <!-- Patient Follow-up (ACTIVE - Teal) -->
+    <a routerLink="/admin/patient-follow-up"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none shadow-sm"
+        style="width: 48px; height: 48px; color: #1e293b; background: #e0f2f1; border: 1px solid #2D9A9B; font-size: 1.3rem;">
+        <i class="bi bi-heart-pulse" style="color: #2D9A9B;"></i>
+    </a>
+
+    <div style="border-bottom: 2px solid #f1f5f9; width: 30px; margin: 0.5rem 0;"></div>
+
+    <!-- Add New Action -->
+    <a href="javascript:void(0)"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none shadow-sm cursor-pointer"
+        style="width: 46px; height: 46px; color: #2D9A9B; border: 2px solid #B2DFDB; background: white;">
+        <i class="bi bi-plus-lg fw-bold" style="font-size: 1.2rem;"></i>
+    </a>
+
+    <!-- Logout -->
+    <a routerLink="/auth/login"
+        class="nav-icon-link d-flex justify-content-center align-items-center text-decoration-none mt-auto"
+        style="width: 48px; height: 48px; color: #475569; font-size: 1.4rem;">
+        <i class="bi bi-box-arrow-left"></i>
+    </a>
+</nav>
+
+<div class="follow-up-container">
+    <div class="d-flex justify-content-start mb-4">
+        <button class="nav-back-btn" routerLink="/admin">
+            <i class="bi bi-arrow-left-circle me-2"></i> Back to Dashboard
+        </button>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-danger shadow-sm border-0 rounded-4 mb-4" role="alert">
+        <i class="bi bi-exclamation-octagon-fill me-2"></i>
+        <strong>Connection Issue:</strong> {{ errorMessage }}.
+        Make sure the backend is running on port 8081.
+        <button class="btn btn-sm btn-outline-danger ms-3"
+            (click)="loadDegradingPatients(); loadSeverePatients()">Retry</button>
+    </div>
+
+    <div class="header-section"
+        style="background: #2D9A9B; border-radius: 16px; padding: 30px; border: none; box-shadow: 0 4px 20px rgba(45,154,155,0.25); color: white; margin-bottom: 30px;">
+        <h1 style="color: white; font-weight: 700;">Patient Follow-up & Status Tracking</h1>
+        <p style="color: rgba(255,255,255,0.85);">Monitor patient statuses and detect clinical anomalies directly.</p>
+    </div>
+
+
+    <div class="tracking-grid">
+        <!-- Degrading Patients Section -->
+        <div class="tracking-card">
+            <div class="card-header">
+                <h2>Clinical Degradation Under Treatment</h2>
+                <p>Identify patients whose cognitive state degrades rapidly despite continuous treatment.</p>
+            </div>
+            <div class="card-body">
+                <div class="filter-bar">
+                    <input type="text" [(ngModel)]="treatmentSearch" (ngModelChange)="loadDegradingPatients()"
+                        placeholder="Treatment (e.g., Donepezil)" class="mr-2 input-style" />
+                    <input type="number" [(ngModel)]="degradationThreshold" (ngModelChange)="loadDegradingPatients()"
+                        placeholder="Threshold (e.g., 2)" class="mr-2 input-style" style="width: 120px;" />
+                    <button class="btn glass-btn" (click)="loadDegradingPatients()">Search</button>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table glass-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Medications</th>
+                                <th>System Analysis</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="isLoadingDegrading">
+                                <td colspan="4" class="text-center">
+                                    <div class="spinner-border text-teal" role="status"></div>
+                                    <p class="mt-2">Analyzing clinical data...</p>
+                                </td>
+                            </tr>
+                            <ng-container *ngIf="!isLoadingDegrading">
+                                <tr *ngIf="degradingPatients.length === 0">
+                                    <td colspan="4" class="text-center">No high-risk patients detected.</td>
+                                </tr>
+                                <tr *ngFor="let p of degradingPatients">
+                                    <td><strong>{{ p.patientName || 'Patient ' + p.userId }}</strong></td>
+                                    <td>{{ p.medications }}</td>
+                                    <td>
+                                        <span class="badge bg-danger-subtle text-danger border border-danger p-2"
+                                            style="font-size: 0.85rem;">
+                                            <i class="bi bi-exclamation-triangle-fill"></i> {{ p.explanation }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning alert-btn" (click)="sendAlert(p)">Send
+                                            Appointment
+                                            Alert</button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Severe Patients Section -->
+        <div class="tracking-card">
+            <div class="card-header">
+                <h2>Severe Diagnosis with No Follow-up</h2>
+                <p>Find patients diagnosed at a severe stage or with alert symptoms who lack future follow-up
+                    consultations.</p>
+            </div>
+            <div class="card-body">
+                <div class="filter-bar">
+                    <input type="number" [(ngModel)]="monthsAgo" (ngModelChange)="loadSeverePatients()"
+                        placeholder="Months Ago (e.g., 3)" class="mr-2 input-style" />
+                    <button class="btn glass-btn" (click)="loadSeverePatients()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Update
+                    </button>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table glass-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Contact</th>
+                                <th>Alert Explanation</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="isLoadingSevere">
+                                <td colspan="4" class="text-center">
+                                    <div class="spinner-border text-teal" role="status"></div>
+                                    <p class="mt-2">Checking follow-up schedules...</p>
+                                </td>
+                            </tr>
+                            <ng-container *ngIf="!isLoadingSevere">
+                                <tr *ngIf="severeWithoutFollowUpPatients.length === 0">
+                                    <td colspan="4" class="text-center">All severe patients have scheduled follow-ups.
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let p of severeWithoutFollowUpPatients">
+                                    <td><strong>{{ p.patientName || 'Patient ' + p.userId }}</strong></td>
+                                    <td>{{ p.email || p.caregiverEmergencyNumber || 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge bg-warning-subtle text-dark border border-warning p-2"
+                                            style="font-size: 0.85rem;">
+                                            <i class="bi bi-clock-history"></i> {{ p.explanation }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning alert-btn" (click)="sendAlert(p)">Send
+                                            Appointment
+                                            Alert</button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

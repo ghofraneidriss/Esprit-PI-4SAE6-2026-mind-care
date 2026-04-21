@@ -1,0 +1,466 @@
+/* ============================================================
+   Consultation Management — Thème Glassmorphism
+   Identique au thème doctor-appointments
+   ============================================================ */
+
+/* Fond gradient bleu pleine largeur */
+.glass-dashboard-wrapper {
+    background: linear-gradient(135deg, #2D9A9B 0%, #248182 100%);
+    min-height: calc(100vh - 80px);
+    margin: -1.5rem;
+    padding: 2rem;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1e293b;
+}
+
+/* En-tête : avatar et titre */
+.glass-avatar {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Boutons discrets dans l'en-tête */
+.glass-btn-sm {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+}
+
+.glass-btn-sm:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   CARTES STATISTIQUES
+   ============================================================ */
+.glass-stat {
+    background: rgba(240, 245, 250, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+.glass-stat:hover {
+    transform: translateY(-3px);
+}
+
+/* Carte : Total */
+.stat-total {
+    background: #f4f6fa;
+}
+
+.stat-total .stat-icon-box {
+    background: #e0f2e9;
+    color: #5cb85c;
+}
+
+.stat-total .stat-pill {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* Carte : Préclinique */
+.stat-preclinical {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 4px 15px rgba(113, 66, 204, 0.1);
+}
+
+.stat-preclinical .stat-icon-box {
+    background: #e0f2f1;
+    color: #2D9A9B;
+}
+
+.stat-preclinical .stat-pill {
+    background: #b2dfdb;
+    color: #2D9A9B;
+}
+
+/* Carte : Modéré */
+.stat-moderate {
+    background: #fefce8;
+    border: 1px solid #fde68a;
+    box-shadow: 0 4px 15px rgba(234, 179, 8, 0.1);
+}
+
+.stat-moderate .stat-icon-box {
+    background: #fef08a;
+    color: #ca8a04;
+}
+
+.stat-moderate .stat-pill {
+    background: #fde68a;
+    color: #ca8a04;
+}
+
+/* Carte : Sévère */
+.stat-severe {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15);
+}
+
+.stat-severe .stat-icon-box {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.stat-severe .stat-pill {
+    background: #fecaca;
+    color: #dc2626;
+}
+
+/* Internals communs des cards */
+.stat-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.stat-label {
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 2px;
+    letter-spacing: 0.03rem;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.stat-pill {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+
+/* ============================================================
+   CONTENEUR DU TABLEAU
+   ============================================================ */
+.glass-table-wrapper {
+    background: rgba(226, 237, 248, 0.9);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Barre onglets + recherche */
+.glass-tabs-bar {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    padding: 0 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.glass-tabs {
+    display: flex;
+    gap: 1.2rem;
+    padding: 15px 10px 0;
+}
+
+.glass-tab {
+    background: none;
+    border: none;
+    padding: 10px 4px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 3px solid transparent;
+    transition: 0.2s;
+}
+
+.glass-tab:hover {
+    color: #334155;
+}
+
+.glass-tab.active {
+    color: #10b981;
+    border-bottom-color: #10b981;
+}
+
+.glass-tab.preclinical-tab.active {
+    color: #2D9A9B;
+    border-bottom-color: #2D9A9B;
+}
+
+.glass-tab.mild-tab.active {
+    color: #10b981;
+    border-bottom-color: #10b981;
+}
+
+.glass-tab.moderate-tab.active {
+    color: #ca8a04;
+    border-bottom-color: #ca8a04;
+}
+
+.glass-tab.severe-tab.active {
+    color: #dc2626;
+    border-bottom-color: #dc2626;
+}
+
+/* Barre de recherche intégrée */
+.glass-search {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px;
+    padding: 6px 12px;
+    min-width: 220px;
+}
+
+.glass-search input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 0.85rem;
+    color: #1e293b;
+    width: 100%;
+}
+
+/* ============================================================
+   TABLEAU
+   ============================================================ */
+.custom-glass-table {
+    margin-bottom: 0;
+}
+
+.custom-glass-table th {
+    border: none;
+    font-size: 0.7rem;
+    color: #475569;
+    font-weight: 700;
+    padding: 18px 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: transparent;
+}
+
+.custom-glass-table td {
+    padding: 16px 15px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    vertical-align: middle;
+    font-size: 0.85rem;
+    background: transparent;
+    color: #334155;
+}
+
+.custom-glass-table tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-glass-table tr:hover td {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================================
+   PILLS (badges colorés)
+   ============================================================ */
+.pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.outline-pill {
+    background: transparent;
+}
+
+.outline-pill.inperson {
+    border: 1px solid #38bdf8;
+    color: #0284c7;
+    background: rgba(56, 189, 248, 0.05);
+}
+
+.status-pill {
+    border: 1px solid transparent;
+}
+
+/* Pills par stade Alzheimer */
+.stage-preclinical {
+    background: #e0f2f1;
+    border-color: #b2dfdb;
+    color: #2D9A9B;
+}
+
+.stage-mild {
+    background: #dcfce7;
+    border-color: #a7f3d0;
+    color: #059669;
+}
+
+.stage-moderate {
+    background: #fef9c3;
+    border-color: #fde68a;
+    color: #ca8a04;
+}
+
+.stage-severe {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+/* ============================================================
+   BOUTONS D'ACTION
+   ============================================================ */
+.btn-glass-action {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid #cbd5e1;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-glass-action:hover {
+    background: white;
+    border-color: #94a3b8;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    color: #1e293b;
+}
+
+.btn-glass-action.btn-confirm {
+    color: #059669;
+    border-color: #a7f3d0;
+    background: #ecfdf5;
+}
+
+.btn-glass-action.btn-confirm:hover {
+    background: #10b981;
+    color: white;
+}
+
+/* ============================================================
+   PIED DU TABLEAU
+   ============================================================ */
+.glass-footer {
+    padding: 12px 25px;
+    font-size: 0.8rem;
+    color: #475569;
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================
+   ERROR ALERT
+   ============================================================ */
+.glass-alert {
+    background: rgba(239, 68, 68, 0.8) !important;
+    color: white !important;
+    border: none;
+    backdrop-filter: blur(10px);
+}
+
+/* ============================================================
+   MODAL FORMULAIRE
+   ============================================================ */
+.glass-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.glass-modal-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.glass-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.glass-modal-backdrop.show .glass-modal {
+    transform: translateY(0);
+}
+
+.glass-modal .form-control,
+.glass-modal .form-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.glass-modal .form-control:focus,
+.glass-modal .form-select:focus {
+    border-color: #7142CC;
+    box-shadow: 0 0 0 3px rgba(113, 66, 204, 0.15);
+}
+
+.text-teal {
+    color: #2D9A9B !important;
+}
+
+.btn-teal {
+    background-color: #2D9A9B !important;
+    border-color: #2D9A9B !important;
+    color: white !important;
+}
+
+.btn-teal:hover {
+    background-color: #248182 !important;
+    border-color: #248182 !important;
+    color: white !important;
+}
