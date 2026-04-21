@@ -28,8 +28,11 @@
         <module>server/incident_service</module>
         <module>api_gateway</module>
         <module>medical_report_service</module>
-       <module>server/forums_service</module>
+        <module>server/forums_service</module>
         <module>movement_service</module>
+        <module>traitement_et_consultation</module>
+        <module>eureka</module>
+        <module>volunteer</module>
     </modules>
 
     <properties>
