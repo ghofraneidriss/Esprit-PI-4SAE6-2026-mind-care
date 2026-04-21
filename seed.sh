@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================
-#   AlzCare - Data Seeder
+#   MindCare - Data Seeder
 #   Hits services DIRECTLY (bypasses gateway)
 #   to avoid routing issues.
 # ============================================
@@ -14,8 +14,8 @@ NC='\033[0m'
 
 # Direct service URLs
 USERS="http://localhost:8081"
-INCIDENTS="http://localhost:8087"
-FORUMS="http://localhost:8086"
+INCIDENTS="http://localhost:8083"
+FORUMS="http://localhost:8082"
 
 # MySQL via Docker container (container name from docker-compose.yml)
 MYSQL_CMD="docker exec alzcare-mysql mysql -u root --silent"
@@ -26,7 +26,7 @@ sec()  { echo -e "\n${CYAN}━━━ $1 ━━━${NC}"; }
 info() { echo -e "  ${YELLOW}$1${NC}"; }
 
 echo -e "${GREEN}============================================${NC}"
-echo -e "${GREEN}   AlzCare - Seeding Data                  ${NC}"
+echo -e "${GREEN}   MindCare - Seeding Data                  ${NC}"
 echo -e "${GREEN}============================================${NC}"
 
 # --------------------------------------------------
@@ -184,7 +184,7 @@ register_or_login() {
 }
 
 ADMIN_ID=$(register_or_login "ADMIN" \
-  '{"firstName":"Admin","lastName":"AlzCare","email":"admin@alzcare.com","password":"Admin@123","phone":"0600000001","role":"ADMIN"}' \
+  '{"firstName":"Admin","lastName":"MindCare","email":"admin@alzcare.com","password":"Admin@123","phone":"0600000001","role":"ADMIN"}' \
   "admin@alzcare.com" "Admin@123")
 
 CAREGIVER_ID=$(register_or_login "CAREGIVER" \

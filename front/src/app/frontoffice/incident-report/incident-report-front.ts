@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { IncidentService } from '../../core/services/incident.service';
 import { AuthService } from '../../core/services/auth.service';
 import { IncidentType, IncidentStatus } from '../../core/models/incident.model';
@@ -20,9 +21,14 @@ export class IncidentReportFrontPage implements OnInit {
     incidentTypes: IncidentType[] = [];
     severityLevels = ['LOW', 'MEDIUM', 'HIGH'];
 
-    submitted = false;
+    /** True after user tried to submit; drives validation messages only. */
+    attemptedSubmit = false;
+    /** True while HTTP create is in flight. */
+    isSubmitting = false;
     successMessage = '';
     errorMessage = '';
+    warningMessage = '';
+    loadingTypes = false;
 
     // Caregiver: list of assigned patients
     assignedPatients: User[] = [];
@@ -33,7 +39,8 @@ export class IncidentReportFrontPage implements OnInit {
         private fb: FormBuilder,
         private incidentService: IncidentService,
         public authService: AuthService,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -46,12 +53,12 @@ export class IncidentReportFrontPage implements OnInit {
 
         this.loadIncidentTypes();
 
-        // If CAREGIVER, load their assigned patients
-        if (this.authService.getRole() === 'CAREGIVER') {
-            const caregiverId = this.authService.getUserId();
-            if (caregiverId) {
-                this.loadAssignedPatients(caregiverId);
-            }
+        const role = this.authService.getRole();
+        const uid = this.authService.getUserId();
+        if (role === 'CAREGIVER' && uid) {
+            this.loadAssignedPatientsForCaregiver(uid);
+        } else if (role === 'VOLUNTEER' && uid) {
+            this.loadAssignedPatientsForVolunteer(uid);
         }
     }
 
@@ -59,18 +66,53 @@ export class IncidentReportFrontPage implements OnInit {
         return this.authService.getCurrentUser();
     }
 
+    /** Same initials logic as navbar profile button */
+    get reportingInitials(): string {
+        const u = this.currentUser;
+        if (!u) return '?';
+        const a = (u.firstName || '?').charAt(0);
+        const b = (u.lastName || '').charAt(0);
+        return (a + b).toUpperCase();
+    }
+
     get isCaregiver(): boolean {
         return this.authService.getRole() === 'CAREGIVER';
     }
 
+    get isVolunteer(): boolean {
+        return this.authService.getRole() === 'VOLUNTEER';
+    }
+
+    /** Aidant ou bénévole : sélection du patient pour le signalement */
+    get isCaregiverOrVolunteer(): boolean {
+        return this.isCaregiver || this.isVolunteer;
+    }
+
     loadIncidentTypes(): void {
-        this.incidentService.getAllIncidentTypes().subscribe({
-            next: (types) => { this.incidentTypes = types; },
-            error: (err: any) => { console.error('Error loading incident types:', err); }
+        this.loadingTypes = true;
+        this.warningMessage = '';
+        this.incidentService.getAllIncidentTypes().pipe(
+            finalize(() => {
+                this.loadingTypes = false;
+                this.cdr.detectChanges();
+            })
+        ).subscribe({
+            next: (types) => {
+                this.incidentTypes = types;
+                if (types.length === 0) {
+                    this.warningMessage = 'No incident types in the database yet. Add them in the admin backoffice or reset the incident_db.';
+                }
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.incidentTypes = [];
+                this.warningMessage = 'Could not load incident types. Ensure incident-service is running (port 8083) and MySQL (incident_db) is up.';
+                this.cdr.detectChanges();
+            }
         });
     }
 
-    loadAssignedPatients(caregiverId: number): void {
+    private loadAssignedPatientsForCaregiver(caregiverId: number): void {
         this.loadingPatients = true;
         this.authService.getPatientsByCaregiver(caregiverId).subscribe({
             next: (patients) => {
@@ -79,35 +121,58 @@ export class IncidentReportFrontPage implements OnInit {
                     this.selectedPatientId = patients[0].userId;
                 }
                 this.loadingPatients = false;
+                this.cdr.detectChanges();
             },
-            error: (err: any) => {
-                console.error('Error loading assigned patients:', err);
+            error: () => {
+                this.assignedPatients = [];
+                this.warningMessage = 'Could not load assigned patients right now.';
                 this.loadingPatients = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    private loadAssignedPatientsForVolunteer(volunteerId: number): void {
+        this.loadingPatients = true;
+        this.authService.getPatientsByVolunteer(volunteerId).subscribe({
+            next: (patients) => {
+                this.assignedPatients = patients;
+                if (patients.length > 0) {
+                    this.selectedPatientId = patients[0].userId;
+                }
+                this.loadingPatients = false;
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.assignedPatients = [];
+                this.warningMessage = 'Could not load assigned patients right now.';
+                this.loadingPatients = false;
+                this.cdr.detectChanges();
             }
         });
     }
 
     onSubmit(): void {
+        this.attemptedSubmit = true;
+
         if (this.incidentForm.invalid) {
-            this.submitted = true;
             return;
         }
 
         const userId = this.authService.getUserId();
         if (!userId) {
-            this.errorMessage = 'Vous devez être connecté pour signaler un incident.';
+            this.errorMessage = 'You must be signed in to report an incident.';
             return;
         }
 
         const role = this.authService.getRole();
 
-        // CAREGIVER must select a patient
-        if (role === 'CAREGIVER' && !this.selectedPatientId) {
-            this.errorMessage = 'Veuillez sélectionner un patient.';
+        if ((role === 'CAREGIVER' || role === 'VOLUNTEER') && !this.selectedPatientId) {
+            this.errorMessage = 'Please select a patient.';
             return;
         }
 
-        this.submitted = true;
+        this.isSubmitting = true;
         this.errorMessage = '';
 
         const formValue = this.incidentForm.value;
@@ -119,21 +184,28 @@ export class IncidentReportFrontPage implements OnInit {
             incidentDate: formValue.incidentDate || new Date().toISOString(),
             status: IncidentStatus.OPEN,
             source: role,
-            patientId: role === 'PATIENT' ? userId : (role === 'CAREGIVER' ? this.selectedPatientId : null),
-            caregiverId: role === 'CAREGIVER' ? userId : null
+            patientId: role === 'CAREGIVER' || role === 'VOLUNTEER' ? this.selectedPatientId : userId,
+            caregiverId: role === 'CAREGIVER' ? userId : null,
+            volunteerId: role === 'VOLUNTEER' ? userId : null
         };
 
         this.incidentService.createIncident(incident).subscribe({
             next: () => {
-                this.successMessage = 'Incident signalé avec succès !';
-                this.incidentForm.reset();
-                this.submitted = false;
+                this.successMessage = 'Incident reported successfully.';
+                this.incidentForm.reset({
+                    type: '',
+                    description: '',
+                    severityLevel: 'MEDIUM',
+                    incidentDate: new Date().toISOString()
+                });
+                this.attemptedSubmit = false;
+                this.isSubmitting = false;
                 setTimeout(() => this.router.navigate(['/incidents/history']), 2000);
             },
             error: (err: any) => {
                 console.error('Error creating incident:', err);
-                this.errorMessage = 'Erreur lors du signalement. Veuillez réessayer.';
-                this.submitted = false;
+                this.errorMessage = 'Could not submit the report. Please try again.';
+                this.isSubmitting = false;
             }
         });
     }

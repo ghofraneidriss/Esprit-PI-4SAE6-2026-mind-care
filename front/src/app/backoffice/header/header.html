@@ -1,1 +1,140 @@
-<p>header works!</p>
+<!-- begin::NexLink Page Header -->
+<header class="app-header">
+  <div class="app-header-inner">
+    <div class="app-header-end">
+
+      <div class="notif-dropdown-wrapper position-relative">
+        <button
+          type="button"
+          class="bo-notif-bell"
+          (click)="toggleDropdown(); $event.stopPropagation()"
+          [attr.aria-expanded]="showDropdown"
+          aria-label="Notifications"
+          title="Notifications">
+          <i class="ri-notification-3-fill" aria-hidden="true"></i>
+          <span *ngIf="unreadCount > 0" class="bo-notif-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+        </button>
+
+        <div
+          *ngIf="showDropdown"
+          class="bo-notif-panel dropdown-menu show p-0 shadow"
+          role="dialog"
+          aria-label="Notifications list"
+          (click)="$event.stopPropagation()">
+          <div class="bo-notif-panel__head px-3 py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h6 class="mb-0 fw-bold bo-notif-panel__title">
+              Notifications
+              <span *ngIf="unreadCount > 0" class="badge rounded-pill ms-1 bo-notif-head-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+            </h6>
+            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+              <button
+                *ngIf="unreadCount > 0"
+                type="button"
+                class="btn btn-link btn-sm p-0 text-primary text-decoration-none fw-semibold"
+                (click)="markAllRead()">
+                Mark all as read
+              </button>
+              <button
+                *ngIf="notifications.length > 0"
+                type="button"
+                class="btn btn-link btn-sm p-0 text-danger fw-semibold text-decoration-none"
+                (click)="deleteAll()">
+                Delete all
+              </button>
+            </div>
+          </div>
+
+          <div class="bo-notif-panel__scroll">
+            <div *ngIf="notifications.length === 0" class="bo-notif-empty text-muted py-4 px-3">
+              <i class="ri-notification-off-line d-block mb-2 text-center" style="font-size: 2.5rem; opacity: 0.45"></i>
+              <p class="fw-bold text-dark mb-2 text-center">Nothing new yet</p>
+              <p class="small mb-0 bo-notif-empty__hint">
+                <strong>Authors</strong>: alerts about activity on their posts.
+                <strong>Thread subscribers</strong>: new comments.
+                Your own actions do not generate notifications.
+              </p>
+            </div>
+            <div
+              *ngFor="let n of notifications"
+              class="bo-notif-row-wrap d-flex align-items-stretch border-bottom"
+              [class.bo-notif-row-wrap--unread]="!n.read">
+              <div class="bo-notif-row-inner flex-grow-1 d-flex flex-column min-width-0">
+                <button
+                  type="button"
+                  class="bo-notif-row text-start border-0 bg-transparent d-flex align-items-start gap-3 px-3 py-3 w-100"
+                  (click)="onNotificationRowClick(n, $event)">
+                  <div class="flex-shrink-0 mt-1 bo-notif-ico-wrap" [ngClass]="eventIconClass(n)">
+                    <i [class]="eventIconFor(n) + ' bo-notif-row__ico'" aria-hidden="true"></i>
+                  </div>
+                  <div class="flex-grow-1 min-width-0">
+                    <p class="mb-1 bo-notif-row__msg" [class.fw-semibold]="!n.read">
+                      <ng-container *ngIf="showActorHighlight(n)">
+                        <span class="bo-notif-actor">{{ n.actorName }}</span>
+                        <span class="bo-notif-tail"> · {{ messageTail(n) }}</span>
+                      </ng-container>
+                      <ng-container *ngIf="!showActorHighlight(n)">{{ plainNotificationMessage(n) }}</ng-container>
+                    </p>
+                    <p *ngIf="n.snippet && n.eventKind !== 'PATIENT_LOCATION_SHARED'" class="bo-notif-snippet small mb-1">
+                      {{ n.snippet }}
+                    </p>
+                    <span class="text-muted d-flex flex-wrap align-items-center gap-2 bo-notif-row__meta">
+                      <span>{{ relativeTimeEn(n.createdAt) }}</span>
+                      <span *ngIf="n.eventKind === 'PATIENT_LOCATION_SHARED'" class="badge rounded-pill bg-info bg-opacity-25 text-primary">Location</span>
+                      <span *ngIf="n.postId" class="badge rounded-pill bo-notif-chip">Forum</span>
+                      <span class="badge bg-secondary bg-opacity-25 text-secondary bo-notif-type-badge">{{ n.type }}</span>
+                    </span>
+                  </div>
+                  <div *ngIf="!n.read" class="flex-shrink-0 mt-2">
+                    <span class="rounded-circle bg-danger d-inline-block" style="width: 7px; height: 7px"></span>
+                  </div>
+                </button>
+                <a
+                  *ngIf="n.eventKind === 'PATIENT_LOCATION_SHARED' && mapsUrl(n)"
+                  class="bo-notif-maps-btn"
+                  [href]="mapsUrl(n) ?? '#'"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  (click)="onLocationMapsLinkClick(n, $event)">
+                  <span class="bo-notif-maps-btn__shine" aria-hidden="true"></span>
+                  <span class="bo-notif-maps-btn__inner">
+                    <i class="ri-google-fill bo-notif-maps-btn__brand" aria-hidden="true"></i>
+                    <span class="bo-notif-maps-btn__label">Open in Google Maps</span>
+                    <i class="ri-arrow-right-up-line bo-notif-maps-btn__arrow" aria-hidden="true"></i>
+                  </span>
+                </a>
+              </div>
+              <button
+                type="button"
+                class="bo-notif-row__dismiss btn btn-link p-0 text-muted align-self-start mt-2"
+                (click)="deleteOne(n, $event)"
+                title="Remove"
+                aria-label="Remove notification">
+                <i class="ri-close-line fs-5" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="px-3 py-2 border-top text-center bo-notif-panel__foot" *ngIf="notifications.length > 0">
+            <small class="text-muted">{{ notifications.length }} recent · your actions are excluded</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-lg-4 px-2 ps-0 d-flex align-items-center bo-header-user-wrap">
+        <div class="mindcare-header-user d-flex align-items-center py-2">
+          <div class="user-initials" aria-hidden="true">{{ userInitials }}</div>
+          <div class="mindcare-header-user-text">
+            <div class="mindcare-header-display-name">{{ authService.getDisplayName() }}</div>
+            <small class="mindcare-header-role">{{ authService.getRole() }}</small>
+          </div>
+          <button type="button" class="mindcare-btn-logout" (click)="logout()">
+            <i class="fi fi-rr-sign-out" aria-hidden="true"></i>
+            <span>Log out</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+<!-- end::NexLink Page Header -->

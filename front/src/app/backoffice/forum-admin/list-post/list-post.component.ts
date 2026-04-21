@@ -1,9 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ForumService, Post, Category } from '../../../core/services/forum.service';
+import {
+  ForumService,
+  Post,
+  Category,
+  StaffDashboardPayload,
+  STAFF_POST_LIST_LIMIT,
+} from '../../../core/services/forum.service';
 import { DeleteConfirmationModalComponent, DeleteConfirmationData } from './delete-confirmation-modal.component';
 import { PostForm } from '../post-form/post-form';
+import { forumPostFormDialogConfig } from '../forum-post-form-dialog.config';
 import { SuccessAlertComponent } from './success-alert.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-list-post',
@@ -29,58 +37,80 @@ export class ListPostComponent implements OnInit {
   showSuccessAlert: boolean = false;
   successMessage: string = '';
 
+  /** KPIs from server COUNTs (list may be capped). */
+  private dashSummary: StaffDashboardPayload | null = null;
+
   constructor(
     private forumService: ForumService,
-    private dialog: MatDialog
-  ) { }
+    private authService: AuthService,
+    private dialog: MatDialog,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly ngZone: NgZone
+  ) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.forumService.getAllCategories().subscribe();
+    setTimeout(() => this.loadData(), 0);
   }
 
   loadData(): void {
     this.loading = true;
     this.error = null;
+    this.cdr.detectChanges();
 
     // Safety timeout
     const timer = setTimeout(() => {
-      if (this.loading) {
-        this.loading = false;
-        this.error = 'The request is taking too long. Showing local data if available.';
-      }
+      this.ngZone.run(() => {
+        if (this.loading) {
+          this.loading = false;
+          this.error = 'The request is taking too long. Showing local data if available.';
+          this.cdr.detectChanges();
+        }
+      });
     }, 10000);
 
-    // Load posts
-    this.forumService.getAllPosts().subscribe({
-      next: (posts) => {
+    const uid = this.authService.getUserId();
+    const doctorScope = this.authService.getRole() === 'DOCTOR' && uid != null;
+
+    this.forumService.getStaffDashboard(doctorScope ? uid! : null, STAFF_POST_LIST_LIMIT).subscribe({
+      next: (payload) => {
+        const { categories, posts } = payload;
         clearTimeout(timer);
-        this.posts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        this.calculateStats();
-        this.loading = false;
-        this.error = null;
+        this.ngZone.run(() => {
+          this.dashSummary = payload;
+          this.posts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          this.categories = categories;
+          this.totalCategories = categories.length;
+          this.calculateStats();
+          this.loading = false;
+          this.error = null;
+          this.cdr.detectChanges();
+        });
       },
       error: (err) => {
         clearTimeout(timer);
         console.error('Error loading posts:', err);
-        this.error = 'Unable to connect to forum service (8085).';
-        this.loading = false;
-      }
-    });
-
-    // Load categories (quietly)
-    this.forumService.getAllCategories().subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        this.totalCategories = categories.length;
+        this.ngZone.run(() => {
+          this.error = 'Unable to connect to forum API (gateway 8080 / forums-service 8082).';
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       },
-      error: (err) => console.error('Error loading categories:', err)
     });
   }
 
   calculateStats(): void {
-    this.totalPosts = this.posts.length;
-    this.publishedPosts = this.posts.filter(p => p.status === 'PUBLISHED').length;
-    this.draftPosts = this.posts.filter(p => p.status === 'DRAFT').length;
+    const s = this.dashSummary;
+    if (s?.totalPostCount != null) {
+      this.totalPosts = s.totalPostCount;
+      this.publishedPosts =
+        s.publishedPostCount ?? this.posts.filter((p) => p.status === 'PUBLISHED').length;
+      this.draftPosts = s.draftPostCount ?? this.posts.filter((p) => p.status === 'DRAFT').length;
+    } else {
+      this.totalPosts = this.posts.length;
+      this.publishedPosts = this.posts.filter((p) => p.status === 'PUBLISHED').length;
+      this.draftPosts = this.posts.filter((p) => p.status === 'DRAFT').length;
+    }
   }
 
   getFilteredPosts(): Post[] {
@@ -130,11 +160,10 @@ export class ListPostComponent implements OnInit {
   }
 
   createNewPost(): void {
-    const dialogRef = this.dialog.open(PostForm, {
-      data: { post: null },
-      width: '600px',
-      panelClass: 'post-form-modal'
-    });
+    const dialogRef = this.dialog.open(
+      PostForm,
+      forumPostFormDialogConfig({ post: undefined, categories: this.categories })
+    );
 
     dialogRef.afterClosed().subscribe((result: { success: boolean; post?: Post }) => {
       if (result && result.success && result.post) {
@@ -147,11 +176,7 @@ export class ListPostComponent implements OnInit {
   }
 
   editPost(post: Post): void {
-    const dialogRef = this.dialog.open(PostForm, {
-      data: { post },
-      width: '600px',
-      panelClass: 'post-form-modal'
-    });
+    const dialogRef = this.dialog.open(PostForm, forumPostFormDialogConfig({ post, categories: this.categories }));
 
     dialogRef.afterClosed().subscribe((result: { success: boolean; post?: Post }) => {
       if (result && result.success && result.post) {

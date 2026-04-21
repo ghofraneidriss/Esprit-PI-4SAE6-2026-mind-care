@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================
-#   AlzCare - Arret de tous les services
+#   MindCare - Arret de tous les services
 # ============================================
 
 RED='\033[0;31m'
@@ -13,7 +13,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 PIDFILE="$ROOT/logs/pids.txt"
 
 echo -e "${YELLOW}============================================${NC}"
-echo -e "${YELLOW}   AlzCare - Arret de tous les services    ${NC}"
+echo -e "${YELLOW}   MindCare - Arret de tous les services    ${NC}"
 echo -e "${YELLOW}============================================${NC}"
 echo
 
@@ -31,7 +31,7 @@ if [ -f "$PIDFILE" ]; then
 else
     echo -e "${YELLOW}Aucun fichier PIDs trouve. Arret par port...${NC}"
     # Fallback : tuer par port
-    for PORT in 8761 8086 8087 8081 8085 4200; do
+    for PORT in 8761 8081 8082 8083 8080 4200; do
         PID=$(lsof -ti tcp:$PORT 2>/dev/null)
         if [ -n "$PID" ]; then
             echo -e "${RED}>>> Arret port $PORT (PID $PID)${NC}"

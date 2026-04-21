@@ -33,8 +33,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Category</th>
+                                <th class="ps-4">Category</th>
                                 <th>Severity</th>
                                 <th>Status</th>
                                 <th class="text-end pe-4">Actions</th>
@@ -42,8 +41,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let incident of incidents">
-                                <td class="ps-4 text-muted fw-bold">#{{ incident.id }}</td>
-                                <td>
+                                <td class="ps-4">
                                     <div class="fw-medium">{{ incident.type.name }}</div>
                                     <small class="text-muted d-block text-truncate" style="max-width: 200px;">{{
                                         incident.description }}</small>
@@ -74,7 +72,7 @@
                                 </td>
                             </tr>
                             <tr *ngIf="incidents.length === 0">
-                                <td colspan="5" class="py-5 text-center text-muted">
+                                <td colspan="4" class="py-5 text-center text-muted">
                                     <i class="fi fi-rr-shield-check fs-1 d-block mb-2"></i>
                                     No reports found.
                                 </td>

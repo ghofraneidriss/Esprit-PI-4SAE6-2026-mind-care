@@ -1,0 +1,205 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <div class="container-fluid py-2 px-3 px-md-4 dashboard-home-wrap">
+
+      <div class="cvp-page-header page-header" *ngIf="!embedInModal">
+        <div>
+          <h1>
+            <i class="ri-dashboard-3-line cvp-title-ico" aria-hidden="true"></i>
+            Dashboard — Analytics
+          </h1>
+          <p>Real-time overview of incidents and patient activity</p>
+        </div>
+      </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Loading analytics...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && stats">
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="rounded-3 p-3 bg-primary bg-opacity-10 text-primary fs-3">
+              <i class="ri-alarm-warning-line"></i>
+            </div>
+            <div>
+              <p class="text-muted small mb-0">Active Incidents</p>
+              <h3 class="fw-bold mb-0">{{ stats.totalActive }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="rounded-3 p-3 bg-success bg-opacity-10 text-success fs-3">
+              <i class="ri-check-double-line"></i>
+            </div>
+            <div>
+              <p class="text-muted small mb-0">Total (History)</p>
+              <h3 class="fw-bold mb-0">{{ stats.totalHistory }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="rounded-3 p-3 bg-danger bg-opacity-10 text-danger fs-3">
+              <i class="ri-error-warning-line"></i>
+            </div>
+            <div>
+              <p class="text-muted small mb-0">Critical</p>
+              <h3 class="fw-bold mb-0">{{ stats.bySeverity['CRITICAL'] || 0 }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="rounded-3 p-3 bg-warning bg-opacity-10 text-warning fs-3">
+              <i class="ri-time-line"></i>
+            </div>
+            <div>
+              <p class="text-muted small mb-0">Open</p>
+              <h3 class="fw-bold mb-0">{{ stats.byStatus['OPEN'] || 0 }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-0 pt-3 pb-0">
+            <h6 class="fw-semibold mb-0">Incidents by Severity</h6>
+          </div>
+          <div class="card-body chart-box" style="height: 260px;">
+            <canvas #severityChart></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-0 pt-3 pb-0">
+            <h6 class="fw-semibold mb-0">Incidents by Status</h6>
+          </div>
+          <div class="card-body chart-box d-flex justify-content-center align-items-center" style="height: 260px;">
+            <canvas #statusChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly Trend -->
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 pt-3 pb-0">
+            <h6 class="fw-semibold mb-0">Monthly Incident Trend — Last 6 Months</h6>
+          </div>
+          <div class="card-body chart-box" style="height: 280px;">
+            <canvas #trendChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Severity + Status Detail -->
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 pt-3 pb-0">
+            <h6 class="fw-semibold mb-0">Severity Breakdown</h6>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-success fw-medium">LOW</span>
+                <span>{{ stats.bySeverity['LOW'] || 0 }}</span>
+              </div>
+              <div class="progress" style="height:8px">
+                <div class="progress-bar bg-success" [style.width.%]="stats.totalActive ? (stats.bySeverity['LOW'] / stats.totalActive) * 100 : 0"></div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-warning fw-medium">MEDIUM</span>
+                <span>{{ stats.bySeverity['MEDIUM'] || 0 }}</span>
+              </div>
+              <div class="progress" style="height:8px">
+                <div class="progress-bar bg-warning" [style.width.%]="stats.totalActive ? (stats.bySeverity['MEDIUM'] / stats.totalActive) * 100 : 0"></div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span style="color:#fd7e14" class="fw-medium">HIGH</span>
+                <span>{{ stats.bySeverity['HIGH'] || 0 }}</span>
+              </div>
+              <div class="progress" style="height:8px">
+                <div class="progress-bar" style="background:#fd7e14" [style.width.%]="stats.totalActive ? (stats.bySeverity['HIGH'] / stats.totalActive) * 100 : 0"></div>
+              </div>
+            </div>
+            <div>
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-danger fw-medium">CRITICAL</span>
+                <span>{{ stats.bySeverity['CRITICAL'] || 0 }}</span>
+              </div>
+              <div class="progress" style="height:8px">
+                <div class="progress-bar bg-danger" [style.width.%]="stats.totalActive ? (stats.bySeverity['CRITICAL'] / stats.totalActive) * 100 : 0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 pt-3 pb-0">
+            <h6 class="fw-semibold mb-0">Status Overview</h6>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-3 bg-danger bg-opacity-10">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger">&nbsp;</span>
+                <span class="fw-medium">Open</span>
+              </div>
+              <span class="fw-bold fs-5">{{ stats.byStatus['OPEN'] || 0 }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-3 bg-primary bg-opacity-10">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary">&nbsp;</span>
+                <span class="fw-medium">In Progress</span>
+              </div>
+              <span class="fw-bold fs-5">{{ stats.byStatus['IN_PROGRESS'] || 0 }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-success bg-opacity-10">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success">&nbsp;</span>
+                <span class="fw-medium">Resolved</span>
+              </div>
+              <span class="fw-bold fs-5">{{ stats.byStatus['RESOLVED'] || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+    <div *ngIf="!loading && !stats" class="text-center py-5">
+      <i class="ri-database-2-line fs-1 text-muted"></i>
+      <p class="mt-2 text-muted">Cannot load analytics. Make sure the incident service is running.</p>
+    </div>
+
+    </div>
+  </div>
+</div>

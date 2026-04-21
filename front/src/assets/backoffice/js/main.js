@@ -1,5 +1,5 @@
-const initAppToggler = () => {
-	
+function initAppToggler() {
+
 	const appTogglers = document.querySelectorAll(".app-toggler");
 	const appMenubars = document.getElementById("appMenubar");
 
@@ -37,7 +37,7 @@ const initAppToggler = () => {
 };
 
 
-const passwordToggle = () => {
+function passwordToggle() {
 	document.querySelectorAll('.toggle-password').forEach(btn => {
 		btn.addEventListener('click', () => {
 			const input = btn.previousElementSibling;
@@ -49,23 +49,23 @@ const passwordToggle = () => {
 }
 
 
-const saerchList = () => {
+function saerchList() {
 	let listItems = [];
 
 	// JSON load
-	$.getJSON("assets/ajax/search.json", function(data) {
+	$.getJSON("assets/ajax/search.json", function (data) {
 		listItems = data.listItems;
 	});
 
 	// Search functionality
-	$("#searchInput").on("keyup", function() {
+	$("#searchInput").on("keyup", function () {
 		let query = $(this).val().toLowerCase();
 		let searchContainer = $("#searchContainer");
 		searchContainer.empty();
 		searchContainer.hide();
-		
+
 		$('#recentlyResults').hide();
-		
+
 		if (query.length === 0) {
 			searchContainer.hide();
 			$('#recentlyResults').show();
@@ -117,34 +117,34 @@ const saerchList = () => {
 };
 
 
-const currentYear = () => {
-    const elements = document.querySelectorAll('.currentYear');
-    const currentYear = new Date().getFullYear();
+function currentYear() {
+	const elements = document.querySelectorAll('.currentYear');
+	const currentYear = new Date().getFullYear();
 
-    elements.forEach(element => {
-        element.textContent = currentYear;
-    });
+	elements.forEach(element => {
+		element.textContent = currentYear;
+	});
 };
 
 
-const setElementHeight = () => {
-    const footer = document.querySelector('.footer-wrapper');
+function setElementHeight() {
+	const footer = document.querySelector('.footer-wrapper');
 	if (footer) {
 		const footerHeight = footer ? footer.offsetHeight : 0;
 		document.documentElement.style.setProperty('--footer-height', `${footerHeight}px`);
 	}
-	
+
 	const chatBox = document.querySelector('.chat-wrapper');
 	if (chatBox) {
 		const chatHeight = chatBox.offsetHeight;
 		document.documentElement.style.setProperty('--chat-height', `${chatHeight}px`);
 	}
-	
+
 };
 
 
-const initSelectPicker = () => {
-	
+function initSelectPicker() {
+
 	document.querySelectorAll('.select-status').forEach(dropdown => {
 		const toggleButton = dropdown.querySelector('.dropdown-toggle');
 		const items = dropdown.querySelectorAll('.dropdown-item');
@@ -189,26 +189,26 @@ const initSelectPicker = () => {
 
 
 function initSectionCheckboxSync() {
-    document.querySelectorAll('.data-row-checkbox').forEach(function(section) {
-        const masterCheckbox = section.querySelector('[data-row-checkbox]');
-        const checkboxes = section.querySelectorAll('[data-checkbox]');
+	document.querySelectorAll('.data-row-checkbox').forEach(function (section) {
+		const masterCheckbox = section.querySelector('[data-row-checkbox]');
+		const checkboxes = section.querySelectorAll('[data-checkbox]');
 
-        if (!masterCheckbox || checkboxes.length === 0) return;
+		if (!masterCheckbox || checkboxes.length === 0) return;
 
-        masterCheckbox.addEventListener('change', function() {
-            const checked = this.checked;
-            checkboxes.forEach(function(cb) {
-                cb.checked = checked;
-            });
-        });
+		masterCheckbox.addEventListener('change', function () {
+			const checked = this.checked;
+			checkboxes.forEach(function (cb) {
+				cb.checked = checked;
+			});
+		});
 
-        checkboxes.forEach(function(cb) {
-            cb.addEventListener('change', function() {
-                const allChecked = Array.from(checkboxes).every(c => c.checked);
-                masterCheckbox.checked = allChecked;
-            });
-        });
-    });
+		checkboxes.forEach(function (cb) {
+			cb.addEventListener('change', function () {
+				const allChecked = Array.from(checkboxes).every(c => c.checked);
+				masterCheckbox.checked = allChecked;
+			});
+		});
+	});
 }
 
 
@@ -324,163 +324,135 @@ function initSidebarMenu() {
 
 
 function initCheckable() {
-    document.querySelectorAll('.checkable-wrapper').forEach(function(wrapper) {
-        const checkAll = wrapper.querySelector('.checkable-check-all');
-        const checkboxes = wrapper.querySelectorAll('.checkable-check-input');
+	document.querySelectorAll('.checkable-wrapper').forEach(function (wrapper) {
+		const checkAll = wrapper.querySelector('.checkable-check-all');
+		const checkboxes = wrapper.querySelectorAll('.checkable-check-input');
 
-        // Initialize checked state on load
-        checkboxes.forEach(function(checkbox) {
-            const item = checkbox.closest('.checkable-item');
-            if (checkbox.checked && item) {
-                item.classList.add('is-checked');
-            }
-        });
+		// Initialize checked state on load
+		checkboxes.forEach(function (checkbox) {
+			const item = checkbox.closest('.checkable-item');
+			if (checkbox.checked && item) {
+				item.classList.add('is-checked');
+			}
+		});
 
-        // Handle "Select All"
-        if (checkAll) {
-            checkAll.addEventListener('change', function () {
-                const isChecked = this.checked;
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.checked = isChecked;
-                    const item = checkbox.closest('.checkable-item');
-                    if (item) {
-                        item.classList.toggle('is-checked', isChecked);
-                    }
-                });
-            });
-        }
+		// Handle "Select All"
+		if (checkAll) {
+			checkAll.addEventListener('change', function () {
+				const isChecked = this.checked;
+				checkboxes.forEach(function (checkbox) {
+					checkbox.checked = isChecked;
+					const item = checkbox.closest('.checkable-item');
+					if (item) {
+						item.classList.toggle('is-checked', isChecked);
+					}
+				});
+			});
+		}
 
-        // Handle individual checkbox toggle
-        wrapper.addEventListener('change', function (e) {
-            if (e.target.matches('.checkable-check-input')) {
-                const item = e.target.closest('.checkable-item');
-                if (item) {
-                    item.classList.toggle('is-checked', e.target.checked);
-                }
+		// Handle individual checkbox toggle
+		wrapper.addEventListener('change', function (e) {
+			if (e.target.matches('.checkable-check-input')) {
+				const item = e.target.closest('.checkable-item');
+				if (item) {
+					item.classList.toggle('is-checked', e.target.checked);
+				}
 
-                // Update "Select All" state
-                const allChecked = wrapper.querySelectorAll('.checkable-check-input:not(:checked)').length === 0;
-                if (checkAll) {
-                    checkAll.checked = allChecked;
-                }
-            }
-        });
-    });
+				// Update "Select All" state
+				const allChecked = wrapper.querySelectorAll('.checkable-check-input:not(:checked)').length === 0;
+				if (checkAll) {
+					checkAll.checked = allChecked;
+				}
+			}
+		});
+	});
 }
 
 
 function initEmailSidebarToggle() {
-    const toggler = document.querySelector('.mail-sidebar-toggler');
-    const sidebar = document.querySelector('.mail-sidebar');
-    const overlay = document.querySelector('.sidebar-mobile-overlay');
+	const toggler = document.querySelector('.mail-sidebar-toggler');
+	const sidebar = document.querySelector('.mail-sidebar');
+	const overlay = document.querySelector('.sidebar-mobile-overlay');
 
-    if (toggler && sidebar && overlay) {
-        toggler.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show', sidebar.classList.contains('open'));
-        });
+	if (toggler && sidebar && overlay) {
+		toggler.addEventListener('click', () => {
+			sidebar.classList.toggle('open');
+			overlay.classList.toggle('show', sidebar.classList.contains('open'));
+		});
 
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-    }
+		overlay.addEventListener('click', () => {
+			sidebar.classList.remove('open');
+			overlay.classList.remove('show');
+		});
+	}
 }
 
 
 function initChatSidebarToggle() {
-    const toggler = document.querySelector('.chat-sidebar-toggler');
-    const sidebar = document.querySelector('.chat-sidebar');
-    const overlay = document.querySelector('.sidebar-mobile-overlay');
-    const btnClose = document.querySelector('.btn-close');
+	const toggler = document.querySelector('.chat-sidebar-toggler');
+	const sidebar = document.querySelector('.chat-sidebar');
+	const overlay = document.querySelector('.sidebar-mobile-overlay');
+	const btnClose = document.querySelector('.btn-close');
 
-    if (toggler && sidebar && overlay) {
-        toggler.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show', sidebar.classList.contains('open'));
-        });
+	if (toggler && sidebar && overlay) {
+		toggler.addEventListener('click', () => {
+			sidebar.classList.toggle('open');
+			overlay.classList.toggle('show', sidebar.classList.contains('open'));
+		});
 
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-		
+		overlay.addEventListener('click', () => {
+			sidebar.classList.remove('open');
+			overlay.classList.remove('show');
+		});
+
 		btnClose.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-    }
+			sidebar.classList.remove('open');
+			overlay.classList.remove('show');
+		});
+	}
 }
 
 
 function initBookmarks() {
-    document.addEventListener('click', (e) => {
-        const bookmark = e.target.closest('.mail-item-bookmark');
-        if (bookmark) {
-            bookmark.classList.toggle('active');
-        }
-    });
+	document.addEventListener('click', (e) => {
+		const bookmark = e.target.closest('.mail-item-bookmark');
+		if (bookmark) {
+			bookmark.classList.toggle('active');
+		}
+	});
 }
 
 
-const ThemeSwitcher = () => {
+function ThemeSwitcher() {
 	'use strict';
 
-	// Cookie helpers
-	const getCookie = (name) => {
-	  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-	  return match ? match[2] : null;
-	};
-
+	// Cookie helpers (keep cookie in sync so nothing re-applies dark later)
 	const setCookie = (name, value, days = 365) => {
-	  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-	  document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+		const expires = new Date(Date.now() + days * 864e5).toUTCString();
+		document.cookie = `${name}=${value}; expires=${expires}; path=/`;
 	};
 
-	const getStoredTheme = () => getCookie('theme');
 	const setStoredTheme = (theme) => setCookie('theme', theme);
 
-	// Preferred theme
-	const getPreferredTheme = () => {
-	  const storedTheme = getStoredTheme();
-	  if (storedTheme) return storedTheme;
-	  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-	};
-
-	// Apply theme
 	const setTheme = (theme) => {
-	  document.documentElement.setAttribute('data-bs-theme', theme);
+		document.documentElement.setAttribute('data-bs-theme', theme);
 	};
 
-	// Page Ready
+	// MindCare: light theme only — no dark mode, ignore OS preference and old cookies
 	$(document).ready(function () {
-	  // ðŸ”¹ On load: apply saved/preferred theme
-	  const preferredTheme = getPreferredTheme();
-	  setTheme(preferredTheme);
-
-	  // ðŸ”¹ Restore active state on button
-	  if (preferredTheme === 'dark') {
-		$('.theme-btn').addClass('active');
-	  } else {
+		setStoredTheme('light');
+		setTheme('light');
 		$('.theme-btn').removeClass('active');
-	  }
-
-	  // ðŸ”¹ Click handler
-	  $('.theme-btn').on('click', function () {
-		$(this).toggleClass('active');
-
-		let currentTheme = document.documentElement.getAttribute('data-bs-theme');
-		let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-		setTheme(newTheme);
-		setStoredTheme(newTheme);
-	  });
+		$('.theme-btn').on('click', function () {
+			setTheme('light');
+			setStoredTheme('light');
+		});
 	});
 };
 
 
 function initSidebarPanel() {
-	document.addEventListener('click', function(e) {
+	document.addEventListener('click', function (e) {
 		const toggler = e.target.closest('.sidebar-panel-toggler');
 		if (toggler) {
 			const panel = document.querySelector('.app-sidebar-panel');
@@ -510,13 +482,13 @@ function initPriceSwitch() {
 
 			monthlyPrices.forEach(price => price.classList.toggle("d-none", isYearly));
 			yearlyPrices.forEach(price => price.classList.toggle("d-none", !isYearly));
-		});	
+		});
 	}
 }
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    Waves.init();
+	Waves.init();
 	initAppToggler();
 	passwordToggle();
 	saerchList();
@@ -538,9 +510,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 $(document).ready(function () {
-	$('.dataTable').each(function() {
+	$('.dataTable').each(function () {
 		const dtInstance = $(this).DataTable();
-		dtInstance.on('draw.dt', function() {
+		dtInstance.on('draw.dt', function () {
 			initSelectPicker();
 			initSectionCheckboxSync();
 		});

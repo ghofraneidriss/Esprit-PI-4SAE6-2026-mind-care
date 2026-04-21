@@ -1,0 +1,285 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page" [class.page--embedded]="embedded">
+    <div class="cvp-page-header page-header">
+      <div>
+        <h1>
+          <i class="ri-questionnaire-line cvp-title-ico" aria-hidden="true"></i>
+          Quiz management
+        </h1>
+        <p>Create, edit, and delete cognitive quizzes</p>
+      </div>
+    </div>
+
+  <!-- Quiz Table -->
+  <div class="table-card" *ngIf="!showForm">
+    <div class="table-toolbar">
+      <div class="table-toolbar__filters">
+        <input
+          type="search"
+          name="qsearch"
+          [(ngModel)]="filterSearch"
+          (ngModelChange)="quizFiltersChanged()"
+          placeholder="Search title or description…"
+          autocomplete="off"
+        />
+        <div>
+          <span class="filter-label">Difficulty</span>
+          <select [(ngModel)]="filterDifficulty" name="fdiff" (ngModelChange)="quizFiltersChanged()">
+            <option value="">All</option>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+          </select>
+        </div>
+        <div>
+          <span class="filter-label">Theme</span>
+          <select [(ngModel)]="filterTheme" name="ftheme" (ngModelChange)="quizFiltersChanged()">
+            <option value="">All</option>
+            <option value="MEMORY">Memory</option>
+            <option value="LOGIC">Logic</option>
+            <option value="LANGUAGE">Language</option>
+            <option value="ATTENTION">Attention</option>
+            <option value="GENERAL">General</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-toolbar__actions">
+        <button type="button" class="btn-ghost" (click)="resetFilters()">Reset</button>
+        <button
+          type="button"
+          class="btn-danger"
+          (click)="deleteSelected()"
+          [disabled]="!selectedIds.length"
+        >
+          Delete selected ({{ selectedIds.length }})
+        </button>
+        <button type="button" class="btn-primary" (click)="openCreate()">+ New quiz</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="th-check">
+              <input
+                type="checkbox"
+                [checked]="allFilteredSelected"
+                (change)="toggleSelectAll($any($event.target).checked)"
+                [attr.aria-label]="'Select all on this page'"
+              />
+            </th>
+            <th>#</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Questions</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="!loading && filteredQuizzes.length">
+            <tr *ngFor="let q of quizTableRows" [class.row--placeholder]="q === null">
+              <ng-container *ngIf="q !== null; else quizEmptyRow">
+                <td class="th-check">
+                  <input
+                    type="checkbox"
+                    [checked]="isSelected(q.id)"
+                    (change)="toggleRow(q.id, $any($event.target).checked)"
+                  />
+                </td>
+                <td>{{ q.id }}</td>
+                <td>
+                  <strong>{{ q.title }}</strong><br /><small class="muted">{{ q.description | slice : 0 : 60 }}</small>
+                </td>
+                <td><span class="badge diff-{{ q.difficulty?.toLowerCase() }}">{{ q.difficulty }}</span></td>
+                <td>{{ q.questions?.length || 0 }}</td>
+                <td class="actions">
+                  <div class="action-group" role="group" aria-label="Quiz actions">
+                    <button
+                      type="button"
+                      class="action-btn action-btn--view"
+                      (click)="openPreview(q)"
+                      title="Preview quiz"
+                    >
+                      <i class="ri-eye-line" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="action-btn action-btn--edit" (click)="openEdit(q)" title="Edit">
+                      <i class="ri-pencil-line" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="action-btn action-btn--del" (click)="deleteOne(q.id)" title="Delete">
+                      <i class="ri-delete-bin-line" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+            </tr>
+          </ng-container>
+          <tr *ngIf="!loading && !filteredQuizzes.length">
+            <td colspan="6" class="empty">No quizzes match your filters</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mgmt-pagination" *ngIf="!loading && filteredQuizzes.length">
+      <span class="mgmt-pagination__info">{{ quizRangeLabel }}</span>
+      <span>Page {{ pageIndex + 1 }} / {{ quizTotalPages }}</span>
+      <button type="button" (click)="quizPrevPage()" [disabled]="pageIndex === 0">Previous</button>
+      <button type="button" (click)="quizNextPage()" [disabled]="pageIndex >= quizTotalPages - 1">Next</button>
+    </div>
+    <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+  </div>
+
+  <ng-template #quizEmptyRow>
+    <td colspan="6" class="td-placeholder">&nbsp;</td>
+  </ng-template>
+
+  <!-- Quiz Form -->
+  <div class="form-card" *ngIf="showForm">
+    <div class="form-header">
+      <h2>{{ editing ? 'Edit quiz' : 'New quiz' }}</h2>
+      <button type="button" class="btn-ghost" (click)="showForm = false">✕ Close</button>
+    </div>
+
+    <form (ngSubmit)="save()">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Title *</label>
+          <input [(ngModel)]="form.title" name="title" placeholder="Quiz name" required />
+        </div>
+        <div class="field span2">
+          <label>Description</label>
+          <textarea [(ngModel)]="form.description" name="desc" rows="2" placeholder="Short description"></textarea>
+        </div>
+        <div class="field">
+          <label>Difficulty</label>
+          <select [(ngModel)]="form.difficulty" name="diff">
+            <option value="EASY">🟢 Easy</option>
+            <option value="MEDIUM">🟡 Medium</option>
+            <option value="HARD">🔴 Hard</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Theme</label>
+          <select [(ngModel)]="form.theme" name="theme">
+            <option value="MEMORY">🧠 Memory</option>
+            <option value="LOGIC">🔢 Logic</option>
+            <option value="LANGUAGE">📝 Language</option>
+            <option value="ATTENTION">👁️ Attention</option>
+            <option value="GENERAL">📚 General</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="questions-section">
+        <div class="q-header">
+          <h3>Questions ({{ form.questions.length }})</h3>
+          <button type="button" class="btn-sm" (click)="addQuestion()">+ Add question</button>
+        </div>
+
+        <div class="question-card" *ngFor="let q of form.questions; let qi = index; trackBy: trackByIdx">
+          <div class="q-top">
+            <span class="q-num">Q{{ qi + 1 }}</span>
+            <button
+              type="button"
+              class="btn-icon del sm"
+              (click)="removeQuestion(qi)"
+              *ngIf="form.questions.length > 1"
+              title="Remove question"
+            >
+              <i class="ri-delete-bin-line" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="field">
+            <label>Question *</label>
+            <input [(ngModel)]="q.questionText" [name]="'qt' + qi" placeholder="Question text" required />
+          </div>
+          <div class="options-grid">
+            <div class="option" *ngFor="let opt of q.options; let oi = index; trackBy: trackByIdx">
+              <label class="opt-label" [class.correct]="q.correctAnswer === oi">
+                <input type="radio" [(ngModel)]="q.correctAnswer" [name]="'ca' + qi" [value]="oi" />
+                <span class="opt-marker">{{ oi === 0 ? 'A' : oi === 1 ? 'B' : oi === 2 ? 'C' : 'D' }}</span>
+              </label>
+              <input [(ngModel)]="q.options[oi]" [name]="'o' + qi + '_' + oi" [placeholder]="'Option ' + (oi + 1)" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" (click)="showForm = false">Cancel</button>
+        <button type="submit" class="btn-primary">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Read-only preview (← →), English UI -->
+  <div class="preview-backdrop" *ngIf="previewOpen" (click)="closePreview()" role="presentation"></div>
+  <div class="preview-modal" *ngIf="previewOpen" role="dialog" aria-modal="true" aria-labelledby="preview-quiz-title">
+    <div class="preview-modal__inner" (click)="$event.stopPropagation()">
+      <div class="preview-modal__head">
+        <div>
+          <h2 id="preview-quiz-title">{{ previewQuiz?.title || 'Quiz' }}</h2>
+          <p class="preview-meta" *ngIf="previewQuiz?.difficulty">
+            <span class="badge diff-{{ previewQuiz?.difficulty?.toLowerCase() }}">{{
+              difficultyLabel(previewQuiz?.difficulty)
+            }}</span>
+          </p>
+        </div>
+        <button type="button" class="preview-close" (click)="closePreview()" title="Close (Esc)">
+          <i class="ri-close-line" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="preview-loading" *ngIf="previewLoading">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Loading…</p>
+      </div>
+      <p class="preview-err" *ngIf="!previewLoading && previewError">{{ previewError }}</p>
+
+      <ng-container *ngIf="!previewLoading && previewQuiz && !previewError">
+        <p class="preview-desc" *ngIf="previewQuiz.description">{{ previewQuiz.description }}</p>
+
+        <div class="preview-empty" *ngIf="!previewQuiz.questions.length">This quiz has no questions yet.</div>
+
+        <ng-container *ngIf="previewQuiz.questions.length">
+          <div class="preview-progress-bar">
+            <div class="preview-progress-fill" [style.width.%]="previewProgress"></div>
+          </div>
+          <p class="preview-step">Question {{ previewIndex + 1 }} of {{ previewQuiz.questions.length }}</p>
+
+          <div class="preview-question-block">
+            <h3 class="preview-q-text">{{ previewQuiz.questions[previewIndex].questionText }}</h3>
+            <ul class="preview-options" aria-label="Answer choices (read-only)">
+              <li *ngFor="let opt of previewQuiz.questions[previewIndex].options; let oi = index" class="preview-opt">
+                <span class="preview-opt-letter">{{ oi === 0 ? 'A' : oi === 1 ? 'B' : oi === 2 ? 'C' : 'D' }}</span>
+                <span class="preview-opt-text">{{ opt || '—' }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="preview-nav">
+            <button type="button" class="preview-nav-btn" (click)="previewPrev()" [disabled]="previewIndex === 0">
+              <i class="ri-arrow-left-s-line" aria-hidden="true"></i> Previous
+            </button>
+            <div class="preview-dots" aria-hidden="true">
+              <span
+                *ngFor="let _ of previewQuiz.questions; let i = index"
+                class="preview-dot"
+                [class.preview-dot--current]="i === previewIndex"
+              ></span>
+            </div>
+            <button
+              type="button"
+              class="preview-nav-btn preview-nav-btn--primary"
+              (click)="previewNext()"
+              [disabled]="previewIndex >= previewQuiz.questions.length - 1"
+            >
+              Next <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p class="preview-hint"><kbd>←</kbd> <kbd>→</kbd> to move · <kbd>Esc</kbd> to close</p>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  </div>
+</div>

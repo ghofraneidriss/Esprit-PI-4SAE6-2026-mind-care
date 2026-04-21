@@ -6,54 +6,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ✅ Spring Boot comme parent -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
-        <relativePath/>
-    </parent>
-
     <groupId>org.example</groupId>
-    <artifactId>mind_care_server</artifactId>
+    <artifactId>alzheimer-app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Alzheimer App - Parent</name>
-    <description>Multi-module project for Alzheimer detection application</description>
+    <name>Alzheimer App — racine Maven</name>
+    <description>Agrégateur : build multi-modules via le dossier server (Eureka, gateway, microservices).</description>
 
-    <!-- ✅ Liste des microservices -->
+    <!--
+      Tout le multi-modules Spring Boot / Spring Cloud est dans server/pom.xml.
+      Commande : mvn -f server/pom.xml clean install   (ou depuis la racine avec -f server/pom.xml)
+    -->
     <modules>
-        <module>users_service</module>
-        <module>server/incident_service</module>
-        <module>api_gateway</module>
-        <module>medical_report_service</module>
-        <module>server/forums_service</module>
-        <module>movement_service</module>
-        <module>traitement_et_consultation</module>
-        <module>server/eureka_server</module>
-        <module>ordonnance_et_medicaments</module>
+        <module>server</module>
     </modules>
-
-    <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-cloud.version>2023.0.0</spring-cloud.version>
-    </properties>
-
-    <!-- ✅ Gestion des versions Spring Cloud -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

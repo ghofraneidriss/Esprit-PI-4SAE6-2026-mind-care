@@ -1,94 +1,334 @@
-<ng-container *ngIf="isVolunteer; else staffDashboard">
-  <div class="volunteer-home">
-    <section class="volunteer-hero">
-      <div class="volunteer-hero__copy">
-        <span class="volunteer-hero__eyebrow">Volunteer Backoffice</span>
-        <h1>Welcome back, {{ authService.getLoggedUser()?.firstName || 'Volunteer' }}</h1>
-        <p>Track your assignments, review completed missions, and export any mission history as a PDF from this secure backoffice view.</p>
-        <div class="volunteer-hero__actions">
-          <a routerLink="/admin/assignment-history" class="volunteer-action volunteer-action--primary">
-            <i class="fi fi-rr-time-past"></i>
-            <span>Assignment History</span>
+<div class="page-layout">
+
+  <!-- begin::NexLink Page Header -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <button class="app-toggler" type="button" aria-label="app toggler">
+        <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.66699 12.6668L3.66699 8.00016L7.66699 3.3335" stroke="#1C274C" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round"></path>
+          <path opacity="0.5" d="M12.667 12.6668L8.66699 8.00016L12.667 3.3335" stroke="#1C274C" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+      <div class="app-header-start d-none d-md-flex">
+        <form class="d-flex align-items-center h-100 w-lg-250px w-xxl-300px position-relative" action="#">
+          <button type="button" class="btn btn-sm border-0 position-absolute start-0 ms-3 p-0">
+            <i class="fi fi-rr-search"></i>
+          </button>
+          <input type="text" class="form-control form-control-fill ps-5" placeholder="Search anything's"
+            data-bs-toggle="modal" data-bs-target="#searchResultsModal">
+        </form>
+        <div class="badge-standard d-none d-lg-inline-block">
+          Today New Leads
+          <span class="badge bg-primary-subtle text-primary">27</span>
+        </div>
+      </div>
+      <div class="app-header-end">
+        <div class="px-lg-4 px-2 ps-0 d-flex align-items-center">
+          <a href="javascript:void(0);" class="theme-btn">
+            <svg class="icon-light" width="20" height="21" viewbox="0 0 20 21" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14.1663 10.5002C14.1663 12.8013 12.3008 14.6668 9.99967 14.6668C7.69849 14.6668 5.83301 12.8013 5.83301 10.5002C5.83301 8.19898 7.69849 6.3335 9.99967 6.3335C12.3008 6.3335 14.1663 8.19898 14.1663 10.5002Z"
+                fill="var(--bs-heading-color)"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M10.0003 1.5415C10.3455 1.5415 10.6253 1.82133 10.6253 2.1665V3.83317C10.6253 4.17834 10.3455 4.45817 10.0003 4.45817C9.65516 4.45817 9.37532 4.17834 9.37532 3.83317V2.1665C9.37532 1.82133 9.65516 1.5415 10.0003 1.5415ZM1.04199 10.4998C1.04199 10.1547 1.32182 9.87484 1.66699 9.87484H3.33366C3.67883 9.87484 3.95866 10.1547 3.95866 10.4998C3.95866 10.845 3.67883 11.1248 3.33366 11.1248H1.66699C1.32182 11.1248 1.04199 10.845 1.04199 10.4998ZM16.042 10.4998C16.042 10.1547 16.3218 9.87484 16.667 9.87484H18.3337C18.6788 9.87484 18.9587 10.1547 18.9587 10.4998C18.9587 10.845 18.6788 11.1248 18.3337 11.1248H16.667C16.3218 11.1248 16.042 10.845 16.042 10.4998ZM10.0003 16.5415C10.3455 16.5415 10.6253 16.8213 10.6253 17.1665V18.8332C10.6253 19.1783 10.3455 19.4582 10.0003 19.4582C9.65516 19.4582 9.37532 19.1783 9.37532 18.8332V17.1665C9.37532 16.8213 9.65516 16.5415 10.0003 16.5415Z"
+                fill="var(--bs-heading-color)"></path>
+              <g opacity="0.5">
+                <path
+                  d="M3.05729 3.59633C3.29021 3.34158 3.68554 3.32389 3.94029 3.55681L5.79198 5.24979C6.04673 5.48271 6.06442 5.87804 5.8315 6.13279C5.59858 6.38754 5.20325 6.40524 4.94851 6.17232L3.09683 4.47933C2.84208 4.24642 2.82438 3.85108 3.05729 3.59633Z"
+                  fill="var(--bs-heading-color)"></path>
+                <path
+                  d="M16.9428 3.59633C17.1758 3.85108 17.1581 4.24642 16.9033 4.47933L15.0516 6.17232C14.7968 6.40524 14.4015 6.38754 14.1686 6.13279C13.9357 5.87804 13.9534 5.48271 14.2082 5.24979L16.0598 3.55681C16.3146 3.32389 16.7099 3.34158 16.9428 3.59633Z"
+                  fill="var(--bs-heading-color)"></path>
+                <path
+                  d="M14.188 14.6874C14.4321 14.4433 14.8277 14.4434 15.0718 14.6875L16.9235 16.5394C17.1676 16.7835 17.1676 17.1792 16.9235 17.4232C16.6794 17.6673 16.2837 17.6673 16.0396 17.4232L14.1879 15.5713C13.9438 15.3272 13.9439 14.9315 14.188 14.6874Z"
+                  fill="var(--bs-heading-color)"></path>
+                <path
+                  d="M5.81235 14.6875C6.05643 14.9315 6.05643 15.3272 5.81235 15.5713L3.9605 17.4231C3.71642 17.6672 3.32069 17.6672 3.07662 17.4231C2.83253 17.179 2.83253 16.7834 3.07662 16.5393L4.92847 14.6874C5.17254 14.4434 5.56828 14.4434 5.81235 14.6875Z"
+                  fill="var(--bs-heading-color)"></path>
+              </g>
+            </svg>
+            <div class="theme-toggle"></div>
+            <svg class="icon-dark" width="20" height="21" viewbox="0 0 20 21" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M16.5835 2.4225C16.4495 2.08117 15.9681 2.08117 15.834 2.4225L15.4754 3.33523C15.4345 3.43944 15.3523 3.52193 15.2485 3.56303L14.339 3.92301C13.999 4.05762 13.999 4.54067 14.339 4.67529L15.2485 5.03527C15.3523 5.07637 15.4345 5.15886 15.4754 5.26306L15.834 6.1758C15.9681 6.51712 16.4495 6.51712 16.5835 6.17581L16.9422 5.26306C16.9831 5.15886 17.0653 5.07637 17.1691 5.03527L18.0785 4.67529C18.4186 4.54067 18.4186 4.05762 18.0785 3.92301L17.1691 3.56303C17.0653 3.52193 16.9831 3.43944 16.9422 3.33523L16.5835 2.4225Z"
+                fill="var(--bs-heading-color)"></path>
+              <path
+                d="M13.3609 7.27454C13.2267 6.93323 12.7455 6.93323 12.6113 7.27454L12.4806 7.60733C12.4396 7.71154 12.3575 7.79403 12.2536 7.83513L11.9221 7.96638C11.582 8.10099 11.582 8.58404 11.9221 8.71866L12.2536 8.8499C12.3575 8.89098 12.4396 8.97348 12.4806 9.07773L12.6113 9.41048C12.7455 9.75182 13.2267 9.75182 13.3609 9.41048L13.4916 9.07773C13.5326 8.97348 13.6147 8.89098 13.7186 8.8499L14.0501 8.71866C14.3902 8.58404 14.3902 8.10099 14.0501 7.96638L13.7186 7.83513C13.6147 7.79403 13.5326 7.71154 13.4916 7.60733L13.3609 7.27454Z"
+                fill="var(--bs-heading-color)"></path>
+              <path opacity="0.5"
+                d="M10.0003 18.8332C14.6027 18.8332 18.3337 15.1022 18.3337 10.4998C18.3337 10.1143 17.7557 10.0505 17.5563 10.3805C16.6077 11.9503 14.8849 12.9998 12.917 12.9998C9.92541 12.9998 7.50032 10.5748 7.50032 7.58317C7.50032 5.61521 8.54982 3.89238 10.1197 2.9438C10.4497 2.7444 10.3859 2.1665 10.0003 2.1665C5.39795 2.1665 1.66699 5.89746 1.66699 10.4998C1.66699 15.1022 5.39795 18.8332 10.0003 18.8332Z"
+                fill="var(--bs-heading-color)"></path>
+            </svg>
           </a>
         </div>
-      </div>
-      <div class="volunteer-hero__stats">
-        <div class="volunteer-stat">
-          <span class="volunteer-stat__label">Role</span>
-          <strong>Volunteer</strong>
-        </div>
-        <div class="volunteer-stat">
-          <span class="volunteer-stat__label">Access</span>
-          <strong>Backoffice only</strong>
-        </div>
-      </div>
-    </section>
-
-    <section class="volunteer-history">
-      <div class="volunteer-section-head">
-        <div>
-          <span class="volunteer-hero__eyebrow">Recent History</span>
-          <h2>Your mission cards</h2>
-          <p>These are your latest assignments, with direct PDF export on each card.</p>
-        </div>
-        <a routerLink="/admin/assignment-history" class="volunteer-history-link">Open full history</a>
-      </div>
-
-      <div *ngIf="historyLoading" class="volunteer-history-state">Loading your assignment history...</div>
-      <div *ngIf="historyError" class="volunteer-history-state volunteer-history-state--error">{{ historyError }}</div>
-
-      <div class="volunteer-history-grid" *ngIf="!historyLoading && recentAssignments.length > 0; else noAssignments">
-        <article class="volunteer-history-card" *ngFor="let card of recentAssignments">
-          <div class="volunteer-history-card__top">
-            <div class="volunteer-history-card__icon"><i [class]="card.icon"></i></div>
-            <button *ngIf="card.status === 'Completed'" type="button" class="volunteer-history-card__pdf" (click)="downloadCardPdf(card)" title="Download PDF">
-              <i class="fi fi-rr-file-pdf"></i>
+        <div class="vr my-3"></div>
+        <div class="d-flex align-items-center gap-sm-2 gap-0 px-lg-4 px-sm-2 px-1">
+          <a href="email/inbox.html"
+            class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative">
+            <svg width="24" height="25" viewbox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path opacity="0.5"
+                d="M22 11V12.5C22 17.214 22 19.5711 20.5355 21.0355C19.0711 22.5 16.714 22.5 12 22.5C7.28595 22.5 4.92893 22.5 3.46447 21.0355C2 19.5711 2 17.214 2 12.5C2 7.78595 2 5.42893 3.46447 3.96447C4.92893 2.5 7.28595 2.5 12 2.5H13.5"
+                stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
+              <path
+                d="M19 8.5C20.6569 8.5 22 7.15685 22 5.5C22 3.84315 20.6569 2.5 19 2.5C17.3431 2.5 16 3.84315 16 5.5C16 7.15685 17.3431 8.5 19 8.5Z"
+                stroke="var(--bs-heading-color)" stroke-width="2"></path>
+              <path d="M7 14.5H16" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
+              <path d="M7 18H13" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+            <span
+              class="position-absolute top-0 end-0 p-1 mt-1 me-1 bg-primary border border-3 border-light rounded-circle">
+              <span class="visually-hidden">New alerts</span>
+            </span>
+          </a>
+          <div class="dropdown text-end">
+            <button type="button" class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light"
+              data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
+              <svg width="24" height="25" viewbox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M18.7491 10.2096V9.50497C18.7491 5.63623 15.7274 2.5 12 2.5C8.27256 2.5 5.25087 5.63623 5.25087 9.50497V10.2096C5.25087 11.0552 5.00972 11.8818 4.5578 12.5854L3.45036 14.3095C2.43882 15.8843 3.21105 18.0249 4.97036 18.5229C9.57274 19.8257 14.4273 19.8257 19.0296 18.5229C20.789 18.0249 21.5612 15.8843 20.5496 14.3095L19.4422 12.5854C18.9903 11.8818 18.7491 11.0552 18.7491 10.2096Z"
+                  stroke="var(--bs-heading-color)" stroke-width="2"></path>
+                <path opacity="0.5"
+                  d="M7.5 19.5C8.15503 21.2478 9.92246 22.5 12 22.5C14.0775 22.5 15.845 21.2478 16.5 19.5"
+                  stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
+                <path opacity="0.5" d="M12 6.5V10.5" stroke="var(--bs-heading-color)" stroke-width="2"
+                  stroke-linecap="round"></path>
+              </svg>
             </button>
+            <div class="dropdown-menu dropdown-menu-lg-end p-0 w-300px mt-2">
+              <div class="px-3 py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Notifications <span class="badge badge-sm rounded-pill bg-primary ms-2">9</span>
+                </h6>
+                <i class="bi bi-x-lg cursor-pointer"></i>
+              </div>
+              <div class="p-2" style="height: 300px;" data-simplebar="">
+                <ul class="list-group list-group-hover list-group-smooth list-group-unlined">
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs avatar-status-success rounded-circle me-1">
+                      <img src="assets/backoffice/images/avatar/avatar1.webp" alt="">
+                    </div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Emma Smith</h6>
+                      <small class="text-body d-block">Need to update the details.</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">7 hr ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs bg-success rounded-circle text-white">D</div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Design Team</h6>
+                      <small class="text-body d-block">Check your shared folder.</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">6 hr ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs bg-dark rounded-circle text-white">
+                      <i class="fi fi-rr-lock"></i>
+                    </div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Security Update</h6>
+                      <small class="text-body d-block">Password successfully set.</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">5 hr ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs bg-info rounded-circle text-white">
+                      <i class="fi fi-rr-shopping-cart"></i>
+                    </div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Invoice #1432</h6>
+                      <small class="text-body d-block">has been paid Amount: $899.00</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">5 hr ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs bg-danger rounded-circle text-white">R</div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Emma Smith</h6>
+                      <small class="text-body d-block">added you to Dashboard Analytics</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">5 hr ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs avatar-status-success rounded-circle me-1">
+                      <img src="assets/backoffice/images/avatar/avatar3.webp" alt="">
+                    </div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Olivia Clark</h6>
+                      <small class="text-body d-block">You can now view the “Report”.</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">4 hr ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="avatar avatar-xs avatar-status-danger rounded-circle me-1">
+                      <img src="assets/backoffice/images/avatar/avatar5.webp" alt="">
+                    </div>
+                    <div class="ms-2 me-auto">
+                      <h6 class="mb-0">Isabella Walker</h6>
+                      <small class="text-body d-block">@Isabella please review.</small>
+                      <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">2 hr ago</small>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="p-2">
+                <a href="javascript:void(0);" class="btn w-100 btn-primary waves-effect waves-light">View all
+                  notifications</a>
+              </div>
+            </div>
           </div>
-
-          <h3 class="volunteer-history-card__title">{{ card.missionTitle }}</h3>
-          <p class="volunteer-history-card__category">{{ card.category }}</p>
-          <p class="volunteer-history-card__patient"><i class="fi fi-rr-user"></i> {{ card.patientName }}</p>
-
-          <div class="volunteer-history-card__meta">
-            <span><i class="fi fi-rr-calendar"></i> {{ card.assignedDate }}</span>
-            <span><i class="fi fi-rr-clock"></i> {{ card.duration }}</span>
-          </div>
-
-          <div class="volunteer-history-card__footer">
-            <span class="history-status" [ngClass]="'history-status--' + card.statusColor">{{ card.status }}</span>
-            <span class="volunteer-history-card__rating" *ngIf="card.rating">{{ card.rating }}/5</span>
-          </div>
-
-          <div class="volunteer-history-card__actions" *ngIf="card.status === 'Assigned'">
-            <button type="button" class="history-action history-action--refuse" (click)="refuseMission(card)" [disabled]="actionLoadingId === card.id">
-              {{ actionLoadingId === card.id ? 'Updating...' : 'Refuse' }}
-            </button>
-            <button type="button" class="history-action history-action--accept" (click)="acceptMission(card)" [disabled]="actionLoadingId === card.id">
-              {{ actionLoadingId === card.id ? 'Updating...' : 'Accept' }}
-            </button>
-          </div>
-
-          <div class="volunteer-history-card__actions" *ngIf="card.status === 'In Progress'">
-            <button type="button" class="history-action history-action--complete" (click)="completeMission(card)" [disabled]="actionLoadingId === card.id">
-              {{ actionLoadingId === card.id ? 'Updating...' : 'Mark Completed' }}
-            </button>
-          </div>
-        </article>
-      </div>
-
-      <ng-template #noAssignments>
-        <div class="volunteer-history-empty">
-          <i class="fi fi-rr-inbox"></i>
-          <h3>No assignments yet</h3>
-          <p>Your mission history will appear here once assignments are created.</p>
+          <a routerLink="/admin/calendar" class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light">
+            <svg width="24" height="25" viewbox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M2 12.5C2 8.72876 2 6.84315 3.17157 5.67157C4.34315 4.5 6.22876 4.5 10 4.5H14C17.7712 4.5 19.6569 4.5 20.8284 5.67157C22 6.84315 22 8.72876 22 12.5V14.5C22 18.2712 22 20.1569 20.8284 21.3284C19.6569 22.5 17.7712 22.5 14 22.5H10C6.22876 22.5 4.34315 22.5 3.17157 21.3284C2 20.1569 2 18.2712 2 14.5V12.5Z"
+                stroke="var(--bs-heading-color)" stroke-width="2"></path>
+              <path opacity="0.5" d="M7 4.5V3" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round">
+              </path>
+              <path opacity="0.5" d="M17 4.5V3" stroke="var(--bs-heading-color)" stroke-width="2"
+                stroke-linecap="round"></path>
+              <path opacity="0.5" d="M2.5 9.5H21.5" stroke="var(--bs-heading-color)" stroke-width="2"
+                stroke-linecap="round"></path>
+              <path
+                d="M18 17.5C18 18.0523 17.5523 18.5 17 18.5C16.4477 18.5 16 18.0523 16 17.5C16 16.9477 16.4477 16.5 17 16.5C17.5523 16.5 18 16.9477 18 17.5Z"
+                fill="var(--bs-heading-color)"></path>
+              <path
+                d="M18 13.5C18 14.0523 17.5523 14.5 17 14.5C16.4477 14.5 16 14.0523 16 13.5C16 12.9477 16.4477 12.5 17 12.5C17.5523 12.5 18 12.9477 18 13.5Z"
+                fill="var(--bs-heading-color)"></path>
+              <path
+                d="M13 17.5C13 18.0523 12.5523 18.5 12 18.5C11.4477 18.5 11 18.0523 11 17.5C11 16.9477 11.4477 16.5 12 16.5C12.5523 16.5 13 16.9477 13 17.5Z"
+                fill="var(--bs-heading-color)"></path>
+              <path
+                d="M13 13.5C13 14.0523 12.5523 14.5 12 14.5C11.4477 14.5 11 14.0523 11 13.5C11 12.9477 11.4477 12.5 12 12.5C12.5523 12.5 13 12.9477 13 13.5Z"
+                fill="var(--bs-heading-color)"></path>
+              <path
+                d="M8 17.5C8 18.0523 7.55228 18.5 7 18.5C6.44772 18.5 6 18.0523 6 17.5C6 16.9477 6.44772 16.5 7 16.5C7.55228 16.5 8 16.9477 8 17.5Z"
+                fill="var(--bs-heading-color)"></path>
+              <path
+                d="M8 13.5C8 14.0523 7.55228 14.5 7 14.5C6.44772 14.5 6 14.0523 6 13.5C6 12.9477 6.44772 12.5 7 12.5C7.55228 12.5 8 12.9477 8 13.5Z"
+                fill="var(--bs-heading-color)"></path>
+            </svg>
+          </a>
         </div>
-      </ng-template>
-    </section>
+        <div class="vr my-3"></div>
+        <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
+          <a routerLink="/admin/profile" class="d-flex align-items-center py-2">
+            <div class="text-end me-2 d-none d-lg-inline-block">
+              <div class="fw-bold text-dark">Robert Brown</div>
+              <small class="text-body d-block lh-sm">
+                <i class="fi fi-rr-angle-down text-3xs me-1"></i> Manager
+              </small>
+            </div>
+            <div class="avatar avatar-sm rounded-circle avatar-status-success">
+              <img src="assets/backoffice/images/avatar/avatar1.webp" alt="">
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
+            <li class="d-flex align-items-center p-2">
+              <div class="avatar avatar-sm rounded-circle">
+                <img src="assets/backoffice/images/avatar/avatar1.webp" alt="">
+              </div>
+              <div class="ms-2">
+                <div class="fw-bold text-dark">Robert Brown </div>
+                <small class="text-body d-block lh-sm">robert@gmail.com</small>
+              </div>
+            </li>
+            <li>
+              <div class="dropdown-divider my-1"></div>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/profile">
+                <i class="fi fi-rr-user scale-1x"></i> View Profile
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/task-management">
+                <i class="fi fi-rr-note scale-1x"></i> My Task
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/settings">
+                <i class="fi fi-rr-settings scale-1x"></i> Account Settings
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" href="pages/pricing.html">
+                <i class="fi fi-rr-usd-circle scale-1x"></i> Upgrade Plan
+              </a>
+            </li>
+            <li>
+              <div class="dropdown-divider my-1"></div>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2 text-danger"
+                href="authentication/login-basic.html">
+                <i class="fi fi-sr-exit scale-1x"></i> Log Out
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- end::NexLink Page Header -->
+
+  <div class="modal fade" id="searchResultsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header py-1 px-3">
+          <form class="d-flex align-items-center position-relative w-100" action="#">
+            <button type="button" class="btn btn-sm border-0 position-absolute start-0 p-0 text-sm ">
+              <i class="fi fi-rr-search"></i>
+            </button>
+            <input type="text" class="form-control form-control-lg ps-4 border-0 shadow-none" id="searchInput"
+              placeholder="Search anything's">
+          </form>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pb-2" style="height: 300px;" data-simplebar="">
+          <div id="recentlyResults">
+            <span class="text-uppercase text-2xs fw-semibold text-muted d-block mb-2">Recently Searched:</span>
+            <ul class="list-inline search-list">
+              <li>
+                <a class="search-item" routerLink="/admin">
+                  <i class="fi fi-rr-apps"></i> Dashboard
+                </a>
+              </li>
+              <li>
+                <a class="search-item" routerLink="/admin/chat">
+                  <i class="fi fi-rr-comment"></i> Chat
+                </a>
+              </li>
+              <li>
+                <a class="search-item" routerLink="/admin/calendar">
+                  <i class="fi fi-rr-calendar"></i> Calendar
+                </a>
+              </li>
+              <li>
+                <a class="search-item" href="chart/apexchart.html">
+                  <i class="fi fi-rr-chart-pie-alt"></i> Apexchart
+                </a>
+              </li>
+              <li>
+                <a class="search-item" href="pages/pricing.html">
+                  <i class="fi fi-rr-file"></i> Pricing
+                </a>
+              </li>
+              <li>
+                <a class="search-item" href="email/inbox.html">
+                  <i class="fi fi-rr-envelope"></i> Email
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div id="searchContainer"></div>
+        </div>
+      </div>
+    </div>
   </div>
-</ng-container>
 
-<ng-template #staffDashboard>
   <!-- begin::NexLink Sidebar Menu -->
   <aside class="app-menubar-tabs" id="appMenubar">
     <div class="app-navbar-brand">
@@ -101,12 +341,19 @@
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Dashboard">
           <a class="menu-link active" href="#dashboardTab" role="tab" aria-controls="dashboardTab" aria-selected="true"
             data-bs-toggle="tab">
-            <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path opacity="0.5"
-                d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
-                stroke="var(--bs-heading-color)" stroke-width="2"></path>
-              <path d="M12 15V18" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
-            </svg>
+            <!-- ... existing svg ... -->
+          </a>
+        </li>
+        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Forum">
+          <a class="menu-link" href="#forumTab" role="tab" aria-controls="forumTab" aria-selected="false"
+            data-bs-toggle="tab">
+            <i class="ri-discuss-line text-xl"></i>
+          </a>
+        </li>
+        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Moderation">
+          <a class="menu-link" href="#moderationTab" role="tab" aria-controls="moderationTab" aria-selected="false"
+            data-bs-toggle="tab">
+            <i class="ri-flag-line text-xl"></i>
           </a>
         </li>
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Apps">
@@ -154,34 +401,6 @@
             </svg>
           </a>
         </li>
-        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Components">
-          <a class="menu-link" href="#componentsTab" role="tab" aria-controls="componentsTab" aria-selected="false"
-            data-bs-toggle="tab">
-            <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M5.5 15.5C5.5 14.5572 5.5 14.0858 5.79289 13.7929C6.08579 13.5 6.55719 13.5 7.5 13.5H8.5C9.44281 13.5 9.91421 13.5 10.2071 13.7929C10.5 14.0858 10.5 14.5572 10.5 15.5V16.5C10.5 17.4428 10.5 17.9142 10.2071 18.2071C9.91421 18.5 9.44281 18.5 8.5 18.5C7.08579 18.5 6.37868 18.5 5.93934 18.0607C5.5 17.6213 5.5 16.9142 5.5 15.5Z"
-                stroke="var(--bs-heading-color)" stroke-width="2"></path>
-              <path
-                d="M5.5 8.5C5.5 7.08579 5.5 6.37868 5.93934 5.93934C6.37868 5.5 7.08579 5.5 8.5 5.5C9.44281 5.5 9.91421 5.5 10.2071 5.79289C10.5 6.08579 10.5 6.55719 10.5 7.5V8.5C10.5 9.44281 10.5 9.91421 10.2071 10.2071C9.91421 10.5 9.44281 10.5 8.5 10.5H7.5C6.55719 10.5 6.08579 10.5 5.79289 10.2071C5.5 9.91421 5.5 9.44281 5.5 8.5Z"
-                stroke="var(--bs-heading-color)" stroke-width="2"></path>
-              <path
-                d="M13.5 15.5C13.5 14.5572 13.5 14.0858 13.7929 13.7929C14.0858 13.5 14.5572 13.5 15.5 13.5H16.5C17.4428 13.5 17.9142 13.5 18.2071 13.7929C18.5 14.0858 18.5 14.5572 18.5 15.5C18.5 16.9142 18.5 17.6213 18.0607 18.0607C17.6213 18.5 16.9142 18.5 15.5 18.5C14.5572 18.5 14.0858 18.5 13.7929 18.2071C13.5 17.9142 13.5 17.4428 13.5 16.5V15.5Z"
-                stroke="var(--bs-heading-color)" stroke-width="2"></path>
-              <path
-                d="M13.5 7.5C13.5 6.55719 13.5 6.08579 13.7929 5.79289C14.0858 5.5 14.5572 5.5 15.5 5.5C16.9142 5.5 17.6213 5.5 18.0607 5.93934C18.5 6.37868 18.5 7.08579 18.5 8.5C18.5 9.44281 18.5 9.91421 18.2071 10.2071C17.9142 10.5 17.4428 10.5 16.5 10.5H15.5C14.5572 10.5 14.0858 10.5 13.7929 10.2071C13.5 9.91421 13.5 9.44281 13.5 8.5V7.5Z"
-                stroke="var(--bs-heading-color)" stroke-width="2"></path>
-              <path opacity="0.5" d="M22 14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22"
-                stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
-              <path opacity="0.5" d="M10 22C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14"
-                stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
-              <path opacity="0.5" d="M10 2C6.22876 2 4.34315 2 3.17157 3.17157C2 4.34315 2 6.22876 2 10"
-                stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
-              <path opacity="0.5" d="M14 2C17.7712 2 19.6569 2 20.8284 3.17157C22 4.34315 22 6.22876 22 10"
-                stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
-            </svg>
-          </a>
-        </li>
-        <li class="nav-item-hr"></li>
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Extended UI">
           <a class="menu-link" href="#extendedTab" role="tab" aria-controls="extendedTab" aria-selected="false"
             data-bs-toggle="tab">
@@ -248,7 +467,7 @@
           </a>
         </li>
         <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Login">
-          <a class="menu-link" routerLink="/auth/login" onclick="localStorage.removeItem('loggedUser')">
+          <a class="menu-link" href="authentication/login-frame.html">
             <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path opacity="0.5"
                 d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2H16.0002C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8V16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17"
@@ -262,7 +481,7 @@
     </div>
     <div class="app-tab-content">
       <div class="app-side-brands">
-        <a class="navbar-brand-text" routerLink="/admin">MindCare</a>
+        <a class="navbar-brand-text" routerLink="/admin">NexLink</a>
       </div>
       <div class="app-content-inner">
         <div class="tab-content" id="appMenubarTabsContent">
@@ -278,79 +497,51 @@
                     <span class="menu-label">Default Dashboard</span>
                   </a>
                 </li>
-
                 <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/medical-reports" role="button">
-                    <i class="fi fi-rr-document"></i>
-                    <span class="menu-label">Medical Reports</span>
+                  <a class="menu-link" routerLink="/admin/sales" role="button">
+                    <i class="fi fi-rr-percent-100"></i>
+                    <span class="menu-label">Sales Dashboard</span>
                   </a>
                 </li>
                 <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/appointments" role="button">
-                    <i class="fi fi-rr-calendar"></i>
-                    <span class="menu-label">Appointments</span>
+                  <a class="menu-link" routerLink="/admin/finance" role="button">
+                    <i class="fi fi-rr-growth-chart-invest"></i>
+                    <span class="menu-label">Finance Dashboard</span>
                   </a>
                 </li>
                 <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/activities" role="button">
-                    <i class="fi fi-rr-list-check"></i>
-                    <span class="menu-label">Activities</span>
+                  <a class="menu-link" routerLink="/admin/team-management" role="button">
+                    <i class="fi fi-rr-circle-user"></i>
+                    <span class="menu-label">Team Management</span>
                   </a>
                 </li>
                 <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/consultations" role="button">
-                    <i class="fi fi-rr-file-medical"></i>
-                    <span class="menu-label">Consultations</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/patient-follow-up" role="button">
-                    <i class="fi fi-rr-heart-pulse"></i>
-                    <span class="menu-label">Patient Follow-up</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/medications" role="button">
-                    <i class="fi fi-rr-capsules"></i>
-                    <span class="menu-label">Medications</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/forums" role="button">
-                    <i class="fi fi-rr-comment-alt"></i>
-                    <span class="menu-label">Forums</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/incidents" role="button">
-                    <i class="fi fi-rr-shield-exclamation"></i>
-                    <span class="menu-label">Incidents</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" routerLink="/admin/movement" role="button">
-                    <i class="fi fi-rr-running"></i>
-                    <span class="menu-label">Movement</span>
-                  </a>
-                </li>
-
-
-
-                <li class="menu-item" *ngIf="authService.isAdmin()">
                   <a class="menu-link" routerLink="/admin/employee" role="button">
                     <i class="fi fi-rr-employee-man"></i>
                     <span class="menu-label">Employees</span>
                   </a>
                 </li>
-                <li class="menu-item" *ngIf="authService.isAdmin()">
+                <li class="menu-item">
                   <a class="menu-link" routerLink="/admin/customers" role="button">
                     <i class="fi fi-rr-review"></i>
                     <span class="menu-label">Customers</span>
                   </a>
                 </li>
-
-
-                <li class="menu-item" *ngIf="authService.isAdmin()">
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/review" role="button">
+                    <i class="fi fi-rr-star"></i>
+                    <span class="menu-label">Review</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/task-management" role="button">
+                    <svg width="18" height="18" viewbox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="20" height="20" rx="6" fill="var(--bs-danger)"></rect>
+                    </svg>
+                    <span class="menu-label">Tasks & Projects</span>
+                  </a>
+                </li>
+                <li class="menu-item">
                   <a class="menu-link" routerLink="/admin/user-management" role="button">
                     <svg width="18" height="18" viewbox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <rect width="20" height="20" rx="6" fill="var(--bs-info)"></rect>
@@ -358,17 +549,121 @@
                     <span class="menu-label">User Management</span>
                   </a>
                 </li>
-
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/deals" role="button">
+                    <svg width="18" height="18" viewbox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="20" height="20" rx="6" fill="var(--bs-primary)"></rect>
+                    </svg>
+                    <span class="menu-label">Deals</span>
+                    <span class="badge badge-sm text-bg-success">+12%</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <!-- Moderation (forum reports — separate from forum content) -->
+          <div class="tab-pane fade" id="moderationTab" role="tabpanel" tabindex="0">
+            <nav class="app-navbar" data-simplebar="">
+              <ul class="side-menubar">
+                <li class="menu-heading">
+                  <span class="menu-label">Moderation</span>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/moderation/forum-reports" role="button">
+                    <i class="ri-flag-line"></i>
+                    <span class="menu-label">Comment reports</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <!-- Forum Tab -->
+          <div class="tab-pane fade" id="forumTab" role="tabpanel" tabindex="0">
+            <nav class="app-navbar" data-simplebar="">
+              <ul class="side-menubar">
+                <li class="menu-heading">
+                  <span class="menu-label">MindCare Forum</span>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/forum" role="button">
+                    <i class="ri-dashboard-line"></i>
+                    <span class="menu-label">Dashboard</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/forum/ListPost" role="button">
+                    <i class="ri-article-line"></i>
+                    <span class="menu-label">Posts</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/forum/categories" role="button">
+                    <i class="ri-folder-line"></i>
+                    <span class="menu-label">Categories</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/forum/comments" role="button">
+                    <i class="ri-chat-3-line"></i>
+                    <span class="menu-label">Comments</span>
+                  </a>
+                </li>
+                <li>
+                  <div class="menu-divider"></div>
+                </li>
+                <li class="menu-heading">
+                  <span class="menu-label">Settings</span>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/forum/settings" role="button">
+                    <i class="ri-settings-3-line"></i>
+                    <span class="menu-label">Forum Settings</span>
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>
           <div class="tab-pane fade" id="appsTab" role="tabpanel" tabindex="0">
             <nav class="app-navbar" data-simplebar="">
               <ul class="side-menubar">
-
-
+                <li class="menu-heading">
+                  <span class="menu-label">Apps</span>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/chat">
+                    <i class="fi fi-rr-comment"></i>
+                    <span class="menu-label">Chat</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" routerLink="/admin/calendar">
+                    <i class="fi fi-rr-calendar"></i>
+                    <span class="menu-label">Calendar</span>
+                  </a>
+                </li>
                 <li>
                   <div class="menu-divider"></div>
+                </li>
+                <li class="menu-heading">
+                  <span class="menu-label">Email</span>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="email/inbox.html">
+                    <i class="fi fi-rr-inbox-in"></i>
+                    <span class="menu-label">Inbox</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="email/compose.html">
+                    <i class="fi fi-rr-pen-field"></i>
+                    <span class="menu-label">Compose</span>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a class="menu-link" href="email/read-email.html">
+                    <i class="fi fi-rr-envelope"></i>
+                    <span class="menu-label">Read email</span>
+                  </a>
                 </li>
               </ul>
             </nav>
@@ -554,153 +849,6 @@
                   <a class="menu-link" href="authentication/new-password-frame.html">
                     <i class="fi fi-rr-password-alt"></i>
                     <span class="menu-label">Frame</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div class="tab-pane fade" id="componentsTab" role="tabpanel" tabindex="0">
-            <nav class="app-navbar" data-simplebar="">
-              <ul class="side-menubar">
-                <li class="menu-heading">
-                  <span class="menu-label">UI Components</span>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/accordion.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Accordion</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/alerts.html">
-                    <i class="fi fi-rs-bell"></i>
-                    <span class="menu-label">Alerts</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/badge.html">
-                    <i class="fi fi-rr-tags"></i>
-                    <span class="menu-label">Badge</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/breadcrumb.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Breadcrumb</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/buttons.html">
-                    <i class="fi fi-rr-toggle-on"></i>
-                    <span class="menu-label">Buttons</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/typography.html">
-                    <i class="fi fi-rr-text"></i>
-                    <span class="menu-label">Typography</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/button-group.html">
-                    <i class="fi fi-rr-toggle-on"></i>
-                    <span class="menu-label">Button Group</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/card.html">
-                    <i class="fi fi-rr-credit-card"></i>
-                    <span class="menu-label">Card</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/collapse.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Collapse</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/carousel.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Carousel</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/dropdowns.html">
-                    <i class="fi fi-rs-settings-sliders"></i>
-                    <span class="menu-label">Dropdowns</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/modal.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Modal</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/navbar.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Navbar</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/list-group.html">
-                    <i class="fi fi-rr-list"></i>
-                    <span class="menu-label">List Group</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/tabs.html">
-                    <i class="fi fi-rr-tab-folder"></i>
-                    <span class="menu-label">Tabs</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/offcanvas.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Offcanvas</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/pagination.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Pagination</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/popovers.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Popovers</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/progress.html">
-                    <i class="fi fi-sr-bars-progress"></i>
-                    <span class="menu-label">Progress</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/scrollspy.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Scrollspy</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/spinners.html">
-                    <i class="fi fi-br-loading"></i>
-                    <span class="menu-label">Spinners</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/toasts.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Toasts</span>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a class="menu-link" href="components/tooltips.html">
-                    <i class="fi fi-rr-flux-capacitor"></i>
-                    <span class="menu-label">Tooltips</span>
                   </a>
                 </li>
               </ul>
@@ -1021,7 +1169,7 @@
                 <div class="card-footer border-0 pt-0 mt-n1">
                   <div class="border-top pb-2"></div>
                   <div class="d-flex align-items-center justify-content-between">
-                    <p class="mb-0">Vs last month:Â 1,195</p>
+                    <p class="mb-0">Vs last month: 1,195</p>
                     <a href="javascript:void(0);" class="btn-link">
                       <svg width="20" height="20" viewbox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path opacity="0.5"
@@ -1066,7 +1214,7 @@
                 <div class="card-footer border-0 p-0">
                   <div id="chartLeadAnalytics" class="my-n3 mx-n1"></div>
                   <div class="position-absolute bottom-0 translate-middle start-50 text-center text-1xs w-100">Compared
-                    to LastÂ Month</div>
+                    to Last Month</div>
                 </div>
               </div>
             </div>
@@ -1138,7 +1286,7 @@
                 <div class="card-footer border-0 pt-0">
                   <div class="border-top pb-2"></div>
                   <div class="d-flex align-items-center justify-content-between">
-                    <p class="mb-0">Vs last month:Â 1,195</p>
+                    <p class="mb-0">Vs last month: 1,195</p>
                     <a href="javascript:void(0);" class="btn-link">
                       <svg width="20" height="20" viewbox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path opacity="0.5"
@@ -2494,7 +2642,7 @@
     <div class="container-fluid">
       <div class="row g-2">
         <div class="col-lg-6 col-md-7 text-center text-md-start">
-          <p class="mb-0">Â© <span class="currentYear">2025</span> NexLink. Proudly powered by <a
+          <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a
               href="javascript:void(0);">LayoutDrop</a>.</p>
         </div>
         <div class="col-lg-6 col-md-5">
@@ -2516,142 +2664,3 @@
   <!-- end::NexLink Footer -->
 
 </div>
-
-<section class="dashboard-grid">
-  <div class="dashboard-main">
-    <section class="metric-grid">
-      <article class="metric-card">
-        <div class="metric-head">
-          <h3>Total Contacts</h3>
-          <button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button>
-        </div>
-        <div class="metric-body">
-          <div>
-            <div class="metric-value-row"><h2>5,758</h2><span class="metric-badge positive">+2.57%</span></div>
-            <p>Vs last month: 1,195</p>
-          </div>
-          <div class="spark spark-blue"></div>
-        </div>
-      </article>
-
-      <article class="metric-card">
-        <div class="metric-head">
-          <h3>Lead Analytics</h3>
-          <button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button>
-        </div>
-        <div class="metric-body stacked">
-          <div class="metric-value-row"><h2>70</h2><span class="metric-badge negative">-2.57%</span></div>
-          <div class="mini-bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <p>Compared to last month</p>
-        </div>
-      </article>
-
-      <article class="metric-card">
-        <div class="metric-head plain">
-          <h3>Tasks Overview</h3>
-          <span class="metric-small">Tasks Done <strong>25</strong></span>
-        </div>
-        <div class="progress-track"><span class="progress-bar primary" style="width: 70%"></span></div>
-        <div class="task-overview">
-          <div class="task-legend">
-            <span><i class="legend-dot low"></i> Follow-ups</span>
-            <span><i class="legend-dot mid"></i> In Progress</span>
-            <span><i class="legend-dot high"></i> Pending</span>
-          </div>
-          <div class="task-ring">70%</div>
-        </div>
-      </article>
-
-      <article class="metric-card">
-        <div class="metric-head">
-          <h3>Active Deals</h3>
-          <button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button>
-        </div>
-        <div class="metric-body stacked">
-          <div class="metric-value-row"><h2>1,249</h2><span class="metric-badge positive">+2.57%</span></div>
-          <div class="deal-line-chart"><span></span><span></span><span></span><span></span><span></span></div>
-          <p>Vs last month: 1,195</p>
-        </div>
-      </article>
-    </section>
-
-    <article class="panel-card revenue-panel">
-      <div class="panel-head">
-        <h3>Revenue</h3>
-        <div class="pill-group"><span class="pill">Today</span><span class="pill">Week</span><span class="pill active">Month</span></div>
-      </div>
-      <div class="revenue-value">
-        <h2><span>$</span>2,56,054.<strong>50</strong></h2>
-        <p>+20% vs last month</p>
-      </div>
-      <div class="revenue-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    </article>
-
-    <section class="bottom-grid">
-      <article class="panel-card deals-panel">
-        <div class="panel-head"><h3>Deals Overview</h3><span class="panel-note">+15% vs last month</span></div>
-        <div class="mini-stat-grid">
-          <div class="mini-stat"><div class="mini-stat-icon"><i class="fi fi-rr-check-double"></i></div><div><p>Closed Deals</p><h4>27</h4><span>+10 Deals</span></div></div>
-          <div class="mini-stat"><div class="mini-stat-icon"><i class="fi fi-rr-clock-five"></i></div><div><p>Pipeline Value</p><h4>$5.2M</h4><span>+$270K</span></div></div>
-        </div>
-        <div class="deals-wave"></div>
-        <div class="conversion-pill"><span>Conversion Rate</span><strong>16%</strong><em>-2%</em></div>
-      </article>
-
-      <article class="panel-card pipeline-panel">
-        <div class="panel-head"><h3>Sales Pipeline Overview</h3><button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button></div>
-        <div class="pipeline-value"><h2><span>$</span>2,56,054.<strong>50</strong></h2><p>+20% vs last month</p></div>
-        <div class="pipeline-list">
-          <div class="pipeline-row"><div class="pipeline-label">Leads</div><div class="pipeline-count">120</div><div class="progress-track"><span class="progress-bar primary" style="width: 85%"></span></div></div>
-          <div class="pipeline-row"><div class="pipeline-label">Prospects</div><div class="pipeline-count">85</div><div class="progress-track"><span class="progress-bar success" style="width: 60%"></span></div></div>
-          <div class="pipeline-row"><div class="pipeline-label">Opportunities</div><div class="pipeline-count">40</div><div class="progress-track"><span class="progress-bar info" style="width: 40%"></span></div></div>
-          <div class="pipeline-row"><div class="pipeline-label">Closed Deals</div><div class="pipeline-count">20</div><div class="progress-track"><span class="progress-bar danger" style="width: 25%"></span></div></div>
-        </div>
-      </article>
-    </section>
-  </div>
-
-  <div class="dashboard-side">
-    <article class="panel-card">
-      <div class="panel-head"><h3>Traffic Sources</h3><button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button></div>
-      <div class="donut-visual"><div class="donut-ring"><strong>41.5%</strong><span>Organic</span></div></div>
-      <div class="source-list">
-        <div><span><i class="legend-dot low"></i> Organic Search</span><strong>41.50%</strong></div>
-        <div><span><i class="legend-dot mid"></i> Direct Traffic</span><strong>27%</strong></div>
-        <div><span><i class="legend-dot high"></i> Referral Traffic</span><strong>18%</strong></div>
-        <div><span><i class="legend-dot dark"></i> Social Media</span><strong>10.30%</strong></div>
-        <div><span><i class="legend-dot solid"></i> Email Traffic</span><strong>3.20%</strong></div>
-      </div>
-    </article>
-
-    <article class="panel-card">
-      <div class="panel-head"><h3>Retention Rate</h3><button type="button" class="metric-menu"><i class="fi fi-bs-menu-dots"></i></button></div>
-      <div class="metric-value-row retention-row"><h2>92%</h2><span>+15% vs last month</span></div>
-      <div class="retention-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    </article>
-
-    <article class="panel-card earning-panel">
-      <div class="panel-head dark"><h3>Total Earning</h3><button type="button" class="metric-menu invert"><i class="fi fi-bs-menu-dots"></i></button></div>
-      <div class="earning-ring"><div class="earning-circle"><strong>673</strong><span>Orders</span></div></div>
-      <div class="earning-stats">
-        <div><h4>$2.78m</h4><p>245 Pickups</p></div>
-        <div><h4>$65,823</h4><p>120 Shipment</p></div>
-      </div>
-      <div class="status-list">
-        <div><span>Paid</span><strong>70%</strong></div>
-        <div><span>Cancelled</span><strong>25%</strong></div>
-        <div><span>Refunded</span><strong>5%</strong></div>
-      </div>
-    </article>
-
-    <article class="panel-card">
-      <div class="panel-head"><h3>Upcoming Meetings</h3><button type="button" class="metric-menu"><i class="fi fi-rr-plus"></i></button></div>
-      <div class="meeting-list">
-        <div class="meeting-item"><h4>Team Stand Up</h4><p>On Google Meet</p><div><span>Marketing</span><strong>06:00 - 07:00</strong></div></div>
-        <div class="meeting-item"><h4>All Hands Meeting</h4><p>On Google Meet</p><div><span>Manager</span><strong>08:00 - 09:00</strong></div></div>
-        <div class="meeting-item"><h4>Sprint Planning</h4><p>On Google Meet</p><div><span>Product</span><strong>11:00 - 12:00</strong></div></div>
-      </div>
-    </article>
-  </div>
-</section>
-</ng-template>

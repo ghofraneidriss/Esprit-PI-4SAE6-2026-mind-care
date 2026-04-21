@@ -1,14 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-app-sidebar="full" data-bs-theme="light">
 
 <head>
+  <script>
+    document.documentElement.setAttribute('data-bs-theme', 'light');
+  </script>
   <meta charset="utf-8">
   <title>MindCare</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/branding/alzcare-logo-3d.png">
 
-  <link href="assets/frontoffice/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="/assets/frontoffice/img/apple-touch-icon.png" rel="apple-touch-icon">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -17,33 +20,59 @@
     rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="assets/frontoffice/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/frontoffice/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/frontoffice/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/frontoffice/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/frontoffice/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-  <link href="assets/frontoffice/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="/assets/frontoffice/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/frontoffice/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/assets/frontoffice/vendor/aos/aos.css" rel="stylesheet">
+  <link href="/assets/frontoffice/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="/assets/frontoffice/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="/assets/frontoffice/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="assets/frontoffice/css/main.css" rel="stylesheet">
+  <link href="/assets/frontoffice/css/main.css" rel="stylesheet">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="assets/backoffice/libs/flaticon/css/all/all.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/lucide/lucide.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/fontawesome/css/all.min.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/simplebar/simplebar.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/node-waves/waves.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/bootstrap-select/css/bootstrap-select.min.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/flatpickr/flatpickr.min.css">
-  <link rel="stylesheet" href="assets/backoffice/libs/datatables/datatables.min.css">
-  <link rel="stylesheet" href="assets/backoffice/css/styles.css">
+
+  <!-- FontAwesome CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Remix Icons CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Backoffice Styles -->
+  <link rel="stylesheet" href="/assets/backoffice/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="/assets/backoffice/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/assets/backoffice/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="/assets/backoffice/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="/assets/backoffice/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="/assets/backoffice/libs/flatpickr/flatpickr.min.css">
+  <link rel="stylesheet" href="/assets/backoffice/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="/assets/backoffice/css/styles.css">
 
 </head>
 
 <body>
   <app-root></app-root>
+  <script src="/assets/frontoffice/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/assets/frontoffice/vendor/php-email-form/validate.js"></script>
+  <script src="/assets/frontoffice/vendor/aos/aos.js"></script>
+  <script src="/assets/frontoffice/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="/assets/frontoffice/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="/assets/frontoffice/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="/assets/frontoffice/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="/assets/frontoffice/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="/assets/frontoffice/js/main.js"></script>
+  <script src="/assets/backoffice/libs/global/global.min.js"></script>
+  <script src="/assets/backoffice/libs/sortable/Sortable.min.js"></script>
+  <script src="/assets/backoffice/libs/chartjs/chart.js"></script>
+  <script src="/assets/backoffice/libs/flatpickr/flatpickr.min.js"></script>
+  <script src="/assets/backoffice/libs/datatables/datatables.min.js"></script>
+  <script src="/assets/backoffice/js/main.js"></script>
+
 </body>
 
 </html>

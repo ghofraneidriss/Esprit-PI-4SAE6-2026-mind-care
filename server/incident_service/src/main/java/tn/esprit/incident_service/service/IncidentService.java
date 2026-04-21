@@ -2,6 +2,8 @@ package tn.esprit.incident_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -58,9 +60,20 @@ public class IncidentService {
         return incidentRepository.findByCaregiverIdActive(caregiverId);
     }
 
-    // Get Incidents reported by Caregivers - Admin Back Office
-    public List<Incident> getCaregiverReportedIncidents() {
-        return incidentRepository.findBySourceActive("CAREGIVER");
+    public List<Incident> getActiveIncidentsByVolunteer(Long volunteerId) {
+        return incidentRepository.findByVolunteerIdActive(volunteerId);
+    }
+
+    /**
+     * Back-office : incidents par source (CAREGIVER par défaut).
+     * Pour les médecins : source=DOCTOR et reporterId = userId du médecin.
+     */
+    public List<Incident> getReportedIncidentsFiltered(String source, Long reporterId) {
+        String s = (source != null && !source.isBlank()) ? source : "CAREGIVER";
+        if ("DOCTOR".equalsIgnoreCase(s) && reporterId != null) {
+            return incidentRepository.findBySourceAndReporterUserIdActive("DOCTOR", reporterId);
+        }
+        return incidentRepository.findBySourceActive(s);
     }
 
     // Create Incident with auto-scoring
@@ -153,6 +166,7 @@ public class IncidentService {
             // On ne change pas le patientId/caregiverId sauf si explicite
             if (updatedIncident.getPatientId() != null) existing.setPatientId(updatedIncident.getPatientId());
             if (updatedIncident.getCaregiverId() != null) existing.setCaregiverId(updatedIncident.getCaregiverId());
+            if (updatedIncident.getVolunteerId() != null) existing.setVolunteerId(updatedIncident.getVolunteerId());
             return incidentRepository.save(existing);
         }).orElseThrow(() -> new RuntimeException("Incident not found with id " + id));
     }
@@ -176,14 +190,17 @@ public class IncidentService {
 
     // --- INCIDENT TYPES ---
 
+    @Cacheable(value = "incidentTypes", key = "'all'")
     public List<IncidentType> getAllIncidentTypes() {
         return incidentTypeRepository.findAll();
     }
 
+    @CacheEvict(value = "incidentTypes", allEntries = true)
     public IncidentType createIncidentType(IncidentType type) {
         return incidentTypeRepository.save(type);
     }
 
+    @CacheEvict(value = "incidentTypes", allEntries = true)
     public IncidentType updateIncidentType(Long id, IncidentType typeDetails) {
         return incidentTypeRepository.findById(id).map(existing -> {
             existing.setName(typeDetails.getName());
@@ -194,6 +211,7 @@ public class IncidentService {
         }).orElseThrow(() -> new RuntimeException("Incident Type not found with id " + id));
     }
 
+    @CacheEvict(value = "incidentTypes", allEntries = true)
     public void deleteIncidentType(Long id) {
         incidentTypeRepository.deleteById(id);
     }
@@ -277,9 +295,8 @@ public class IncidentService {
             // Compute average days between incidents
             double avgDays = computeAvgDaysBetween(incidents);
 
-            // Compute severity score (0-100)
-            int severityScore = computeSeverityScore(incidents, avgDays);
-            String riskLevel = severityScoreToRisk(severityScore);
+            SeverityBreakdown br = computeSeverityBreakdown(incidents);
+            String riskLevel = severityScoreToRisk(br.total);
 
             result.add(PatientStatsDTO.builder()
                     .patientId(patientId)
@@ -287,10 +304,13 @@ public class IncidentService {
                     .totalIncidents(total)
                     .activeIncidents(active)
                     .resolvedIncidents(resolved)
-                    .severityScore(severityScore)
+                    .severityScore(br.total)
                     .riskLevel(riskLevel)
                     .avgDaysBetween(Math.round(avgDays * 10.0) / 10.0)
                     .bySeverity(sev)
+                    .volumeScorePart(br.volumePart)
+                    .severityWeightedPart(br.severityPart)
+                    .frequencyScorePart(br.frequencyPart)
                     .build());
         }
 
@@ -327,8 +347,8 @@ public class IncidentService {
         }
 
         double avgDays = computeAvgDaysBetween(incidents);
-        int severityScore = computeSeverityScore(incidents, avgDays);
-        String riskLevel = severityScoreToRisk(severityScore);
+        SeverityBreakdown br = computeSeverityBreakdown(incidents);
+        String riskLevel = severityScoreToRisk(br.total);
 
         return PatientStatsDTO.builder()
                 .patientId(patientId)
@@ -336,10 +356,13 @@ public class IncidentService {
                 .totalIncidents(total)
                 .activeIncidents(active)
                 .resolvedIncidents(resolved)
-                .severityScore(severityScore)
+                .severityScore(br.total)
                 .riskLevel(riskLevel)
                 .avgDaysBetween(Math.round(avgDays * 10.0) / 10.0)
                 .bySeverity(sev)
+                .volumeScorePart(br.volumePart)
+                .severityWeightedPart(br.severityPart)
+                .frequencyScorePart(br.frequencyPart)
                 .build();
     }
 
@@ -359,43 +382,79 @@ public class IncidentService {
     }
 
     /**
-     * Score de gravité (0-100) basé sur :
-     * - Nombre total d'incidents (max 30 pts)
-     * - Sévérité des incidents (max 40 pts)
-     * - Fréquence : durée moyenne entre incidents (max 30 pts) — plus court = plus grave
+     * Référence haute pour normaliser les {@link Incident#getComputedScore()} (points type + récurrence) vers 0–100.
      */
-    private int computeSeverityScore(List<Incident> incidents, double avgDaysBetween) {
-        if (incidents.isEmpty()) return 0;
+    private static final double COMPUTED_SCORE_REF_MAX = 72.0;
 
-        // 1. Volume score (0-30)
-        int volumeScore = Math.min(30, incidents.size() * 5);
+    /**
+     * Score global 0–100 = moyenne de :
+     * - la moyenne des scores auto (computed), normalisés sur 0–100 ;
+     * - la moyenne des niveaux de sévérité (LOW→25 … CRITICAL→100).
+     * Si aucun computedScore n’est présent, la première moyenne retombe sur la moyenne des niveaux.
+     */
+    private SeverityBreakdown computeSeverityBreakdown(List<Incident> incidents) {
+        if (incidents.isEmpty()) {
+            return new SeverityBreakdown(0, 0, null, 0);
+        }
 
-        // 2. Severity-weighted score (0-40)
-        int severityPoints = 0;
+        final int n = incidents.size();
+        double sumLevel = 0.0;
         for (Incident i : incidents) {
-            if (i.getSeverityLevel() == null) continue;
-            switch (i.getSeverityLevel()) {
-                case CRITICAL -> severityPoints += 4;
-                case HIGH     -> severityPoints += 3;
-                case MEDIUM   -> severityPoints += 2;
-                case LOW      -> severityPoints += 1;
+            sumLevel += severityLevelTo100(i.getSeverityLevel());
+        }
+        double avgLevel = sumLevel / n;
+
+        double sumComputedNorm = 0.0;
+        int withComputed = 0;
+        for (Incident i : incidents) {
+            if (i.getComputedScore() != null) {
+                sumComputedNorm += normalizeComputedScore(i.getComputedScore());
+                withComputed++;
             }
         }
-        int maxSevPts = incidents.size() * 4; // max if all were CRITICAL
-        int severityScore = maxSevPts > 0 ? (int) ((severityPoints / (double) maxSevPts) * 40) : 0;
+        double avgComputedNorm = withComputed > 0 ? (sumComputedNorm / withComputed) : avgLevel;
 
-        // 3. Frequency score (0-30) — shorter interval = higher score
-        int frequencyScore = 0;
-        if (incidents.size() >= 2 && avgDaysBetween > 0) {
-            if (avgDaysBetween <= 1)       frequencyScore = 30;
-            else if (avgDaysBetween <= 3)  frequencyScore = 25;
-            else if (avgDaysBetween <= 7)  frequencyScore = 20;
-            else if (avgDaysBetween <= 14) frequencyScore = 15;
-            else if (avgDaysBetween <= 30) frequencyScore = 10;
-            else                           frequencyScore = 5;
+        int total = (int) Math.round((avgComputedNorm + avgLevel) / 2.0);
+        total = Math.min(100, Math.max(0, total));
+
+        return new SeverityBreakdown(
+                (int) Math.round(avgComputedNorm),
+                (int) Math.round(avgLevel),
+                null,
+                total);
+    }
+
+    private static int severityLevelTo100(SeverityLevel s) {
+        if (s == null) {
+            return 50;
         }
+        return switch (s) {
+            case LOW -> 25;
+            case MEDIUM -> 50;
+            case HIGH -> 75;
+            case CRITICAL -> 100;
+        };
+    }
 
-        return Math.min(100, volumeScore + severityScore + frequencyScore);
+    private static double normalizeComputedScore(int computed) {
+        return Math.min(100.0, computed * 100.0 / COMPUTED_SCORE_REF_MAX);
+    }
+
+    private static final class SeverityBreakdown {
+        /** Moyenne des scores auto normalisés (0–100). */
+        final int volumePart;
+        /** Moyenne des niveaux de sévérité (0–100). */
+        final int severityPart;
+        /** Réservé (non utilisé avec le nouveau calcul). */
+        final Integer frequencyPart;
+        final int total;
+
+        SeverityBreakdown(int volumePart, int severityPart, Integer frequencyPart, int total) {
+            this.volumePart = volumePart;
+            this.severityPart = severityPart;
+            this.frequencyPart = frequencyPart;
+            this.total = total;
+        }
     }
 
     private String severityScoreToRisk(int score) {

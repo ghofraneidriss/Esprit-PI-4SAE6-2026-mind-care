@@ -1,0 +1,106 @@
+<section class="profile-page">
+    <div *ngIf="loadError" class="alert alert-warning mx-auto profile-shell-inner" role="alert">
+        {{ loadError }}
+    </div>
+
+    <div *ngIf="initialLoad && profileRefreshing" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <form *ngIf="!initialLoad && authService.getCurrentUser() as u" [formGroup]="form" (ngSubmit)="onSubmit()" class="profile-shell-inner">
+        <div class="profile-card">
+            <div class="profile-split">
+                <div class="profile-pane profile-pane--left">
+                    <div class="profile-identity">
+                        <div class="profile-avatar" aria-hidden="true">{{ initials }}</div>
+                        <div class="profile-meta">
+                            <div class="profile-name">{{ displayName(u) }}</div>
+                            <div class="profile-role-pill" *ngIf="u.role">
+                                <span class="profile-role-pill__icon" aria-hidden="true"><i class="bi bi-award"></i></span>
+                                <span class="profile-role-pill__text">{{ roleLabel(u.role) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="profile-column-heading profile-column-heading--left">
+                        <span class="profile-column-heading__icon" aria-hidden="true"><i class="bi bi-person-vcard"></i></span>
+                        Your details
+                    </h2>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label profile-field-label profile-field-label--rose" for="firstName">
+                                <i class="bi bi-person" aria-hidden="true"></i> First name
+                            </label>
+                            <input id="firstName" class="form-control" formControlName="firstName" autocomplete="given-name" />
+                            <div class="invalid-feedback d-block" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
+                                First name is required (min 2 characters).
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label profile-field-label profile-field-label--violet" for="lastName">
+                                <i class="bi bi-person-lines-fill" aria-hidden="true"></i> Last name
+                            </label>
+                            <input id="lastName" class="form-control" formControlName="lastName" autocomplete="family-name" />
+                            <div class="invalid-feedback d-block" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
+                                Last name is required (min 2 characters).
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label profile-field-label profile-field-label--teal" for="email">
+                                <i class="bi bi-envelope-at" aria-hidden="true"></i> Email
+                            </label>
+                            <input id="email" type="email" class="form-control" formControlName="email" autocomplete="email" />
+                            <div class="invalid-feedback d-block" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+                                Enter a valid email address.
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label profile-field-label profile-field-label--amber" for="phone">
+                                <i class="bi bi-telephone" aria-hidden="true"></i> Phone
+                            </label>
+                            <input id="phone" class="form-control" formControlName="phone" autocomplete="tel" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-pane profile-pane--right">
+                    <h2 class="profile-column-heading profile-column-heading--right">
+                        <span class="profile-column-heading__icon" aria-hidden="true"><i class="bi bi-shield-lock"></i></span>
+                        Change password
+                    </h2>
+                    <p class="profile-hint">Leave blank to keep your current password.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label profile-field-label profile-field-label--magenta" for="newPassword">
+                            <i class="bi bi-key" aria-hidden="true"></i> New password
+                        </label>
+                        <input id="newPassword" type="password" class="form-control" formControlName="newPassword" autocomplete="new-password" />
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label profile-field-label profile-field-label--indigo" for="confirmPassword">
+                            <i class="bi bi-key-fill" aria-hidden="true"></i> Confirm new password
+                        </label>
+                        <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword" autocomplete="new-password" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card-footer">
+                <div class="profile-card-footer__alerts w-100" *ngIf="successMsg || saveError">
+                    <div class="alert alert-success mb-2" *ngIf="successMsg" role="status">{{ successMsg }}</div>
+                    <div class="alert alert-danger mb-0" *ngIf="saveError" role="alert">{{ saveError }}</div>
+                </div>
+                <div class="profile-card-footer__actions">
+                    <button type="submit" class="btn btn-primary" [disabled]="loading || form.invalid">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Save changes
+                    </button>
+                    <a routerLink="/frontoffice" class="btn btn-outline-secondary">Back to dashboard</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

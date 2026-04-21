@@ -22,12 +22,21 @@
     <name>Alzheimer App - Parent</name>
     <description>Multi-module project for Alzheimer detection application</description>
 
-    <!-- ✅ Liste des microservices -->
+    <!--
+      Microservices : users, forums, incident, activities, localization, movement + Eureka + API Gateway.
+      Ports : Eureka 8761 | Gateway 8080 | users 8081 | forums 8082 | incident 8083 | activities 8084 |
+      localization 8085 | movement 8086
+    -->
     <modules>
+        <module>eureka_server</module>
         <module>users_service</module>
         <module>forums_service</module>
         <module>incident_service</module>
-        <module>eureka_server</module>
+        <module>activities_service</module>
+        <module>localization_service</module>
+        <module>movement_service</module>
+        <module>recommendation_service/recommendation_service</module>
+        <module>souvenir_service/souvenir_service</module>
         <module>api_gateway</module>
     </modules>
 

@@ -1,0 +1,335 @@
+<div class="forum-home">
+  <div class="forum-home__inner">
+    <!-- Hero -->
+    <header class="forum-hero text-center">
+      <div class="forum-hero__pattern" aria-hidden="true"></div>
+      <div class="forum-hero__glow forum-hero__glow--1" aria-hidden="true"></div>
+      <div class="forum-hero__glow forum-hero__glow--2" aria-hidden="true"></div>
+      <div class="forum-hero__content">
+      <p class="forum-hero__eyebrow">
+        <i class="ri-community-line" aria-hidden="true"></i>
+        Community
+      </p>
+      <h1 class="forum-hero__title">MindCare Forum</h1>
+      <p class="forum-hero__lead">
+        A calm, modern space to share experiences, ask questions, and support each other — aligned with
+        the rest of the MindCare experience.
+      </p>
+      <div class="forum-hero__stats">
+        <div class="forum-pill">
+          <i class="ri-group-line" aria-hidden="true"></i>
+          <span>{{ totalMembers | number }} members</span>
+        </div>
+        <div class="forum-pill">
+          <i class="ri-chat-1-line" aria-hidden="true"></i>
+          <span>{{ totalDiscussions | number }} threads</span>
+        </div>
+      </div>
+      <p class="forum-hero__cvp-link-wrap">
+        <a routerLink="/forum/statistiques" class="forum-btn forum-btn--ghost forum-hero__cvp-link">
+          <i class="ri-bar-chart-2-line" aria-hidden="true"></i>
+          Statistics &amp; archived threads (CVP)
+        </a>
+      </p>
+      </div>
+    </header>
+
+    <div *ngIf="usingDemoCategories" class="forum-banner" role="status">
+      <i class="ri-information-line" aria-hidden="true"></i>
+      <div>
+        <strong>Preview topics</strong>
+        <span>
+          Start the API Gateway (8080) and forums service so live categories and posts load from the
+          server.
+        </span>
+      </div>
+    </div>
+
+    <!-- Advanced search: sort, category filter, keywords -->
+    <section class="forum-advanced" aria-labelledby="forum-adv-heading">
+      <div class="forum-advanced__head">
+        <div>
+          <h2 id="forum-adv-heading" class="forum-advanced__title">
+            <i class="ri-filter-3-line forum-advanced__title-icon" aria-hidden="true"></i>
+            Advanced search
+          </h2>
+          <p class="forum-advanced__subtitle">
+            Combine keywords, category, and sort. Results appear directly below.
+          </p>
+        </div>
+        <button type="button" class="forum-advanced__reset" (click)="clearAdvancedFilters()">
+          <i class="ri-refresh-line" aria-hidden="true"></i>
+          Reset
+        </button>
+      </div>
+
+      <div class="forum-advanced__body">
+        <div class="forum-advanced__search">
+          <label class="visually-hidden" for="forum-adv-search">Search threads</label>
+          <i class="ri-search-line forum-advanced__search-icon" aria-hidden="true"></i>
+          <input
+            id="forum-adv-search"
+            type="search"
+            class="forum-advanced__search-input"
+            [(ngModel)]="threadSearchInput"
+            (ngModelChange)="onThreadSearchInput($event)"
+            placeholder="Search titles and messages…"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="forum-advanced__controls">
+          <div class="forum-advanced__field">
+            <label class="forum-advanced__label" for="forum-adv-category">Category</label>
+            <div class="forum-advanced__select-wrap">
+              <i class="ri-folder-line forum-advanced__field-icon" aria-hidden="true"></i>
+              <select
+                id="forum-adv-category"
+                class="forum-advanced__select"
+                [(ngModel)]="filterCategoryId"
+                (change)="onCategoryFilterChange()"
+              >
+                <option [ngValue]="null">All categories</option>
+                <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="forum-advanced__field forum-advanced__field--grow">
+            <span class="forum-advanced__label" id="forum-adv-sort-label">Sort</span>
+            <div class="forum-advanced__sort" role="group" aria-labelledby="forum-adv-sort-label">
+              <button
+                type="button"
+                class="forum-advanced__sort-btn"
+                [class.forum-advanced__sort-btn--active]="postSort === 'recent'"
+                (click)="setSort('recent')"
+              >
+                Recent
+              </button>
+              <button
+                type="button"
+                class="forum-advanced__sort-btn"
+                [class.forum-advanced__sort-btn--active]="postSort === 'hot'"
+                (click)="setSort('hot')"
+              >
+                Most discussed
+              </button>
+              <button
+                type="button"
+                class="forum-advanced__sort-btn"
+                [class.forum-advanced__sort-btn--active]="postSort === 'views'"
+                (click)="setSort('views')"
+              >
+                Most viewed
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Thread results (directly under search) -->
+    <section class="forum-section forum-section--posts forum-section--results" aria-labelledby="forum-recent-heading">
+      <div class="forum-section__head">
+        <h2 id="forum-recent-heading" class="forum-section__title">Threads</h2>
+        <span class="forum-result-count" *ngIf="totalPostCount > 0">
+          {{ totalPostCount | number }} result<span *ngIf="totalPostCount !== 1">s</span>
+        </span>
+      </div>
+
+      <div *ngIf="loadingPosts && discussionPosts.length === 0" class="forum-loading">
+        <div class="forum-loading__spinner" aria-hidden="true"></div>
+        <p>Loading threads…</p>
+      </div>
+
+      <div
+        *ngIf="!loadingPosts && discussionPosts.length === 0"
+        class="forum-empty forum-empty--soft"
+      >
+        <i class="ri-chat-new-line forum-empty__icon" aria-hidden="true"></i>
+        <h3 class="forum-empty__title">No threads match</h3>
+        <p class="forum-empty__text">
+          Try different keywords, category, or sort.
+        </p>
+      </div>
+
+      <div class="forum-post-grid" *ngIf="discussionPosts.length > 0">
+        <article
+          class="forum-post-card"
+          *ngFor="let post of discussionPosts; trackBy: trackPost"
+          (click)="navigateToPost(post)"
+          (keyup.enter)="navigateToPost(post)"
+          [tabindex]="0"
+          role="button"
+          [attr.aria-label]="'Open post ' + post.title"
+        >
+          <div
+            class="forum-post-card__badge"
+            [style.background]="getPostCategoryStyle(post.categoryName)"
+          >
+            {{ post.categoryName || 'General' }}
+          </div>
+          <h3 class="forum-post-card__title">{{ post.title }}</h3>
+          <p class="forum-post-card__excerpt">{{ postExcerpt(post) }}</p>
+          <div class="forum-post-card__foot">
+            <span class="forum-post-card__author">
+              <i class="ri-user-smile-line" aria-hidden="true"></i>
+              {{ post.author || 'Member' }}
+            </span>
+            <span class="forum-post-card__date">
+              <i class="ri-time-line" aria-hidden="true"></i>
+              {{ formatPostDate(post) }}
+            </span>
+            <span class="forum-post-card__comments" title="Comments">
+              <i class="ri-chat-3-line" aria-hidden="true"></i>
+              {{ post.commentCount || 0 }}
+            </span>
+            <span class="forum-post-card__comments" *ngIf="post.viewCount != null" title="Views">
+              <i class="ri-eye-line" aria-hidden="true"></i>
+              {{ post.viewCount | number }}
+            </span>
+          </div>
+        </article>
+      </div>
+
+      <div
+        #loadMoreSentinel
+        class="forum-load-sentinel"
+        *ngIf="discussionPosts.length > 0 && hasMore"
+        aria-hidden="true"
+      ></div>
+
+      <div *ngIf="loadingMore" class="forum-loading forum-loading--inline">
+        <div class="forum-loading__spinner" aria-hidden="true"></div>
+        <p>Loading more…</p>
+      </div>
+
+      <p *ngIf="discussionPosts.length > 0 && !hasMore && !loadingPosts" class="forum-end-hint">
+        End of list.
+      </p>
+    </section>
+
+    <!-- Browse categories -->
+    <section class="forum-section" aria-labelledby="forum-cat-heading">
+      <div class="forum-section__head">
+        <h2 id="forum-cat-heading" class="forum-section__title">Browse categories</h2>
+        <a routerLink="/forum/categories" class="forum-link-more">
+          All categories
+          <i class="ri-arrow-right-line" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div
+        *ngIf="!loadingPosts && displayCategories.length === 0"
+        class="forum-empty"
+      >
+        <i class="ri-folder-open-line forum-empty__icon" aria-hidden="true"></i>
+        <h3 class="forum-empty__title">No categories</h3>
+        <p class="forum-empty__text">Categories will load when the forum API is available.</p>
+      </div>
+
+      <div class="forum-cat-grid" *ngIf="!loadingPosts && displayCategories.length > 0">
+        <article
+          class="forum-cat-card"
+          *ngFor="let cat of displayCategories; trackBy: trackCategory"
+          (click)="navigateToCategory(cat)"
+          (keyup.enter)="navigateToCategory(cat)"
+          [tabindex]="0"
+          role="button"
+          [attr.aria-label]="'Open category ' + cat.name"
+        >
+          <div
+            class="forum-cat-card__accent"
+            [style.background]="getCategoryCardStyle(cat)"
+          ></div>
+          <div class="forum-cat-card__body">
+            <div
+              class="forum-cat-card__icon"
+              [style.background]="getCategoryCardStyle(cat)"
+            >
+              <i [class]="cat.icon || getCategoryIcon(categoryVisualIndex(cat))" aria-hidden="true"></i>
+            </div>
+            <h3 class="forum-cat-card__name">{{ cat.name }}</h3>
+            <p class="forum-cat-card__desc">
+              {{ cat.description || 'Join the discussion in this space.' }}
+            </p>
+            <div class="forum-cat-card__meta">
+              <span
+                ><i class="ri-chat-1-line" aria-hidden="true"></i> {{ getPostCountForCategory(cat) }} posts</span
+              >
+              <span class="forum-cat-card__cta">
+                Open
+                <i class="ri-arrow-right-up-line" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Top 3 threads & comments (CVP) -->
+    <div class="forum-top-grid" *ngIf="topPosts.length > 0 || topComments.length > 0">
+      <section
+        class="forum-section forum-section--compact forum-section--topcv"
+        *ngIf="topPosts.length > 0"
+        aria-labelledby="forum-top-posts"
+      >
+        <h2 id="forum-top-posts" class="forum-section__title">Top threads</h2>
+        <p class="forum-muted-caption forum-muted-caption--topcv">Top 3 · most discussed right now</p>
+        <ul class="forum-top-list">
+          <li *ngFor="let post of topPosts; let idx = index" class="forum-top-item">
+            <button type="button" class="forum-top-item__btn" (click)="navigateToPost(post)">
+              <span class="forum-top-item__rank" [attr.data-rank]="idx + 1" aria-hidden="true">{{ idx + 1 }}</span>
+              <span class="forum-top-item__body">
+                <span class="forum-top-item__row">
+                  <span class="forum-top-item__badge" [style.background]="getPostCategoryStyle(post.categoryName)">
+                    {{ post.categoryName || 'General' }}
+                  </span>
+                  <span class="forum-top-item__stat forum-top-item__stat--chip">
+                    <i class="ri-chat-3-line" aria-hidden="true"></i>
+                    {{ post.commentCount || 0 }}
+                  </span>
+                </span>
+                <span class="forum-top-item__title">{{ post.title }}</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </section>
+
+      <section
+        class="forum-section forum-section--compact forum-section--topcv"
+        *ngIf="topComments.length > 0"
+        aria-labelledby="forum-top-comments"
+      >
+        <h2 id="forum-top-comments" class="forum-section__title">Top comments</h2>
+        <p class="forum-muted-caption forum-muted-caption--topcv">Top 3 · most liked replies</p>
+        <ul class="forum-top-list">
+          <li *ngFor="let c of topComments; let idx = index" class="forum-top-item forum-top-item--comment">
+            <button type="button" class="forum-top-item__btn forum-top-item__btn--comment" (click)="navigateToPostId(c.postId)">
+              <span class="forum-top-item__rank" [attr.data-rank]="idx + 1" aria-hidden="true">{{ idx + 1 }}</span>
+              <span class="forum-top-item__body">
+                <span
+                  class="forum-top-item__preview"
+                  [class.forum-top-item__preview--moderated]="isModeratedPreview(c.contentPreview)">
+                  <ng-container *ngIf="isModeratedPreview(c.contentPreview); else topCommentPlain">
+                    Comment removed — community guidelines apply.
+                  </ng-container>
+                  <ng-template #topCommentPlain>{{ c.contentPreview }}</ng-template>
+                </span>
+                <span class="forum-top-item__row forum-top-item__row--meta">
+                  <span class="forum-top-item__author">{{ c.authorName }}</span>
+                  <span class="forum-top-item__stat forum-top-item__stat--chip">
+                    <i class="ri-thumb-up-fill" aria-hidden="true"></i>
+                    {{ c.likeCount }}
+                  </span>
+                </span>
+                <span class="forum-top-item__thread"><i class="ri-links-line" aria-hidden="true"></i> {{ c.postTitle }}</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.users_service.dto.LoginRequest;
+import tn.esprit.users_service.dto.PatientSummaryDTO;
 import tn.esprit.users_service.entity.User;
 import tn.esprit.users_service.service.UserService;
 
@@ -22,8 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestParam String email, @RequestParam String password) {
-        return ResponseEntity.ok(userService.login(email, password));
+    public ResponseEntity<User> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(userService.login(request.getEmail(), request.getPassword()));
     }
 
     @GetMapping
@@ -47,8 +49,18 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/patients")
+    public ResponseEntity<List<PatientSummaryDTO>> getPatientsForRegistration() {
+        return ResponseEntity.ok(userService.getPatientSummariesForRegistration());
+    }
+
     @GetMapping("/caregiver/{id}/patients")
     public ResponseEntity<List<User>> getPatientsByCaregiver(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getPatientsByCaregiver(id));
+    }
+
+    @GetMapping("/volunteer/{id}/patients")
+    public ResponseEntity<List<User>> getPatientsByVolunteer(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getPatientsByVolunteer(id));
     }
 }

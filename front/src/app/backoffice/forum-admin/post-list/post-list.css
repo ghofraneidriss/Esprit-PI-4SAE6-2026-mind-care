@@ -1,0 +1,23 @@
+.post-list__title-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+/* Posts Management — lisible sur grand écran */
+:host {
+  font-size: 1rem;
+}
+
+:host h1.h3 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  letter-spacing: -0.02em;
+}
+
+:host .table thead th {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+:host .table tbody td {
+  font-size: 0.9375rem;
+}

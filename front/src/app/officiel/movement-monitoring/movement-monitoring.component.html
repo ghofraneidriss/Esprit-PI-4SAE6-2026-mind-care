@@ -1,0 +1,468 @@
+<section
+  class="movement-shell"
+  [class.patient-shell]="isPatient"
+  [class.staff-movement-shell]="!isPatient"
+>
+  <ng-container *ngIf="isPatient">
+    <header class="patient-header">
+      <div class="patient-header-text">
+        <h1 class="patient-title">My location</h1>
+      </div>
+      <div class="patient-header-tools">
+        <span class="status-chip" [class.offline]="backendOffline">
+          {{ backendOffline ? 'Offline' : 'Online' }}
+        </span>
+        <button
+          type="button"
+          class="btn-icon"
+          (click)="refresh()"
+          [disabled]="loading || backendOffline"
+          title="Refresh"
+          aria-label="Refresh"
+        >
+          ↻
+        </button>
+      </div>
+    </header>
+
+    <p class="tracking-summary" *ngIf="selectedPatientId">
+      Tracking status: <strong>{{ trackingComplianceLabel }}</strong>
+      <span *ngIf="locationStatus?.minutesSinceLastGps != null">
+        · GPS {{ locationStatus?.minutesSinceLastGps | number : '1.0-0' }} min ago
+      </span>
+    </p>
+
+    <article class="patient-offline" *ngIf="backendOffline">
+      <p class="patient-offline-title">Can’t connect</p>
+      <p class="patient-offline-msg">{{ offlineReason || offlineHelpHint }}</p>
+      <button type="button" class="btn-pill primary" (click)="retryConnection()">Try again</button>
+    </article>
+
+    <article class="patient-share-bar patient-surface-card" *ngIf="!isAdmin">
+      <div class="patient-share-bar__top">
+        <div class="patient-share-bar__label">
+          <span class="patient-share-bar__icon" aria-hidden="true"><i class="ri-radar-line"></i></span>
+          <span class="patient-share-bar__kicker">Who receives your location</span>
+        </div>
+        <ng-container *ngIf="linkedCaregiverName || linkedVolunteerName; else introNoLinks">
+          <div class="patient-share-bar__pills" role="list">
+            <div *ngIf="linkedCaregiverName" class="patient-share-pill" role="listitem">
+              <span class="patient-share-pill__role">Caregiver</span>
+              <span class="patient-share-pill__name">{{ linkedCaregiverName }}</span>
+            </div>
+            <div *ngIf="linkedVolunteerName" class="patient-share-pill" role="listitem">
+              <span class="patient-share-pill__role">Volunteer</span>
+              <span class="patient-share-pill__name">{{ linkedVolunteerName }}</span>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #introNoLinks>
+          <p class="patient-share-bar__hint patient-share-bar__hint--solo">
+            Link a caregiver or volunteer to your profile — then use the button below to share your position.
+          </p>
+        </ng-template>
+      </div>
+      <p *ngIf="linkedCaregiverName || linkedVolunteerName" class="patient-share-bar__hint">
+        Each send updates your pin for them on the map. Send again after you move or as agreed.
+      </p>
+    </article>
+
+    <div class="patient-stack" *ngIf="!isAdmin">
+      <div class="patient-map-card patient-surface-card">
+        <app-patient-track-map
+          [latestLocation]="latestLocation"
+          [history]="history"
+          [safeZones]="safeZones"
+          [staffJoinPoint]="null"
+          [mapRevision]="liveSyncRevision"
+          [patientMode]="true"
+        />
+        <div class="patient-loc-strip" *ngIf="latestLocation">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span>{{ formatTimeShort(latestLocation.recordedAt) }}</span>
+          <span *ngIf="latestLocation.accuracyMeters != null" class="muted"
+            >±{{ latestLocation.accuracyMeters | number : '1.0-0' }} m</span
+          >
+        </div>
+
+        <div class="patient-map-actions">
+          <button
+            type="button"
+            class="btn-pill btn-dir-safe btn-cta-inline"
+            *ngIf="safeZones.length"
+            (click)="openSafeZoneDirectionsModal()"
+            [disabled]="backendOffline"
+          >
+            Safe zone directions
+          </button>
+          <button
+            type="button"
+            class="btn-pill primary btn-share-location btn-cta-inline"
+            (click)="reportMyLiveGps()"
+            [disabled]="reporting || backendOffline"
+          >
+            {{ reporting ? 'Sending…' : 'Share my location' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Alerts are for linked caregiver / volunteer / staff only — not shown to the patient. -->
+
+      <section class="patient-panel patient-surface-card history-panel" *ngIf="history.length">
+        <h2>Recent movement</h2>
+        <p class="history-scroll-hint">Showing 5 rows — scroll for more</p>
+        <ul class="patient-history-list patient-history-scroll">
+          <li *ngFor="let h of history">
+            <span>{{ formatTimeShort(h.recordedAt) }}</span>
+            <span class="muted">{{ formatSpeed(h.speedKmh) }}</span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!isPatient">
+    <header class="staff-header">
+      <div>
+        <h2 class="staff-title">Movement tracking</h2>
+        <p class="staff-lead">Map, alerts, and history.</p>
+        <p *ngIf="showSafeZonesLink" class="staff-link-row">
+          <a [routerLink]="safeZonesRouterLink" class="link-accent">Safe zones</a>
+        </p>
+      </div>
+      <div class="staff-tools">
+        <span class="status-chip" [class.offline]="backendOffline">
+          {{ backendOffline ? 'Offline' : 'Online' }}
+        </span>
+        <span class="refresh-hint" *ngIf="!backendOffline && selectedPatientId"
+          >Auto {{ pollIntervalMs / 1000 | number : '1.0-0' }}s</span
+        >
+        <button type="button" class="btn-pill ghost" (click)="refresh()" [disabled]="loading">
+          {{ loading ? '…' : 'Refresh' }}
+        </button>
+      </div>
+    </header>
+
+    <p class="tracking-summary" *ngIf="selectedPatientId">
+      Tracking status: <strong>{{ trackingComplianceLabel }}</strong>
+      <span *ngIf="locationStatus?.minutesSinceLastGps != null">
+        · GPS {{ locationStatus?.minutesSinceLastGps | number : '1.0-0' }} min ago
+      </span>
+    </p>
+
+    <article class="movement-demo-sim" *ngIf="showMovementDemoSim">
+      <div class="movement-demo-sim__inner">
+        <h3 class="movement-demo-sim__title">Jury demo — alert simulation</h3>
+        <p class="movement-demo-sim__lead">
+          Each click <strong>stores a real movement alert</strong> in the database (same as live tracking) for the
+          <strong>patient selected above</strong>, so Critical patients / history / PDF stay in sync. The assistant
+          panel shows a short confirmation.
+        </p>
+        <div class="movement-demo-sim__row">
+          <button type="button" class="btn-pill primary" (click)="simulateDemoOutOfZone()">
+            Simulate out-of-zone / distance
+          </button>
+          <button type="button" class="btn-pill ghost" (click)="simulateDemoImmobile()">
+            Simulate 10 min no movement
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <article class="staff-offline" *ngIf="backendOffline">
+      <strong>Service unavailable</strong>
+      <p>{{ offlineReason || offlineHelpHint }}</p>
+      <button type="button" class="btn-pill primary" (click)="retryConnection()">Try again</button>
+    </article>
+
+    <article class="picker-card" *ngIf="isAdminOrDoctor">
+      <div class="picker-row">
+        <label for="patientSelect">{{ isCaregiver || isVolunteer ? 'Linked patient' : 'Patient' }}</label>
+        <select
+          id="patientSelect"
+          [(ngModel)]="selectedPatientId"
+          (ngModelChange)="onPatientChange()"
+          [required]="patients.length > 0"
+        >
+          <option [ngValue]="0" disabled *ngIf="patients.length > 1">Select…</option>
+          <option *ngFor="let p of patients" [ngValue]="p.id">{{ p.firstname }} {{ p.lastname }}</option>
+        </select>
+      </div>
+      <p class="picker-hint" *ngIf="patients.length > 1 && !selectedPatientId">Select a patient first.</p>
+      <p class="picker-phone-hint" *ngIf="selectedPatientId && !selectedPatientHasPhone()">
+        Add a phone number on the patient profile to call or WhatsApp from alerts.
+      </p>
+    </article>
+
+    <div class="staff-grid" *ngIf="!isAdmin">
+      <article class="staff-card map-card">
+        <h3 class="card-title">Map</h3>
+        <app-patient-track-map
+          [latestLocation]="latestLocation"
+          [history]="history"
+          [safeZones]="safeZones"
+          [staffJoinPoint]="staffJoinPoint"
+          [mapRevision]="liveSyncRevision + mapOverlayRevision"
+          [patientMode]="false"
+          [staffWideViewport]="true"
+        />
+
+        <div class="staff-loc" *ngIf="latestLocation">
+          <p class="staff-loc-name"><strong>{{ getPatientLabel(selectedPatientId) }}</strong></p>
+          <p class="staff-loc-meta">
+            {{ formatTimeShort(latestLocation.recordedAt) }}
+            <span *ngIf="latestLocation.accuracyMeters != null"> · ±{{ latestLocation.accuracyMeters | number : '1.0-0' }} m</span>
+            <span> · {{ formatSpeed(latestLocation.speedKmh) }}</span>
+          </p>
+          <div class="staff-ext-links">
+            <a class="link-accent" [href]="mapLink" target="_blank" rel="noopener noreferrer">Open in OSM</a>
+            <span class="sep">·</span>
+            <a class="link-accent" [href]="googleMapsPatientUrl" target="_blank" rel="noopener noreferrer">Google Maps</a>
+          </div>
+        </div>
+
+        <div class="staff-map-actions" *ngIf="latestLocation || safeZones.length">
+          <button
+            type="button"
+            class="btn-pill btn-dir-google btn-cta-inline staff-map-actions__dir"
+            (click)="openStaffDirectionsModal()"
+            [disabled]="backendOffline"
+            title="Choose the patient’s position or a safe zone, then open Google Maps."
+          >
+            Directions (Google Maps)
+          </button>
+          <button
+            type="button"
+            class="btn-pill btn-preview-route btn-cta-inline staff-map-actions__preview"
+            *ngIf="latestLocation"
+            (click)="plotStaffPickupOnMap()"
+            title="Uses your GPS: your position on this map + straight line to the patient. For driving directions use “Directions (Google Maps)”."
+          >
+            Me → patient on map
+          </button>
+          <button
+            type="button"
+            class="btn-pill ghost btn-cta-inline staff-map-actions__clear"
+            *ngIf="staffJoinPoint"
+            (click)="clearStaffPickupOnMap()"
+          >
+            Clear my position & line
+          </button>
+        </div>
+
+        <p class="empty-soft" *ngIf="!latestLocation && (!history || !history.length) && !safeZones.length">
+          No position or zone yet — the patient can share location from their account.
+        </p>
+      </article>
+
+      <article class="staff-card">
+        <div class="alert-head">
+          <h3 class="card-title">Alerts</h3>
+          <div class="alert-head__tools">
+            <span
+              class="badge-count"
+              [class.badge-all-clear]="unacknowledgedAlertCount === 0 && alerts.length > 0"
+              [attr.title]="alerts.length + ' alert(s) in total'"
+              >{{ unacknowledgedAlertCount }}</span
+            >
+            <button
+              type="button"
+              class="alert-clear-all"
+              *ngIf="alerts.length"
+              (click)="clearAllAlerts()"
+              [disabled]="backendOffline"
+              title="Remove every alert in this list"
+            >
+              Clear all
+            </button>
+          </div>
+        </div>
+        <div class="alert-scroll" *ngIf="alerts.length; else noAlertsStaff">
+          <div
+            class="alert-row"
+            *ngFor="let a of alerts"
+            [ngClass]="getAlertClass(a)"
+            [class.alert-ack]="a.acknowledged"
+          >
+            <div class="alert-main">
+              <span class="alert-kind">{{ formatAlertTitle(a.alertType) }}</span>
+              <p class="alert-msg">{{ formatAlertMessage(a.message) }}</p>
+              <span class="alert-meta"
+                >{{ getPatientLabel(a.patientId) }} · {{ formatTimeShort(a.createdAt) }}
+                <span class="alert-ack-pill" *ngIf="a.acknowledged">Acknowledged</span></span
+              >
+            </div>
+            <div class="alert-row-tools">
+              <div class="alert-actions" *ngIf="canContactPatientFromAlerts">
+                <a *ngIf="getContactTelHref(a) as telHref" class="alert-action-btn alert-action-btn--call" [href]="telHref">Call</a>
+                <a
+                  *ngIf="getContactWhatsAppHref(a) as waHref"
+                  class="alert-action-btn alert-action-btn--wa"
+                  [href]="waHref"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >WhatsApp</a
+                >
+                <span *ngIf="!getContactTelHref(a) && !getContactWhatsAppHref(a)" class="alert-action-muted">No phone</span>
+                <button type="button" class="alert-action-btn alert-action-btn--ack" *ngIf="!a.acknowledged" (click)="acknowledge(a)">
+                  OK
+                </button>
+              </div>
+              <button
+                type="button"
+                class="alert-dismiss-btn"
+                (click)="removeAlert(a)"
+                [disabled]="backendOffline"
+                title="Remove this alert"
+                aria-label="Remove this alert"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+        <ng-template #noAlertsStaff>
+          <p class="empty-soft">No alerts.</p>
+        </ng-template>
+      </article>
+
+      <article class="staff-card history-block">
+        <h3 class="card-title">Recent movement (4h)</h3>
+        <p class="history-scroll-hint staff-history-hint">5 rows visible — scroll for more</p>
+        <div class="table-wrap staff-history-scroll" *ngIf="history.length; else noHist">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Speed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let h of history">
+                <td>{{ formatTimeShort(h.recordedAt) }}</td>
+                <td>{{ formatSpeed(h.speedKmh) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noHist>
+          <p class="empty-soft">No history.</p>
+        </ng-template>
+      </article>
+    </div>
+  </ng-container>
+
+  <!-- Directions modal: patient = zones only; staff = patient position and/or zones -->
+  <div
+    class="sz-modal-layer"
+    *ngIf="directionsModalOpen"
+    (click)="closeDirectionsModal()"
+    role="presentation"
+  >
+    <div
+      class="sz-modal-dialog"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sz-modal-title"
+    >
+      <div class="sz-modal-head">
+        <h2 id="sz-modal-title" class="sz-modal-title">
+          <ng-container *ngIf="directionsModalMode === 'patient'">Choose a safe zone</ng-container>
+          <ng-container *ngIf="directionsModalMode === 'staff'">Choose destination</ng-container>
+        </h2>
+        <button type="button" class="sz-modal-close" (click)="closeDirectionsModal()" aria-label="Close">×</button>
+      </div>
+      <p class="sz-modal-lead" *ngIf="directionsModalMode === 'patient'">
+        Pick a zone. Google Maps opens with driving directions from your position to that zone.
+      </p>
+      <p class="sz-modal-lead" *ngIf="directionsModalMode === 'staff'">
+        Go to the patient’s last position or to a safe zone — then open Google Maps from your current location.
+      </p>
+      <div class="sz-voice-panel" *ngIf="directionsVoiceSupported && (safeZones.length || (directionsModalMode === 'staff' && latestLocation))">
+        <div class="sz-voice-panel__head">
+          <span class="sz-voice-panel__eyebrow">Voice selection</span>
+          <p class="sz-voice-panel__hint">
+            Say a zone name{{ directionsModalMode === 'staff' && latestLocation ? ', or say patient for their last position' : '' }}.
+          </p>
+        </div>
+        <div class="sz-voice-panel__row">
+          <button
+            type="button"
+            class="sz-mic-btn"
+            [class.sz-mic-btn--listening]="directionsVoiceListening"
+            (click)="toggleDirectionsVoice()"
+            title="Tap to speak your choice"
+            aria-label="Start or stop voice input for destination"
+          >
+            <span class="sz-mic-btn__glow" aria-hidden="true"></span>
+            <span class="sz-mic-btn__inner">
+              <i class="ri-mic-fill sz-mic-btn__icon" *ngIf="!directionsVoiceListening" aria-hidden="true"></i>
+              <span class="sz-mic-btn__waves" *ngIf="directionsVoiceListening" aria-hidden="true">
+                <span class="sz-mic-btn__wave"></span>
+                <span class="sz-mic-btn__wave"></span>
+                <span class="sz-mic-btn__wave"></span>
+              </span>
+            </span>
+          </button>
+          <div class="sz-voice-panel__copy">
+            <span class="sz-voice-panel__status" *ngIf="!directionsVoiceListening && !directionsVoiceTranscript">
+              Tap the mic and speak clearly
+            </span>
+            <span class="sz-voice-panel__status sz-voice-panel__status--live" *ngIf="directionsVoiceListening && !directionsVoiceTranscript">
+              Listening…
+            </span>
+            <span class="sz-voice-panel__transcript" *ngIf="directionsVoiceTranscript">“{{ directionsVoiceTranscript }}”</span>
+          </div>
+        </div>
+        <div
+          class="sz-voice-feedback"
+          *ngIf="directionsVoiceFeedback"
+          [class.sz-voice-feedback--ok]="directionsVoiceFeedbackType === 'success'"
+          [class.sz-voice-feedback--err]="directionsVoiceFeedbackType === 'error'"
+        >
+          {{ directionsVoiceFeedback }}
+        </div>
+      </div>
+      <div class="sz-modal-list-wrap">
+        <ul class="sz-modal-list">
+          <li *ngIf="directionsModalMode === 'staff' && latestLocation">
+            <label class="sz-modal-option">
+              <input
+                type="radio"
+                name="staffDestPick"
+                [checked]="staffDirectionsTarget === 'patient'"
+                (change)="setStaffDirectionsTarget('patient')"
+              />
+              <span class="sz-modal-option-label">Patient’s current position</span>
+            </label>
+          </li>
+          <li *ngFor="let z of safeZones; index as i">
+            <label class="sz-modal-option">
+              <input
+                type="radio"
+                [name]="directionsModalMode === 'staff' ? 'staffDestPick' : 'patientZonePick'"
+                [checked]="directionsModalMode === 'staff' ? isStaffZoneSelected(i) : safeZoneDirectionIndex === i"
+                (change)="onDirectionsZoneRadioChange(i)"
+              />
+              <span class="sz-modal-option-label">{{ safeZoneChipLabel(z, i) }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="sz-modal-actions">
+        <button type="button" class="btn-pill ghost btn-cta-wide sz-modal-btn" (click)="closeDirectionsModal()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn-pill primary btn-cta-wide sz-modal-btn"
+          (click)="confirmDirectionsModal()"
+          [disabled]="directionsModalMode === 'patient' && !selectedSafeZoneForDirections"
+        >
+          Open in Google Maps
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

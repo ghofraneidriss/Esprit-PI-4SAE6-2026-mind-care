@@ -28,7 +28,7 @@ public class ChatbotController {
     private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
     private static final String SYSTEM_PROMPT_BASE =
-            "You are AlzCare Admin Assistant — an intelligent assistant for the AlzCare platform, " +
+            "You are MindCare Admin Assistant — an intelligent assistant for the MindCare platform, " +
             "a system that helps manage Alzheimer's patients, caregivers, incidents, and medical staff.\n\n" +
             "You have access to LIVE DATA from the platform (injected below). " +
             "Use this data to answer admin questions accurately and concisely.\n" +

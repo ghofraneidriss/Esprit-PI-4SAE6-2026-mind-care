@@ -1,1 +1,271 @@
-/* You can add global styles to this file, and also import other style files */
+/* Leaflet tiles: prevent global img { max-width: 100% } from breaking tile layout */
+.leaflet-container img.leaflet-tile,
+.leaflet-container .leaflet-tile-container img {
+  max-width: none !important;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Variables */
+:root {
+  --primary-rose: #F43F5E;
+  --rose-light: #FFF1F2;
+  --secondary-amber: #F59E0B;
+  --amber-light: #FFFBEB;
+  --accent-emerald: #10B981;
+  --emerald-light: #ECFDF5;
+  --accent-violet: #8B5CF6;
+  --violet-light: #F5F3FF;
+  --text-dark: #1F2937;
+  --text-gray: #6B7280;
+  --bg-gradient: linear-gradient(to right, #FFF1F2, #FFFBEB);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.5);
+
+  /* Navbar fixe MindCare (header .fixed-top) — une seule source pour CVP, forum, incidents */
+  --alzcare-header-offset: 6.5rem;
+  --alzcare-main-padding-bottom: 2.5rem;
+  --alzcare-footer-offset: 11rem;
+  --alzcare-footer-offset-forum: 10.5rem;
+
+  /*
+   * Largeur max du contenu (forum, CVP shell, incidents) : mieux remplir 15–17" desktop
+   * sans colonne trop étroite au centre. Utiliser max-width: var(--alzcare-content-max).
+   */
+  --alzcare-content-max: min(100rem, calc(100% - clamp(1rem, 3vw, 2.5rem)));
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --alzcare-content-max: min(112rem, calc(100% - 2rem));
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --alzcare-content-max: min(120rem, calc(100% - 1.5rem));
+  }
+}
+
+/*
+ * Zone principale sous la navbar : défini ici (global), pas dans app.css du root,
+ * sinon l’encapsulation Angular n’applique pas les styles au <main> du front-office.
+ */
+html {
+  scroll-padding-top: var(--alzcare-header-offset);
+}
+
+.alzcare-main {
+  display: block;
+  min-height: 100vh;
+  padding-top: var(--alzcare-header-offset);
+  padding-bottom: var(--alzcare-main-padding-bottom);
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Titres zone .cvp-page-header (MindCare CVP) : Poppins + poids 500 partout, pas le serif global */
+.cvp-page .cvp-page-header h1,
+.cvp-page .cvp-page-header h2,
+.cvp-page .cvp-page-header h3 {
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 500;
+}
+
+body, button, input, textarea {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Utilities */
+.text-rose { color: var(--primary-rose); }
+.text-amber { color: var(--secondary-amber); }
+.text-emerald { color: var(--accent-emerald); }
+.text-violet { color: var(--accent-violet); }
+
+.bg-rose-light { background-color: var(--rose-light); }
+.bg-amber-light { background-color: var(--amber-light); }
+
+.rounded-xl { border-radius: 12px; }
+.rounded-2xl { border-radius: 16px; }
+.rounded-full { border-radius: 9999px; }
+
+.shadow-soft { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.shadow-hover:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #F43F5E, #EC4899);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid #F3F4F6;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* MindCare: no dark UI — if anything sets data-bs-theme=dark, keep light surfaces */
+html[data-bs-theme='dark'] {
+  color-scheme: light;
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #212529;
+  --bs-secondary-bg: #e9ecef;
+  --bs-tertiary-bg: #f8f9fa;
+  --bs-border-color: #dee2e6;
+  --bs-emphasis-color: #000;
+  --bs-secondary-color: rgba(33, 37, 41, 0.75);
+}
+html[data-bs-theme='dark'] body {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+/* MindCare admin — une seule sidebar (le thème NexLink supposait 80px + panneau) */
+/* Aligner header / contenu sur la largeur réelle de la sidebar (évite un vide entre les deux) */
+:root:has(.mindcare-single-sidebar) {
+  --app-menubar-tabs: 268px;
+}
+
+:root:has(.mindcare-single-sidebar) .page-layout {
+  overflow-x: hidden;
+}
+
+.mindcare-single-sidebar.app-menubar-tabs {
+  --app-menubar-tabs: 268px;
+}
+
+.mindcare-single-sidebar .app-tab-content {
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 268px;
+}
+
+.mindcare-single-sidebar .app-tab-content .app-navbar {
+  height: auto !important;
+  max-height: calc(100vh - 7rem);
+  padding-top: 0.25rem;
+}
+
+.mindcare-single-sidebar.app-menubar-tabs.open .app-tab-content {
+  left: 0 !important;
+}
+
+[data-app-sidebar='mini'] .mindcare-single-sidebar.app-menubar-tabs,
+[data-app-sidebar='mini-hover'] .mindcare-single-sidebar.app-menubar-tabs {
+  --app-menubar-tabs: 268px !important;
+}
+
+[data-app-sidebar='mini'] .mindcare-single-sidebar .app-tab-content,
+[data-app-sidebar='mini-hover'] .mindcare-single-sidebar .app-tab-content {
+  left: 0 !important;
+}
+
+[data-app-sidebar='mini'] :has(.mindcare-single-sidebar) .app-wrapper,
+[data-app-sidebar='mini-hover'] :has(.mindcare-single-sidebar) .app-wrapper {
+  margin-left: 268px !important;
+}
+
+[data-app-sidebar='mini'] :has(.mindcare-single-sidebar) .app-header,
+[data-app-sidebar='mini-hover'] :has(.mindcare-single-sidebar) .app-header {
+  padding-left: 268px !important;
+}
+
+[data-app-sidebar='mini'] :has(.mindcare-single-sidebar) .footer-wrapper,
+[data-app-sidebar='mini-hover'] :has(.mindcare-single-sidebar) .footer-wrapper {
+  margin-left: 268px !important;
+}
+
+@media (max-width: 1480px) {
+  .mindcare-single-sidebar.app-menubar-tabs {
+    --app-menubar-tabs: 268px !important;
+  }
+
+  .mindcare-single-sidebar .app-tab-content {
+    left: 0 !important;
+    width: 268px !important;
+  }
+
+  .mindcare-single-sidebar.app-menubar-tabs.open .app-tab-content {
+    left: 0 !important;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .mindcare-single-sidebar.app-menubar-tabs {
+    --app-menubar-tabs: 268px;
+  }
+
+  .mindcare-single-sidebar .app-tab-content {
+    left: 0 !important;
+  }
+}
+
+/* Contenu principal : moins de marge interne, bloc centré dans la zone utile */
+:root:has(.mindcare-single-sidebar) .app-wrapper {
+  padding-top: 0 !important;
+  padding-left: clamp(0.75rem, 2vw, 1.25rem);
+  padding-right: clamp(0.75rem, 2vw, 1.25rem);
+  box-sizing: border-box;
+  /* Sécurité si un autre stylesheet remet width:100% (évite coupure à droite) */
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/*
+ * Pages CVP (dashboard, résultats, etc.) : le shell centre le bloc (margin auto + max-width),
+ * ce qui crée un grand vide à gauche entre la sidebar et le texte. En admin, on aligne à gauche.
+ */
+:root:has(.mindcare-single-sidebar) .app-wrapper .cvp-page {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  max-width: 100% !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Pages admin (Users, Reports, Photos, Quiz mgmt) : même alignement vertical que incidents-analytics */
+:root:has(.mindcare-single-sidebar) .app-wrapper .admin-mgmt-root.cvp-page.mgmt-page.page {
+  margin-top: 0 !important;
+}
+
+/* Back-office : aperçu post + commentaires (panelClass sur overlay Material) */
+.view-post-modal-panel .mat-mdc-dialog-container,
+.view-post-modal-panel .mat-dialog-container {
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0.85rem !important;
+  max-width: min(960px, 98vw) !important;
+  width: 100% !important;
+  max-height: 92vh !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+}

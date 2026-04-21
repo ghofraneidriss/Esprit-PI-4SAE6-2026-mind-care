@@ -1,6 +1,15 @@
+:host {
+    font-size: 1rem;
+}
+
 .comments-admin-container {
     background: #f8fafc;
     min-height: 100vh;
+}
+
+.comments-admin-container .page-title {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    letter-spacing: -0.02em;
 }
 
 .card {
@@ -39,4 +48,36 @@
 
 .text-truncate {
     max-width: 400px;
+}
+
+.cl-mod-notice {
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    background: linear-gradient(135deg, #fff1f2 0%, #fffbeb 100%);
+    max-width: 520px;
+}
+
+.cl-mod-notice__icon {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #f87171, #ef4444);
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.cl-mod-notice__title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #991b1b;
+}
+
+.cl-mod-notice__hint {
+    margin-top: 0.15rem;
+    line-height: 1.35;
 }

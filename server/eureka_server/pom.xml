@@ -16,7 +16,7 @@
     <artifactId>eureka_server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>eureka_server</name>
-    <description>Eureka Discovery Server for AlzCare Microservices</description>
+    <description>Eureka Discovery Server for MindCare Microservices</description>
 
     <properties>
         <java.version>17</java.version>

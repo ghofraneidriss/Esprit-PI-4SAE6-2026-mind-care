@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "1f2df8c9-86b6-42bd-956a-c443e8cd78e8"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -36,15 +37,9 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/assets/frontoffice/css/main.css",
-              "src/assets/backoffice/libs/flaticon/css/all/all.css",
-              "src/assets/backoffice/libs/simplebar/simplebar.css",
-              "src/assets/backoffice/libs/node-waves/waves.css",
-              "src/assets/backoffice/libs/bootstrap-select/css/bootstrap-select.min.css",
-              "src/assets/backoffice/libs/flatpickr/flatpickr.min.css",
-              "src/assets/backoffice/libs/datatables/datatables.min.css",
-              "src/assets/backoffice/css/styles.css"
+              "node_modules/leaflet/dist/leaflet.css",
+              "src/styles/post-form-dialog.css",
+              "src/styles.css"
             ]
           },
           "configurations": {
@@ -57,8 +52,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "16kB",
-                  "maximumError": "32kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
               ],
               "outputHashing": "all"
@@ -73,12 +68,16 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.cjs"
+          },
           "configurations": {
             "production": {
               "buildTarget": "mind_care:build:production"
             },
             "development": {
-              "buildTarget": "mind_care:build:development"
+              "buildTarget": "mind_care:build:development",
+              "proxyConfig": "proxy.conf.cjs"
             }
           },
           "defaultConfiguration": "development"

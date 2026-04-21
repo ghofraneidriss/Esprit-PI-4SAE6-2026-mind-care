@@ -1,0 +1,283 @@
+/* Extended Utilities for Category Page */
+.hover\:text-rose-500:hover {
+    color: var(--primary-rose);
+}
+
+.transition-colors {
+    transition: color 0.3s;
+}
+
+.mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.text-gray-500 {
+    color: #6B7280;
+}
+
+.bg-rose-light {
+    background-color: var(--rose-light);
+}
+
+.p-8 {
+    padding: 2rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.bg-rose-500 {
+    background-color: var(--primary-rose);
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+}
+
+.text-emerald-500 {
+    color: var(--accent-emerald);
+}
+
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--primary-rose), #EC4899);
+}
+
+.to-pink-500 {
+    --tw-gradient-to: #EC4899;
+}
+
+.hover\:shadow-xl:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:-translate-y-1:hover {
+    transform: translateY(-0.25rem);
+}
+
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+
+.sticky {
+    position: sticky;
+}
+
+.top-24 {
+    top: 6rem;
+}
+
+.space-y-2> :not(:first-child) {
+    margin-top: 0.5rem;
+}
+
+.bg-rose-50 {
+    background-color: #FFF1F2;
+}
+
+.text-rose-600 {
+    color: #E11D48;
+}
+
+.hover\:bg-gray-50:hover {
+    background-color: #F9FAFB;
+}
+
+.border-t {
+    border-top-width: 1px;
+}
+
+.border-gray-100 {
+    border-color: #F3F4F6;
+}
+
+.my-4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.bg-gray-100 {
+    background-color: #F3F4F6;
+}
+
+.py-0\.5 {
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+}
+
+.bg-emerald-50 {
+    background-color: #ECFDF5;
+}
+
+.text-emerald-600 {
+    color: #059669;
+}
+
+.bg-amber-50 {
+    background-color: #FFFBEB;
+}
+
+.text-amber-600 {
+    color: #D97706;
+}
+
+.lg\:col-span-1 {
+    grid-column: span 1 / span 1;
+}
+
+.lg\:col-span-3 {
+    grid-column: span 3 / span 3;
+}
+
+.space-y-4> :not(:first-child) {
+    margin-top: 1rem;
+}
+
+.flex-shrink-0 {
+    flex-shrink: 0;
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.border-dashed {
+    border-style: dashed;
+}
+
+.border-gray-300 {
+    border-color: #D1D5DB;
+}
+
+.py-12 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.text-4xl {
+    font-size: 2.25rem;
+}
+
+.border-gray-200 {
+    border-color: #E5E7EB;
+}
+
+.w-10 {
+    width: 2.5rem;
+}
+
+.h-10 {
+    height: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+    .lg\:grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .lg\:col-span-1 {
+        grid-column: span 1;
+    }
+
+    .lg\:col-span-3 {
+        grid-column: span 3;
+    }
+}
+
+/* Glass Panel and Card Styles */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+}
+
+.card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid #F3F4F6;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-soft {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Font */
+.font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+.font-display {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Animation */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.animate-pulse-soft {
+    animation: pulse 3s infinite;
+}
+
+/* Gradient Background */
+.bg-gradient-to-bl {
+    background: linear-gradient(to bottom left, rgba(255,255,255,0.2), transparent);
+}
+
+/* Z-index */
+.z-0 {
+    z-index: 0;
+}
+
+.z-10 {
+    z-index: 10;
+}
+
+/* Negative margin for avatars */
+.-space-x-2 > :not(:first-child) {
+    margin-left: -0.5rem;
+}
+
+/* Transform scale */
+.transition-transform {
+    transition: transform 0.3s ease;
+}
+
+.group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+}
+
+.group:hover .group-hover\:gap-2 {
+    gap: 0.5rem;
+}

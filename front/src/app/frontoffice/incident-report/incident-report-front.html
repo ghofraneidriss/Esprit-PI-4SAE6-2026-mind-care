@@ -1,155 +1,185 @@
-<div class="content container-fluid pt-5 mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-7">
+<section class="incident-page" aria-label="Report an incident">
+    <div class="incident-split">
+        <!-- Left column: visual + identity (full width) -->
+        <aside class="incident-hero" aria-hidden="false">
+            <div class="incident-hero__pattern" aria-hidden="true"></div>
+            <div class="incident-hero__glow incident-hero__glow--1" aria-hidden="true"></div>
+            <div class="incident-hero__glow incident-hero__glow--2" aria-hidden="true"></div>
 
-            <!-- Breadcrumb -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h4 class="page-title mb-1">Signaler un Incident</h4>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-                            <li class="breadcrumb-item"><a routerLink="/incidents/history">Incidents</a></li>
-                            <li class="breadcrumb-item active">Signaler</li>
-                        </ol>
-                    </nav>
-                </div>
-                <a routerLink="/incidents/history" class="btn btn-outline-secondary btn-sm">
-                    ← Retour
+            <div class="incident-hero__inner">
+                <a routerLink="/incidents/history" class="incident-hero__back">
+                    <i class="ri-arrow-left-s-line" aria-hidden="true"></i>
+                    <span>History</span>
                 </a>
-            </div>
 
-            <!-- Success -->
-            <div *ngIf="successMessage" class="alert alert-success" role="alert">
-                ✔ <strong>{{ successMessage }}</strong>
-            </div>
-
-            <!-- Error -->
-            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-                ⚠ {{ errorMessage }}
-            </div>
-
-            <!-- Card -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="mb-0 fw-bold">📝 Nouveau signalement</h5>
+                <div class="incident-hero__badge">
+                    <i class="ri-shield-check-line" aria-hidden="true"></i>
+                    <span>Safety Center</span>
                 </div>
 
-                <div class="card-body p-4">
-                    <form [formGroup]="incidentForm" (ngSubmit)="onSubmit()">
+                <h1 class="incident-hero__title">Report an incident</h1>
+                <p class="incident-hero__lead">
+                    Share what happened in a few steps — our team uses this to respond with clarity and care.
+                </p>
 
-                        <!-- Patient Block -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                {{ isCaregiver ? 'Patient concerné' : 'Vous signalez pour' }}
-                            </label>
+                <ul class="incident-hero__features">
+                    <li>
+                        <span class="incident-hero__feat-icon"><i class="ri-time-line" aria-hidden="true"></i></span>
+                        <span class="incident-hero__feat-text">Fast triage &amp; follow-up</span>
+                    </li>
+                    <li>
+                        <span class="incident-hero__feat-icon"><i class="ri-lock-2-line" aria-hidden="true"></i></span>
+                        <span class="incident-hero__feat-text">Handled with discretion</span>
+                    </li>
+                    <li>
+                        <span class="incident-hero__feat-icon"><i class="ri-user-heart-line" aria-hidden="true"></i></span>
+                        <span class="incident-hero__feat-text">Linked to your care profile</span>
+                    </li>
+                </ul>
 
-                            <!-- PATIENT: own info card -->
-                            <div *ngIf="!isCaregiver"
-                                 class="d-flex align-items-center p-3 rounded border bg-light">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3 flex-shrink-0"
-                                     style="width:48px;height:48px;font-size:1.1rem">
-                                    {{ (currentUser?.firstName || '?').charAt(0).toUpperCase() }}
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark">{{ authService.getFullName() }}</div>
-                                    <small class="text-muted">ID: {{ currentUser?.userId }}</small>
-                                </div>
+                <div class="incident-hero__deco" aria-hidden="true">
+                    <i class="ri-heart-pulse-fill"></i>
+                    <i class="ri-first-aid-kit-fill"></i>
+                    <i class="ri-mental-health-fill"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right column: form (no narrow centered card) -->
+        <div class="incident-form-col">
+            <div class="incident-form-surface">
+                <div class="incident-form-head">
+                    <h2 class="incident-form-head__title">
+                        <i class="ri-file-list-3-line" aria-hidden="true"></i>
+                        New report
+                    </h2>
+                    <p class="incident-form-head__hint">Severity, type, and a short description help us act in context.</p>
+                </div>
+
+                <div *ngIf="successMessage" class="alert alert-success incident-alert" role="alert">
+                    <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                    <strong>{{ successMessage }}</strong>
+                </div>
+
+                <div *ngIf="errorMessage" class="alert alert-danger incident-alert" role="alert">
+                    <i class="ri-error-warning-line" aria-hidden="true"></i>
+                    <span>{{ errorMessage }}</span>
+                </div>
+
+                <div *ngIf="warningMessage" class="alert alert-warning incident-alert" role="alert">
+                    <i class="ri-alert-line" aria-hidden="true"></i>
+                    <span>{{ warningMessage }}</span>
+                </div>
+
+                <form [formGroup]="incidentForm" (ngSubmit)="onSubmit()" class="incident-form">
+                    <div class="form-block">
+                        <label class="field-label">{{ isCaregiverOrVolunteer ? 'Patient' : 'Reporting for' }}</label>
+
+                        <div *ngIf="!isCaregiverOrVolunteer" class="reporting-user-card">
+                            <div class="reporting-avatar" aria-hidden="true">
+                                <span class="reporting-avatar-initials">{{ reportingInitials }}</span>
                             </div>
-
-                            <!-- CAREGIVER: patient dropdown -->
-                            <div *ngIf="isCaregiver">
-                                <div *ngIf="loadingPatients" class="text-muted fst-italic small py-2">
-                                    <span class="spinner-border spinner-border-sm me-1"></span>
-                                    Chargement des patients...
-                                </div>
-                                <div *ngIf="!loadingPatients && assignedPatients.length === 0"
-                                     class="alert alert-warning small mb-0">
-                                    Aucun patient assigné à votre compte.
-                                </div>
-                                <select *ngIf="!loadingPatients && assignedPatients.length > 0"
-                                        [(ngModel)]="selectedPatientId"
-                                        [ngModelOptions]="{standalone: true}"
-                                        class="form-select">
-                                    <option *ngFor="let patient of assignedPatients" [ngValue]="patient.userId">
-                                        {{ patient.firstName }} {{ patient.lastName }}
-                                    </option>
-                                </select>
+                            <div class="reporting-info">
+                                <p class="reporting-name">{{ authService.getFullName() }}</p>
+                                <p class="reporting-email">{{ currentUser?.email }}</p>
                             </div>
                         </div>
 
-                        <!-- Incident Type -->
-                        <div class="mb-4">
-                            <label for="type" class="form-label fw-semibold">Type d'incident</label>
-                            <select id="type" formControlName="type" class="form-select"
-                                    [ngClass]="{'is-invalid': submitted && incidentForm.get('type')?.invalid}">
-                                <option value="">— Sélectionner un type —</option>
-                                <option *ngFor="let type of incidentTypes" [value]="type.id">
-                                    {{ type.name }}
+                        <div *ngIf="isCaregiverOrVolunteer">
+                            <div *ngIf="loadingPatients" class="loading-inline">
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                                Loading patients...
+                            </div>
+                            <div *ngIf="!loadingPatients && assignedPatients.length === 0" class="alert alert-warning small mb-0">
+                                No patients assigned to your account.
+                            </div>
+                            <select
+                                *ngIf="!loadingPatients && assignedPatients.length > 0"
+                                [(ngModel)]="selectedPatientId"
+                                [ngModelOptions]="{standalone: true}"
+                                class="form-select custom-select">
+                                <option *ngFor="let patient of assignedPatients" [ngValue]="patient.userId">
+                                    {{ patient.firstName }} {{ patient.lastName }}
                                 </option>
                             </select>
-                            <div class="invalid-feedback">Veuillez sélectionner un type d'incident.</div>
                         </div>
+                    </div>
 
-                        <!-- Severity Level -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Niveau de sévérité</label>
-                            <div class="btn-group w-100" role="group">
-                                <ng-container *ngFor="let level of severityLevels">
-                                    <input type="radio"
-                                           class="btn-check"
-                                           [id]="'sev-' + level"
-                                           [value]="level"
-                                           formControlName="severityLevel"
-                                           autocomplete="off">
-                                    <label class="btn"
-                                           [for]="'sev-' + level"
-                                           [ngClass]="{
-                                               'btn-success':         level === 'LOW'    && incidentForm.get('severityLevel')?.value === 'LOW',
-                                               'btn-outline-success': level === 'LOW'    && incidentForm.get('severityLevel')?.value !== 'LOW',
-                                               'btn-warning':         level === 'MEDIUM' && incidentForm.get('severityLevel')?.value === 'MEDIUM',
-                                               'btn-outline-warning': level === 'MEDIUM' && incidentForm.get('severityLevel')?.value !== 'MEDIUM',
-                                               'btn-danger':          level === 'HIGH'   && incidentForm.get('severityLevel')?.value === 'HIGH',
-                                               'btn-outline-danger':  level === 'HIGH'   && incidentForm.get('severityLevel')?.value !== 'HIGH'
-                                           }">
-                                        <span *ngIf="level === 'LOW'">🟢 Faible</span>
-                                        <span *ngIf="level === 'MEDIUM'">🟡 Moyen</span>
-                                        <span *ngIf="level === 'HIGH'">🔴 Élevé</span>
-                                    </label>
-                                </ng-container>
-                            </div>
+                    <div class="form-block">
+                        <label for="type" class="field-label">
+                            <i class="ri-list-settings-line field-label__icon" aria-hidden="true"></i>
+                            Incident type
+                        </label>
+                        <div *ngIf="loadingTypes" class="loading-inline">
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                            Loading types...
                         </div>
+                        <select
+                            id="type"
+                            formControlName="type"
+                            class="form-select custom-select"
+                            [disabled]="loadingTypes"
+                            [ngClass]="{'is-invalid': attemptedSubmit && incidentForm.get('type')?.invalid}">
+                            <option value="">Select a type</option>
+                            <option *ngFor="let type of incidentTypes" [value]="type.id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                        <div class="invalid-feedback">Please select an incident type.</div>
+                    </div>
 
-                        <!-- Description -->
-                        <div class="mb-4">
-                            <label for="description" class="form-label fw-semibold">Description</label>
-                            <textarea id="description"
-                                      formControlName="description"
-                                      rows="5"
-                                      class="form-control"
-                                      placeholder="Décrivez l'incident en détail (minimum 10 caractères)..."
-                                      [ngClass]="{'is-invalid': submitted && incidentForm.get('description')?.invalid}">
-                            </textarea>
-                            <div class="invalid-feedback">La description doit contenir au moins 10 caractères.</div>
+                    <div class="form-block">
+                        <span class="field-label">
+                            <i class="ri-pulse-line field-label__icon" aria-hidden="true"></i>
+                            Severity
+                        </span>
+                        <div class="severity-grid" role="group" aria-label="Severity">
+                            <ng-container *ngFor="let level of severityLevels">
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    [id]="'sev-' + level"
+                                    [value]="level"
+                                    formControlName="severityLevel"
+                                    autocomplete="off">
+                                <label class="severity-pill" [for]="'sev-' + level">
+                                    <i *ngIf="level === 'LOW'" class="ri-checkbox-circle-line low-icon" aria-hidden="true"></i>
+                                    <i *ngIf="level === 'MEDIUM'" class="ri-alert-line medium-icon" aria-hidden="true"></i>
+                                    <i *ngIf="level === 'HIGH'" class="ri-alarm-warning-line high-icon" aria-hidden="true"></i>
+                                    <span>{{ level }}</span>
+                                </label>
+                            </ng-container>
                         </div>
+                    </div>
 
-                        <!-- Submit -->
-                        <div class="d-grid mt-2">
-                            <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitted">
-                                <span *ngIf="!submitted">
-                                    ✈ Signaler l'Incident
-                                </span>
-                                <span *ngIf="submitted" class="d-flex align-items-center justify-content-center">
-                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                    Envoi en cours...
-                                </span>
-                            </button>
-                        </div>
+                    <div class="form-block">
+                        <label for="description" class="field-label">
+                            <i class="ri-edit-2-line field-label__icon" aria-hidden="true"></i>
+                            Description
+                        </label>
+                        <textarea
+                            id="description"
+                            formControlName="description"
+                            rows="5"
+                            class="form-control custom-textarea"
+                            placeholder="Describe what happened (minimum 10 characters)..."
+                            [ngClass]="{'is-invalid': attemptedSubmit && incidentForm.get('description')?.invalid}">
+                        </textarea>
+                        <div class="invalid-feedback">Description must be at least 10 characters.</div>
+                    </div>
 
-                    </form>
-                </div>
+                    <button type="submit" class="btn submit-btn w-100" [disabled]="isSubmitting">
+                        <span *ngIf="!isSubmitting">
+                            <i class="ri-send-plane-2-line" aria-hidden="true"></i>
+                            Submit report
+                        </span>
+                        <span *ngIf="isSubmitting" class="d-flex align-items-center justify-content-center">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            Sending...
+                        </span>
+                    </button>
+                </form>
             </div>
-
         </div>
     </div>
-</div>
+</section>

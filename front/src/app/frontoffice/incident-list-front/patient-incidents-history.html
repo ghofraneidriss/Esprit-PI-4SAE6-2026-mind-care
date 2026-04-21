@@ -3,7 +3,7 @@
         <h2 class="text-3xl font-extrabold text-[#00a3c1] sm:text-4xl">Incident History</h2>
         <p class="mt-4 text-xl text-gray-500">View all your reported incidents, including resolved ones.</p>
 
-        <div class="mt-8 flex justify-center space-x-4">
+        <div class="mt-8 flex justify-center space-x-4" *ngIf="canReportIncident">
             <a routerLink="/incidents/report"
                 class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#00a3c1] hover:bg-[#008d9e] shadow-lg transform hover:-translate-y-0.5 transition-all">
                 <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

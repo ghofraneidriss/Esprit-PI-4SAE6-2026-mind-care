@@ -1,102 +1,720 @@
-/* ─── CTA group (Appointment + Logout/Login) ─── */
-.header-cta-group {
+/* MindCare front header — light theme; complements assets/frontoffice/css/main.css */
+
+/* Barre : logo | nav centrée | cloche + profil collés à droite */
+.alzcare-header-container {
+  max-width: 100%;
+  padding-left: clamp(0.75rem, 2vw, 1.25rem);
+  padding-right: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.alzcare-header-row {
+  width: 100%;
+}
+
+@media (min-width: 1200px) {
+  .alzcare-header-nav.navmenu {
+    display: flex;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .alzcare-header-nav.navmenu > ul {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 1199px) {
+  .alzcare-header-row .alzcare-header-brand {
+    order: 1;
+  }
+
+  .alzcare-header-row .alzcare-header-end {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .alzcare-header-row .alzcare-header-nav {
+    order: 10;
+    width: 100%;
+  }
+}
+
+/* Gold bell + large notification drawer (UI copy in English) */
+.alzcare-notif-wrap {
+  margin-right: 0.35rem;
+}
+
+@media (min-width: 576px) {
+  .alzcare-notif-wrap {
+    margin-right: 1.1rem;
+  }
+}
+
+.alzcare-user-cluster--after-notif {
+  margin-left: 0.15rem;
+}
+
+.alzcare-notif-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(155deg, #fffbeb 0%, #fef3c7 35%, #fde68a 100%);
+  color: #b45309;
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.45),
+    0 2px 10px rgba(217, 119, 6, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.15s ease,
+    filter 0.15s ease;
+}
+
+.alzcare-notif-bell:hover {
+  color: #92400e;
+  filter: brightness(1.03);
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(217, 119, 6, 0.55),
+    0 8px 20px rgba(217, 119, 6, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.alzcare-notif-bell:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+.alzcare-notif-bell i {
+  font-size: 1.35rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(180, 83, 9, 0.2));
+}
+
+.alzcare-notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 1.2rem;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow:
+    0 0 0 2px #fff,
+    0 2px 6px rgba(220, 38, 38, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.alzcare-notif-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: min(38rem, calc(100vw - 1rem));
+  max-height: min(82dvh, 42rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.1rem;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 4px 6px -1px rgba(15, 23, 42, 0.06),
+    0 24px 48px -12px rgba(15, 23, 42, 0.2);
+  z-index: 10050;
+  overflow: hidden;
+}
+
+.alzcare-notif-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+  background: linear-gradient(180deg, #fafbfc 0%, #fff 100%);
+}
+
+.alzcare-notif-panel__title {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.alzcare-notif-panel__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+.alzcare-notif-panel__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+}
+
+.alzcare-notif-panel__markall {
+  border: none;
+  background: none;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #6366f1;
+  cursor: pointer;
+  border-radius: 0.35rem;
+}
+
+.alzcare-notif-panel__markall:hover {
+  text-decoration: underline;
+}
+
+.alzcare-notif-panel__deleteall {
+  border: none;
+  background: none;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #dc2626;
+  cursor: pointer;
+  border-radius: 0.35rem;
+}
+
+.alzcare-notif-panel__deleteall:hover {
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+.alzcare-notif-panel__body {
+  overflow-y: auto;
+  max-height: min(68dvh, 34rem);
+  scrollbar-width: thin;
+}
+
+.alzcare-notif-panel__foot {
+  margin: 0;
+  padding: 0.55rem 1.25rem 0.85rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #94a3b8;
+  text-align: center;
+  border-top: 1px solid rgba(241, 245, 249, 0.95);
+  background: #fafbfc;
+}
+
+.alzcare-notif-empty {
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.alzcare-notif-empty i {
+  font-size: 2.75rem;
+  opacity: 0.45;
+  display: block;
+  margin-bottom: 0.65rem;
+}
+
+.alzcare-notif-empty p {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.alzcare-notif-empty__hint {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  display: block;
+  max-width: 26rem;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.alzcare-notif-empty__hint strong {
+  color: #475569;
+  font-weight: 700;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--comment {
+  background: linear-gradient(145deg, #e0e7ff 0%, #c7d2fe 100%) !important;
+  color: #4338ca !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--like {
+  background: linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%) !important;
+  color: #be185d !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--react {
+  background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%) !important;
+  color: #b45309 !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--star {
+  background: linear-gradient(145deg, #ecfccb 0%, #d9f99d 100%) !important;
+  color: #4d7c0f !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--follow {
+  background: linear-gradient(145deg, #e0f2fe 0%, #bae6fd 100%) !important;
+  color: #0369a1 !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--sys {
+  background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+  color: #475569 !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--info {
+  background: linear-gradient(145deg, #eef2ff 0%, #e0e7ff 100%) !important;
+  color: #4f46e5 !important;
+}
+
+.alzcare-notif-item__icon.alzcare-notif-ico--location {
+  background: linear-gradient(145deg, #ccfbf1 0%, #99f6e4 100%) !important;
+  color: #0f766e !important;
+}
+
+.alzcare-notif-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.alzcare-notif-maps-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.15rem 1rem 0.75rem 1rem;
+  padding: 0.55rem 1rem 0.6rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.03em;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 38%, #047857 100%);
+  box-shadow:
+    0 4px 16px rgba(13, 148, 136, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.alzcare-notif-maps-btn:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow:
+    0 8px 22px rgba(13, 148, 136, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.alzcare-notif-maps-btn:active {
+  transform: translateY(0);
+}
+
+.alzcare-notif-maps-btn__shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.18) 50%, transparent 65%);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.alzcare-notif-maps-btn__inner {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.alzcare-notif-maps-btn__brand {
+  font-size: 1.1rem;
+  opacity: 0.95;
+}
+
+.alzcare-notif-maps-btn__label {
+  flex: 1;
+  text-align: center;
+}
+
+.alzcare-notif-maps-btn__arrow {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.alzcare-notif-actor {
+  font-weight: 800;
+  color: #6d28d9;
+  letter-spacing: -0.02em;
+}
+
+.alzcare-notif-tail {
+  font-weight: 500;
+  color: #334155;
+}
+
+.alzcare-notif-snippet {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #64748b;
+  font-style: italic;
+  border-left: 3px solid rgba(99, 102, 241, 0.35);
+  padding-left: 0.5rem;
+}
+
+.alzcare-notif-item {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid rgba(241, 245, 249, 0.95);
+  transition: background 0.12s ease;
+}
+
+.alzcare-notif-item:hover {
+  background: #f8fafc;
+}
+
+.alzcare-notif-item--unread {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.06) 0%, #fff 48%);
+}
+
+.alzcare-notif-item__main {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.05rem;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 0.85rem 0.35rem 0.85rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.alzcare-notif-item__main:hover {
+  background: transparent;
+}
+
+.alzcare-notif-item__dismiss {
+  flex-shrink: 0;
+  width: 2.25rem;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.75rem;
+  border: none;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.alzcare-notif-item__dismiss:hover {
+  color: #dc2626;
+  background: rgba(254, 226, 226, 0.35);
+}
+
+.alzcare-notif-item__dismiss i {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.alzcare-notif-item__icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #eef2ff 0%, #e0e7ff 100%);
+  color: #4f46e5;
+}
+
+.alzcare-notif-item__icon--warn {
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);
+  color: #b45309;
+}
+
+.alzcare-notif-item__icon--crit {
+  background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%);
+  color: #be123c;
+}
+
+.alzcare-notif-item__icon i {
+  font-size: 1.15rem;
+}
+
+.alzcare-notif-item__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.alzcare-notif-item__msg {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #1e293b;
+}
+
+.alzcare-notif-item--unread .alzcare-notif-item__msg {
+  font-weight: 600;
+}
+
+.alzcare-notif-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.alzcare-notif-item__time {
+  font-variant-numeric: tabular-nums;
+}
+
+.alzcare-notif-item__chip {
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alzcare-notif-item__chip--type {
+  background: rgba(148, 163, 184, 0.2);
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.alzcare-notif-item__dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 0.35rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.header.alzcare-header {
+  --background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color, #363f40), transparent 92%);
+}
+
+.scrolled .header.alzcare-header {
+  --background-color: #ffffff;
+}
+
+.header .logo .navbar-logo-3d {
+  max-height: none;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.header .logo .sitename {
+  font-family: var(--heading-font, "Ubuntu", sans-serif);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+/* Activités — wider panel, rounded, clear hierarchy */
+@media (min-width: 1200px) {
+  .navmenu .dropdown ul.alzcare-activites-submenu {
+    min-width: 280px;
+    padding: 8px 0;
+    left: 0;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--default-color, #363f40), transparent 90%);
+    box-shadow:
+      0 10px 40px rgba(15, 23, 42, 0.08),
+      0 2px 8px rgba(15, 23, 42, 0.04);
+  }
+
+  .navmenu .dropdown ul.alzcare-activites-submenu li {
+    min-width: 0;
+  }
+
+  .navmenu .dropdown ul.alzcare-activites-submenu a {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
+    gap: 0.35rem;
+    padding: 11px 18px;
+    font-weight: 500;
+  }
 
-/* ─── Logout button ─── */
-.btn-logout {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    height: 40px;
-    padding: 0 18px;
-    border-radius: 50px;
-    border: 2px solid #ef4444;
-    background: rgba(239, 68, 68, 0.08);
-    color: #ef4444;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.14s, box-shadow 0.22s;
-    white-space: nowrap;
-}
-
-.btn-logout:hover {
-    background: #ef4444;
-    border-color: #ef4444;
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
-}
-
-.btn-logout:active {
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-.btn-logout svg {
+  .navmenu .dropdown ul.alzcare-activites-submenu a .alzcare-nav-ico {
+    font-size: 1.2rem;
+    line-height: 1;
+    color: color-mix(in srgb, var(--accent-color, #099aa7), #6366f1 35%);
     flex-shrink: 0;
-    transition: transform 0.22s;
+    margin-left: 0 !important;
+  }
+
+  .navmenu .dropdown ul.alzcare-activites-submenu a:hover .alzcare-nav-ico,
+  .navmenu .dropdown ul.alzcare-activites-submenu a.active .alzcare-nav-ico {
+    color: var(--accent-color, #099aa7);
+  }
+
+  .navmenu .dropdown ul.alzcare-activites-submenu a.active {
+    background: color-mix(in srgb, var(--accent-color, #099aa7), transparent 92%);
+    color: var(--heading-color, #1f2f31);
+  }
 }
 
-.btn-logout:hover svg {
-    transform: translateX(2px);
+@media (max-width: 1199px) {
+  .navmenu .dropdown ul.alzcare-activites-submenu {
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--default-color, #363f40), transparent 88%);
+  }
+
+  .navmenu .dropdown ul.alzcare-activites-submenu a .alzcare-nav-ico {
+    font-size: 1.15rem;
+    color: var(--accent-color, #099aa7);
+    background: none !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 0 !important;
+  }
 }
 
-/* ─── Login link ─── */
-.btn-login {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    height: 40px;
-    padding: 0 18px;
-    border-radius: 50px;
-    border: 2px solid #099aa7;
-    background: rgba(9, 154, 167, 0.08);
-    color: #099aa7;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.14s, box-shadow 0.22s;
-    white-space: nowrap;
+/* Bloc utilisateur : avatar, nom, actions — espacement cohérent */
+.alzcare-user-cluster {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin-left: 0.25rem;
 }
 
-.btn-login:hover {
-    background: #099aa7;
-    border-color: #099aa7;
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(9, 154, 167, 0.35);
+/* Avatar profil */
+.alzcare-profile-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #6366f1 0%, #7c3aed 45%, #a78bfa 100%);
+  color: #fff !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.95),
+    0 3px 12px rgba(99, 102, 241, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-login:active {
-    transform: translateY(0);
-    box-shadow: none;
+.alzcare-profile-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.95),
+    0 6px 18px rgba(124, 58, 237, 0.35);
+  color: #fff !important;
 }
 
-.btn-login svg {
-    flex-shrink: 0;
-    transition: transform 0.22s;
+.alzcare-profile-initials {
+  line-height: 1;
 }
 
-.btn-login:hover svg {
-    transform: translateX(-2px);
+.alzcare-user-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.02em;
+  max-width: 11rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
-/* ─── Hide label on very small screens, keep icon visible ─── */
-@media (max-width: 480px) {
-    .logout-label {
-        display: none;
-    }
+.alzcare-btn-admin {
+  flex-shrink: 0;
+}
 
-    .btn-logout,
-    .btn-login {
-        width: 40px;
-        padding: 0;
-        justify-content: center;
-    }
+/* Déconnexion — neutre, pas rouge */
+.alzcare-btn-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.625rem;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.alzcare-btn-logout:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.alzcare-btn-logout:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.alzcare-btn-logout i {
+  font-size: 1.05rem;
+  opacity: 0.88;
 }

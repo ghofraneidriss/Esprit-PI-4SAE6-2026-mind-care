@@ -5,6 +5,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/api")
 @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:4210"})
 @RequiredArgsConstructor
+@Slf4j
 public class IncidentController {
 
     private final IncidentService incidentService;
@@ -65,9 +67,16 @@ public class IncidentController {
         return ResponseEntity.ok(incidentService.getActiveIncidentsByCaregiver(caregiverId));
     }
 
+    @GetMapping("/incidents/volunteer/{volunteerId}")
+    public ResponseEntity<List<Incident>> getByVolunteer(@PathVariable Long volunteerId) {
+        return ResponseEntity.ok(incidentService.getActiveIncidentsByVolunteer(volunteerId));
+    }
+
     @GetMapping("/incidents/reported")
-    public ResponseEntity<List<Incident>> getReportedIncidents() {
-        return ResponseEntity.ok(incidentService.getCaregiverReportedIncidents());
+    public ResponseEntity<List<Incident>> getReportedIncidents(
+            @RequestParam(required = false, defaultValue = "CAREGIVER") String source,
+            @RequestParam(required = false) Long reporterId) {
+        return ResponseEntity.ok(incidentService.getReportedIncidentsFiltered(source, reporterId));
     }
 
     @PostMapping("/incidents")
@@ -270,7 +279,7 @@ public class IncidentController {
             return baos.toByteArray();
 
         } catch (Exception e) {
-            //log.error("❌ Erreur lors de la génération du PDF de stats : {}", e.getMessage());
+            log.error("❌ Erreur lors de la génération du PDF de stats : {}", e.getMessage());
             return new byte[0];
         }
     }

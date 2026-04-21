@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.users_service.entity.Notification;
 import tn.esprit.users_service.repository.NotificationRepository;
+import tn.esprit.users_service.service.NotificationService;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class NotificationController {
 
     private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Notification>> getByUser(@PathVariable Long userId) {
@@ -55,7 +57,22 @@ public class NotificationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        notificationRepository.deleteById(id);
+        notificationService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/user/{userId}/all")
+    public ResponseEntity<Void> deleteAllForUserDelete(@PathVariable Long userId) {
+        notificationService.deleteAllForUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Same as {@link #deleteAllForUserDelete} — POST is more reliable through some proxies / dev setups than DELETE.
+     */
+    @PostMapping("/user/{userId}/delete-all")
+    public ResponseEntity<Void> deleteAllForUserPost(@PathVariable Long userId) {
+        notificationService.deleteAllForUser(userId);
         return ResponseEntity.noContent().build();
     }
 }

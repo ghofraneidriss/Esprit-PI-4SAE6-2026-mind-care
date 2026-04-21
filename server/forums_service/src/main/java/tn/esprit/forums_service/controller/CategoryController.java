@@ -10,7 +10,6 @@ import tn.esprit.forums_service.entity.Category;
 import tn.esprit.forums_service.service.CategoryService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -27,21 +26,7 @@ public class CategoryController {
 
     @GetMapping
     public List<CategoryDTO> getAllCategories() {
-        System.out.println(">>> Request: getAllCategories");
-        List<Category> categories = categoryService.getAllCategories();
-        System.out.println(">>> Found " + categories.size() + " categories");
-        
-        List<CategoryDTO> dtos = categories.stream()
-            .map(cat -> CategoryDTO.builder()
-                .id(cat.getId())
-                .name(cat.getName())
-                .description(cat.getDescription())
-                .icon("ri-folder-line")
-                .build())
-            .collect(Collectors.toList());
-            
-        System.out.println(">>> Returning " + dtos.size() + " categories");
-        return dtos;
+        return categoryService.getAllCategoryDtos();
     }
 
     @GetMapping("/{id}")

@@ -1,15 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatDialogModule } from '@angular/material/dialog';
 import { Post } from '../../../core/services/forum.service';
 
 @Component({
   selector: 'app-delete-post-modal',
   templateUrl: './delete-post-modal.html',
   styleUrls: ['./delete-post-modal.css'],
-  standalone: true,
-  imports: [CommonModule, MatDialogModule]
+  standalone: false
 })
 export class DeletePostModal {
   constructor(

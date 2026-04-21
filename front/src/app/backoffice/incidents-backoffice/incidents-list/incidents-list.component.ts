@@ -1,24 +1,45 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { IncidentService } from '../../../core/services/incident.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Incident, IncidentComment, IncidentType } from '../../../core/models/incident.model';
-
-type IncidentStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+import { Incident, IncidentComment, PatientStats } from '../../../core/models/incident.model';
+import { PatientRegistrationOption } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-incidents-list',
   standalone: false,
   templateUrl: './incidents-list.component.html',
-  styleUrls: ['./incidents-list.component.css']
+  styleUrls: ['./incidents-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IncidentsListComponent implements OnInit {
   incidents: Incident[] = [];
-  incidentTypes: IncidentType[] = [];
-  loading = false;
+  /** First type from API (required by backend); no category picker in UI. */
+  defaultIncidentTypeId: number | null = null;
+  /** True jusqu’au 1er résultat de `loadReportedIncidents` (évite flash vide + OnPush figé). */
+  loading = true;
   error: string | null = null;
   isAddModalOpen = false;
+  /** Incident analytics (same charts as former /admin/incidents-analytics). */
+  isAnalyticsModalOpen = false;
   incidentForm: FormGroup;
+
+  /** Comptes patient (liste déroulante) — tous les rôles PATIENT. */
+  patients: PatientRegistrationOption[] = [];
+
+  isDoctor = false;
+
+  /** Calcul avancé de gravité (API patient-stats). */
+  gravityPatientId: number | null = null;
+  gravityStats: PatientStats | null = null;
+  gravityLoading = false;
 
   // Patient names map: patientId → full name
   patientNames: Map<number, string> = new Map();
@@ -40,107 +61,197 @@ export class IncidentsListComponent implements OnInit {
   constructor(
     private incidentService: IncidentService,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
     this.incidentForm = this.fb.group({
       patientId: ['', Validators.required],
       description: ['', Validators.required],
-      severityLevel: ['MEDIUM', Validators.required],
-      typeId: ['', Validators.required]
+      severityLevel: ['MEDIUM', Validators.required]
     });
+  }
+
+  openAnalyticsModal(): void {
+    this.isAnalyticsModalOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closeAnalyticsModal(): void {
+    this.isAnalyticsModalOpen = false;
+    this.cdr.markForCheck();
   }
 
   openAddModal() {
     this.incidentForm.reset({
       patientId: '',
       description: '',
-      severityLevel: 'MEDIUM',
-      typeId: ''
+      severityLevel: 'MEDIUM'
     });
     this.isAddModalOpen = true;
+    this.cdr.markForCheck();
   }
 
   saveIncident(): void {
-    if (this.incidentForm.invalid) return;
+    if (this.incidentForm.invalid || this.defaultIncidentTypeId == null) return;
 
     this.loading = true;
+    this.cdr.markForCheck();
     const formVal = this.incidentForm.value;
 
-    // Construct the incident object
-    const newIncident: any = {
-      patientId: formVal.patientId,
-      description: formVal.description,
-      severityLevel: formVal.severityLevel,
-      status: 'OPEN',
-      type: { id: parseInt(formVal.typeId) }
-    };
-
-    this.incidentService.createIncident(newIncident).subscribe({
+    const uid = this.authService.getUserId();
+    const role = this.authService.getRole();
+    this.incidentService
+      .createIncident({
+        patientId: Number(formVal.patientId),
+        description: formVal.description,
+        severityLevel: formVal.severityLevel,
+        status: 'OPEN',
+        type: { id: this.defaultIncidentTypeId },
+        source: role === 'DOCTOR' ? 'DOCTOR' : 'ADMIN',
+        reporterUserId: uid ?? undefined
+      } as Incident)
+      .subscribe({
       next: () => {
         this.isAddModalOpen = false;
         this.loadReportedIncidents();
-        this.loading = false;
       },
       error: (err) => {
         console.error('Error creating incident:', err);
         this.error = 'Failed to submit report.';
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
 
   ngOnInit(): void {
-    this.loadReportedIncidents();
-    this.loadIncidentTypes();
+    this.isDoctor = this.authService.getRole() === 'DOCTOR';
+    this.cdr.markForCheck();
+    /** Évite NG0100 / vue figée : ne pas lancer 3 flux dans le même tour que le 1er CD. */
+    queueMicrotask(() => {
+      this.loadPatients();
+      this.loadReportedIncidents();
+      this.loadDefaultIncidentType();
+    });
   }
 
-  loadIncidentTypes(): void {
+  loadPatients(): void {
+    this.authService.getPatientsForRegistration().subscribe({
+      next: (list) => {
+        this.patients = list ?? [];
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.patients = [];
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  computeGravityScore(): void {
+    if (this.gravityPatientId == null || this.gravityPatientId <= 0) {
+      return;
+    }
+    this.gravityLoading = true;
+    this.gravityStats = null;
+    this.cdr.markForCheck();
+    this.incidentService.getPatientStatsById(this.gravityPatientId).subscribe({
+      next: (s) => {
+        this.gravityStats = s;
+        this.gravityLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.gravityLoading = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  getRiskBadgeClass(risk: string): string {
+    switch (risk?.toUpperCase()) {
+      case 'CRITICAL':
+        return 'bg-danger';
+      case 'HIGH':
+        return 'bg-warning text-dark';
+      case 'MODERATE':
+        return 'bg-info text-dark';
+      default:
+        return 'bg-success';
+    }
+  }
+
+  /** Backend requires a type id; we use the first type from the service (no category UI). */
+  loadDefaultIncidentType(): void {
     this.incidentService.getAllIncidentTypes().subscribe({
-      next: (types) => { this.incidentTypes = types; },
-      error: (err) => { console.error('Error loading incident types:', err); }
+      next: (types) => {
+        const sorted = [...(types ?? [])].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        this.defaultIncidentTypeId = sorted[0]?.id ?? null;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.defaultIncidentTypeId = null;
+        this.cdr.markForCheck();
+      }
     });
   }
 
   loadReportedIncidents(): void {
     this.loading = true;
     this.error = null;
+    this.cdr.markForCheck();
 
     const timer = setTimeout(() => {
       if (this.loading) {
         this.loading = false;
         this.error = "Connection timeout. Please refresh.";
+        this.cdr.markForCheck();
       }
     }, 10000);
 
-    this.incidentService.getReportedIncidents().subscribe({
+    const uid = this.authService.getUserId();
+    const source = this.isDoctor ? 'DOCTOR' : 'CAREGIVER';
+    const reporterId = this.isDoctor ? uid : null;
+
+    this.incidentService.getReportedIncidents(source, reporterId).subscribe({
       next: (incidents) => {
         clearTimeout(timer);
-        this.incidents = incidents;
+        const list = incidents ?? [];
+        this.incidents = list;
         this.loading = false;
-        this.loadPatientNames(incidents);
+        this.loadPatientNames(list);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         clearTimeout(timer);
-        this.error = 'Erreur lors du chargement des incidents signalés';
+        this.error = 'Failed to load reported incidents';
         this.loading = false;
         console.error('Error loading reported incidents:', err);
+        this.cdr.markForCheck();
       }
     });
   }
 
   loadPatientNames(incidents: Incident[]): void {
-    const uniqueIds = [...new Set(incidents.map(i => i.patientId).filter((id): id is number => id != null))];
-    uniqueIds.forEach(id => {
-      if (!this.patientNames.has(id)) {
-        this.authService.getUserById(id).subscribe({
-          next: (user) => {
-            this.patientNames.set(id, `${user.firstName} ${user.lastName}`);
-          },
-          error: () => {
-            this.patientNames.set(id, `Patient #${id}`);
-          }
-        });
+    const uniqueIds = [...new Set(incidents.map((i) => i.patientId).filter((id): id is number => id != null))];
+    const missing = uniqueIds.filter((id) => !this.patientNames.has(id));
+    if (missing.length === 0) {
+      return;
+    }
+    forkJoin(
+      missing.map((id) =>
+        this.authService.getUserById(id).pipe(
+          map((user) => ({ id, name: `${user.firstName} ${user.lastName}`.trim() })),
+          catchError(() => of({ id, name: `Patient #${id}` }))
+        )
+      )
+    ).subscribe((rows) => {
+      const next = new Map(this.patientNames);
+      for (const r of rows) {
+        next.set(r.id, r.name);
       }
+      this.patientNames = next;
+      this.cdr.markForCheck();
     });
   }
 
@@ -156,14 +267,17 @@ export class IncidentsListComponent implements OnInit {
     this.patientHistory = [];
     this.historyLoading = true;
     this.isHistoryModalOpen = true;
+    this.cdr.markForCheck();
 
     this.incidentService.getPatientIncidentsHistory(patientId).subscribe({
       next: (data) => {
         this.patientHistory = data;
         this.historyLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.historyLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -171,11 +285,13 @@ export class IncidentsListComponent implements OnInit {
   updateIncidentStatus(incidentId: number, newStatus: string): void {
     this.incidentService.updateIncidentStatus(incidentId, newStatus).subscribe({
       next: (updatedIncident) => {
-        // Mettre à jour l'incident dans la liste
-        const index = this.incidents.findIndex(i => i.id === incidentId);
+        const index = this.incidents.findIndex((i) => i.id === incidentId);
         if (index !== -1) {
-          this.incidents[index] = updatedIncident;
+          const next = [...this.incidents];
+          next[index] = updatedIncident;
+          this.incidents = next;
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error updating incident status:', err);
@@ -186,40 +302,56 @@ export class IncidentsListComponent implements OnInit {
   viewDetails(incident: Incident): void {
     this.selectedIncident = incident;
     this.newCommentContent = '';
+    this.cdr.markForCheck();
     this.loadComments(incident.id!);
   }
 
   loadComments(incidentId: number): void {
     this.commentsLoading = true;
     this.incidentService.getCommentsByIncident(incidentId).subscribe({
-      next: (data) => { this.comments = data; this.commentsLoading = false; },
-      error: () => { this.commentsLoading = false; }
+      next: (data) => {
+        this.comments = data;
+        this.commentsLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.commentsLoading = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
   addComment(): void {
     if (!this.newCommentContent.trim() || !this.selectedIncident?.id) return;
     this.addingComment = true;
+    this.cdr.markForCheck();
     this.incidentService.addComment(this.selectedIncident.id, {
       content: this.newCommentContent.trim(),
-      authorName: 'Admin'
+      authorName: this.authService.getFullName() || 'Staff'
     }).subscribe({
       next: (comment) => {
         this.comments.push(comment);
         this.newCommentContent = '';
         this.addingComment = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.addingComment = false; }
+      error: () => {
+        this.addingComment = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
   deleteComment(commentId: number): void {
     this.incidentService.deleteComment(commentId).subscribe({
-      next: () => { this.comments = this.comments.filter(c => c.id !== commentId); }
+      next: () => {
+        this.comments = this.comments.filter((c) => c.id !== commentId);
+        this.cdr.markForCheck();
+      }
     });
   }
 
-  getSeverityBadgeClass(severity?: string): string {
+  getSeverityBadgeClass(severity: string): string {
     switch (severity?.toUpperCase()) {
       case 'LOW':
         return 'bg-success';
@@ -234,7 +366,7 @@ export class IncidentsListComponent implements OnInit {
     }
   }
 
-  getStatusBadgeClass(status?: string): string {
+  getStatusBadgeClass(status: string): string {
     switch (status?.toLowerCase()) {
       case 'résolu':
       case 'resolu':
@@ -242,6 +374,7 @@ export class IncidentsListComponent implements OnInit {
         return 'bg-success';
       case 'en cours':
       case 'en_cours':
+      case 'in progress':
       case 'in_progress':
         return 'bg-warning';
       case 'nouveau':

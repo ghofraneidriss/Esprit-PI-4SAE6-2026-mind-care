@@ -1,6 +1,4 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MoodService, MoodEntry } from '../../core/services/mood.service';
 import { Chart, registerables } from 'chart.js';
 
@@ -8,8 +6,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-mood-tracker',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  standalone: false,
   templateUrl: './mood-tracker.html',
   styleUrl: './mood-tracker.css'
 })

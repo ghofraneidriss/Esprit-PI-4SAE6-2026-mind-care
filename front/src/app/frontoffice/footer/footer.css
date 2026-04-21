@@ -1,0 +1,38 @@
+.alzcare-footer {
+  background: var(--background-color, #ffffff);
+  border-top: 1px solid color-mix(in srgb, var(--default-color, #363f40), transparent 90%) !important;
+  color: var(--default-color, #363f40);
+}
+
+.alzcare-footer .link-secondary {
+  color: var(--default-color, #363f40) !important;
+  opacity: 0.85;
+}
+
+.alzcare-footer .link-secondary:hover {
+  color: var(--accent-color, #099aa7) !important;
+  opacity: 1;
+}
+
+.font-alzcare {
+  font-family: var(--heading-font, 'Ubuntu', sans-serif);
+  letter-spacing: -0.02em;
+}
+
+.alzcare-footer-brand {
+  color: var(--heading-color, #1f2f31);
+}
+
+.alzcare-footer-text {
+  color: var(--default-color, #363f40);
+  opacity: 0.9;
+}
+
+.alzcare-footer-label {
+  color: var(--heading-color, #1f2f31);
+  letter-spacing: 0.06em;
+}
+
+.alzcare-footer-copy {
+  color: var(--default-color, #363f40);
+}

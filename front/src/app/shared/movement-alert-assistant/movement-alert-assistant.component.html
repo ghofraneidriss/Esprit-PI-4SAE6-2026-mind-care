@@ -1,0 +1,109 @@
+<ng-container *ngIf="showWidget">
+  <div class="mov-asst" [class.mov-asst--open]="panelOpen">
+    <aside
+      class="mov-asst__panel"
+      *ngIf="panelOpen"
+      role="dialog"
+      aria-label="Movement alerts"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="mov-asst__head">
+        <div class="mov-asst__brand">
+          <span class="mov-asst__brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="movAssistHeadG" x1="8" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#5eead4" />
+                  <stop offset="1" stop-color="#099aa7" />
+                </linearGradient>
+              </defs>
+              <circle cx="24" cy="24" r="20" stroke="url(#movAssistHeadG)" stroke-width="2.2" opacity="0.45" />
+              <circle cx="24" cy="24" r="12" stroke="url(#movAssistHeadG)" stroke-width="2.2" opacity="0.65" />
+              <circle cx="24" cy="24" r="4.5" fill="url(#movAssistHeadG)" />
+            </svg>
+          </span>
+          <div>
+            <h2 class="mov-asst__title">Movement alerts</h2>
+            <p class="mov-asst__subtitle">Safe zone · home · immobility</p>
+          </div>
+        </div>
+        <button type="button" class="mov-asst__icon-btn" (click)="close()" aria-label="Close">×</button>
+      </header>
+
+      <div class="mov-asst__toolbar">
+        <a [routerLink]="trackingRoute" class="mov-asst__link" (click)="close()">Open full tracking</a>
+      </div>
+
+      <div class="mov-asst__scroll">
+        <p class="mov-asst__empty" *ngIf="!messages.length">
+          No demo alerts yet. Use the two simulation buttons on the movement tracking page to show sample alerts here.
+        </p>
+
+        <article
+          class="mov-msg"
+          *ngFor="let m of messages; trackBy: trackById"
+          [ngClass]="severityClass(m)"
+        >
+          <div class="mov-msg__top">
+            <span class="mov-msg__badge" *ngIf="m.source === 'sim'">Demo</span>
+            <span class="mov-msg__time">{{ formatTime(m.createdAt) }}</span>
+            <button type="button" class="mov-msg__dismiss" (click)="dismiss($event, m.id)" aria-label="Dismiss">
+              ×
+            </button>
+          </div>
+          <p class="mov-msg__who">{{ m.patientLabel }}</p>
+          <h3 class="mov-msg__title">{{ m.title }}</h3>
+          <p class="mov-msg__body">{{ m.body }}</p>
+          <div class="mov-msg__actions">
+            <button type="button" class="mov-msg__btn mov-msg__btn--primary" (click)="itinerary(m)">
+              Get itinerary
+            </button>
+            <button
+              type="button"
+              class="mov-msg__btn mov-msg__btn--ghost"
+              *ngIf="m.source === 'api' && m.alertId && !m.acknowledged"
+              (click)="acknowledge(m)"
+            >
+              Acknowledge
+            </button>
+          </div>
+        </article>
+      </div>
+    </aside>
+
+    <button
+      type="button"
+      class="mov-asst__fab"
+      (click)="toggle()"
+      [attr.aria-expanded]="panelOpen"
+      aria-label="Movement alerts"
+    >
+      <span class="mov-asst__fab-glow" aria-hidden="true"></span>
+      <span class="mov-asst__fab-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="movAssistFabG" x1="10" y1="8" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ccfbf1" />
+              <stop offset="0.45" stop-color="#5eead4" />
+              <stop offset="1" stop-color="#099aa7" />
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="21.5" fill="#ffffff" stroke="#99f6e4" stroke-width="1.25" />
+          <circle cx="24" cy="24" r="18.5" fill="#f0fdfa" stroke="url(#movAssistFabG)" stroke-width="2.4" />
+          <path
+            d="M24 13c-3.86 0-7 3.14-7 7 0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
+            fill="url(#movAssistFabG)"
+          />
+          <path
+            d="M33 30c0 1.66-4.03 3-9 3s-9-1.34-9-3"
+            stroke="url(#movAssistFabG)"
+            stroke-width="2"
+            stroke-linecap="round"
+            opacity="0.95"
+          />
+        </svg>
+      </span>
+      <span class="mov-asst__fab-badge" *ngIf="unread > 0 && !panelOpen">{{ unread > 9 ? '9+' : unread }}</span>
+    </button>
+  </div>
+</ng-container>

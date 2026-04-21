@@ -11,25 +11,44 @@
             <h1 class="h4 fw-bold mb-1">Forum Management</h1>
             <p class="text-muted small mb-0">Control discussion posts and track engagement metrics.</p>
         </div>
-        <button (click)="openPostForm()" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
-            <i class="ri-add-line me-2"></i> Create New Post
-        </button>
+        <div class="d-flex flex-wrap gap-2 justify-content-end">
+            <a
+                routerLink="/admin/moderation/forum-reports"
+                class="btn btn-outline-secondary px-4 py-2 rounded-pill shadow-sm"
+            >
+                <i class="ri-flag-line me-2"></i> Reports
+            </a>
+            <a
+                *ngIf="canManageForum"
+                routerLink="/admin/forum/categories"
+                class="btn btn-outline-primary px-4 py-2 rounded-pill shadow-sm"
+            >
+                <i class="ri-folder-settings-line me-2"></i> Forum categories
+            </a>
+            <button
+                *ngIf="canManageForum"
+                (click)="openPostForm()"
+                class="btn btn-primary px-4 py-2 rounded-pill shadow-sm"
+            >
+                <i class="ri-add-line me-2"></i> Create New Post
+            </button>
+        </div>
     </div>
 
-    <!-- Stats Grid -->
+    <!-- Stats Grid (live API data) -->
     <div class="row g-4 mb-4">
         <div *ngFor="let stat of stats" class="col-12 col-md-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex align-items-center justify-content-between p-4">
-                    <div>
+                    <div class="flex-grow-1 min-w-0">
                         <div class="text-muted small fw-medium mb-1">{{ stat.label }}</div>
-                        <div class="h3 fw-bold mb-1">{{ stat.value }}</div>
-                        <div class="small fw-semibold mt-1"
-                            [ngClass]="stat.change.startsWith('+') ? 'text-success' : 'text-muted'">
-                            {{ stat.change }} <span class="fw-normal text-muted">vs last month</span>
+                        <div class="h3 fw-bold mb-1">
+                            <span *ngIf="!statsLoading">{{ stat.value }}</span>
+                            <span *ngIf="statsLoading" class="placeholder col-6 placeholder-wave d-inline-block rounded" style="height: 2rem;"></span>
                         </div>
+                        <div class="small text-muted mt-1" *ngIf="stat.detail && !statsLoading">{{ stat.detail }}</div>
                     </div>
-                    <div class="rounded p-3 bg-light text-primary fs-3">
+                    <div class="rounded p-3 bg-light text-primary fs-3 flex-shrink-0 ms-2">
                         <i class="ri" [ngClass]="stat.icon"></i>
                     </div>
                 </div>
@@ -59,39 +78,47 @@
                 </thead>
                 <tbody>
                     <!-- Initial Loading (Only if array is empty) -->
-                    <tr *ngIf="loading && recentPosts.length === 0">
-                        <td colspan="5" class="py-5 text-center">
-                            <div class="spinner-border text-primary mb-2" role="status"></div>
-                            <p class="text-muted small">Accessing server data...</p>
+                    <tr *ngIf="postsLoading && recentPosts.length === 0">
+                        <td colspan="5" class="py-4 text-center">
+                            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status" aria-hidden="true"></div>
+                            <p class="text-muted small mb-0">Loading…</p>
                         </td>
                     </tr>
 
                     <!-- Error Case -->
-                    <tr *ngIf="!loading && error && recentPosts.length === 0">
+                    <tr *ngIf="!postsLoading && error && recentPosts.length === 0">
                         <td colspan="5" class="py-5 text-center text-danger">
                             <i class="ri-error-warning-line fs-1 mb-2"></i>
                             <h6 class="fw-bold">{{ error }}</h6>
-                            <button (click)="loadPosts()" class="btn btn-sm btn-outline-danger mt-2">Retry
+                            <button (click)="loadDashboard(false)" class="btn btn-sm btn-outline-danger mt-2">Retry
                                 Loading</button>
                         </td>
                     </tr>
 
                     <!-- No Data Case -->
-                    <tr *ngIf="!loading && !error && recentPosts.length === 0">
+                    <tr *ngIf="!postsLoading && !error && recentPosts.length === 0">
                         <td colspan="5" class="py-5 text-center">
                             <i class="ri-chat-delete-line fs-1 text-muted mb-3 d-block"></i>
                             <h5 class="fw-bold">No posts found in the system</h5>
                             <p class="text-muted mb-4 small">Total records currently 0.</p>
-                            <button (click)="openPostForm()" class="btn btn-primary rounded-pill px-4">
+                            <button *ngIf="canManageForum" (click)="openPostForm()" class="btn btn-primary rounded-pill px-4">
                                 <i class="ri-add-line me-2"></i> Create Your First Post
                             </button>
                         </td>
                     </tr>
 
                     <!-- Records List (Always show if data exists) -->
-                    <tr *ngFor="let post of recentPosts">
+                    <tr *ngFor="let post of recentPosts; trackBy: trackByPostId">
                         <td class="ps-4">
-                            <div class="fw-medium text-dark text-truncate" style="max-width: 320px;">{{ post.title }}
+                            <div class="fw-medium text-dark text-truncate d-flex align-items-center flex-wrap gap-1" style="max-width: 360px;">
+                                <i *ngIf="post.hasImages" class="ri-image-2-line text-primary" title="Photos" aria-hidden="true"></i>
+                                <span>{{ post.title }}</span>
+                                <span *ngIf="(post.status || '').toUpperCase() === 'DRAFT'" class="badge rounded-pill bg-warning text-dark" title="Not visible to patients / caregivers / volunteers until published">
+                                    Draft
+                                </span>
+                                <span *ngIf="post.inactive" class="badge rounded-pill bg-secondary" title="Removed from public forum">
+                                    Archived
+                                </span>
                             </div>
                         </td>
                         <td>
@@ -116,11 +143,19 @@
                                 <button (click)="viewPost(post)" class="btn btn-sm btn-icon btn-light" title="Preview">
                                     <i class="ri-external-link-line"></i>
                                 </button>
-                                <button (click)="openPostForm(post)" class="btn btn-sm btn-icon btn-light"
+                                <button
+                                    *ngIf="canManageForum && canEditPost(post) && post.inactive"
+                                    (click)="reactivatePost(post)"
+                                    class="btn btn-sm btn-icon btn-light"
+                                    title="Restore to public forum (unarchive)"
+                                >
+                                    <i class="ri-inbox-unarchive-line text-success"></i>
+                                </button>
+                                <button *ngIf="canManageForum && canEditPost(post)" (click)="openPostForm(post)" class="btn btn-sm btn-icon btn-light"
                                     title="Modify">
                                     <i class="ri-edit-2-line text-warning"></i>
                                 </button>
-                                <button (click)="deletePost(post)" class="btn btn-sm btn-icon btn-light" title="Remove">
+                                <button *ngIf="canManageForum && canEditPost(post)" (click)="deletePost(post)" class="btn btn-sm btn-icon btn-light" title="Remove">
                                     <i class="ri-delete-bin-6-line text-danger"></i>
                                 </button>
                             </div>

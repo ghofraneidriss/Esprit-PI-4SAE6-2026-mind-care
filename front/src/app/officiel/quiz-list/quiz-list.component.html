@@ -1,0 +1,101 @@
+<div class="cvp-page">
+  <div class="page mgmt-page">
+    <div class="cvp-page-header">
+      <div>
+        <h1>
+          <i class="ri-brain-line cvp-title-ico" aria-hidden="true"></i>
+          Cognitive activities
+        </h1>
+        <p>Choose an activity to stimulate your memory</p>
+      </div>
+    </div>
+
+    <div class="limit-banner" *ngIf="limitStatus && limitStatus.hasLimit">
+      <div class="limit-banner-inner" [class.limit-reached]="isLimitReached">
+        <span class="limit-ico" aria-hidden="true">
+          <i [class]="isLimitReached ? 'ri-forbid-line' : 'ri-focus-line'"></i>
+        </span>
+        <div class="lb-info">
+          <strong *ngIf="!isLimitReached">{{ limitStatus.remaining }} quiz left out of {{ limitStatus.maxQuizzes }}</strong>
+          <strong *ngIf="isLimitReached">Limit reached</strong>
+          <span *ngIf="!isLimitReached">You have completed {{ limitStatus.completedQuizzes }} of {{ limitStatus.maxQuizzes }} allowed quizzes.</span>
+          <span *ngIf="isLimitReached">You have reached your limit of {{ limitStatus.maxQuizzes }} quizzes. Contact your doctor to adjust the limit.</span>
+        </div>
+        <div class="lb-progress" *ngIf="!isLimitReached">
+          <div class="lb-bar">
+            <div class="lb-fill" [style.width.%]="(limitStatus.completedQuizzes / limitStatus.maxQuizzes) * 100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button type="button" [class.active]="activeTab==='quiz'" (click)="activeTab='quiz'">
+        <i class="ri-questionnaire-line" aria-hidden="true"></i> Quizzes ({{ quizzes.length }})
+      </button>
+      <button type="button" [class.active]="activeTab==='photo'" (click)="activeTab='photo'">
+        <i class="ri-image-2-line" aria-hidden="true"></i> Photo discrimination ({{ photos.length }})
+      </button>
+    </div>
+
+    <div class="activity-grid" *ngIf="activeTab==='quiz' && !loading">
+      <div class="activity-card" *ngFor="let q of quizzes" [class.card-disabled]="isLimitReached">
+        <div class="card-top">
+          <span class="card-icon-wrap" aria-hidden="true"><i class="ri-questionnaire-fill"></i></span>
+          <span class="diff-badge" [ngClass]="'diff-' + (q.difficulty?.toLowerCase() || '')">
+            <i class="ri-circle-fill diff-dot"></i> {{ getDiffLabel(q.difficulty) }}
+          </span>
+        </div>
+        <h3>{{ q.title }}</h3>
+        <p class="card-desc">{{ q.description || 'Cognitive quiz' }}</p>
+        <div class="card-meta">
+          <i class="ri-file-list-3-line me-1" aria-hidden="true"></i>{{ q.questions?.length || 0 }} questions
+        </div>
+        <a *ngIf="!isLimitReached" [routerLink]="['/officiel/play', 'quiz', q.id]" class="play-btn">
+          <i class="ri-play-fill" aria-hidden="true"></i> Start
+        </a>
+        <span *ngIf="isLimitReached" class="play-btn play-btn-disabled">
+          <i class="ri-lock-line" aria-hidden="true"></i> Limit reached
+        </span>
+      </div>
+      <div class="empty-state" *ngIf="!quizzes.length">
+        <span class="empty-icon" aria-hidden="true"><i class="ri-inbox-line"></i></span>
+        <p>No quizzes available</p>
+      </div>
+    </div>
+
+    <div class="activity-grid" *ngIf="activeTab==='photo' && !loading">
+      <div class="activity-card" *ngFor="let p of photos" [class.card-disabled]="isLimitReached">
+        <div class="card-top">
+          <span class="card-icon-wrap card-icon-wrap--photo" aria-hidden="true"><i class="ri-camera-lens-fill"></i></span>
+          <span class="diff-badge" [ngClass]="'diff-' + (p.difficulty?.toLowerCase() || '')">
+            <i class="ri-circle-fill diff-dot"></i> {{ getDiffLabel(p.difficulty) }}
+          </span>
+        </div>
+        <div class="card-img" *ngIf="p.imageUrl">
+          <img [src]="resolveActivitiesMediaUrl(p.imageUrl)" alt="" />
+        </div>
+        <h3>{{ p.title }}</h3>
+        <p class="card-desc">{{ p.description || 'Photo recognition (quiz-style)' }}</p>
+        <div class="card-meta">
+          <i class="ri-gallery-line me-1" aria-hidden="true"></i>{{ p.options?.length || 0 }} options
+        </div>
+        <a *ngIf="!isLimitReached" [routerLink]="['/officiel/play', 'photo', p.id]" class="play-btn">
+          <i class="ri-play-fill" aria-hidden="true"></i> Start
+        </a>
+        <span *ngIf="isLimitReached" class="play-btn play-btn-disabled">
+          <i class="ri-lock-line" aria-hidden="true"></i> Limit reached
+        </span>
+      </div>
+      <div class="empty-state" *ngIf="!photos.length">
+        <span class="empty-icon" aria-hidden="true"><i class="ri-image-line"></i></span>
+        <p>No photo discrimination activities available</p>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading activities...</p>
+    </div>
+  </div>
+</div>

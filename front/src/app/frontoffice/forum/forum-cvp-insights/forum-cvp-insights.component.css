@@ -1,0 +1,127 @@
+.forum-cvp-insights__hero {
+  margin-bottom: 1.5rem;
+}
+
+.forum-cvp-insights__kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.forum-cvp-insights__kpi {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.forum-cvp-insights__kpi > i {
+  font-size: 1.75rem;
+  color: #099aa7;
+}
+
+.forum-cvp-insights__kpi--muted > i {
+  color: #94a3b8;
+}
+
+.forum-cvp-insights__kpi-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.forum-cvp-insights__kpi-label {
+  display: block;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+.forum-section__lead {
+  margin-top: -0.35rem;
+}
+
+.forum-cvp-insights__top-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  overflow: hidden;
+  background: #fff;
+}
+
+.forum-cvp-insights__top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.forum-cvp-insights__top-row:last-child {
+  border-bottom: none;
+}
+
+.forum-cvp-insights__top-name {
+  font-weight: 600;
+  color: #334155;
+}
+
+.forum-cvp-insights__top-count {
+  font-weight: 800;
+  color: #099aa7;
+  font-variant-numeric: tabular-nums;
+}
+
+.forum-cvp-insights__table-wrap {
+  overflow-x: auto;
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: #fff;
+}
+
+.forum-cvp-insights__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.forum-cvp-insights__table th,
+.forum-cvp-insights__table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.forum-cvp-insights__table th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  background: #f8fafc;
+}
+
+.forum-cvp-insights__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.forum-cvp-insights__title-cell {
+  font-weight: 600;
+  color: #0f172a;
+  max-width: 280px;
+}
+
+@media (max-width: 640px) {
+  .forum-cvp-insights__table th:nth-child(3),
+  .forum-cvp-insights__table td:nth-child(3) {
+    display: none;
+  }
+}

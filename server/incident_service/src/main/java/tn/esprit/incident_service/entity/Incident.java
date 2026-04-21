@@ -48,12 +48,17 @@ public class Incident {
     // IDs pour référence aux autres microservices (User/Patient)
     private Long patientId;
     private Long caregiverId;
+    /** When the reporter is a volunteer (distinct from caregiver). */
+    private Long volunteerId;
 
     // Soft delete flag
     @Column(name = "deleted")
     private boolean deleted = false;
 
     private String source;
+
+    /** Utilisateur ayant saisi l’incident (ex. userId du médecin si source = DOCTOR). */
+    private Long reporterUserId;
 
     // Score calculé automatiquement à la création (basé sur type.points + récurrence)
     @Column(name = "computed_score")

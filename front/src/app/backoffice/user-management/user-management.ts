@@ -1,19 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AuthService,
-  AuthUser,
-  RegisterRequest,
-  UpdateUserRequest,
-} from '../../frontoffice/auth/auth.service';
-
-interface UserFormModel {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  role: string;
-  password: string;
-}
+import { AuthService } from '../../core/services/auth.service';
+import { User } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-user-management',
@@ -22,265 +9,94 @@ interface UserFormModel {
   styleUrls: ['./user-management.css'],
 })
 export class UserManagementPage implements OnInit {
-  readonly roles = ['ADMIN', 'DOCTOR', 'CAREGIVER', 'PATIENT', 'VOLUNTEER'];
 
-  users: AuthUser[] = [];
-  filteredUsers: AuthUser[] = [];
-  isLoading = true;
-  isSubmitting = false;
-  searchTerm = '';
-  errorMessage = '';
-  successMessage = '';
-  editingUserId: number | null = null;
+  users: User[] = [];
+  loading = false;
+  error: string | null = null;
+  successMessage: string | null = null;
 
-  createForm: UserFormModel = this.createEmptyForm();
-  editForm: UserFormModel = this.createEmptyForm();
+  // Assignment modal
+  isAssignModalOpen = false;
+  selectedPatient: User | null = null;
+  selectedCaregiverId: number | null = null;
+  assigning = false;
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.fetchUsers();
+    this.loadUsers();
   }
 
-  fetchUsers(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-
+  loadUsers(): void {
+    this.loading = true;
+    this.error = null;
     this.authService.getAllUsers().subscribe({
-      next: (users) => {
-        this.users = users;
-        this.applyFilters();
-        this.isLoading = false;
+      next: (data) => {
+        this.users = data;
+        this.loading = false;
       },
-      error: (err) => {
-        console.error('Failed to load users', err);
-        this.errorMessage = this.buildHttpError('Failed to load users', err);
-        this.isLoading = false;
-      },
+      error: () => {
+        this.error = 'Failed to load users. Is users_service running?';
+        this.loading = false;
+      }
     });
   }
 
-  applyFilters(): void {
-    const term = this.searchTerm.trim().toLowerCase();
-
-    if (!term) {
-      this.filteredUsers = [...this.users];
-      return;
-    }
-
-    this.filteredUsers = this.users.filter((user) => {
-      const haystack = [
-        user.userId,
-        user.firstName,
-        user.lastName,
-        user.email,
-        user.phone,
-        user.role,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-
-      return haystack.includes(term);
-    });
+  get patients(): User[] {
+    return this.users.filter(u => u.role === 'PATIENT');
   }
 
-  createUser(): void {
-    if (!this.isCreateFormValid()) {
-      this.errorMessage = 'Please fill in first name, last name, email, password, and role.';
-      return;
-    }
+  get caregivers(): User[] {
+    return this.users.filter(u => u.role === 'CAREGIVER');
+  }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+  getCaregiverName(caregiverId: number | null | undefined): string {
+    if (!caregiverId) return '—';
+    const cg = this.users.find(u => u.userId === caregiverId);
+    return cg ? `${cg.firstName} ${cg.lastName}` : `#${caregiverId}`;
+  }
 
-    const payload: RegisterRequest = {
-      firstName: this.createForm.firstName.trim(),
-      lastName: this.createForm.lastName.trim(),
-      email: this.createForm.email.trim(),
-      password: this.createForm.password,
-      role: this.createForm.role,
-      phone: this.normalizeOptionalValue(this.createForm.phone),
+  openAssignModal(patient: User): void {
+    this.selectedPatient = patient;
+    this.selectedCaregiverId = patient.caregiverId ?? null;
+    this.isAssignModalOpen = true;
+    this.successMessage = null;
+  }
+
+  saveAssignment(): void {
+    if (!this.selectedPatient) return;
+    this.assigning = true;
+
+    const updated = {
+      firstName: this.selectedPatient.firstName,
+      lastName: this.selectedPatient.lastName,
+      phone: this.selectedPatient.phone || '',
+      role: this.selectedPatient.role,
+      caregiverId: this.selectedCaregiverId
     };
 
-    this.authService.register(payload).subscribe({
+    this.authService.updateUser(this.selectedPatient.userId, updated).subscribe({
       next: () => {
-        this.successMessage = 'User created successfully.';
-        this.resetCreateForm();
-        this.isSubmitting = false;
-        this.fetchUsers();
+        this.assigning = false;
+        this.isAssignModalOpen = false;
+        this.successMessage = `${this.selectedPatient!.firstName} assigned successfully.`;
+        this.loadUsers();
+        setTimeout(() => this.successMessage = null, 3000);
       },
-      error: (err) => {
-        console.error('Failed to create user', err);
-        this.errorMessage = this.buildHttpError('Failed to create user', err);
-        this.isSubmitting = false;
-      },
+      error: () => {
+        this.assigning = false;
+        this.error = 'Failed to update assignment.';
+      }
     });
   }
 
-  startEdit(user: AuthUser): void {
-    this.editingUserId = user.userId;
-    this.editForm = {
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
-      email: user.email ?? '',
-      phone: user.phone ?? '',
-      role: this.authService.normalizeRole(user.role),
-      password: '',
-    };
-    this.successMessage = '';
-    this.errorMessage = '';
-  }
-
-  cancelEdit(): void {
-    this.editingUserId = null;
-    this.editForm = this.createEmptyForm();
-  }
-
-  resetCreateForm(): void {
-    this.createForm = this.createEmptyForm();
-  }
-
-  saveEdit(userId: number): void {
-    if (!this.isEditFormValid()) {
-      this.errorMessage = 'Please fill in first name, last name, and role before saving.';
-      return;
+  getRoleBadgeClass(role: string): string {
+    switch (role) {
+      case 'ADMIN':     return 'bg-danger';
+      case 'DOCTOR':    return 'bg-primary';
+      case 'CAREGIVER': return 'bg-success';
+      case 'PATIENT':   return 'bg-info text-dark';
+      default:          return 'bg-secondary';
     }
-
-    this.isSubmitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    const payload: UpdateUserRequest = {
-      firstName: this.editForm.firstName.trim(),
-      lastName: this.editForm.lastName.trim(),
-      phone: this.normalizeOptionalValue(this.editForm.phone),
-      role: this.editForm.role,
-      password: this.normalizeOptionalValue(this.editForm.password),
-    };
-
-    this.authService.updateUser(userId, payload).subscribe({
-      next: () => {
-        this.successMessage = 'User updated successfully.';
-        this.isSubmitting = false;
-        this.cancelEdit();
-        this.fetchUsers();
-      },
-      error: (err) => {
-        console.error('Failed to update user', err);
-        this.errorMessage = this.buildHttpError('Failed to update user', err);
-        this.isSubmitting = false;
-      },
-    });
-  }
-
-  saveCurrentEdit(): void {
-    if (this.editingUserId === null) {
-      return;
-    }
-
-    this.saveEdit(this.editingUserId);
-  }
-
-  deleteUser(user: AuthUser): void {
-    const fullName = `${user.firstName} ${user.lastName}`.trim();
-
-    if (!confirm(`Delete ${fullName || 'this user'}?`)) {
-      return;
-    }
-
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.authService.deleteUser(user.userId).subscribe({
-      next: () => {
-        this.successMessage = 'User deleted successfully.';
-        if (this.editingUserId === user.userId) {
-          this.cancelEdit();
-        }
-        this.fetchUsers();
-      },
-      error: (err) => {
-        console.error('Failed to delete user', err);
-        this.errorMessage = this.buildHttpError('Failed to delete user', err);
-      },
-    });
-  }
-
-  getTotalUsers(): number {
-    return this.users.length;
-  }
-
-  getRoleCount(role: string): number {
-    return this.users.filter((user) => this.authService.normalizeRole(user.role) === role).length;
-  }
-
-  formatRole(role?: string): string {
-    const normalized = this.authService.normalizeRole(role);
-    return normalized ? normalized.charAt(0) + normalized.slice(1).toLowerCase() : 'Unknown';
-  }
-
-  formatDate(createdAt?: string): string {
-    if (!createdAt) {
-      return 'N/A';
-    }
-
-    const date = new Date(createdAt);
-    if (Number.isNaN(date.getTime())) {
-      return createdAt;
-    }
-
-    return new Intl.DateTimeFormat('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(date);
-  }
-
-  private createEmptyForm(): UserFormModel {
-    return {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      role: 'PATIENT',
-      password: '',
-    };
-  }
-
-  private isCreateFormValid(): boolean {
-    return Boolean(
-      this.createForm.firstName.trim() &&
-        this.createForm.lastName.trim() &&
-        this.createForm.email.trim() &&
-        this.createForm.password &&
-        this.createForm.role,
-    );
-  }
-
-  private isEditFormValid(): boolean {
-    return Boolean(
-      this.editForm.firstName.trim() && this.editForm.lastName.trim() && this.editForm.role,
-    );
-  }
-
-  private normalizeOptionalValue(value: string): string | undefined {
-    const trimmedValue = value.trim();
-    return trimmedValue ? trimmedValue : undefined;
-  }
-
-  private buildHttpError(prefix: string, err: { error?: unknown; message?: string }): string {
-    const apiMessage =
-      typeof err.error === 'string'
-        ? err.error
-        : typeof err.error === 'object' &&
-            err.error !== null &&
-            'message' in err.error &&
-            typeof (err.error as { message?: unknown }).message === 'string'
-          ? (err.error as { message: string }).message
-          : err.message;
-
-    return apiMessage ? `${prefix}: ${apiMessage}` : prefix;
   }
 }

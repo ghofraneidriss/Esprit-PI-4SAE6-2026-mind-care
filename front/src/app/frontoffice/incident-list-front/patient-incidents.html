@@ -1,197 +1,422 @@
-<div class="content container-fluid pt-5 mt-4">
-    <div class="row">
-        <div class="col-12">
-
-            <!-- Breadcrumb + action -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h4 class="page-title mb-1">Historique des Incidents</h4>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-                            <li class="breadcrumb-item active">Incidents</li>
-                        </ol>
-                    </nav>
+<div class="ih-fullpage ih-fullpage--incidents">
+    <div class="ih-shell ih-shell--centered">
+        <header class="ih-hero ih-hero--centered" id="ih-top">
+            <div class="ih-hero__glow" aria-hidden="true"></div>
+            <div class="ih-hero__main">
+                <div class="ih-hero__content">
+                    <p class="ih-hero__eyebrow">Incident center</p>
+                    <h1 class="ih-hero__title">{{ isPatientIncidentViewer ? 'Your incidents' : 'My reports' }}</h1>
+                    <p class="ih-hero__lead">
+                        <ng-container *ngIf="isPatientIncidentViewer">
+                            What your care team recorded about you — refined view.
+                        </ng-container>
+                        <ng-container *ngIf="!isPatientIncidentViewer">
+                            Incidents you reported for your patients — edit or delete as needed.
+                        </ng-container>
+                    </p>
                 </div>
-                <a routerLink="/incidents/report" class="btn btn-primary btn-sm">
-                    + Signaler un incident
+                <a *ngIf="canReportIncident" routerLink="/incidents/report" class="ih-cta">
+                    <i class="ri-add-line" aria-hidden="true"></i>
+                    New report
                 </a>
             </div>
-
-            <!-- Title + identity bar -->
-            <div class="text-center mb-4">
-                <h3 class="fw-bold mb-2">📋 MES INCIDENTS</h3>
-                <span class="badge bg-light text-dark border fs-6 px-3 py-2">
-                    👤 {{ authService.getRole() }} : {{ authService.getFullName() }}
-                </span>
-            </div>
-
-            <!-- Search bar -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-lg-6">
-                    <input type="text"
-                           class="form-control"
-                           placeholder="Rechercher par type ou description..."
-                           [(ngModel)]="searchQuery"
-                           (input)="applyFilters()">
+            <!-- Patient: lightweight search (no full toolbar) -->
+            <div *ngIf="isPatientIncidentViewer" class="ih-pat-search-strip">
+                <div class="ih-pat-search-inner">
+                    <i class="ri-search-line ih-pat-search-ico" aria-hidden="true"></i>
+                    <input
+                        type="search"
+                        class="ih-pat-search-input"
+                        placeholder="Search by type or description…"
+                        [(ngModel)]="searchQuery"
+                        (ngModelChange)="applyFilters()"
+                        autocomplete="off"
+                    />
                 </div>
             </div>
+        </header>
 
-            <!-- Loading -->
-            <div *ngIf="loading" class="text-center py-5">
-                <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;">
-                    <span class="visually-hidden">Chargement...</span>
-                </div>
-                <p class="mt-3 text-muted">Chargement des incidents...</p>
-            </div>
-
-            <!-- Empty state -->
-            <div *ngIf="!loading && filteredIncidents.length === 0" class="text-center py-5">
-                <div class="mb-3" style="font-size:3rem">📭</div>
-                <h5 class="text-muted">Aucun incident trouvé</h5>
-                <p class="text-muted small">Essayez de modifier vos critères de recherche.</p>
-            </div>
-
-            <!-- Incidents list -->
-            <div *ngIf="!loading && filteredIncidents.length > 0" class="row">
-                <div class="col-lg-10 mx-auto">
-
-                    <!-- Cards -->
-                    <div *ngFor="let incident of paginatedIncidents"
-                         class="card shadow-sm mb-3 border-0"
-                         style="cursor:pointer"
-                         (click)="openDetailModal(incident)">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-
-                                <!-- ID circle + type + date -->
-                                <div class="col-auto">
-                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-                                         style="width:48px;height:48px;font-size:0.85rem">
-                                        #{{ incident.id }}
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <h6 class="mb-1 fw-bold">{{ incident.type.name || '—' }}</h6>
-                                    <small class="text-muted">{{ incident.incidentDate | date:'dd/MM/yyyy à HH:mm' }}</small>
-                                    <p class="mb-0 mt-1 text-secondary small text-truncate" style="max-width:500px">
-                                        {{ incident.description }}
-                                    </p>
-                                </div>
-
-                                <!-- Badges + arrow -->
-                                <div class="col-auto d-flex align-items-center gap-2">
-                                    <span class="badge rounded-pill text-white"
-                                          [style.background-color]="getSeverityColor(incident.severityLevel)">
-                                        {{ incident.severityLevel }}
-                                    </span>
-                                    <span class="badge rounded-pill text-white"
-                                          [style.background-color]="getStatusColor(incident.status)">
-                                        {{ incident.status }}
-                                    </span>
-                                    <span class="text-muted ms-2 fs-5">›</span>
-                                </div>
-
-                            </div>
+        <!-- Toolbar + list: centered panel -->
+        <section class="ih-data-card ih-data-card--modern" aria-label="Incidents list">
+            <div class="ih-toolbar" *ngIf="!isPatientIncidentViewer">
+                <div class="ih-toolbar__row">
+                    <div class="ih-field ih-field--search">
+                        <label class="ih-field-label" for="ih-search">Search</label>
+                        <div class="ih-search-wrap">
+                            <i class="ri-search-line ih-search-icon" aria-hidden="true"></i>
+                            <input
+                                id="ih-search"
+                                type="search"
+                                class="ih-search"
+                                placeholder="Type or description…"
+                                [(ngModel)]="searchQuery"
+                                (ngModelChange)="applyFilters()"
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
 
-                    <!-- Pagination -->
-                    <div *ngIf="filteredIncidents.length > pageSize"
-                         class="d-flex justify-content-between align-items-center mt-3">
-                        <button class="btn btn-outline-secondary btn-sm"
-                                [disabled]="currentPage === 1"
-                                (click)="currentPage = currentPage - 1">
-                            ← Précédent
-                        </button>
-                        <span class="text-muted small">
-                            Page {{ currentPage }} / {{ totalPages }}
-                        </span>
-                        <button class="btn btn-outline-secondary btn-sm"
-                                [disabled]="currentPage === totalPages"
-                                (click)="currentPage = currentPage + 1">
-                            Suivant →
-                        </button>
+                    <div class="ih-field">
+                        <label class="ih-field-label" for="ih-sev">Severity</label>
+                        <select
+                            id="ih-sev"
+                            class="ih-select ih-select--sm ih-select--filter"
+                            [ngStyle]="severitySelectBoxStyle()"
+                            [(ngModel)]="filterSeverity"
+                            (ngModelChange)="applyFilters()"
+                        >
+                            <option
+                                *ngFor="let o of severityOptions"
+                                [ngValue]="o.value"
+                                [style.background]="o.bg"
+                                [style.color]="o.fg"
+                            >
+                                {{ o.label }}
+                            </option>
+                        </select>
                     </div>
 
+                    <div class="ih-field">
+                        <label class="ih-field-label" for="ih-st">Status</label>
+                        <select
+                            id="ih-st"
+                            class="ih-select ih-select--sm ih-select--filter"
+                            [ngStyle]="statusSelectBoxStyle()"
+                            [(ngModel)]="filterStatus"
+                            (ngModelChange)="applyFilters()"
+                        >
+                            <option
+                                *ngFor="let o of statusOptions"
+                                [ngValue]="o.value"
+                                [style.background]="o.bg"
+                                [style.color]="o.fg"
+                            >
+                                {{ o.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="ih-field ih-field--sort">
+                        <label class="ih-field-label" for="ih-sort">Sort</label>
+                        <div class="ih-sort-row">
+                            <select
+                                id="ih-sort"
+                                class="ih-select ih-select--sm ih-select--grow ih-select--filter"
+                                [ngStyle]="sortSelectBoxStyle()"
+                                [(ngModel)]="sortKey"
+                                (ngModelChange)="applyFilters()"
+                            >
+                                <option
+                                    *ngFor="let o of sortOptions"
+                                    [ngValue]="o.key"
+                                    [style.background]="o.bg"
+                                    [style.color]="o.fg"
+                                >
+                                    {{ o.label }}
+                                </option>
+                            </select>
+                            <button
+                                type="button"
+                                class="ih-sort-dir"
+                                (click)="toggleSortDirection()"
+                                [attr.aria-label]="sortAsc ? 'Ascending' : 'Descending'"
+                            >
+                                <i class="ri-arrow-up-line" *ngIf="sortAsc" aria-hidden="true"></i>
+                                <i class="ri-arrow-down-line" *ngIf="!sortAsc" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="ih-btn-reset" (click)="clearFilters()" title="Reset filters">
+                        <i class="ri-restart-line" aria-hidden="true"></i>
+                        Reset
+                    </button>
                 </div>
             </div>
 
+            <div class="ih-data-card__body">
+                <div *ngIf="loading" class="ih-state ih-state--loading">
+                    <div class="spinner-border ih-spin" role="status">
+                        <span class="visually-hidden">Loading…</span>
+                    </div>
+                    <p class="mt-2 text-muted small mb-0">Loading incidents…</p>
+                </div>
+
+                <div *ngIf="!loading && filteredIncidents.length === 0" class="ih-state ih-state--empty">
+                    <div class="ih-empty-visual" aria-hidden="true"></div>
+                    <h2 class="ih-empty-title">Nothing to show</h2>
+                    <p class="text-muted small mb-2" *ngIf="!serviceUnavailable && canReportIncident">Try other filters or create a report.</p>
+                    <p class="text-muted small mb-2" *ngIf="!serviceUnavailable && !canReportIncident">Try other filters or check back later.</p>
+                    <p class="text-muted small mb-2" *ngIf="serviceUnavailable">Service temporarily unavailable.</p>
+                    <a *ngIf="canReportIncident" routerLink="/incidents/report" class="ih-cta ih-cta--inline">Create a report</a>
+                </div>
+
+                <ng-container *ngIf="!loading && filteredIncidents.length > 0">
+                    <!-- Patient : cartes lecture seule, style moderne -->
+                    <div *ngIf="isPatientIncidentViewer" class="ih-pat-grid ih-pat-grid--chic" role="list">
+                        <article
+                            *ngFor="let incident of paginatedIncidents; trackBy: trackByIncidentId"
+                            class="ih-pat-card ih-pat-card--chic"
+                            role="listitem"
+                            tabindex="0"
+                            (click)="openDetailModal(incident)"
+                            (keydown.enter)="openDetailModal(incident)"
+                        >
+                            <div class="ih-pat-card__shine" aria-hidden="true"></div>
+                            <div class="ih-pat-card__doc-bar" aria-hidden="true"></div>
+                            <div class="ih-pat-card__doc-top">
+                                <span class="ih-pat-card__ref">{{ incidentRef(incident) }}</span>
+                                <time class="ih-pat-card__date" [attr.datetime]="incident.incidentDate">{{
+                                    incident.incidentDate | date : 'dd MMM yyyy · HH:mm'
+                                }}</time>
+                            </div>
+                            <h2 class="ih-pat-card__title">{{ incident.type.name || 'Incident' }}</h2>
+                            <p class="ih-pat-card__desc">{{ incident.description }}</p>
+                            <div class="ih-pat-card__metrics" aria-label="Severity and status">
+                                <span class="ih-pat-metric ih-pat-metric--sev" [style.--m-bg]="getSeverityColor(incident.severityLevel)">
+                                    <span class="ih-pat-metric__k">Severity</span>
+                                    <span class="ih-pat-metric__v">{{ incident.severityLevel }}</span>
+                                </span>
+                                <span class="ih-pat-metric ih-pat-metric--st" [style.--m-bg]="getStatusColor(incident.status)">
+                                    <span class="ih-pat-metric__k">Status</span>
+                                    <span class="ih-pat-metric__v">{{ incident.status }}</span>
+                                </span>
+                            </div>
+                            <div class="ih-pat-card__foot">
+                                <span class="ih-pat-card__hint">Open full report</span>
+                                <i class="ri-file-text-line" aria-hidden="true"></i>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Non-patient: cards (Edit/Delete only for caregiver & volunteer) -->
+                    <div *ngIf="!isPatientIncidentViewer" class="ih-mgr-grid" role="list">
+                        <article
+                            *ngFor="let incident of paginatedIncidents; trackBy: trackByIncidentId"
+                            class="ih-mgr-card"
+                            role="listitem"
+                            tabindex="0"
+                            (click)="openDetailModal(incident)"
+                            (keydown.enter)="openDetailModal(incident)"
+                        >
+                            <div class="ih-mgr-card__top">
+                                <span class="ih-type-pill">{{ incident.type.name || '—' }}</span>
+                                <time class="ih-mgr-card__when">{{ incident.incidentDate | date : 'dd MMM yyyy, HH:mm' }}</time>
+                            </div>
+                            <p class="ih-mgr-card__desc">{{ incident.description }}</p>
+                            <div class="ih-mgr-card__badges">
+                                <span class="ih-pill ih-pill--sev" [style.background]="getSeverityColor(incident.severityLevel)">{{
+                                    incident.severityLevel
+                                }}</span>
+                                <span class="ih-pill ih-pill--stat" [style.background]="getStatusColor(incident.status)">{{ incident.status }}</span>
+                            </div>
+                            <div *ngIf="canManageIncidents" class="ih-mgr-actions" (click)="$event.stopPropagation()">
+                                <button type="button" class="ih-mgr-btn ih-mgr-btn--edit" (click)="openEditModal(incident, $event)">
+                                    <i class="ri-pencil-line" aria-hidden="true"></i> Edit
+                                </button>
+                                <button type="button" class="ih-mgr-btn ih-mgr-btn--del" (click)="confirmDeleteIncident(incident, $event)">
+                                    <i class="ri-delete-bin-line" aria-hidden="true"></i> Delete
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+
+                    <footer class="ih-pagination">
+                        <div class="ih-pagination__summary">
+                            <span class="ih-page-range"
+                                >Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of
+                                <strong>{{ filteredIncidents.length }}</strong></span
+                            >
+                            <span class="ih-page-per">· {{ pageSize }} per page</span>
+                        </div>
+                        <div class="ih-pagination__nav" *ngIf="totalPages > 1">
+                            <button
+                                type="button"
+                                class="ih-page-btn"
+                                [disabled]="currentPage === 1"
+                                (click)="currentPage = currentPage - 1"
+                            >
+                                ← Prev
+                            </button>
+                            <span class="ih-page-info">{{ currentPage }} / {{ totalPages }}</span>
+                            <button
+                                type="button"
+                                class="ih-page-btn"
+                                [disabled]="currentPage === totalPages"
+                                (click)="currentPage = currentPage + 1"
+                            >
+                                Next →
+                            </button>
+                        </div>
+                    </footer>
+                </ng-container>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div
+    *ngIf="isModalOpen && selectedIncident"
+    class="modal d-block ih-modal-backdrop"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="ih-modal-title"
+>
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable ih-report-dialog">
+        <div class="modal-content ih-report-sheet border-0 shadow-lg">
+            <header class="ih-report-sheet__ribbon" aria-hidden="true"></header>
+
+            <div class="ih-report-sheet__brand">
+                <span class="ih-report-sheet__logo">MindCare</span>
+                <span class="ih-report-sheet__brand-line">Incident record · same detail level as your care PDFs</span>
+            </div>
+
+            <div class="ih-report-sheet__toolbar">
+                <div>
+                    <p class="ih-report-sheet__eyebrow">Clinical incident report</p>
+                    <h2 class="ih-report-sheet__title" id="ih-modal-title">{{ selectedIncident.type.name || 'Incident' }}</h2>
+                    <p class="ih-report-sheet__ref">{{ incidentRef(selectedIncident) }}</p>
+                </div>
+                <div class="ih-report-sheet__toolbar-badges">
+                    <span class="ih-report-pill ih-report-pill--lg" [style.--pill-bg]="getSeverityColor(selectedIncident.severityLevel)">{{
+                        selectedIncident.severityLevel
+                    }}</span>
+                    <span class="ih-report-pill ih-report-pill--lg" [style.--pill-bg]="getStatusColor(selectedIncident.status)">{{
+                        selectedIncident.status
+                    }}</span>
+                </div>
+                <button type="button" class="btn-close ih-report-sheet__close" (click)="closeModal()" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body ih-report-sheet__body">
+                <div class="ih-report-facts">
+                    <section class="ih-report-panel" aria-labelledby="ih-facts-heading">
+                        <h3 class="ih-report-panel__title" id="ih-facts-heading">Record summary</h3>
+                        <dl class="ih-report-dl">
+                            <div class="ih-report-dl__row">
+                                <dt>Occurred</dt>
+                                <dd>{{ selectedIncident.incidentDate | date : "EEEE d MMMM yyyy 'at' HH:mm" }}</dd>
+                            </div>
+                            <div class="ih-report-dl__row">
+                                <dt>Category</dt>
+                                <dd>{{ selectedIncident.type.name || '—' }}</dd>
+                            </div>
+                            <div class="ih-report-dl__row">
+                                <dt>Source</dt>
+                                <dd class="text-capitalize">{{ selectedIncident.source || '—' }}</dd>
+                            </div>
+                            <div class="ih-report-dl__row" *ngIf="selectedIncident.computedScore != null">
+                                <dt>Risk score</dt>
+                                <dd>
+                                    <span class="ih-report-score">{{ selectedIncident.computedScore }}</span>
+                                    <span class="ih-report-score-hint">weighted index</span>
+                                </dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="ih-report-panel ih-report-panel--accent" aria-labelledby="ih-status-heading">
+                        <h3 class="ih-report-panel__title" id="ih-status-heading">Status</h3>
+                        <ul class="ih-report-status-list">
+                            <li>
+                                <span class="ih-report-status-k">Severity</span>
+                                <span
+                                    class="ih-report-status-v ih-report-pill"
+                                    [style.--pill-bg]="getSeverityColor(selectedIncident.severityLevel)"
+                                    >{{ selectedIncident.severityLevel }}</span
+                                >
+                            </li>
+                            <li>
+                                <span class="ih-report-status-k">Workflow</span>
+                                <span
+                                    class="ih-report-status-v ih-report-pill"
+                                    [style.--pill-bg]="getStatusColor(selectedIncident.status)"
+                                    >{{ selectedIncident.status }}</span
+                                >
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+
+                <section class="ih-report-narrative" aria-labelledby="ih-narr-heading">
+                    <div class="ih-report-narrative__head">
+                        <h3 class="ih-report-narrative__title" id="ih-narr-heading">Narrative</h3>
+                        <span class="ih-report-narrative__tag">Full text</span>
+                    </div>
+                    <div class="ih-report-narrative__body">
+                        {{ selectedIncident.description }}
+                    </div>
+                </section>
+            </div>
+
+            <div class="modal-footer ih-report-sheet__footer border-0 flex-column align-items-stretch gap-3">
+                <p class="ih-report-sheet__footer-note mb-0">
+                    This view mirrors the structured fields exported in PDF reports. For questions, contact your care team.
+                </p>
+                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center">
+                    <ng-container *ngIf="canManageIncidents">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openEditFromDetail()">
+                            <i class="ri-pencil-line me-1" aria-hidden="true"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleteFromDetail()">
+                            <i class="ri-delete-bin-line me-1" aria-hidden="true"></i> Delete
+                        </button>
+                    </ng-container>
+                    <button type="button" class="ih-cta ih-cta--block" (click)="closeModal()">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ===================== DETAIL MODAL ===================== -->
-<div *ngIf="isModalOpen && selectedIncident"
-     class="modal d-block"
-     tabindex="-1"
-     style="background:rgba(0,0,0,0.6)">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-bold">📋 Détail de l'incident</h5>
-                <button type="button" class="btn-close" (click)="closeModal()"></button>
+<!-- Incident edit (caregiver / volunteer) -->
+<div
+    *ngIf="editModalOpen && editingIncident"
+    class="modal d-block ih-modal-backdrop"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="ih-edit-title"
+>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content ih-modal-card border-0 shadow-lg">
+            <div class="ih-modal-card__head">
+                <h5 class="modal-title fw-bold mb-0" id="ih-edit-title">Edit incident</h5>
+                <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Close"></button>
             </div>
-
-            <div class="modal-body p-4">
-                <div class="row g-4">
-
-                    <!-- Left column -->
+            <div class="modal-body pt-3">
+                <div class="mb-3">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Type</label>
+                    <select class="form-select" [(ngModel)]="editTypeId" name="editTypeId">
+                        <option *ngFor="let t of incidentTypes" [ngValue]="t.id">{{ t.name }}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-muted text-uppercase fw-semibold">Description</label>
+                    <textarea class="form-control" rows="4" [(ngModel)]="editDescription" name="editDesc"></textarea>
+                </div>
+                <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="mb-3">
-                            <small class="text-muted fw-semibold text-uppercase d-block mb-1">Type</small>
-                            <span class="fw-bold">{{ selectedIncident.type.name || '—' }}</span>
-                        </div>
-                        <div class="mb-3">
-                            <small class="text-muted fw-semibold text-uppercase d-block mb-1">Date</small>
-                            <span>{{ selectedIncident.incidentDate | date:'dd/MM/yyyy à HH:mm' }}</span>
-                        </div>
-                        <div class="mb-3">
-                            <small class="text-muted fw-semibold text-uppercase d-block mb-1">Signalé par</small>
-                            <span>{{ authService.getFullName() }}</span>
-                        </div>
+                        <label class="form-label small text-muted text-uppercase fw-semibold">Severity</label>
+                        <select class="form-select" [(ngModel)]="editSeverity" name="editSev">
+                            <option *ngFor="let s of severityEditOptions" [ngValue]="s">{{ s }}</option>
+                        </select>
                     </div>
-
-                    <!-- Right column -->
                     <div class="col-md-6">
-                        <div class="mb-3">
-                            <small class="text-muted fw-semibold text-uppercase d-block mb-2">Sévérité</small>
-                            <span class="badge rounded-pill text-white px-3 py-2"
-                                  [style.background-color]="getSeverityColor(selectedIncident.severityLevel)">
-                                {{ selectedIncident.severityLevel }}
-                            </span>
-                        </div>
-                        <div class="mb-3">
-                            <small class="text-muted fw-semibold text-uppercase d-block mb-2">Statut</small>
-                            <span class="badge rounded-pill text-white px-3 py-2"
-                                  [style.background-color]="getStatusColor(selectedIncident.status)">
-                                {{ selectedIncident.status }}
-                            </span>
-                        </div>
-                        <div class="mb-3">
-                            <small class="text-muted fw-semibold text-uppercase d-block mb-1">Source</small>
-                            <span class="text-capitalize">{{ selectedIncident.source || '—' }}</span>
-                        </div>
+                        <label class="form-label small text-muted text-uppercase fw-semibold">Status</label>
+                        <select class="form-select" [(ngModel)]="editStatus" name="editSt">
+                            <option *ngFor="let st of statusEditOptions" [ngValue]="st">{{ st }}</option>
+                        </select>
                     </div>
-
-                    <!-- Description full width -->
-                    <div class="col-12">
-                        <small class="text-muted fw-semibold text-uppercase d-block mb-2">Description</small>
-                        <div class="bg-light rounded p-3 fst-italic text-secondary border">
-                            "{{ selectedIncident.description }}"
-                        </div>
-                    </div>
-
                 </div>
             </div>
-
-            <div class="modal-footer border-top">
-                <button type="button" class="btn btn-dark w-100" (click)="closeModal()">
-                    Fermer
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" (click)="closeEditModal()" [disabled]="savingEdit">Cancel</button>
+                <button type="button" class="btn btn-primary" (click)="saveEdit()" [disabled]="savingEdit">
+                    {{ savingEdit ? 'Saving…' : 'Save changes' }}
                 </button>
             </div>
-
         </div>
     </div>
 </div>

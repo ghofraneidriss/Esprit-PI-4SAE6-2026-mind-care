@@ -1,26 +1,28 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { adminAccessGuard } from './guards/admin-access.guard';
-import { frontofficeAccessGuard } from './guards/frontoffice-access.guard';
+import { adminGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: 'admin',
-    canMatch: [adminAccessGuard],
+    canActivate: [adminGuard],
     loadChildren: () =>
       import('./backoffice/backoffice-module').then((m) => m.BackofficeModule),
   },
   {
     path: '',
-    canMatch: [frontofficeAccessGuard],
     loadChildren: () =>
       import('./frontoffice/frontoffice-module').then((m) => m.FrontofficeModule),
   },
-  { path: '**', redirectTo: '404' },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'top',
+    }),
+  ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

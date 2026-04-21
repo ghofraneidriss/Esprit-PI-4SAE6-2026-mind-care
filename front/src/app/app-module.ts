@@ -1,21 +1,35 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+﻿import { APP_INITIALIZER, NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { NotFoundInterceptor } from './core/interceptors/not-found.interceptor';
+
+function initMindCareLightTheme(): () => void {
+  return () => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-bs-theme', 'light');
+    }
+  };
+}
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [App],
-  imports: [BrowserModule, HttpClientModule, AppRoutingModule],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    CommonModule,
+    FormsModule,
+    HttpClientModule
+  ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: NotFoundInterceptor,
-      multi: true,
-    },
+    { provide: APP_INITIALIZER, useFactory: initMindCareLightTheme, multi: true },
   ],
   bootstrap: [App],
 })

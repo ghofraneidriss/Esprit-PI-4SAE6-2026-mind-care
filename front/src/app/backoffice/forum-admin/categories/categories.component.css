@@ -6,40 +6,74 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Hero Banner */
-.hero-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 30px;
-  padding: 3rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
+.categories-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  margin-bottom: 1.5rem;
+  max-width: 720px;
 }
 
-.hero-content {
-  color: white;
+.categories-error i {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
 }
 
-/* Header */
-.header {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 3rem;
-  font-weight: 800;
-  margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #ffffff, #e0e7ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.page-subtitle {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.9);
+.categories-error p {
   margin: 0;
-  font-weight: 300;
+  line-height: 1.5;
+}
+
+.categories-intro {
+  max-width: 920px;
+  margin: 0 auto 1.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.categories-intro p {
+  margin: 0 0 0.65rem;
+}
+
+.categories-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.categories-intro code {
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.categories-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.categories-page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 /* New Category Button */
@@ -266,17 +300,16 @@
   .categories-container {
     padding: 1rem;
   }
-  
-  .header-content {
+
+  .categories-toolbar {
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
   }
-  
-  .page-title {
-    font-size: 2rem;
+
+  .categories-page-title {
+    font-size: 1.35rem;
   }
-  
+
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 1rem;

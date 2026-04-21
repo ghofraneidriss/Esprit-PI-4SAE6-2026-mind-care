@@ -1,0 +1,134 @@
+:host {
+  display: contents;
+}
+
+.toast-stack {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  bottom: auto;
+  z-index: 10050;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: min(460px, calc(100vw - 32px));
+  pointer-events: none;
+}
+.toast-stack .cvp-toast {
+  pointer-events: auto;
+}
+.cvp-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  min-height: 52px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  border: 1px solid #334155;
+  color: #f8fafc;
+  background: #0f172a;
+}
+.cvp-toast--success {
+  border-color: #15803d;
+  background: #14532d;
+  color: #ecfdf5;
+}
+.cvp-toast--error {
+  border-color: #b91c1c;
+  background: #7f1d1d;
+  color: #fef2f2;
+}
+.cvp-toast--info {
+  border-color: #4338ca;
+  background: #312e81;
+  color: #eef2ff;
+}
+.cvp-toast__text {
+  flex: 1;
+  min-width: 0;
+}
+.cvp-toast__close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: rgba(248, 250, 252, 0.75);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 4px;
+}
+.cvp-toast__close:hover {
+  color: #e2e8f0;
+}
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  background: rgba(15, 23, 42, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.confirm-modal {
+  width: 100%;
+  max-width: 420px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 22px 24px;
+  color: #e2e8f0;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+.confirm-modal__title {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.confirm-modal__msg {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+.confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.confirm-btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+.confirm-btn--ghost {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #475569;
+}
+.confirm-btn--ghost:hover {
+  background: #334155;
+  color: #e2e8f0;
+}
+.confirm-btn--primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+}
+.confirm-btn--danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+}
+.confirm-btn--primary:hover,
+.confirm-btn--danger:hover {
+  filter: brightness(1.06);
+}

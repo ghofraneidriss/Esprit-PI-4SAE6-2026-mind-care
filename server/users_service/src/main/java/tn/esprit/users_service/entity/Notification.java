@@ -36,6 +36,31 @@ public class Notification {
     // Optional: reference to the incident that triggered this
     private Long incidentId;
 
+    /** Deep-link to forum post (MindCare forum: follow, inactive archive, best answer, …). */
+    private Long postId;
+
+    /**
+     * Forum event discriminator for UI (icons, colours): FORUM_COMMENT_FOLLOW, FORUM_COMMENT_AUTHOR,
+     * FORUM_LIKE, FORUM_REACTION, FORUM_RATING, FORUM_THREAD_FOLLOW, FORUM_BEST_ANSWER, …
+     */
+    @Column(length = 48)
+    private String eventKind;
+
+    /** Display name of the user who triggered the event (French UI). */
+    @Column(length = 200)
+    private String actorName;
+
+    /** Short post title for display. */
+    @Column(length = 300)
+    private String postTitle;
+
+    /** Optional excerpt (e.g. comment preview). */
+    @Column(length = 500)
+    private String snippet;
+
+    /** Actor user id — helps dedupe on client. */
+    private Long actorUserId;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

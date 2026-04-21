@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ============================================
-#   AlzCare - Démarrage base de données MySQL
+#   MindCare - Démarrage base de données MySQL
 #   Lance le conteneur Docker MySQL uniquement
 # ============================================
 
@@ -17,7 +17,7 @@ LOGS="$ROOT/logs"
 mkdir -p "$LOGS"
 
 echo -e "${GREEN}============================================${NC}"
-echo -e "${GREEN}   AlzCare - Démarrage MySQL (Docker)      ${NC}"
+echo -e "${GREEN}   MindCare - Démarrage MySQL (Docker)      ${NC}"
 echo -e "${GREEN}============================================${NC}"
 echo
 

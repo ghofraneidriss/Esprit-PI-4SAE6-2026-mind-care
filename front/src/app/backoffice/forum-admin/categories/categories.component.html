@@ -1,17 +1,19 @@
 <div class="categories-container">
-  <!-- Header -->
-  <header class="header">
-    <div class="hero-banner">
-      <div class="hero-content">
-        <h1 class="page-title">Forum Categories</h1>
-        <p class="page-subtitle">Manage and organize forum discussions</p>
-      </div>
-    </div>
-    <button class="new-category-btn" (click)="openCreateCategoryModal()">
-      <i class="ri-add-line"></i>
-      New Category
+  <header class="categories-toolbar">
+    <h1 class="categories-page-title">Forum categories</h1>
+    <button type="button" class="new-category-btn" (click)="openCreateCategoryModal()">
+      <i class="ri-add-line" aria-hidden="true"></i>
+      New category
     </button>
   </header>
+
+  <section class="categories-intro" *ngIf="!loading" aria-label="About this page">
+    <p>
+      Doctors and administrators can create, edit, or delete forum categories below. Use <strong>Edit</strong> to
+      update the name, description, <strong>icon</strong> (Remix Icon class, e.g. <code>ri-heart-pulse-line</code>), and
+      <strong>color</strong> — the same styling appears on the public forum.
+    </p>
+  </section>
 
   <!-- Loading State -->
   <div class="loading-state" *ngIf="loading">
@@ -19,10 +21,15 @@
     <p>Loading categories...</p>
   </div>
 
+  <div class="categories-error" *ngIf="!loading && loadError && categories.length === 0" role="alert">
+    <i class="ri-error-warning-line"></i>
+    <p>{{ loadError }}</p>
+  </div>
+
   <!-- Categories Grid -->
   <div class="categories-grid" *ngIf="!loading">
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="categories.length === 0">
+    <div class="empty-state" *ngIf="categories.length === 0 && !loadError">
       <i class="ri-folder-line empty-icon"></i>
       <h3>No categories found</h3>
       <p>Create your first category to get started</p>
@@ -32,11 +39,11 @@
     <div 
       class="category-card" 
       *ngFor="let category of categories"
-      [style.borderColor]="getCategoryColor(category.name)"
+      [style.borderColor]="displayColor(category)"
     >
       <div class="category-header">
-        <div class="category-icon" [style.backgroundColor]="getCategoryColor(category.name) + '20'">
-          <i [class]="getCategoryIcon(category.name)" [style.color]="getCategoryColor(category.name)"></i>
+        <div class="category-icon" [style.backgroundColor]="displayColor(category) + '22'">
+          <i [class]="displayIcon(category)" [style.color]="displayColor(category)"></i>
         </div>
         <div class="category-info">
           <h3 class="category-name">{{ category.name }}</h3>

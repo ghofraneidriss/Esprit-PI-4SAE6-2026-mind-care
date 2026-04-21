@@ -1,0 +1,27 @@
+<div
+  class="track-map-wrap"
+  [class.patient-mode]="patientMode"
+  [class.staff-map-wide]="staffWideViewport && !patientMode"
+>
+  <div class="map-container" #mapContainer role="application" aria-label="Location map"></div>
+  <ng-container *ngIf="!patientMode">
+    <p class="map-hint" *ngIf="safeZones.length && latestLocation">
+      Green: patient → nearest safe zone. Orange: you → patient (after “Show route on map”).
+    </p>
+    <p class="map-hint" *ngIf="safeZones.length && !latestLocation && (!history || history.length === 0)">
+      Safe zones shown — waiting for a live position to compute routes.
+    </p>
+    <p class="map-hint" *ngIf="!safeZones.length && !latestLocation && (!history || history.length === 0)">
+      Waiting for live location or safe zones.
+    </p>
+  </ng-container>
+  <p class="map-hint patient-hint" *ngIf="patientMode">
+    <span *ngIf="latestLocation || history.length">Blue: allowed zone · Grey: recent path</span>
+    <span *ngIf="!latestLocation && (!history || history.length === 0) && !safeZones.length"
+      >Map centered on Tunisia — send your location to appear here.</span
+    >
+    <span *ngIf="!latestLocation && (!history || history.length === 0) && safeZones.length"
+      >Your zones show in blue — send your location for an exact pin.</span
+    >
+  </p>
+</div>

@@ -1,0 +1,93 @@
+<div class="posts-by-category-container">
+  <header class="header">
+    <div class="forum-hero forum-hero--category">
+      <div class="forum-hero__pattern" aria-hidden="true"></div>
+      <div class="forum-hero__glow forum-hero__glow--1" aria-hidden="true"></div>
+      <div class="forum-hero__glow forum-hero__glow--2" aria-hidden="true"></div>
+      <div class="forum-hero__content forum-hero__content--category">
+        <div class="category-hero__toolbar">
+          <button type="button" class="back-btn back-btn--in-hero" (click)="navigateBack()">
+            <i class="ri-arrow-left-line" aria-hidden="true"></i>
+            Back to Categories
+          </button>
+        </div>
+        <div class="category-info text-center" *ngIf="category">
+          <div class="category-badge" [style.background]="getCategoryGradient(category.name || '')">
+            <i [class]="category.icon || 'ri-folder-line'"></i>
+            {{ category.name }}
+          </div>
+          <h1 class="page-title">{{ category.name }}</h1>
+          <p class="page-subtitle">{{ posts.length }} {{ posts.length === 1 ? 'discussion' : 'discussions' }}</p>
+        </div>
+        <div class="category-info text-center" *ngIf="!category && !loading">
+          <h1 class="page-title">Category Not Found</h1>
+          <p class="page-subtitle">We couldn't load the details for this category.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading posts...</p>
+  </div>
+
+  <!-- Posts List -->
+  <div class="posts-container" *ngIf="!loading">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && posts.length === 0">
+      <i class="ri-inbox-line empty-icon"></i>
+      <h3>No posts yet</h3>
+      <p>Be the first to start a discussion in this category.</p>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="posts-grid" *ngIf="posts.length > 0">
+      <div class="post-card" *ngFor="let post of posts" [routerLink]="['/forum/post', post.id]">
+        <div class="post-card__media" *ngIf="post.hasImages">
+          <img
+            class="post-card__cover"
+            [src]="postCoverSrc(post)"
+            [alt]="'Preview: ' + post.title"
+            loading="lazy"
+            decoding="async"
+            (error)="onCoverError($event)"
+          />
+        </div>
+        <div class="post-card__inner">
+          <div class="post-header">
+            <h3 class="post-title">{{ post.title }}</h3>
+            <div class="post-meta">
+              <span class="post-author">
+                <i class="ri-user-line"></i>
+                {{ post.author }}
+              </span>
+              <span class="post-date">
+                <i class="ri-calendar-line"></i>
+                {{ formatDate(post.createdAt) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="post-content">
+            <p>{{ post.content }}</p>
+          </div>
+
+          <div class="post-footer">
+            <div class="post-stats">
+              <span class="comment-count">
+                <i class="ri-chat-3-line"></i>
+                {{ post.commentCount }} {{ post.commentCount === 1 ? 'comment' : 'comments' }}
+              </span>
+            </div>
+            <div class="post-action-btn">
+              <span>Read Discussion</span>
+              <i class="ri-arrow-right-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

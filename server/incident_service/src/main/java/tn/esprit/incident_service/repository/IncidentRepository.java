@@ -29,6 +29,9 @@ public interface IncidentRepository extends JpaRepository<Incident, Long> {
     @Query("SELECT i FROM Incident i WHERE i.caregiverId = ?1 AND i.deleted = false ORDER BY i.incidentDate DESC")
     List<Incident> findByCaregiverIdActive(Long caregiverId);
 
+    @Query("SELECT i FROM Incident i WHERE i.volunteerId = ?1 AND i.deleted = false ORDER BY i.incidentDate DESC")
+    List<Incident> findByVolunteerIdActive(Long volunteerId);
+
     // FIND HISTORY (All, active AND deleted) - Pour l'historique Admin
     @Query("SELECT i FROM Incident i ORDER BY i.incidentDate DESC")
     List<Incident> findAllIncludingHistory();
@@ -40,6 +43,9 @@ public interface IncidentRepository extends JpaRepository<Incident, Long> {
     // FIND BY SOURCE (Active only)
     @Query("SELECT i FROM Incident i WHERE i.source = ?1 AND i.deleted = false ORDER BY i.incidentDate DESC")
     List<Incident> findBySourceActive(String source);
+
+    @Query("SELECT i FROM Incident i WHERE i.source = ?1 AND i.reporterUserId = ?2 AND i.deleted = false ORDER BY i.incidentDate DESC")
+    List<Incident> findBySourceAndReporterUserIdActive(String source, Long reporterUserId);
 
     // Override delete behavior (Soft Delete handled by @SQLDelete on Entity)
 

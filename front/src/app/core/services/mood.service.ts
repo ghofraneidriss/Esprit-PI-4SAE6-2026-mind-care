@@ -5,26 +5,28 @@ import { Observable } from 'rxjs';
 export interface MoodEntry {
   id?: number;
   patientId: number;
-  date: string;
-  score: number;
+  caregiverId?: number;
+  date: string;       // ISO date string "YYYY-MM-DD"
+  score: number;      // 1-5
   note?: string;
+  createdAt?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class MoodService {
-  private readonly moodApi = 'http://localhost:8087/api/moods';
+  private api = '/api/users/mood';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
   getByPatient(patientId: number): Observable<MoodEntry[]> {
-    return this.http.get<MoodEntry[]>(`${this.moodApi}/patient/${patientId}`);
+    return this.http.get<MoodEntry[]>(`${this.api}/patient/${patientId}`);
   }
 
-  create(payload: MoodEntry): Observable<MoodEntry> {
-    return this.http.post<MoodEntry>(this.moodApi, payload);
+  create(entry: MoodEntry): Observable<MoodEntry> {
+    return this.http.post<MoodEntry>(this.api, entry);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.moodApi}/${id}`);
+    return this.http.delete<void>(`${this.api}/${id}`);
   }
 }

@@ -21,4 +21,12 @@ public class PatientStatsDTO {
     private String riskLevel;           // LOW, MODERATE, HIGH, CRITICAL
     private double avgDaysBetween;      // Durée moyenne entre incidents (jours)
     private Map<String, Long> bySeverity;  // LOW, MEDIUM, HIGH, CRITICAL
+
+    /**
+     * Détail du score : moyenne des computed normalisés (0–100), moyenne des niveaux LOW→CRITICAL (0–100),
+     * ancien slot fréquence (souvent null).
+     */
+    private Integer volumeScorePart;
+    private Integer severityWeightedPart;
+    private Integer frequencyScorePart;
 }

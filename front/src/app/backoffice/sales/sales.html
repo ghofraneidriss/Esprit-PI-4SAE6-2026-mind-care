@@ -210,7 +210,7 @@
                 <div class="dropdown-divider my-1"></div>
               </li>
               <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" routerLink="/auth/login" onclick="localStorage.removeItem('loggedUser')">
+                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="authentication/login-basic.html">
                   <i class="fi fi-sr-exit scale-1x"></i> Log Out
                 </a>
               </li>
@@ -374,7 +374,7 @@
             </a>
           </li>
           <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Login">
-            <a class="menu-link" routerLink="/auth/login" onclick="localStorage.removeItem('loggedUser')">
+            <a class="menu-link" href="authentication/login-frame.html">
               <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path opacity="0.5" d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2H16.0002C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8V16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
                 <path d="M15 12H2M2 12L5.5 9M2 12L5.5 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -399,12 +399,6 @@
                     <a class="menu-link" routerLink="/admin" role="button">
                       <i class="fi fi-rr-house-blank"></i>
                       <span class="menu-label">Default Dashboard</span>
-                    </a>
-                  </li>
-                  <li class="menu-item">
-                    <a class="menu-link" routerLink="/admin/reports" role="button">
-                      <i class="fi fi-rr-document"></i>
-                      <span class="menu-label">Reports</span>
                     </a>
                   </li>
                   <li class="menu-item">
@@ -457,14 +451,6 @@
                         <rect width="20" height="20" rx="6" fill="var(--bs-info)"></rect>
                       </svg>
                       <span class="menu-label">User Management</span>
-                    </a>
-                  </li>
-                  <li class="menu-item">
-                    <a class="menu-link" routerLink="/admin/activities" role="button">
-                      <svg width="18" height="18" viewbox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="20" height="20" rx="6" fill="var(--bs-warning)"></rect>
-                      </svg>
-                      <span class="menu-label">Activities</span>
                     </a>
                   </li>
                   <li class="menu-item">
@@ -2232,10 +2218,6 @@
   
   
   <!-- end::NexLink Page Scripts -->
-
-
-
-
 
 
 

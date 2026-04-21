@@ -1,0 +1,57 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <a routerLink="/" class="back-home">← Mind Care</a>
+    <div class="auth-header">
+      <div class="auth-icon">🧠</div>
+      <h2>Create an account</h2>
+      <p>Join Mind Care</p>
+    </div>
+    <div *ngIf="error" class="alert error">⚠️ {{ error }}</div>
+    <div *ngIf="success" class="alert success">✅ {{ success }}</div>
+    <form (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="field"><label>First name *</label><input [(ngModel)]="firstname" name="fn" placeholder="Jane" /></div>
+        <div class="field"><label>Last name *</label><input [(ngModel)]="lastname" name="ln" placeholder="Doe" /></div>
+      </div>
+      <div class="field"><label>Email *</label><input type="email" [(ngModel)]="email" name="em" placeholder="you@email.com" /></div>
+      <div class="field"><label>Phone</label><input type="tel" [(ngModel)]="phone" name="ph" placeholder="+216 XX XXX XXX" /></div>
+      <div class="form-row">
+        <div class="field"><label>Password *</label>
+          <div class="pwd-wrap"><input [type]="showPwd?'text':'password'" [(ngModel)]="password" name="pw" placeholder="Min. 4 chars" />
+            <button type="button" class="eye" (click)="showPwd=!showPwd">{{showPwd?'🙈':'👁️'}}</button></div>
+        </div>
+        <div class="field"><label>Confirm *</label><input [type]="showPwd?'text':'password'" [(ngModel)]="confirm" name="cf" placeholder="Repeat" /></div>
+      </div>
+      <div class="field"><label>Role</label>
+        <div class="role-grid">
+          <div *ngFor="let r of roles" class="role-opt" [class.sel]="role===r.v" (click)="onRoleChange(r.v)">
+            <input type="radio" [(ngModel)]="role" name="role" [value]="r.v" />
+            <div class="rl">{{r.l}}</div><div class="rd">{{r.d}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="field" *ngIf="role === 'CAREGIVER' || role === 'VOLUNTEER'">
+        <label>Linked patient *</label>
+        <div *ngIf="loadingPatients" class="text-muted small">Loading patients…</div>
+        <select
+          *ngIf="!loadingPatients && patientsForLink.length > 0"
+          class="form-select"
+          [(ngModel)]="assignedPatientId"
+          name="assignedPatientId"
+          required>
+          <option [ngValue]="null" disabled>— Select a patient —</option>
+          <option *ngFor="let p of patientsForLink" [ngValue]="p.userId">
+            {{ p.firstName }} {{ p.lastName }} ({{ p.email }})
+          </option>
+        </select>
+        <p *ngIf="!loadingPatients && patientsForLink.length === 0" class="alert error small mb-0">
+          No patients registered yet. An administrator must create patient accounts first.
+        </p>
+      </div>
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        <span *ngIf="!loading">Create my account</span><span *ngIf="loading" class="spin"></span>
+      </button>
+    </form>
+    <p class="switch-link">Already have an account? <a routerLink="/officiel/login">Sign in</a></p>
+  </div>
+</div>

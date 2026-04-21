@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service';
-import { NotificationService } from '../../../shared/notification.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-auth-login-cover',
@@ -10,64 +9,35 @@ import { NotificationService } from '../../../shared/notification.service';
   styleUrls: ['./login-cover.css'],
 })
 export class LoginCoverAuthPage {
-  roles = ['PATIENT', 'VOLUNTEER', 'DOCTOR', 'CAREGIVER', 'ADMIN'];
-
-  credentials = {
-    email: '',
-    password: '',
-    role: 'PATIENT',
-  };
-
-  isLoading = false;
+  email = '';
+  password = '';
   errorMessage = '';
+  loading = false;
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router,
-    private readonly notificationService: NotificationService
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  onSubmit(): void {
-    if (!this.credentials.email || !this.credentials.password || !this.credentials.role) {
-      this.errorMessage = 'Email, password and role are required.';
+  onLogin(): void {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please fill in all fields.';
       return;
     }
 
-    this.isLoading = true;
+    this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.credentials).subscribe({
+    this.authService.login(this.email, this.password).subscribe({
       next: (user) => {
-        this.isLoading = false;
-        const loggedRole = this.authService.normalizeRole(user.role || this.credentials.role);
-
-        if (loggedRole === 'VOLUNTEER') {
-          // Register FCM token + start foreground listener
-          this.notificationService.initForUser(user.userId);
-          this.notificationService.startListening();
+        this.loading = false;
+        if (user.role === 'ADMIN' || user.role === 'DOCTOR') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/']);
         }
-
-        if (this.authService.isBackofficeRole(loggedRole)) {
-          this.router.navigateByUrl('/admin');
-          return;
-        }
-
-        if (loggedRole === 'VOLUNTEER') {
-          this.router.navigateByUrl('/admin');
-          return;
-        }
-
-        if (loggedRole === 'PATIENT') {
-          this.router.navigateByUrl('/reports');
-          return;
-        }
-
-        this.router.navigateByUrl('/');
       },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error?.error?.message || 'Login failed. Please try again.';
-      },
+      error: () => {
+        this.loading = false;
+        this.errorMessage = 'Incorrect email or password.';
+      }
     });
   }
 }

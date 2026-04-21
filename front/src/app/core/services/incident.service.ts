@@ -1,81 +1,186 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
-import { Incident, IncidentComment, IncidentType } from '../models/incident.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { asyncScheduler } from 'rxjs';
+import { Observable, Subject, finalize, of, tap, timeout, shareReplay } from 'rxjs';
+import { observeOn } from 'rxjs/operators';
+import { Incident, IncidentComment, IncidentType, PatientStats } from '../models/incident.model';
+import { environment } from '../../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+    providedIn: 'root'
+})
 export class IncidentService {
-  private readonly incidentsApi = 'http://localhost:8087/api/incidents';
-  private readonly typesApi = 'http://localhost:8087/api/incident-types';
-  readonly refresh$ = new Subject<void>();
 
-  constructor(private readonly http: HttpClient) {}
+    /** Incidents : direct 8083 en dev (rapide) ou `/api` via gateway si useIncidentDirect false */
+    private readonly incidentBase = environment.useIncidentDirect
+        ? environment.incidentApiUrl
+        : environment.apiUrl;
 
-  getIncidentsByPatient(patientId: number): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentsApi}/patient/${patientId}`);
-  }
+    private static readonly TIMEOUT_MS = 8000;
 
-  getIncidentsByCaregiver(caregiverId: number): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentsApi}/caregiver/${caregiverId}`);
-  }
+    private _refresh$ = new Subject<void>();
 
-  getPatientIncidentsHistory(patientId: number): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentsApi}/patient/${patientId}/history`);
-  }
+    /** Une seule requête HTTP pour les types tant que la session n’a pas invalidé le cache */
+    private incidentTypesCache: IncidentType[] | null = null;
+    private incidentTypesInFlight: Observable<IncidentType[]> | null = null;
 
-  getIncidentHistory(): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentsApi}/history`);
-  }
+    constructor(private http: HttpClient) { }
 
-  getAllActiveIncidents(): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentsApi}/active`);
-  }
+    get refresh$() {
+        return this._refresh$;
+    }
 
-  getReportedIncidents(): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentsApi}/reported`);
-  }
+    private clearIncidentTypesClientCache(): void {
+        this.incidentTypesCache = null;
+        this.incidentTypesInFlight = null;
+    }
 
-  getAllIncidentTypes(): Observable<IncidentType[]> {
-    return this.http.get<IncidentType[]>(this.typesApi);
-  }
+    private t8<T>(obs: Observable<T>): Observable<T> {
+        return obs.pipe(timeout(IncidentService.TIMEOUT_MS));
+    }
 
-  createIncidentType(payload: Partial<IncidentType>): Observable<IncidentType> {
-    return this.http.post<IncidentType>(this.typesApi, payload);
-  }
+    // --- INCIDENTS ---
 
-  updateIncidentType(typeId: number, payload: Partial<IncidentType>): Observable<IncidentType> {
-    return this.http.put<IncidentType>(`${this.typesApi}/${typeId}`, payload);
-  }
+    getAllActiveIncidents(): Observable<Incident[]> {
+        return this.t8(this.http.get<Incident[]>(`${this.incidentBase}/incidents`));
+    }
 
-  deleteIncidentType(typeId: number): Observable<void> {
-    return this.http.delete<void>(`${this.typesApi}/${typeId}`);
-  }
+    getIncidentHistory(): Observable<Incident[]> {
+        return this.t8(this.http.get<Incident[]>(`${this.incidentBase}/incidents/history`));
+    }
 
-  createIncident(payload: any): Observable<Incident> {
-    return this.http.post<Incident>(this.incidentsApi, payload);
-  }
+    getPatientIncidentsHistory(patientId: number): Observable<Incident[]> {
+        return this.t8(this.http.get<Incident[]>(`${this.incidentBase}/incidents/patient/${patientId}/history`));
+    }
 
-  updateIncident(incidentId: number, payload: Partial<Incident>): Observable<Incident> {
-    return this.http.put<Incident>(`${this.incidentsApi}/${incidentId}`, payload);
-  }
+    getIncidentsByPatient(patientId: number): Observable<Incident[]> {
+        return this.t8(this.http.get<Incident[]>(`${this.incidentBase}/incidents/patient/${patientId}`));
+    }
 
-  deleteIncident(incidentId: number): Observable<void> {
-    return this.http.delete<void>(`${this.incidentsApi}/${incidentId}`);
-  }
+    getIncidentsByCaregiver(caregiverId: number): Observable<Incident[]> {
+        return this.t8(this.http.get<Incident[]>(`${this.incidentBase}/incidents/caregiver/${caregiverId}`));
+    }
 
-  updateIncidentStatus(incidentId: number, status: string): Observable<Incident> {
-    return this.http.patch<Incident>(`${this.incidentsApi}/${incidentId}/status`, { status });
-  }
+    getIncidentsByVolunteer(volunteerId: number): Observable<Incident[]> {
+        return this.t8(this.http.get<Incident[]>(`${this.incidentBase}/incidents/volunteer/${volunteerId}`));
+    }
 
-  getCommentsByIncident(incidentId: number): Observable<IncidentComment[]> {
-    return this.http.get<IncidentComment[]>(`${this.incidentsApi}/${incidentId}/comments`);
-  }
+    getIncidentById(id: number): Observable<Incident> {
+        return this.t8(this.http.get<Incident>(`${this.incidentBase}/incidents/${id}`));
+    }
 
-  addComment(incidentId: number, payload: Pick<IncidentComment, 'content' | 'authorName'>): Observable<IncidentComment> {
-    return this.http.post<IncidentComment>(`${this.incidentsApi}/${incidentId}/comments`, payload);
-  }
+    createIncident(incident: Incident): Observable<Incident> {
+        return this.http.post<Incident>(`${this.incidentBase}/incidents`, incident)
+            .pipe(tap(() => this._refresh$.next()));
+    }
 
-  deleteComment(commentId: number): Observable<void> {
-    return this.http.delete<void>(`${this.incidentsApi}/comments/${commentId}`);
-  }
+    updateIncident(id: number, incident: Incident): Observable<Incident> {
+        return this.http.put<Incident>(`${this.incidentBase}/incidents/${id}`, incident)
+            .pipe(tap(() => this._refresh$.next()));
+    }
+
+    updateIncidentStatus(id: number, status: string): Observable<Incident> {
+        return this.http.patch<Incident>(`${this.incidentBase}/incidents/${id}/status`, { status })
+            .pipe(tap(() => this._refresh$.next()));
+    }
+
+    deleteIncident(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.incidentBase}/incidents/${id}`)
+            .pipe(tap(() => this._refresh$.next()));
+    }
+
+    /**
+     * Back-office : CAREGIVER par défaut (admin). Médecin : source=DOCTOR et reporterId = userId courant.
+     */
+    getReportedIncidents(source: string = 'CAREGIVER', reporterId?: number | null): Observable<Incident[]> {
+        let params = new HttpParams().set('source', source);
+        if (reporterId != null && reporterId > 0) {
+            params = params.set('reporterId', String(reporterId));
+        }
+        return this.t8(
+            this.http.get<Incident[]>(`${this.incidentBase}/incidents/reported`, { params })
+        );
+    }
+
+    // --- INCIDENT TYPES ---
+
+    /**
+     * Liste des types : mise en cache côté client (instantané après le 1er chargement).
+     * Invalider via création / mise à jour / suppression de type.
+     */
+    getAllIncidentTypes(): Observable<IncidentType[]> {
+        if (this.incidentTypesCache !== null) {
+            // Émission différée : évite une mise à jour synchrone pendant le 1er cycle de détection Angular.
+            return of(this.incidentTypesCache).pipe(observeOn(asyncScheduler));
+        }
+        if (this.incidentTypesInFlight) {
+            return this.incidentTypesInFlight;
+        }
+        this.incidentTypesInFlight = this.t8(
+            this.http.get<IncidentType[]>(`${this.incidentBase}/incident-types`)
+        ).pipe(
+            tap((types) => { this.incidentTypesCache = types; }),
+            finalize(() => { this.incidentTypesInFlight = null; }),
+            shareReplay(1)
+        );
+        return this.incidentTypesInFlight;
+    }
+
+    createIncidentType(type: IncidentType): Observable<IncidentType> {
+        return this.http.post<IncidentType>(`${this.incidentBase}/incident-types`, type)
+            .pipe(
+                tap(() => {
+                    this.clearIncidentTypesClientCache();
+                    this._refresh$.next();
+                })
+            );
+    }
+
+    updateIncidentType(id: number, type: IncidentType): Observable<IncidentType> {
+        return this.http.put<IncidentType>(`${this.incidentBase}/incident-types/${id}`, type)
+            .pipe(
+                tap(() => {
+                    this.clearIncidentTypesClientCache();
+                    this._refresh$.next();
+                })
+            );
+    }
+
+    deleteIncidentType(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.incidentBase}/incident-types/${id}`)
+            .pipe(
+                tap(() => {
+                    this.clearIncidentTypesClientCache();
+                    this._refresh$.next();
+                })
+            );
+    }
+
+    // --- COMMENTS ---
+
+    getCommentsByIncident(incidentId: number): Observable<IncidentComment[]> {
+        return this.t8(this.http.get<IncidentComment[]>(`${this.incidentBase}/incidents/${incidentId}/comments`));
+    }
+
+    addComment(incidentId: number, comment: { content: string; authorId?: number; authorName?: string }): Observable<IncidentComment> {
+        return this.http.post<IncidentComment>(`${this.incidentBase}/incidents/${incidentId}/comments`, comment);
+    }
+
+    deleteComment(commentId: number): Observable<void> {
+        return this.http.delete<void>(`${this.incidentBase}/incidents/comments/${commentId}`);
+    }
+
+    // --- PATIENT STATS ---
+
+    getPatientStats(): Observable<PatientStats[]> {
+        return this.t8(this.http.get<PatientStats[]>(`${this.incidentBase}/incidents/patient-stats`));
+    }
+
+    getPatientStatsById(patientId: number): Observable<PatientStats> {
+        return this.t8(this.http.get<PatientStats>(`${this.incidentBase}/incidents/patient-stats/${patientId}`));
+    }
+
+    sendPatientStatsByEmail(patientId: number, email: string): Observable<any> {
+        return this.http.post(`${this.incidentBase}/incidents/patient-stats/${patientId}/send-email`, { email });
+    }
 }
