@@ -1,13 +1,10 @@
 <style>
-    .nav-icon-link {
-        transition: all 0.2s ease;
-    }
-
-    .nav-icon-link:hover {
-        background: #f8fafc;
-        color: #1e293b;
-        transform: translateY(-2px);
-    }
+    .nav-icon-link { color: #64748b !important; transition: all 0.2s ease; }
+    .nav-icon-link:visited { color: #64748b !important; }
+    .nav-icon-link:focus { color: #64748b !important; outline: none; }
+    .nav-icon-link:active { color: #64748b !important; }
+    .nav-icon-link:hover { background: #f8fafc; color: #1e293b !important; transform: translateY(-2px); }
+    .active-nav-link, .active-nav-link:visited, .active-nav-link:focus, .active-nav-link:active { color: #2D9A9B !important; }
 </style>
 
 <!-- FLOATING SIDEBAR NAVIGATION -->
@@ -46,6 +43,13 @@
         class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none shadow-sm"
         style="width: 48px; height: 48px; color: #1e293b; background: #e0f2f1; border: 1px solid #2D9A9B; font-size: 1.3rem;">
         <i class="bi bi-heart-pulse" style="color: #2D9A9B;"></i>
+    </a>
+
+    <!-- Medications -->
+    <a routerLink="/admin/medications"
+        class="nav-icon-link d-flex justify-content-center align-items-center rounded-4 text-decoration-none"
+        style="width: 48px; height: 48px; color: #64748b; font-size: 1.3rem;">
+        <i class="bi bi-capsule"></i>
     </a>
 
     <div style="border-bottom: 2px solid #f1f5f9; width: 30px; margin: 0.5rem 0;"></div>
