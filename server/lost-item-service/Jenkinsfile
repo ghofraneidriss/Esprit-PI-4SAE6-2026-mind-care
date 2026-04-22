@@ -32,6 +32,24 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo '========== SonarQube Code Quality Analysis =========='
+                dir('server/lost-item-service') {
+                    sh '''
+                        mvn sonar:sonar \
+                            -Dsonar.projectKey=lost-item-service \
+                            -Dsonar.projectName="Lost Item Service" \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=admin \
+                            -Dsonar.password=admin \
+                            -Dsonar.exclusions=**/*Test.java \
+                            -Dsonar.coverage.exclusions=**/*Test.java
+                    '''
+                }
+            }
+        }
+
         stage('Package') {
             steps {
                 echo '========== Packaging Application =========='
