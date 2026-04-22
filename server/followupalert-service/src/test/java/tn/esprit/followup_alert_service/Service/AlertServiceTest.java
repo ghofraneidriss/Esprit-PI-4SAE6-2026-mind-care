@@ -44,7 +44,7 @@ class AlertServiceTest {
         Alert created = alertService.createAlert(testAlert);
         assertNotNull(created);
         assertNotNull(created.getId());
-        assertEquals("Test Alert", created.getDescription());
+        assertEquals("Test Alert Description", created.getDescription());
     }
 
     @Test
