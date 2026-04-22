@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import tn.esprit.followup_alert_service.Entity.FollowUp;
-import tn.esprit.followup_alert_service.Entity.FollowUpStatus;
+import tn.esprit.followup_alert_service.Entity.IndependenceLevel;
+import tn.esprit.followup_alert_service.Entity.MoodState;
 import tn.esprit.followup_alert_service.Repository.FollowUpRepository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +32,15 @@ class FollowUpServiceTest {
         followUpRepository.deleteAll();
         testFollowUp = new FollowUp();
         testFollowUp.setPatientId(1L);
-        testFollowUp.setStatus(FollowUpStatus.PENDING);
-        testFollowUp.setDescription("Test Follow-up");
-        testFollowUp.setScheduledDate(LocalDateTime.now().plusDays(1));
+        testFollowUp.setCaregiverId(2L);
+        testFollowUp.setFollowUpDate(LocalDate.now());
+        testFollowUp.setCognitiveScore(25);
+        testFollowUp.setMood(MoodState.CALM);
+        testFollowUp.setEating(IndependenceLevel.INDEPENDENT);
+        testFollowUp.setDressing(IndependenceLevel.INDEPENDENT);
+        testFollowUp.setMobility(IndependenceLevel.PARTIALLY_DEPENDENT);
+        testFollowUp.setHoursSlept(8);
+        testFollowUp.setNotes("Test Follow-up Note");
     }
 
     @Test
@@ -41,7 +48,7 @@ class FollowUpServiceTest {
         FollowUp created = followUpService.createFollowUp(testFollowUp);
         assertNotNull(created);
         assertNotNull(created.getId());
-        assertEquals("Test Follow-up", created.getDescription());
+        assertEquals(1L, created.getPatientId());
     }
 
     @Test
@@ -68,9 +75,11 @@ class FollowUpServiceTest {
     }
 
     @Test
-    void testGetFollowUpsByStatus() {
-        followUpService.createFollowUp(testFollowUp);
-        List<FollowUp> followUps = followUpService.getFollowUpsByStatus(FollowUpStatus.PENDING);
-        assertFalse(followUps.isEmpty());
+    void testUpdateFollowUp() {
+        FollowUp created = followUpService.createFollowUp(testFollowUp);
+        created.setCognitiveScore(20);
+        FollowUp updated = followUpService.updateFollowUp(created.getId(), created);
+        assertNotNull(updated);
+        assertEquals(20, updated.getCognitiveScore());
     }
 }
