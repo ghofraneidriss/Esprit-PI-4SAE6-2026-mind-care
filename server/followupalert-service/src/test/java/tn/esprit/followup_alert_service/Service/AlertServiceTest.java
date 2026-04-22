@@ -32,9 +32,10 @@ class AlertServiceTest {
         alertRepository.deleteAll();
         testAlert = new Alert();
         testAlert.setPatientId(1L);
+        testAlert.setTitle("Test Alert Title");
         testAlert.setLevel(AlertLevel.HIGH);
         testAlert.setStatus(AlertStatus.NEW);
-        testAlert.setDescription("Test Alert");
+        testAlert.setDescription("Test Alert Description");
         testAlert.setCreatedAt(LocalDateTime.now());
     }
 
