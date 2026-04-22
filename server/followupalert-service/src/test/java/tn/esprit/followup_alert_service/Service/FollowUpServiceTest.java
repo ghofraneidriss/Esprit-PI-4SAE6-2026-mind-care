@@ -38,7 +38,7 @@ class FollowUpServiceTest {
         testFollowUp.setMood(MoodState.CALM);
         testFollowUp.setEating(IndependenceLevel.INDEPENDENT);
         testFollowUp.setDressing(IndependenceLevel.INDEPENDENT);
-        testFollowUp.setMobility(IndependenceLevel.PARTIALLY_DEPENDENT);
+        testFollowUp.setMobility(IndependenceLevel.NEEDS_ASSISTANCE);
         testFollowUp.setHoursSlept(8);
         testFollowUp.setNotes("Test Follow-up Note");
     }

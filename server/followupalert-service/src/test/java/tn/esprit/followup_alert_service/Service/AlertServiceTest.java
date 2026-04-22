@@ -33,7 +33,7 @@ class AlertServiceTest {
         testAlert = new Alert();
         testAlert.setPatientId(1L);
         testAlert.setLevel(AlertLevel.HIGH);
-        testAlert.setStatus(AlertStatus.OPEN);
+        testAlert.setStatus(AlertStatus.NEW);
         testAlert.setDescription("Test Alert");
         testAlert.setCreatedAt(LocalDateTime.now());
     }
@@ -79,7 +79,7 @@ class AlertServiceTest {
     @Test
     void testGetAlertsByStatus() {
         alertService.createAlert(testAlert);
-        List<Alert> alerts = alertService.getAlertsByStatus(AlertStatus.OPEN);
+        List<Alert> alerts = alertService.getAlertsByStatus(AlertStatus.NEW);
         assertFalse(alerts.isEmpty());
     }
 }
