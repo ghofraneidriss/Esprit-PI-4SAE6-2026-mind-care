@@ -16,8 +16,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo '========== Building followup-alert-service =========='
-                dir('server/followup-alert-service') {
+                echo '========== Building followupalert-service =========='
+                dir('server/followupalert-service') {
                     sh 'mvn clean compile'
                 }
             }
@@ -26,7 +26,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo '========== Running Unit Tests =========='
-                dir('server/followup-alert-service') {
+                dir('server/followupalert-service') {
                     sh 'mvn test'
                 }
             }
@@ -35,7 +35,7 @@ pipeline {
         stage('Package') {
             steps {
                 echo '========== Packaging Application =========='
-                dir('server/followup-alert-service') {
+                dir('server/followupalert-service') {
                     sh 'mvn package -DskipTests'
                 }
             }
@@ -45,13 +45,13 @@ pipeline {
     post {
         always {
             echo '========== Pipeline Execution Completed =========='
-            junit 'server/followup-alert-service/target/surefire-reports/*.xml'
+            junit 'server/followupalert-service/target/surefire-reports/*.xml'
         }
         success {
-            echo '✓ followup-alert-service pipeline SUCCESS'
+            echo '✓ followupalert-service pipeline SUCCESS'
         }
         failure {
-            echo '✗ followup-alert-service pipeline FAILED'
+            echo '✗ followupalert-service pipeline FAILED'
         }
     }
 }
