@@ -1,0 +1,109 @@
+<div class="forum-home forum-cvp-insights">
+  <div class="forum-home__inner">
+    <header class="forum-hero forum-cvp-insights__hero text-center">
+      <div class="forum-hero__pattern" aria-hidden="true"></div>
+      <div class="forum-hero__content">
+        <p class="forum-hero__eyebrow">
+          <i class="ri-pulse-line" aria-hidden="true"></i>
+          MindCare Forum
+        </p>
+        <h1 class="forum-hero__title">Statistics &amp; archives</h1>
+        <p class="forum-hero__lead">
+          Global activity indicators, top topics, and threads automatically archived after a quiet period — all in one place for the community (CVP).
+        </p>
+        <a routerLink="/forum" class="forum-btn forum-btn--ghost mt-2 d-inline-flex align-items-center gap-2">
+          <i class="ri-arrow-left-line" aria-hidden="true"></i>
+          Back to forum
+        </a>
+      </div>
+    </header>
+
+    <div *ngIf="loading" class="forum-loading my-5">
+      <div class="forum-loading__spinner" aria-hidden="true"></div>
+      <p class="text-muted small mb-0">Loading…</p>
+    </div>
+
+    <div *ngIf="!loading && error" class="forum-banner forum-banner--compact" role="alert">
+      <i class="ri-error-warning-line" aria-hidden="true"></i>
+      <div>{{ error }}</div>
+    </div>
+
+    <div *ngIf="!loading && statsPartial && stats" class="forum-banner forum-banner--compact" role="status">
+      <i class="ri-information-line" aria-hidden="true"></i>
+      <div>
+        Detailed KPIs are unavailable (could not reach <code>/forum/stats</code>). Thread count below comes from the
+        forum home API; comment totals and top categories need the statistics endpoint.
+      </div>
+    </div>
+
+    <section *ngIf="!loading && stats" class="forum-section" aria-labelledby="cvp-kpi-heading">
+      <h2 id="cvp-kpi-heading" class="forum-section__title">Overview</h2>
+      <div class="forum-cvp-insights__kpi-grid">
+        <div class="forum-cvp-insights__kpi">
+          <i class="ri-file-text-line" aria-hidden="true"></i>
+          <div>
+            <span class="forum-cvp-insights__kpi-value">{{ stats.totalPosts | number }}</span>
+            <span class="forum-cvp-insights__kpi-label">Threads (total)</span>
+          </div>
+        </div>
+        <div class="forum-cvp-insights__kpi">
+          <i class="ri-chat-3-line" aria-hidden="true"></i>
+          <div>
+            <span class="forum-cvp-insights__kpi-value">{{ stats.totalComments | number }}</span>
+            <span class="forum-cvp-insights__kpi-label">Comments</span>
+          </div>
+        </div>
+        <div class="forum-cvp-insights__kpi forum-cvp-insights__kpi--muted">
+          <i class="ri-inbox-archive-line" aria-hidden="true"></i>
+          <div>
+            <span class="forum-cvp-insights__kpi-value">{{ stats.inactivePosts | number }}</span>
+            <span class="forum-cvp-insights__kpi-label">Archived (inactive)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="!loading && stats?.topCategories?.length" class="forum-section" aria-labelledby="cvp-top-cat-heading">
+      <h2 id="cvp-top-cat-heading" class="forum-section__title">Top categories</h2>
+      <p class="forum-section__lead text-muted small mb-3">By number of threads</p>
+      <ul class="forum-cvp-insights__top-list">
+        <li *ngFor="let c of stats!.topCategories" class="forum-cvp-insights__top-row">
+          <span class="forum-cvp-insights__top-name">{{ c.categoryName }}</span>
+          <span class="forum-cvp-insights__top-count">{{ c.postCount | number }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section *ngIf="!loading" class="forum-section" aria-labelledby="cvp-archived-heading">
+      <h2 id="cvp-archived-heading" class="forum-section__title">Archived threads</h2>
+      <p class="forum-section__lead text-muted small mb-3">
+        These discussions are no longer shown in public lists; titles remain visible here for transparency.
+      </p>
+      <div *ngIf="inactiveRows.length === 0" class="forum-empty forum-empty--soft">
+        <i class="ri-inbox-line forum-empty__icon" aria-hidden="true"></i>
+        <h3 class="forum-empty__title">No archived threads</h3>
+        <p class="forum-empty__text">Nothing has been archived yet.</p>
+      </div>
+      <div *ngIf="inactiveRows.length > 0" class="forum-cvp-insights__table-wrap">
+        <table class="forum-cvp-insights__table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Author</th>
+              <th>Archived on</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let post of inactiveRows; trackBy: trackById">
+              <td class="forum-cvp-insights__title-cell">{{ post.title }}</td>
+              <td>{{ post.categoryName || '—' }}</td>
+              <td>{{ post.author || ('User ' + post.userId) }}</td>
+              <td class="text-muted small">{{ post.inactiveSince ? (post.inactiveSince | date:'medium') : '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

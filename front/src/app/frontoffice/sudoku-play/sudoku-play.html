@@ -1,0 +1,140 @@
+<app-header></app-header>
+<main class="sudoku-page">
+
+  <!-- Success Overlay -->
+  <div class="success-overlay" *ngIf="showSuccessOverlay">
+    <div class="success-modal">
+      <div class="success-icon">🎉</div>
+      <h2 *ngIf="finalScore !== null && finalScore > 0">Bravo !</h2>
+      <h2 *ngIf="finalScore === null || finalScore === 0">Session terminée</h2>
+      <p class="success-sub">{{ completionPercent >= 100 ? 'Sudoku complété avec succès !' : 'Solution soumise.' }}</p>
+      <div class="score-display" *ngIf="finalScore !== null">
+        <span class="score-label">Score</span>
+        <span class="score-value">{{ finalScore }}</span>
+      </div>
+      <div class="success-stats">
+        <div class="sstat">
+          <span>Temps</span>
+          <strong>{{ formattedTime }}</strong>
+        </div>
+        <div class="sstat">
+          <span>Erreurs</span>
+          <strong>{{ errorsCount }}</strong>
+        </div>
+        <div class="sstat">
+          <span>Complétion</span>
+          <strong>{{ completionPercent }}%</strong>
+        </div>
+      </div>
+      <div class="success-actions">
+        <button type="button" class="btn-overlay ghost" (click)="goToRecommendations()">
+          Mes recommandations
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <section class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement du Sudoku...</p>
+  </section>
+
+  <section class="sudoku-shell" *ngIf="!loading">
+    <div class="sudoku-top">
+      <div>
+        <p class="eyebrow">Sudoku Thérapeutique</p>
+        <h1>Sudoku 4×4</h1>
+        <p class="lede">Remplissez la grille en respectant les règles du Sudoku.</p>
+      </div>
+      <div class="timer-block">
+        <div class="status-chip">⏱ {{ formattedTime }}</div>
+        <div class="stats-row">
+          <span class="stat-chip">❌ {{ errorsCount }} erreur(s)</span>
+          <span class="stat-chip">✅ {{ completionPercent }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="sudoku-layout" *ngIf="game && !errorMessage">
+      <section class="board-card">
+
+        <!-- Not logged in warning -->
+        <div class="alert error" *ngIf="!canPlay">
+          Connectez-vous comme patient pour jouer ce Sudoku.
+        </div>
+
+        <!-- Grid -->
+        <div class="sudoku-grid" *ngIf="canPlay">
+          <ng-container *ngFor="let row of grid; let r = index">
+            <div class="sudoku-row">
+              <ng-container *ngFor="let cell of row; let c = index">
+                <div class="sudoku-cell" [class.fixed]="fixedCells[r][c]" [class.error-cell]="errorCells[r][c]">
+                  <span *ngIf="fixedCells[r][c]" class="cell-value fixed-value">{{ cell }}</span>
+                  <input
+                    *ngIf="!fixedCells[r][c]"
+                    type="number"
+                    min="1"
+                    max="4"
+                    [value]="cell > 0 ? cell : ''"
+                    [class.error-input]="errorCells[r][c]"
+                    [disabled]="submitted || submitting"
+                    (input)="onCellInput(r, c, $event)"
+                  />
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Actions -->
+        <div class="board-actions" *ngIf="canPlay">
+          <button
+            type="button"
+            class="btn validate-btn"
+            (click)="validateSolution()"
+            [disabled]="submitting || submitted">
+            <span class="spinner-sm" *ngIf="submitting"></span>
+            ✅ Valider
+          </button>
+        </div>
+
+        <div class="submitted-banner" *ngIf="submitted && !showSuccessOverlay">
+          Session soumise. Score : {{ finalScore ?? 0 }}
+        </div>
+      </section>
+
+      <aside class="info-card">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span>Difficulté</span>
+            <strong class="diff-badge easy">EASY</strong>
+          </div>
+          <div class="stat-item">
+            <span>Grille</span>
+            <strong>4 × 4</strong>
+          </div>
+          <div class="stat-item">
+            <span>Limite</span>
+            <strong>{{ game.timeLimitSeconds }}s</strong>
+          </div>
+          <div class="stat-item">
+            <span>Meilleur score</span>
+            <strong>{{ game.bestScore ?? '-' }}</strong>
+          </div>
+        </div>
+        <div class="rules-card">
+          <h4>📋 Règles</h4>
+          <ul>
+            <li>Chaque ligne doit contenir 1, 2, 3 et 4.</li>
+            <li>Chaque colonne doit contenir 1, 2, 3 et 4.</li>
+            <li>Chaque carré 2×2 doit contenir 1, 2, 3 et 4.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+<app-footer></app-footer>

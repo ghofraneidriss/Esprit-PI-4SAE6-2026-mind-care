@@ -1,0 +1,293 @@
+<div class="lost-item-container">
+  <!-- Success Message -->
+  <div *ngIf="successMsg" class="alert alert-success">{{ successMsg }}</div>
+
+  <!-- Error Message -->
+  <div *ngIf="pageError" class="alert alert-danger">{{ pageError }}</div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Lost Item Management</h1>
+    <button class="btn btn-primary" (click)="openCreateModal()" *ngIf="!isFormOpen">
+      <i class="bi bi-plus-lg"></i> Report Lost Item
+    </button>
+  </div>
+
+  <!-- Critical Items Section -->
+  <div *ngIf="criticalItems.length > 0" class="critical-section">
+    <h3>🚨 Critical Items (Immediate Attention)</h3>
+    <div class="critical-items">
+      <div *ngFor="let item of criticalItems" class="critical-item">
+        <div class="critical-item-content">
+          <span class="category">{{ getCategoryIcon(item.category) }} {{ item.category }}</span>
+          <h4>{{ item.title }}</h4>
+          <p><strong>Patient ID:</strong> {{ item.patientId }} | <strong>Last Location:</strong> {{ item.lastSeenLocation }}</p>
+          <p><strong>Reported:</strong> {{ item.lastSeenDate | date: 'medium' }}</p>
+        </div>
+        <div class="critical-item-actions">
+          <button class="btn btn-sm btn-success" (click)="markAsFound(item)">Mark as Found</button>
+          <button class="btn btn-sm btn-info" (click)="openViewModal(item)">Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts Section -->
+  <div *ngIf="alerts.length > 0" class="alerts-section">
+    <h3>⚠️ Active Alerts ({{ alerts.length }})</h3>
+    <div class="alerts-list">
+      <div *ngFor="let alert of alerts" [class]="'alert-item alert-' + alert.level.toLowerCase()">
+        <span class="alert-level">{{ alert.level }}</span>
+        <p>{{ alert.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by patient ID, description, or location..."
+      [(ngModel)]="filters.query"
+      (change)="applyFilters()"
+    />
+    <select class="form-control" [(ngModel)]="filters.status" (change)="applyFilters()">
+      <option value="">All Statuses</option>
+      <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+    </select>
+    <select class="form-control" [(ngModel)]="filters.category" (change)="applyFilters()">
+      <option value="">All Categories</option>
+      <option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</option>
+    </select>
+    <button class="btn btn-secondary" (click)="toggleStats()">
+      {{ showStats ? 'Hide' : 'Show' }} Stats
+    </button>
+  </div>
+
+  <!-- Stats Panel -->
+  <div *ngIf="showStats && statistics" class="stats-panel">
+    <div class="stat-card">
+      <h4>Total Items</h4>
+      <p class="stat-value">{{ statistics.totalItems }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Found Items</h4>
+      <p class="stat-value">{{ statistics.foundCount }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Still Lost</h4>
+      <p class="stat-value">{{ statistics.lostCount }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Recovery Rate</h4>
+      <p class="stat-value">{{ statistics.recoveryRate }}%</p>
+    </div>
+    <div class="stat-card">
+      <h4>Avg Days to Find</h4>
+      <p class="stat-value">{{ statistics.averageDaysToFind }}</p> <span>days</span>
+    </div>
+  </div>
+
+  <!-- Items Table -->
+  <div class="table-section">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Category</th>
+          <th>Title</th>
+          <th>Patient ID</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Last Seen Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredItems; trackBy: trackById">
+          <td>{{ item.id }}</td>
+          <td>{{ getCategoryIcon(item.category) }} {{ item.category }}</td>
+          <td>{{ item.title }}</td>
+          <td>{{ item.patientId }}</td>
+          <td>
+            <span [class]="'badge ' + getStatusBadgeClass(item.status)">{{ item.status }}</span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="item.priority === 'CRITICAL' ? 'badge-danger' : item.priority === 'HIGH' ? 'badge-warning' : item.priority === 'MEDIUM' ? 'badge-info' : 'badge-secondary'">
+              {{ item.priority }}
+            </span>
+          </td>
+          <td>{{ item.lastSeenDate | date: 'short' }}</td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="openViewModal(item)">View</button>
+            <button class="btn btn-sm btn-warning" (click)="openEditModal(item)">Edit</button>
+            <button class="btn btn-sm btn-success" (click)="markAsFound(item)" *ngIf="item.status === 'LOST'">
+              Found
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteItem(item)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="filteredItems.length === 0" class="text-center text-muted">
+      No lost items found. Report one to get started.
+    </p>
+  </div>
+
+  <!-- View Modal -->
+  <div *ngIf="isViewOpen && viewItem" class="modal-overlay" (click)="closeViewModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Lost Item #{{ viewItem.id }}</h3>
+        <button class="btn-close" (click)="closeViewModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Title:</strong> {{ viewItem.title }}</p>
+        <p><strong>Category:</strong> {{ getCategoryIcon(viewItem.category) }} {{ viewItem.category }}</p>
+        <p><strong>Description:</strong> {{ viewItem.description }}</p>
+        <p><strong>Patient ID:</strong> {{ viewItem.patientId }}</p>
+        <p><strong>Caregiver ID:</strong> {{ viewItem.caregiverId || 'N/A' }}</p>
+        <p><strong>Status:</strong> <span [class]="'badge ' + getStatusBadgeClass(viewItem.status)">{{ viewItem.status }}</span></p>
+        <p><strong>Priority:</strong> <span class="badge" [ngClass]="viewItem.priority === 'CRITICAL' ? 'badge-danger' : viewItem.priority === 'HIGH' ? 'badge-warning' : viewItem.priority === 'MEDIUM' ? 'badge-info' : 'badge-secondary'">{{ viewItem.priority }}</span></p>
+        <p><strong>Last Location:</strong> {{ viewItem.lastSeenLocation }}</p>
+        <p><strong>Last Seen Date:</strong> {{ viewItem.lastSeenDate | date: 'medium' }}</p>
+        <p *ngIf="viewItem.imageUrl"><strong>Image:</strong> <img [src]="viewItem.imageUrl" style="max-width: 200px;" /></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" (click)="markAsFound(viewItem)" *ngIf="viewItem.status === 'LOST'">
+          Mark as Found
+        </button>
+        <button class="btn btn-secondary" (click)="closeViewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Modal -->
+  <div *ngIf="isFormOpen" class="modal-overlay" (click)="closeFormModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ formMode === 'create' ? 'Report Lost Item' : 'Edit Lost Item' }}</h3>
+        <button class="btn-close" (click)="closeFormModal()">×</button>
+      </div>
+
+      <form [formGroup]="form" class="modal-body">
+        <div class="form-group">
+          <label>Title *</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="title"
+            [class.is-invalid]="controlHasError('title')"
+          />
+          <div class="invalid-feedback" *ngIf="controlHasError('title')">
+            Title is required (min 2 characters)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Patient ID *</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="patientId"
+            min="1"
+            [class.is-invalid]="controlHasError('patientId')"
+          />
+          <div class="invalid-feedback" *ngIf="controlHasError('patientId')">
+            Patient ID is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Caregiver ID</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="caregiverId"
+            min="1"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Category *</label>
+          <select class="form-control" formControlName="category" [class.is-invalid]="controlHasError('category')">
+            <option value="">Select Category</option>
+            <option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="controlHasError('category')">
+            Category is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea
+            class="form-control"
+            formControlName="description"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Last Seen Location *</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="lastSeenLocation"
+            [class.is-invalid]="controlHasError('lastSeenLocation')"
+          />
+          <div class="invalid-feedback" *ngIf="controlHasError('lastSeenLocation')">
+            Location is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Last Seen Date *</label>
+          <input
+            type="date"
+            class="form-control"
+            formControlName="lastSeenDate"
+            [class.is-invalid]="controlHasError('lastSeenDate')"
+          />
+          <div class="invalid-feedback" *ngIf="controlHasError('lastSeenDate')">
+            Date is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Status *</label>
+          <select class="form-control" formControlName="status" [class.is-invalid]="controlHasError('status')">
+            <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Priority *</label>
+          <select class="form-control" formControlName="priority" [class.is-invalid]="controlHasError('priority')">
+            <option *ngFor="let p of priorities" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Image URL</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="imageUrl"
+            placeholder="https://..."
+          />
+        </div>
+
+        <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
+      </form>
+
+      <div class="modal-footer">
+        <button class="btn btn-success" (click)="validateAndSave()" [disabled]="isSaving">
+          {{ isSaving ? 'Saving...' : formMode === 'create' ? 'Report Item' : 'Update Item' }}
+        </button>
+        <button class="btn btn-secondary" (click)="closeFormModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

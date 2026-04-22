@@ -1,0 +1,205 @@
+<app-header></app-header>
+<main class="puzzle-page">
+
+  <!-- Success Overlay -->
+  <div class="success-overlay" *ngIf="showSuccessOverlay">
+    <div class="success-modal">
+      <div class="success-icon">🎉</div>
+      <h2 *ngIf="finalScore !== null && finalScore > 0">Bravo !</h2>
+      <h2 *ngIf="finalScore === null || finalScore === 0">Session terminée</h2>
+      <p class="success-sub" *ngIf="isSolvedNow || submitted">
+        {{ submitted && finalScore !== null && finalScore > 0 ? 'Puzzle complété avec succès !' : 'Solution soumise.' }}
+      </p>
+      <div class="score-display" *ngIf="finalScore !== null">
+        <span class="score-label">Score</span>
+        <span class="score-value">{{ finalScore }}</span>
+      </div>
+      <div class="success-stats">
+        <div class="sstat">
+          <span>Temps</span>
+          <strong>{{ formattedTime }}</strong>
+        </div>
+        <div class="sstat">
+          <span>Mouvements</span>
+          <strong>{{ movesCount }}</strong>
+        </div>
+        <div class="sstat">
+          <span>Indices</span>
+          <strong>{{ hintsUsed }}</strong>
+        </div>
+      </div>
+      <div class="success-actions">
+        <button type="button" class="btn-overlay primary" (click)="closeOverlayAndRestart()">
+          Rejouer
+        </button>
+        <button type="button" class="btn-overlay ghost" (click)="goToRecommendations()">
+          Mes recommandations
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="puzzle-shell" *ngIf="!loading; else loadingTpl">
+    <div class="puzzle-top">
+      <div>
+        <p class="eyebrow">Puzzle Souvenir</p>
+        <h1>{{ puzzle?.title || 'Puzzle thérapeutique' }}</h1>
+        <p class="lede">{{ puzzle?.description || 'Reconstituez l\'image souvenir.' }}</p>
+      </div>
+      <div class="timer-block">
+        <div class="status-chip" [class.warning]="timeLimitExceeded">
+          ⏱ {{ formattedTime }}
+          <span *ngIf="puzzle?.timeLimitSeconds"> / {{ puzzle?.timeLimitSeconds }}s</span>
+        </div>
+        <div class="time-bar-wrap" *ngIf="puzzle?.timeLimitSeconds">
+          <div class="time-bar" [style.width.%]="timeProgressPercent" [class.danger]="timeProgressPercent >= 80"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="alert success" *ngIf="successMessage && !showSuccessOverlay">{{ successMessage }}</div>
+
+    <div class="puzzle-layout" *ngIf="puzzle">
+      <!-- Board -->
+      <section class="board-card">
+        <div class="board-toolbar">
+          <div class="toolbar-stat">
+            <span>Mouvements</span>
+            <strong>{{ movesCount }}</strong>
+          </div>
+          <div class="toolbar-stat">
+            <span>Progression</span>
+            <strong [class.complete]="completionPercent === 100">{{ completionPercent }}%</strong>
+          </div>
+          <div class="toolbar-stat">
+            <span>Indices</span>
+            <strong>{{ hintsUsed }} / {{ puzzle.maxHints }}</strong>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="completion-bar-wrap">
+          <div class="completion-bar-fill" [style.width.%]="completionPercent" [class.done]="completionPercent === 100"></div>
+        </div>
+
+        <!-- Reference preview on hint -->
+        <div class="reference-preview" *ngIf="showReference">
+          <img [src]="sourceImage" [alt]="puzzle.title" />
+          <span class="hint-label">Image de référence</span>
+        </div>
+
+        <!-- Puzzle board -->
+        <div
+          class="puzzle-board"
+          [style.gridTemplateColumns]="gridTemplateColumns"
+          [class.disabled]="!canPlay || submitting || puzzle.status !== 'ACTIVE' || submitted"
+          [class.solved]="isSolvedNow && !submitted"
+        >
+          <button
+            type="button"
+            class="tile"
+            *ngFor="let tile of tiles; let i = index; trackBy: trackTile"
+            [class.empty]="tile.isEmpty"
+            [class.correct]="!tile.isEmpty && tile.value === i"
+            [ngStyle]="tileStyle(tile)"
+            (click)="moveTile(i)"
+          >
+            <span *ngIf="tile.isEmpty"></span>
+          </button>
+        </div>
+
+        <!-- Actions -->
+        <div class="board-actions">
+          <button type="button" class="btn hint-btn"
+            (click)="useHint()"
+            [disabled]="hintsUsed >= (puzzle.maxHints || 0) || submitted">
+            💡 Indice ({{ puzzle.maxHints - hintsUsed }} restants)
+          </button>
+          <button type="button" class="btn validate-btn"
+            (click)="validateSolution()"
+            [disabled]="submitting || submitted">
+            <span class="spinner-sm" *ngIf="submitting"></span>
+            ✅ Valider ma solution
+          </button>
+          <button type="button" class="btn ghost-btn"
+            (click)="restartPuzzle()"
+            [disabled]="submitting">
+            🔄 Recommencer
+          </button>
+        </div>
+
+        <div class="solved-banner" *ngIf="isSolvedNow && !submitted">
+          🎉 Puzzle résolu ! Cliquez sur "Valider ma solution" pour enregistrer votre score.
+        </div>
+      </section>
+
+      <!-- Sidebar -->
+      <aside class="info-card">
+        <div class="source-card">
+          <div class="source-img-wrap">
+            <img [src]="sourceImage" [alt]="puzzle.souvenir.mediaTitle || puzzle.title" />
+            <span class="source-badge">Image source</span>
+          </div>
+          <div class="source-meta">
+            <h3>{{ puzzle.souvenir.mediaTitle || 'Souvenir' }}</h3>
+            <p>{{ puzzle.souvenir.texte || '' }}</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span>Difficulté</span>
+            <strong class="diff-badge" [class.easy]="puzzle.difficulty === 'EASY'" [class.medium]="puzzle.difficulty === 'MEDIUM'" [class.hard]="puzzle.difficulty === 'HARD'">
+              {{ puzzle.difficulty }}
+            </strong>
+          </div>
+          <div class="stat-item">
+            <span>Grille</span>
+            <strong>{{ puzzle.gridSize }} × {{ puzzle.gridSize }}</strong>
+          </div>
+          <div class="stat-item">
+            <span>Meilleur score</span>
+            <strong>{{ puzzle.bestScore ?? '-' }}</strong>
+          </div>
+          <div class="stat-item">
+            <span>Sessions</span>
+            <strong>{{ puzzle.completedSessions ?? 0 }}</strong>
+          </div>
+        </div>
+
+        <div class="leaderboard-card">
+          <h4>🏆 Classement</h4>
+          <div class="leaderboard-item" *ngFor="let entry of leaderboard">
+            <span class="rank-badge" [class.gold]="entry.rank === 1" [class.silver]="entry.rank === 2" [class.bronze]="entry.rank === 3">
+              #{{ entry.rank }}
+            </span>
+            <span>Patient {{ entry.patientId }}</span>
+            <strong>{{ entry.bestScore }} pts</strong>
+          </div>
+          <p class="empty" *ngIf="leaderboard.length === 0">Aucune partie complétée.</p>
+        </div>
+
+        <div class="history-card">
+          <h4>📋 Mes sessions</h4>
+          <div class="history-item" *ngFor="let session of latestSessions">
+            <span class="session-status" [class.done]="session.completed">
+              {{ session.completed ? '✅' : '⏸' }}
+            </span>
+            <span>{{ session.durationSeconds || 0 }}s — {{ session.movesCount || 0 }} mvts</span>
+            <strong>{{ session.score ?? '-' }}</strong>
+          </div>
+          <p class="empty" *ngIf="latestSessions.length === 0">Aucune session.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <ng-template #loadingTpl>
+    <section class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement du puzzle...</p>
+    </section>
+  </ng-template>
+</main>
+<app-footer></app-footer>

@@ -1,0 +1,197 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <div class="cvp-page-header page-header">
+      <div>
+        <h1>
+          <i class="ri-image-2-line cvp-title-ico" aria-hidden="true"></i>
+          Photo discrimination
+        </h1>
+        <p>Create and manage photo recognition activities (same structure as quizzes: question and four choices)</p>
+      </div>
+    </div>
+
+  <div class="table-card" *ngIf="!showForm">
+    <div class="table-toolbar">
+      <div class="table-toolbar__filters">
+        <input
+          type="search"
+          name="psearch"
+          [(ngModel)]="filterSearch"
+          (ngModelChange)="photoFiltersChanged()"
+          placeholder="Search title, question, answer…"
+          autocomplete="off"
+        />
+        <div>
+          <span class="filter-label">Difficulty</span>
+          <select [(ngModel)]="filterDifficulty" name="pdiff" (ngModelChange)="photoFiltersChanged()">
+            <option value="">All</option>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-toolbar__actions">
+        <button type="button" class="btn-ghost" (click)="resetFilters()">Reset</button>
+        <button type="button" class="btn-danger" (click)="deleteSelected()" [disabled]="!selectedIds.length">
+          Delete selected ({{ selectedIds.length }})
+        </button>
+        <button type="button" class="btn-primary" (click)="openCreate()">+ New activity</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="th-check">
+              <input
+                type="checkbox"
+                [checked]="allFilteredSelected"
+                (change)="toggleSelectAll($any($event.target).checked)"
+              />
+            </th>
+            <th>#</th>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Correct answer</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="!loading && filteredPhotos.length">
+            <tr *ngFor="let p of photoTableRows" [class.row--placeholder]="p === null">
+              <ng-container *ngIf="p !== null; else photoEmptyRow">
+                <td class="th-check">
+                  <input
+                    type="checkbox"
+                    [checked]="isSelected(p.id)"
+                    (change)="toggleRow(p.id, $any($event.target).checked)"
+                  />
+                </td>
+                <td>{{ p.id }}</td>
+                <td>
+                  <img *ngIf="p.imageUrl" [src]="resolveActivitiesMediaUrl(p.imageUrl)" class="thumb" alt="" />
+                  <span *ngIf="!p.imageUrl" class="no-img">📷</span>
+                </td>
+                <td>
+                  <strong>{{ p.title }}</strong><br /><small class="muted">{{ (p.description | slice : 0 : 50) || '—' }}</small>
+                </td>
+                <td><span class="badge diff-{{ p.difficulty?.toLowerCase() }}">{{ p.difficulty }}</span></td>
+                <td>{{ p.correctAnswer }}</td>
+                <td class="actions">
+                  <button type="button" class="btn-icon edit" (click)="openEdit(p)" title="Edit">✏️</button>
+                  <button type="button" class="btn-icon del" (click)="deleteOne(p.id)" title="Delete">🗑️</button>
+                </td>
+              </ng-container>
+            </tr>
+          </ng-container>
+          <tr *ngIf="!loading && !filteredPhotos.length">
+            <td colspan="7" class="empty">No activities match your filters</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mgmt-pagination" *ngIf="!loading && filteredPhotos.length">
+      <span class="mgmt-pagination__info">{{ photoRangeLabel }}</span>
+      <span>Page {{ pageIndex + 1 }} / {{ photoTotalPages }}</span>
+      <button type="button" (click)="photoPrevPage()" [disabled]="pageIndex === 0">Previous</button>
+      <button type="button" (click)="photoNextPage()" [disabled]="pageIndex >= photoTotalPages - 1">Next</button>
+    </div>
+    <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+  </div>
+
+  <ng-template #photoEmptyRow>
+    <td colspan="7" class="td-placeholder">&nbsp;</td>
+  </ng-template>
+
+  <div class="form-card" *ngIf="showForm">
+    <div class="form-header">
+      <h2>{{ editing ? 'Edit' : 'New' }} — Photo discrimination</h2>
+      <button type="button" class="btn-ghost" (click)="showForm = false">✕ Close</button>
+    </div>
+    <form (ngSubmit)="save()">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Activity title *</label>
+          <input [(ngModel)]="form.title" name="title" placeholder="Short name (list &amp; cards)" required />
+        </div>
+        <div class="field">
+          <label>Difficulty</label>
+          <select [(ngModel)]="form.difficulty" name="diff">
+            <option value="EASY">🟢 Easy</option>
+            <option value="MEDIUM">🟡 Medium</option>
+            <option value="HARD">🔴 Hard</option>
+          </select>
+        </div>
+        <div class="field span2">
+          <label>Image *</label>
+          <div
+            class="drop-zone"
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop($event)"
+            (click)="fileInput.click()"
+          >
+            <input
+              #fileInput
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/*"
+              class="visually-hidden"
+              (change)="onPickFile($event)"
+            />
+            <i class="ri-upload-cloud-2-line drop-ico" aria-hidden="true"></i>
+            <p>
+              <strong>Drag &amp; drop</strong> an image here or <span class="link-like">browse</span> on this device
+            </p>
+            <p class="drop-hint">JPEG / PNG — resized and compressed in the browser, then again on the server before storage</p>
+            <button type="button" class="btn-clear-file" *ngIf="pendingFile" (click)="$event.stopPropagation(); clearPendingFile()">
+              Remove file
+            </button>
+          </div>
+          <p class="field-hint" *ngIf="editing && !pendingFile && form.imageUrl">
+            Current image is kept until you replace it with a new file above.
+          </p>
+        </div>
+      </div>
+
+      <div class="questions-section">
+        <div class="q-header">
+          <h3>Question &amp; answers (like a quiz)</h3>
+        </div>
+        <div class="question-card">
+          <div class="q-top">
+            <span class="q-num">Q1</span>
+          </div>
+          <div class="field">
+            <label>Question shown to the patient *</label>
+            <textarea [(ngModel)]="form.description" name="desc" rows="2" placeholder="What do you see? / What is this?" required></textarea>
+          </div>
+          <div class="options-grid">
+            <div class="option" *ngFor="let opt of form.options; let oi = index; trackBy: trackByIdx">
+              <label class="opt-label" [class.correct]="form.correctOptionIndex === oi">
+                <input
+                  type="radio"
+                  name="correctOpt"
+                  [checked]="form.correctOptionIndex === oi"
+                  (change)="form.correctOptionIndex = oi"
+                />
+                <span class="opt-marker">{{ oi === 0 ? 'A' : oi === 1 ? 'B' : oi === 2 ? 'C' : 'D' }}</span>
+              </label>
+              <input [(ngModel)]="form.options[oi]" [name]="'o' + oi" [placeholder]="'Option ' + (oi + 1)" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="img-preview" *ngIf="formPreviewSrc">
+        <label>Preview</label>
+        <img [src]="formPreviewSrc" alt="" />
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" (click)="showForm = false">Cancel</button>
+        <button type="submit" class="btn-primary">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </form>
+  </div>
+  </div>
+</div>

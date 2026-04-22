@@ -1,0 +1,164 @@
+<div class="page-layout">
+  <app-backoffice-header></app-backoffice-header>
+
+  <!-- MindCare — single sidebar (no separate icon bar) -->
+  <aside class="app-menubar-tabs mindcare-single-sidebar" id="appMenubar">
+    <div class="app-tab-content mindcare-sidebar-panel">
+      <div class="mindcare-brand">
+        <a class="mindcare-brand__link" routerLink="/admin">
+          <img class="mindcare-brand__mark" src="assets/branding/alzcare-logo-3d.png" width="44" height="44" alt="MindCare">
+          <div class="mindcare-brand__titles">
+            <span class="mindcare-brand__name">MindCare</span>
+            <span class="mindcare-brand__sub">Cognitive care</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="app-content-inner mindcare-sidebar-body">
+        <nav class="app-navbar mindcare-sidebar-nav" data-simplebar="">
+          <ul class="side-menubar mindcare-nav-list">
+            <li class="menu-item">
+              <a class="menu-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" role="button">
+                <i class="fi fi-rr-house-blank"></i>
+                <span class="menu-label">Analytics</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" routerLink="/admin/quiz-management" routerLinkActive="active" role="button">
+                <i class="ri-questionnaire-line"></i>
+                <span class="menu-label">Quiz management</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" routerLink="/admin/photo-management" routerLinkActive="active" role="button">
+                <i class="ri-camera-lens-line"></i>
+                <span class="menu-label">Photo discrimination</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" routerLink="/admin/results" routerLinkActive="active" role="button">
+                <i class="ri-line-chart-line"></i>
+                <span class="menu-label">Results &amp; risk</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/recommendations" routerLinkActive="active" role="button">
+                <i class="ri-magic-line"></i>
+                <span class="menu-label">Recommendations</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/souvenirs" routerLinkActive="active" role="button">
+                <i class="ri-book-open-line"></i>
+                <span class="menu-label">Souvenirs</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/medical-events" routerLinkActive="active" role="button">
+                <i class="ri-calendar-event-line"></i>
+                <span class="menu-label">Medical events</span>
+              </a>
+            </li>
+            <!-- Your Individual Work Integration -->
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/followup-management" routerLinkActive="active" role="button">
+                <i class="ri-check-double-line"></i>
+                <span class="menu-label">Follow-Up Management</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/lost-items" routerLinkActive="active" role="button">
+                <i class="ri-search-line"></i>
+                <span class="menu-label">Lost Items</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/ml-recommendations" routerLinkActive="active" role="button">
+                <i class="ri-brain-line"></i>
+                <span class="menu-label">ML Recommendations</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" routerLink="/admin/reports" routerLinkActive="active" role="button">
+                <i class="ri-file-pdf-2-line"></i>
+                <span class="menu-label">PDF reports</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/forum" [class.active]="forumHubActive()" role="button">
+                <i class="ri-discuss-line"></i>
+                <span class="menu-label">Forum</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a
+                class="menu-link"
+                routerLink="/admin/forum/categories"
+                [class.active]="forumCategoriesActive()"
+                role="button"
+              >
+                <i class="ri-folder-settings-line"></i>
+                <span class="menu-label">Forum categories</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a
+                class="menu-link"
+                routerLink="/admin/moderation/forum-reports"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                role="button"
+              >
+                <i class="ri-flag-line"></i>
+                <span class="menu-label">Comment reports</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/users" routerLinkActive="active" role="button">
+                <i class="ri-user-settings-line"></i>
+                <span class="menu-label">Users</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/critical-patients" routerLinkActive="active" role="button">
+                <i class="ri-alarm-warning-line"></i>
+                <span class="menu-label">Critical patients</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/safe-zones" routerLinkActive="active" role="button">
+                <i class="ri-map-pin-line"></i>
+                <span class="menu-label">Safe zones</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" routerLink="/admin/patient-movement" routerLinkActive="active" role="button">
+                <i class="ri-pulse-line"></i>
+                <span class="menu-label">Movement</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a
+                class="menu-link"
+                routerLink="/admin/incidents-reported"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                role="button"
+              >
+                <i class="ri-file-list-3-line"></i>
+                <span class="menu-label">Incident reports</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </aside>
+
+  <main class="app-wrapper">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-backoffice-footer></app-backoffice-footer>
+  <app-global-overlays />
+</div>

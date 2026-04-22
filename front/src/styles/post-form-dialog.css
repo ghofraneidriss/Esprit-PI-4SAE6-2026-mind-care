@@ -1,0 +1,101 @@
+/* MindCare post modal — panelClass: post-form-modal (+ post-form-modal--fullscreen). Overlay is global. */
+.cdk-overlay-container .post-form-backdrop-opaque {
+  background: #e2e8f0;
+}
+
+.post-form-modal .mat-dialog-container {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 1.35rem;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow:
+    0 4px 24px rgba(15, 23, 42, 0.08),
+    0 25px 50px -12px rgba(9, 154, 167, 0.12);
+  max-width: min(760px, 96vw) !important;
+}
+
+.post-form-modal .mat-dialog-content {
+  margin: 0;
+  padding: 0 1.25rem 1rem;
+  max-height: min(78vh, 720px);
+}
+
+.post-form-modal .mat-dialog-actions {
+  margin: 0;
+  padding: 0 1.25rem 1.25rem;
+  border: 0;
+  background: #ffffff;
+}
+
+/* Facebook-style compact composer */
+.post-form-modal--fb .mat-dialog-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  max-width: min(920px, 98vw) !important;
+  width: 100%;
+  max-height: 92vh;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.post-form-modal--fb .mat-dialog-content {
+  max-height: min(78vh, 720px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.post-form-modal--fb .mat-dialog-actions {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.post-form-modal .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(9, 154, 167, 0.28);
+}
+
+.post-form-modal .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: rgba(9, 154, 167, 0.55);
+}
+
+.post-form-modal .mat-input-element,
+.post-form-modal .mat-form-field-label {
+  font-size: 0.95rem;
+}
+
+.post-form-modal .mat-dialog-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.post-form-modal .mat-dialog-content::-webkit-scrollbar-thumb {
+  background: rgba(9, 154, 167, 0.25);
+  border-radius: 4px;
+}
+
+@media (max-width: 576px) {
+  .post-form-modal:not(.post-form-modal--fb) .mat-dialog-container {
+    margin: 0.5rem;
+    border-radius: 1rem;
+  }
+
+  .post-form-modal--fb .mat-dialog-container {
+    margin: 0.35rem;
+    border-radius: 10px;
+  }
+
+  .post-form-modal .mat-dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch !important;
+  }
+
+  .post-form-modal .mat-dialog-actions .btn {
+    width: 100%;
+  }
+}

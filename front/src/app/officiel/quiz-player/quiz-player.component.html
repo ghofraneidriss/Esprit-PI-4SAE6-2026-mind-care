@@ -1,0 +1,177 @@
+<div class="cvp-page cvp-page--quiz-player">
+  <div class="player-page">
+    <div class="loading-screen" *ngIf="loading">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading activity...</p>
+    </div>
+
+    <div class="error-screen" *ngIf="error">
+      <i class="ri-emotion-unhappy-line err-ico" aria-hidden="true"></i>
+      <h2>{{ error }}</h2>
+      <a routerLink="/officiel/quiz-list" class="btn-back">
+        <i class="ri-arrow-left-line" aria-hidden="true"></i> Back to activities
+      </a>
+    </div>
+
+    <div class="quiz-container" *ngIf="activity && !loading && !error && !finished">
+      <div class="quiz-header">
+        <a routerLink="/officiel/quiz-list" class="back-link">
+          <i class="ri-arrow-left-s-line" aria-hidden="true"></i> Back
+        </a>
+        <div class="quiz-title">{{ activity.title }}</div>
+        <div class="timer-badge">
+          <i class="ri-timer-line" aria-hidden="true"></i> {{ timer }}s
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progress"></div>
+      </div>
+      <div class="progress-text">Question {{ currentQ + 1 }} / {{ activity.questions.length }}</div>
+
+      <div class="question-area">
+        <div class="q-image" *ngIf="activity.questions[currentQ].imageUrl">
+          <img [src]="activity.questions[currentQ].imageUrl" alt="" />
+        </div>
+        <h2 class="q-text">{{ activity.questions[currentQ].questionText }}</h2>
+
+        <div class="options">
+          <button type="button"
+                  *ngFor="let opt of activity.questions[currentQ].options; let i = index"
+                  class="option-btn"
+                  [class.selected]="answers[currentQ] === i"
+                  (click)="selectAnswer(i)">
+            <span class="opt-letter">{{ i===0?'A':i===1?'B':i===2?'C':'D' }}</span>
+            <span class="opt-text">{{ opt }}</span>
+            <i class="ri-check-line opt-check" *ngIf="answers[currentQ] === i" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="voice-section" *ngIf="voiceSupported">
+          <div class="voice-divider"><span>Or answer by voice</span></div>
+          <div class="voice-controls">
+            <button type="button" class="mic-btn" [class.listening]="voiceListening" (click)="toggleVoice()" title="Answer by voice">
+              <i class="ri-mic-line mic-ico" *ngIf="!voiceListening" aria-hidden="true"></i>
+              <span class="mic-waves" *ngIf="voiceListening" aria-hidden="true">
+                <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+              </span>
+            </button>
+            <div class="voice-label">
+              <span *ngIf="!voiceListening && !voiceTranscript">Click to speak</span>
+              <span *ngIf="voiceListening && !voiceTranscript" class="voice-listening-text">
+                <i class="ri-sound-module-line me-1" aria-hidden="true"></i> Speak now — say A, B, C, D or the answer text
+              </span>
+              <span *ngIf="voiceTranscript" class="voice-transcript">« {{ voiceTranscript }} »</span>
+            </div>
+          </div>
+          <div class="voice-feedback" *ngIf="voiceMatchFeedback" [ngClass]="'vf-' + voiceFeedbackType">
+            {{ voiceMatchFeedback }}
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-nav">
+        <button type="button" class="nav-btn" (click)="prev()" [disabled]="currentQ===0">
+          <i class="ri-arrow-left-line" aria-hidden="true"></i> Previous
+        </button>
+        <div class="dots">
+          <span *ngFor="let q of activity.questions; let i = index"
+                class="dot"
+                [class.current]="i===currentQ"
+                [class.answered]="answers[i]>=0"
+                (click)="currentQ=i; startQuestionTimer()">
+          </span>
+        </div>
+        <button type="button" *ngIf="currentQ < activity.questions.length - 1" class="nav-btn primary" (click)="next()">
+          Next <i class="ri-arrow-right-line" aria-hidden="true"></i>
+        </button>
+        <button type="button" *ngIf="currentQ === activity.questions.length - 1" class="nav-btn finish" (click)="finish()">
+          <i class="ri-flag-line" aria-hidden="true"></i> Finish
+        </button>
+      </div>
+    </div>
+
+    <div class="results-container" *ngIf="finished && result">
+      <div class="results-card">
+        <div class="result-icon-wrap" aria-hidden="true">
+          <i class="ri-emotion-happy-line" *ngIf="scorePercent >= 70"></i>
+          <i class="ri-thumb-up-line" *ngIf="scorePercent >= 40 && scorePercent < 70"></i>
+          <i class="ri-focus-3-line" *ngIf="scorePercent < 40"></i>
+        </div>
+        <h1>Result</h1>
+
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+            <circle cx="60" cy="60" r="54" fill="none"
+                    [attr.stroke]="scorePercent >= 70 ? '#10b981' : scorePercent >= 40 ? '#f59e0b' : '#ef4444'"
+                    stroke-width="8" stroke-linecap="round"
+                    [attr.stroke-dasharray]="339.292" [attr.stroke-dashoffset]="339.292 - (339.292 * scorePercent / 100)"
+                    transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="score-center">{{ scorePercent }}%</div>
+        </div>
+
+        <div class="result-stats">
+          <div class="rs"><span class="rs-val">{{ result.correctAnswers }}/{{ result.totalQuestions }}</span><span class="rs-lbl">Correct</span></div>
+          <div class="rs"><span class="rs-val">{{ result.timeSpentSeconds }}s</span><span class="rs-lbl">Total time</span></div>
+          <div class="rs"><span class="rs-val">{{ result.avgResponseTime }}s</span><span class="rs-lbl">Avg./question</span></div>
+          <div class="rs"><span class="rs-val">{{ result.difficulty }}</span><span class="rs-lbl">Difficulty</span></div>
+        </div>
+
+        <div class="risk-result" *ngIf="result.riskLevel">
+          <span class="badge" [ngClass]="getRiskClass(result.riskLevel)">Risk: {{ result.riskLevel }}</span>
+          <span class="ws-badge">Weighted score: {{ result.weightedScore | number:'1.0-0' }}%</span>
+        </div>
+
+        <div class="result-actions">
+          <div class="auto-save-status" *ngIf="saving">
+            <i class="ri-loader-4-line spin" aria-hidden="true"></i>
+            <span>Saving your result automatically…</span>
+          </div>
+          <div class="saved-msg" *ngIf="saved && !saving">
+            <i class="ri-checkbox-circle-fill" aria-hidden="true"></i>
+            Result saved — your first attempt is kept for your doctor (cannot be changed or redone).
+          </div>
+          <div class="save-err" *ngIf="saveError && !saving">
+            <p>{{ saveError }}</p>
+            <button type="button" class="btn-save" (click)="retryAutoSave()">
+              <i class="ri-refresh-line" aria-hidden="true"></i> Retry save
+            </button>
+          </div>
+          <a routerLink="/officiel/quiz-list" class="btn-back-list">
+            <i class="ri-gamepad-line" aria-hidden="true"></i> More activities
+          </a>
+          <a routerLink="/officiel/results" class="btn-back-list secondary">
+            <i class="ri-line-chart-line" aria-hidden="true"></i> View my results
+          </a>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <h2><i class="ri-file-list-3-line" aria-hidden="true"></i> Answer review</h2>
+        <div class="review-card" *ngFor="let q of activity.questions; let i = index">
+          <div class="rev-header">
+            <span class="rev-num">Q{{ i + 1 }}</span>
+            <span class="rev-status" [class.correct]="answers[i]===q.correctAnswer" [class.wrong]="answers[i]!==q.correctAnswer">
+              <i class="ri-checkbox-circle-fill" *ngIf="answers[i]===q.correctAnswer" aria-hidden="true"></i>
+              <i class="ri-close-circle-fill" *ngIf="answers[i]!==q.correctAnswer" aria-hidden="true"></i>
+              {{ answers[i]===q.correctAnswer ? 'Correct' : 'Incorrect' }}
+            </span>
+          </div>
+          <p class="rev-question">{{ q.questionText }}</p>
+          <div class="rev-options">
+            <div *ngFor="let opt of q.options; let oi = index"
+                 class="rev-opt"
+                 [class.was-selected]="answers[i]===oi"
+                 [class.is-correct]="oi===q.correctAnswer"
+                 [class.is-wrong]="answers[i]===oi && oi!==q.correctAnswer">
+              <span class="rev-marker">{{ oi===0?'A':oi===1?'B':oi===2?'C':'D' }}</span>
+              {{ opt }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

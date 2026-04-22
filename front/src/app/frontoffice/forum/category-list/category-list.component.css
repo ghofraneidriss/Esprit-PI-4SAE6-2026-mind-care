@@ -1,0 +1,61 @@
+.forum-categories-page {
+  max-width: var(--alzcare-content-max);
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 2.5vw, 2rem) 2.75rem;
+  color: var(--forum-fg);
+  font-family: var(--bs-font-sans-serif, system-ui, sans-serif);
+}
+
+.forum-categories-page__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.forum-categories-page__head {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  padding: clamp(1.35rem, 3vw, 2rem);
+  margin-bottom: 0.25rem;
+  background: linear-gradient(155deg, #fff5f7 0%, #eef2ff 42%, #e0f2fe 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.forum-categories-page__head::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23099aa7' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.forum-categories-page__title {
+  position: relative;
+  z-index: 1;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.45rem, 2.8vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+}
+
+.forum-categories-page__lead {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--forum-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.forum-categories-page .forum-cat-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+  font-size: 0.85rem;
+}

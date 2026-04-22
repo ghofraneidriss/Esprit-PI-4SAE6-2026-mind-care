@@ -1,0 +1,183 @@
+/* Layout: sidebar + contenu CVP (sans logo / header / logout dans la barre) */
+:host {
+  display: block;
+  width: 100%;
+}
+
+.oas {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  min-height: calc(100vh - var(--alzcare-header-offset) - var(--alzcare-main-padding-bottom));
+  box-sizing: border-box;
+}
+
+/* Sticky: la barre reste visible pendant le scroll du contenu (ne défile pas avec le body comme un bloc normal). */
+.oas-sidebar {
+  flex: 0 0 15.5rem;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 0.75rem 1rem;
+  position: sticky;
+  top: calc(var(--alzcare-header-offset, 0px) + 0.5rem);
+  align-self: flex-start;
+  max-height: calc(100vh - var(--alzcare-header-offset, 0px) - var(--alzcare-footer-offset, 0px) - 1rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(165deg, #f8fafc 0%, #eef2f7 45%, #e8edf5 100%);
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 2px 0 4px rgba(255, 255, 255, 0.35),
+    4px 0 18px rgba(15, 23, 42, 0.04);
+}
+
+.oas-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.oas-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.15s ease;
+}
+
+.oas-link-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 0.75rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(248, 250, 252, 0.55) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.04),
+    0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.oas-link:hover .oas-link-inner {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 4px 14px rgba(99, 102, 241, 0.1);
+}
+
+.oas-link--active .oas-link-inner {
+  background: linear-gradient(165deg, #ffffff 0%, #eef2ff 100%);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 3px 0 0 0 #6366f1,
+    0 4px 16px rgba(99, 102, 241, 0.12);
+}
+
+.oas-ico {
+  font-size: 1.25rem;
+  color: #64748b;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.oas-link--active .oas-ico {
+  color: #4f46e5;
+}
+
+.oas-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.oas-link--active .oas-label {
+  color: #1e1b4b;
+}
+
+/* Séparateur “designer” entre les cartes */
+.oas-rule {
+  height: 1px;
+  margin: 0.55rem 0.35rem;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(148, 163, 184, 0.45) 18%,
+    rgba(99, 102, 241, 0.22) 50%,
+    rgba(148, 163, 184, 0.45) 82%,
+    transparent 100%
+  );
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.oas-main {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+@media (max-width: 767.98px) {
+  .oas {
+    flex-direction: column;
+  }
+
+  .oas-sidebar {
+    position: relative;
+    top: auto;
+    max-height: none;
+    overflow-y: visible;
+    flex: none;
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 0 0.5rem 0.65rem;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      0 4px 12px rgba(15, 23, 42, 0.05);
+  }
+
+  .oas-nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.15rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .oas-rule {
+    display: none;
+  }
+
+  .oas-link {
+    flex: 0 0 auto;
+    min-width: 8.5rem;
+  }
+
+  .oas-link-inner {
+    padding: 0.65rem 0.6rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.35rem;
+  }
+
+  .oas-label {
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .oas-ico {
+    font-size: 1.35rem;
+  }
+}

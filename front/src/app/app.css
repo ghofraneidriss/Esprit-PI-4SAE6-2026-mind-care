@@ -1,0 +1,47 @@
+/* MediNest-style base: keep template main.css variables; no forced sky-blue page */
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html[data-bs-theme="dark"] {
+  color-scheme: light;
+}
+
+body {
+  background-color: #ffffff !important;
+  color: var(--default-color, #363f40);
+}
+
+/* .alzcare-main : voir styles.css (global) — évite le chevauchement avec la navbar fixe */
+
+/* Fix for oversized icons */
+img, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.profile-icon {
+  width: 80px;
+  height: 80px;
+}
+
+.sidebar-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.incident-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.modal-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}

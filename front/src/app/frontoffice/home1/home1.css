@@ -1,0 +1,678 @@
+/* MediNest-aligned home — same blocks as before, template colors & fonts (main.css variables) */
+.alzcare-home {
+  font-family: var(--default-font);
+  color: var(--default-color);
+  background: var(--background-color);
+}
+
+.alzcare-home .alzcare-block {
+  position: relative;
+  padding: 2.75rem 0 3.25rem !important;
+  background: transparent !important;
+  color: var(--default-color) !important;
+  overflow: visible !important;
+}
+
+.alzcare-home h1,
+.alzcare-home h2,
+.alzcare-home h3 {
+  font-family: var(--heading-font) !important;
+}
+
+/* --- Hero --- */
+.alzcare-hero {
+  min-height: min(88vh, 820px);
+  display: flex;
+  align-items: center;
+  /* Dégagement navbar : .alzcare-main (styles.css) */
+  padding-top: 0;
+  padding-bottom: 2.5rem;
+  background: var(--background-color);
+}
+
+@media (min-width: 992px) {
+  .alzcare-home .py-lg-6 {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+}
+
+.alzcare-display {
+  font-family: var(--heading-font);
+  font-size: clamp(2.35rem, 1.9rem + 2.8vw, 3.65rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--heading-color) !important;
+}
+
+.alzcare-kicker {
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.alzcare-lead {
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.3rem);
+  line-height: 1.65;
+  max-width: 36rem;
+  color: var(--default-color);
+  font-weight: 400;
+}
+
+.alzcare-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-color), transparent 94%) 0%,
+    var(--background-color) 55%
+  );
+  pointer-events: none;
+}
+
+/* Hero: logo libre + bulles / icônes façon “sous la mer” */
+.alzcare-hero-visual {
+  position: relative;
+  max-width: 380px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 992px) {
+  .alzcare-hero-visual {
+    min-height: 340px;
+    max-width: 420px;
+  }
+}
+
+.alzcare-sea-scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.alzcare-logo-wrap {
+  position: relative;
+  z-index: 2;
+}
+
+.alzcare-logo-float {
+  max-width: 200px;
+  width: min(52vw, 200px);
+  height: auto;
+  filter: drop-shadow(0 10px 28px color-mix(in srgb, var(--accent-color), transparent 70%));
+  animation: alzcare-logo-drift 5.5s ease-in-out infinite;
+}
+
+@keyframes alzcare-logo-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg) scale(1);
+  }
+  33% {
+    transform: translateY(-10px) rotate(2deg) scale(1.02);
+  }
+  66% {
+    transform: translateY(4px) rotate(-1deg) scale(0.99);
+  }
+}
+
+.alzcare-sea-bubble {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  color: color-mix(in srgb, var(--accent-color), #fff 15%);
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 65%);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color), transparent 80%);
+  animation: alzcare-sea-swim 7s ease-in-out infinite;
+}
+
+.alzcare-sea-bubble:empty {
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  border-color: color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+@keyframes alzcare-sea-swim {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.75;
+  }
+  20% {
+    transform: translate(6px, -14px) scale(1.06);
+    opacity: 0.95;
+  }
+  40% {
+    transform: translate(-8px, -22px) scale(0.94);
+    opacity: 0.85;
+  }
+  60% {
+    transform: translate(-12px, -8px) scale(1.03);
+    opacity: 0.9;
+  }
+  80% {
+    transform: translate(4px, 6px) scale(0.98);
+    opacity: 0.8;
+  }
+}
+
+/* Positions autour du logo (orbite + délais différents) */
+.alzcare-sea-bubble--a {
+  width: 2.35rem;
+  height: 2.35rem;
+  left: 4%;
+  top: 18%;
+  animation-duration: 6.2s;
+  animation-delay: -0.5s;
+}
+
+.alzcare-sea-bubble--b {
+  width: 2.6rem;
+  height: 2.6rem;
+  right: 6%;
+  top: 12%;
+  animation-duration: 7.8s;
+  animation-delay: -2s;
+}
+
+.alzcare-sea-bubble--c {
+  width: 2.2rem;
+  height: 2.2rem;
+  left: 0;
+  bottom: 28%;
+  animation-duration: 8.4s;
+  animation-delay: -1s;
+}
+
+.alzcare-sea-bubble--d {
+  width: 2.5rem;
+  height: 2.5rem;
+  right: 2%;
+  bottom: 22%;
+  animation-duration: 6.8s;
+  animation-delay: -3.2s;
+}
+
+.alzcare-sea-bubble--e {
+  width: 2.15rem;
+  height: 2.15rem;
+  left: 18%;
+  bottom: 8%;
+  animation-duration: 7.2s;
+  animation-delay: -4s;
+}
+
+.alzcare-sea-bubble--f {
+  width: 2.3rem;
+  height: 2.3rem;
+  right: 20%;
+  top: 38%;
+  animation-duration: 9s;
+  animation-delay: -2.8s;
+}
+
+.alzcare-sea-bubble--g {
+  width: 1.15rem;
+  height: 1.15rem;
+  left: 42%;
+  top: 6%;
+  animation-duration: 5.5s;
+  animation-delay: -0.8s;
+}
+
+.alzcare-sea-bubble--h {
+  width: 0.95rem;
+  height: 0.95rem;
+  right: 38%;
+  bottom: 14%;
+  animation-duration: 6s;
+  animation-delay: -3.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alzcare-logo-float,
+  .alzcare-sea-bubble {
+    animation: none !important;
+  }
+}
+
+@keyframes alzcare-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.alzcare-bounce {
+  display: inline-block;
+  animation: alzcare-bounce 1.4s ease-in-out infinite;
+}
+
+.alzcare-scroll-hint:hover .alzcare-bounce {
+  animation-duration: 0.8s;
+}
+
+.alzcare-body {
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
+  line-height: 1.7;
+  color: var(--default-color) !important;
+}
+
+/* --- About --- */
+.alzcare-about {
+  background: color-mix(in srgb, var(--accent-color), var(--background-color) 96%) !important;
+}
+
+.alzcare-about .container {
+  position: relative;
+  z-index: 1;
+}
+
+.alzcare-glass-panel {
+  position: relative;
+  border-radius: 1.25rem;
+  padding: 2px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  box-shadow: 0 16px 48px color-mix(in srgb, var(--heading-color), transparent 92%);
+}
+
+.alzcare-glass-panel--lift {
+  transform: translateY(0);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.alzcare-glass-panel--lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 56px color-mix(in srgb, var(--heading-color), transparent 88%);
+}
+
+.alzcare-glass-panel__shine {
+  display: none;
+}
+
+.alzcare-glass-panel__inner {
+  position: relative;
+  z-index: 2;
+  background: var(--surface-color);
+  border-radius: calc(1.25rem - 2px);
+  padding: 2rem 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .alzcare-glass-panel__inner {
+    padding: 2.5rem 2.75rem;
+  }
+}
+
+.alzcare-mini-chip {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+}
+
+.alzcare-panel-title {
+  font-family: var(--heading-font) !important;
+  font-size: clamp(1.45rem, 1.25rem + 0.85vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--heading-color) !important;
+  line-height: 1.22;
+}
+
+.alzcare-subtitle {
+  max-width: 26rem;
+  color: var(--default-color);
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+/* --- Features --- */
+.alzcare-features {
+  padding-bottom: 3.5rem !important;
+  background: var(--background-color) !important;
+}
+
+.alzcare-features::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(88%, 520px);
+  height: 1px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color), transparent 70%);
+  opacity: 0.9;
+}
+
+.alzcare-3d-card {
+  position: relative;
+  height: 100%;
+  border-radius: 1.25rem;
+  padding: 1.85rem 1.5rem 2rem;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--heading-color), transparent 93%);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.alzcare-3d-card::before {
+  display: none;
+}
+
+.alzcare-3d-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--heading-color), transparent 88%);
+}
+
+.alzcare-3d-card__icon {
+  position: relative;
+  z-index: 1;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--accent-color), #ffffff 12%) 0%,
+    var(--accent-color) 100%
+  );
+  color: var(--contrast-color);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+.alzcare-3d-card__title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--heading-font) !important;
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: var(--heading-color) !important;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.alzcare-3d-card__text {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--default-color) !important;
+  line-height: 1.65;
+  font-size: 1rem;
+}
+
+.alzcare-3d-card--compact {
+  padding: 1.5rem 1.35rem 1.65rem;
+}
+
+.alzcare-3d-card--compact .alzcare-3d-card__icon {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+
+.alzcare-3d-card--compact .alzcare-3d-card__title {
+  font-size: 1.12rem;
+}
+
+.alzcare-3d-card--compact .alzcare-3d-card__text {
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* --- Mission --- */
+.alzcare-mission {
+  padding-top: 2rem !important;
+  padding-bottom: 2.5rem !important;
+  background: linear-gradient(
+    180deg,
+    var(--background-color) 0%,
+    color-mix(in srgb, var(--accent-color), var(--background-color) 94%) 50%,
+    var(--background-color) 100%
+  ) !important;
+}
+
+.alzcare-mission-lead {
+  font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.22rem);
+  line-height: 1.75;
+  color: var(--default-color);
+  max-width: 46rem;
+}
+
+.alzcare-mission-lead strong {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+/* --- Innovation row --- */
+.alzcare-innovation {
+  background: var(--background-color) !important;
+}
+
+.alzcare-innovation::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(88%, 520px);
+  height: 1px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color), transparent 70%);
+  opacity: 0.9;
+}
+
+.alzcare-sea-bubble--i {
+  width: 2.25rem;
+  height: 2.25rem;
+  right: 14%;
+  bottom: 40%;
+  animation-duration: 7.5s;
+  animation-delay: -2.2s;
+}
+
+/* --- Capability cards --- */
+.alzcare-capabilities {
+  padding-bottom: 3rem !important;
+  background: color-mix(in srgb, var(--accent-color), var(--background-color) 97%) !important;
+}
+
+.alzcare-cap-card {
+  border-radius: 1.25rem;
+  padding: 1.75rem 1.6rem 1.5rem;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  box-shadow: 0 10px 32px color-mix(in srgb, var(--heading-color), transparent 94%);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.alzcare-cap-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--heading-color), transparent 90%);
+}
+
+.alzcare-cap-card--wide {
+  padding: 2rem 1.75rem;
+}
+
+.alzcare-cap-card__head {
+  margin-bottom: 1.1rem;
+}
+
+.alzcare-cap-card__badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
+}
+
+.alzcare-cap-card__title {
+  font-family: var(--heading-font) !important;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--heading-color) !important;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.alzcare-cap-card__intro {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--default-color) !important;
+}
+
+.alzcare-cap-list {
+  margin: 0;
+  padding: 0 0 0 1.15rem;
+  list-style: disc;
+  color: var(--default-color);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.alzcare-cap-list li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.15rem;
+}
+
+.alzcare-cap-list li:last-child {
+  margin-bottom: 0;
+}
+
+.alzcare-cap-list strong {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+.alzcare-cap-list--tight {
+  list-style: none;
+  padding-left: 0;
+}
+
+.alzcare-cap-list--tight li {
+  position: relative;
+  padding-left: 1.35rem;
+  margin-bottom: 0.45rem;
+}
+
+.alzcare-cap-list--tight li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+.alzcare-cap-card__foot {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 92%);
+}
+
+.alzcare-cap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--accent-color) !important;
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.alzcare-cap-link:hover {
+  color: color-mix(in srgb, var(--accent-color), var(--heading-color) 18%) !important;
+  gap: 0.35rem;
+}
+
+/* --- Bottom CTA --- */
+.alzcare-cta {
+  padding-bottom: 3.5rem !important;
+  background: var(--background-color) !important;
+}
+
+.alzcare-cta__inner {
+  border-radius: 1.35rem;
+  padding: 2rem 1.75rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-color), #fff 8%) 0%,
+    var(--accent-color) 48%,
+    color-mix(in srgb, var(--accent-color), var(--heading-color) 22%) 100%
+  );
+  color: var(--contrast-color);
+  box-shadow: 0 18px 48px color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+@media (min-width: 768px) {
+  .alzcare-cta__inner {
+    padding: 2.35rem 2.75rem;
+  }
+}
+
+.alzcare-cta__title {
+  font-family: var(--heading-font) !important;
+  font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--contrast-color) !important;
+}
+
+.alzcare-cta__text {
+  font-size: 1.02rem;
+  line-height: 1.55;
+  opacity: 0.95;
+  color: var(--contrast-color) !important;
+}
+
+.alzcare-cta .btn-light {
+  font-weight: 600;
+  border: none;
+  color: var(--accent-color) !important;
+}
+
+.alzcare-cta .btn-outline-light {
+  font-weight: 600;
+  border-width: 2px;
+  color: var(--contrast-color) !important;
+}
+
+.alzcare-cta .btn-outline-light:hover {
+  background: color-mix(in srgb, var(--contrast-color), transparent 88%);
+  border-color: var(--contrast-color);
+  color: var(--contrast-color) !important;
+}

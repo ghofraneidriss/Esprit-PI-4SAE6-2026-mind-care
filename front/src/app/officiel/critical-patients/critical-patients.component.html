@@ -1,0 +1,259 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <div class="cvp-page-header page-header">
+      <div>
+        <h1>
+          <i class="ri-alarm-warning-line cvp-title-ico" aria-hidden="true"></i>
+          Critical patients
+        </h1>
+        <p>
+          Patients with more than {{ threshold }} <strong>total</strong> persisted movement alerts (safe zone, registered
+          home exit, immobility, no GPS, rapid movement — same rows as alert history). Full DB aggregate, not the limited
+          global “recent 200” feed. Search, sort, history, PDF.
+        </p>
+        <p class="critical-banner" *ngIf="movementError">
+          <i class="ri-error-warning-line" aria-hidden="true"></i>
+          Movement service unavailable — exit counts may be incomplete. Check the gateway / movement service.
+        </p>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div class="table-toolbar__filters">
+          <input
+            type="search"
+            name="critsearch"
+            [(ngModel)]="filterSearch"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search name, email, ID…"
+            autocomplete="off"
+          />
+        </div>
+        <div class="table-toolbar__actions">
+          <button type="button" class="btn-ghost" (click)="load()">Refresh</button>
+        </div>
+      </div>
+
+      <div class="thermo-legend" aria-label="Risk level legend">
+        <span class="thermo-legend__title">Risk (total movement alerts):</span>
+        <span class="thermo-legend__item"
+          ><span class="thermo-dot thermo-dot--low" aria-hidden="true"></span> Low — ≤ {{ riskLowMax }} (faible)</span
+        >
+        <span class="thermo-legend__item"
+          ><span class="thermo-dot thermo-dot--mid" aria-hidden="true"></span> Medium — {{ riskLowMax + 1 }}–{{
+            riskMediumMax
+          }}
+          (moyen)</span
+        >
+        <span class="thermo-legend__item"
+          ><span class="thermo-dot thermo-dot--high" aria-hidden="true"></span> High — &gt; {{ riskMediumMax }} (grave)</span
+        >
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <button type="button" class="th-sort" (click)="setSort('name')">
+                  Name {{ sortIndicator('name') }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="th-sort" (click)="setSort('email')">
+                  Email {{ sortIndicator('email') }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="th-sort" (click)="setSort('exits')">
+                  Movement alerts (total) {{ sortIndicator('exits') }}
+                </button>
+              </th>
+              <th>
+                <button type="button" class="th-sort" (click)="setSort('risk')">
+                  Risk level {{ sortIndicator('risk') }}
+                </button>
+              </th>
+              <th>Status</th>
+              <th>
+                <button type="button" class="th-sort" (click)="setSort('created')">
+                  Registered {{ sortIndicator('created') }}
+                </button>
+              </th>
+              <th class="th-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="!loading && filteredSorted.length">
+              <tr *ngFor="let r of tableRows" [class.row--placeholder]="r === null">
+                <ng-container *ngIf="r !== null; else critEmptyRow">
+                  <td>
+                    <strong>{{ r.firstname }} {{ r.lastname }}</strong>
+                  </td>
+                  <td>{{ r.email }}</td>
+                  <td>{{ r.totalMovementAlerts }}</td>
+                  <td>
+                    <div
+                      class="thermo-cell"
+                      [attr.aria-label]="'Risk: ' + riskLabelEn(r.totalMovementAlerts)"
+                    >
+                      <div class="thermo-bar" [ngClass]="'thermo-bar--' + riskBand(r.totalMovementAlerts)">
+                        <span></span><span></span><span></span>
+                      </div>
+                      <span class="thermo-pill" [ngClass]="'thermo-pill--' + riskBand(r.totalMovementAlerts)">{{
+                        riskLabelEn(r.totalMovementAlerts)
+                      }}</span>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-crit">Critical</span></td>
+                  <td>{{ r.createdAt | date : 'dd/MM/yyyy' }}</td>
+                  <td class="critical-actions-col">
+                    <div class="critical-action-btns">
+                      <button
+                        type="button"
+                        class="crit-act-btn crit-act-btn--history"
+                        (click)="openHistory(r)"
+                        title="View alert history"
+                      >
+                        <i class="ri-history-line" aria-hidden="true"></i>
+                        <span>History</span>
+                      </button>
+                      <button
+                        type="button"
+                        class="crit-act-btn crit-act-btn--pdf"
+                        (click)="downloadPdfRow(r)"
+                        [disabled]="pdfBusyRowId === r.id"
+                        title="Download clinical PDF"
+                      >
+                        <i class="ri-file-pdf-2-line" aria-hidden="true"></i>
+                        <span>{{ pdfBusyRowId === r.id ? 'PDF…' : 'PDF' }}</span>
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+              </tr>
+            </ng-container>
+            <tr *ngIf="!loading && !filteredSorted.length">
+              <td colspan="7" class="empty">
+                No patients currently meet the critical threshold (&gt; {{ threshold }} total movement alerts).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mgmt-pagination" *ngIf="!loading && filteredSorted.length">
+        <span class="mgmt-pagination__info">{{ rangeLabel }}</span>
+        <span>Page {{ pageIndex + 1 }} / {{ totalPages }}</span>
+        <button type="button" (click)="prevPage()" [disabled]="pageIndex === 0">Previous</button>
+        <button type="button" (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1">Next</button>
+      </div>
+      <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop modal-backdrop--layered" *ngIf="historyOpen" (click)="closeHistory()"></div>
+  <div class="detail-modal detail-modal--history" *ngIf="historyOpen" role="dialog" aria-modal="true">
+    <div class="detail-modal__panel detail-modal__panel--history" (click)="$event.stopPropagation()">
+      <div class="detail-modal__head detail-modal__head--history">
+        <h2>
+          <i class="ri-history-line" aria-hidden="true"></i>
+          Alert history — {{ historyPatient?.firstname }} {{ historyPatient?.lastname }}
+        </h2>
+        <button type="button" class="btn-icon" (click)="closeHistory()" aria-label="Close">✕</button>
+      </div>
+      <div class="detail-modal__body" *ngIf="historyLoading">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+      <div class="detail-modal__body history-modal-body" *ngIf="!historyLoading && historyPatient">
+        <div class="history-risk-banner">
+          <span class="history-risk-banner__label">Overall load</span>
+          <div class="thermo-cell thermo-cell--inline">
+            <div
+              class="thermo-bar thermo-bar--compact"
+              [ngClass]="'thermo-bar--' + riskBand(historyPatient.totalMovementAlerts)"
+            >
+              <span></span><span></span><span></span>
+            </div>
+            <span
+              class="thermo-pill"
+              [ngClass]="'thermo-pill--' + riskBand(historyPatient.totalMovementAlerts)"
+              >{{ riskLabelEn(historyPatient.totalMovementAlerts) }}</span
+            >
+            <span class="history-risk-banner__count">{{ historyPatient.totalMovementAlerts }} total alerts</span>
+          </div>
+        </div>
+        <p class="history-lead">
+          Saved alerts (newest last). Same data as the PDF. Use <strong>Maps</strong> to open the pin.
+        </p>
+        <div class="table-wrap history-table-wrap">
+          <table class="history-table">
+            <colgroup>
+              <col class="history-col history-col--when" />
+              <col class="history-col history-col--kind" />
+              <col class="history-col history-col--level" />
+              <col class="history-col history-col--seen" />
+              <col class="history-col history-col--summary" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Kind</th>
+                <th>Level</th>
+                <th>Seen</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of historyAlerts">
+                <td class="history-when">{{ a.createdAt | date : 'short' }}</td>
+                <td class="history-kind">
+                  <span class="alert-kind-pill">{{ alertKindTitle(a) }}</span>
+                </td>
+                <td class="history-level">
+                  <span class="sev-pill" [class.sev-pill--high]="a.severity === 'CRITICAL'">{{
+                    severityLabel(a.severity)
+                  }}</span>
+                </td>
+                <td class="history-seen">{{ a.acknowledged ? 'Yes' : 'No' }}</td>
+                <td class="history-msg-cell">
+                  <div class="history-msg-modern">
+                    <p class="history-msg-line" *ngIf="alertNoteText(a) as note">{{ note }}</p>
+                    <div
+                      class="history-msg-actions"
+                      *ngIf="alertCoordsLine(a) || extractGoogleMapsUrl(a.message)"
+                    >
+                      <span class="history-msg-coords" *ngIf="alertCoordsLine(a) as coordsLine">
+                        <i class="ri-focus-3-line" aria-hidden="true"></i>{{ coordsLine }}
+                      </span>
+                      <a
+                        *ngIf="extractGoogleMapsUrl(a.message) as mapHref"
+                        class="btn-maps-compact"
+                        [href]="mapHref"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <i class="ri-google-fill" aria-hidden="true"></i>
+                        <span>Maps</span>
+                        <i class="ri-external-link-line" aria-hidden="true"></i>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="!historyAlerts.length">
+                <td colspan="5" class="empty">No movement alerts on file for this patient.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #critEmptyRow>
+  <td colspan="7" class="td-placeholder"></td>
+</ng-template>

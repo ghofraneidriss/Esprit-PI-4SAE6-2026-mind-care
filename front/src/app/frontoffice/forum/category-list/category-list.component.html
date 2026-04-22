@@ -1,0 +1,51 @@
+<div class="forum-categories-page">
+  <div class="forum-categories-page__inner">
+    <header class="forum-categories-page__head text-center">
+      <h1 class="forum-categories-page__title">All categories</h1>
+      <p class="forum-categories-page__lead">Choose a topic to read and join the conversation.</p>
+    </header>
+
+    <div *ngIf="usingDemo" class="forum-banner forum-banner--compact" role="status">
+      <i class="ri-information-line" aria-hidden="true"></i>
+      <span>Preview list — connect the forum API for live data.</span>
+    </div>
+
+    <div class="forum-loading" *ngIf="loading">
+      <div class="forum-loading__spinner" aria-hidden="true"></div>
+      <p>Loading…</p>
+    </div>
+
+    <div class="forum-cat-grid" *ngIf="!loading && categories.length > 0">
+      <article
+        class="forum-cat-card"
+        *ngFor="let category of categories; trackBy: trackById"
+        (click)="navigateToCategory(category)"
+        (keyup.enter)="navigateToCategory(category)"
+        [tabindex]="0"
+        role="button"
+        [attr.aria-label]="'Open category ' + category.name"
+      >
+        <div
+          class="forum-cat-card__accent"
+          [style.background]="getCategoryCardStyle(category)"
+        ></div>
+        <div class="forum-cat-card__body">
+          <div
+            class="forum-cat-card__icon"
+            [style.background]="getCategoryCardStyle(category)"
+          >
+            <i [class]="category.icon || getCategoryIcon(categoryVisualIndex(category))" aria-hidden="true"></i>
+          </div>
+          <h2 class="forum-cat-card__name">{{ category.name }}</h2>
+          <p class="forum-cat-card__desc">
+            {{ category.description || 'Join the discussion in this space.' }}
+          </p>
+          <span class="forum-cat-card__cta">
+            Open
+            <i class="ri-arrow-right-up-line" aria-hidden="true"></i>
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>

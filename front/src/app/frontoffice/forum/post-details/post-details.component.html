@@ -1,0 +1,157 @@
+<!-- Post Details Page - Header and Footer are provided by ForumLayout -->
+<div class="container mx-auto px-4 py-8 max-w-4xl" *ngIf="post">
+    <!-- Back Button -->
+    <button (click)="navigateBack()"
+        class="inline-flex items-center gap-2 text-rose-500 font-medium mb-6 hover:underline transition-colors">
+        <i class="ri-arrow-left-line"></i> Back to {{ post.categoryName }}
+    </button>
+
+    <!-- Post Content -->
+    <div class="bg-white rounded-2xl shadow-soft p-8 mb-8 border border-gray-100 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-full -z-0"></div>
+
+        <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-6">
+                <span
+                    class="px-3 py-1 rounded-full bg-rose-100 text-rose-600 text-xs font-bold uppercase tracking-wider">
+                    {{ post.categoryName }}
+                </span>
+                <span class="text-gray-400 text-sm">
+                    <i class="ri-time-line"></i> {{ post.createdAt | date:'mediumDate' }}
+                </span>
+            </div>
+
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 font-serif leading-tight">{{ post.title }}</h1>
+
+            <div class="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold">
+                    {{ post.author?.charAt(0) || 'U' }}
+                </div>
+                <div>
+                    <div class="font-bold text-gray-800">{{ post.author || 'User ' + post.userId }}</div>
+                    <div class="text-xs text-gray-500">Member since 2023</div>
+                </div>
+            </div>
+
+            <div class="prose max-w-none text-gray-600 leading-relaxed text-lg">
+                {{ post.content }}
+            </div>
+
+            <div class="mt-8 flex gap-4">
+                <button class="flex items-center gap-2 text-gray-500 hover:text-rose-500 transition-colors">
+                    <i class="ri-heart-line"></i> Like
+                </button>
+                <button class="flex items-center gap-2 text-gray-500 hover:text-rose-500 transition-colors">
+                    <i class="ri-share-line"></i> Share
+                </button>
+                <button class="flex items-center gap-2 text-gray-500 hover:text-rose-500 transition-colors ml-auto">
+                    <i class="ri-flag-line"></i> Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mb-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="ri-chat-3-line text-amber-500"></i>
+            Discussion <span class="text-gray-400 font-normal">({{ comments.length }})</span>
+        </h3>
+
+        <div class="space-y-6">
+            <div *ngFor="let comment of comments"
+                class="bg-gray-50 rounded-xl p-6 relative group hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100">
+
+                <!-- Edit/Delete buttons for comment owner -->
+                <div *ngIf="isCommentOwner(comment)"
+                    class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button *ngIf="editingCommentId !== comment.id" (click)="startEditComment(comment)"
+                        class="text-gray-400 hover:text-amber-500 text-sm font-medium">
+                        <i class="ri-pencil-line"></i>
+                    </button>
+                    <button (click)="deleteComment(comment.id)"
+                        class="text-gray-400 hover:text-red-500 text-sm font-medium">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </div>
+
+                <div class="flex gap-4">
+                    <div
+                        class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        U{{ comment.userId }}
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-gray-800">User {{ comment.userId }}</span>
+                            <span class="text-xs text-gray-400">{{ comment.createdAt | date:'shortTime' }}</span>
+                        </div>
+
+                        <!-- Edit mode -->
+                        <div *ngIf="editingCommentId === comment.id" class="mt-2">
+                            <textarea [(ngModel)]="editCommentContent" rows="3"
+                                class="w-full bg-white border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-violet-200 resize-none"></textarea>
+                            <div class="flex gap-2 mt-2">
+                                <button (click)="saveEditComment(comment)"
+                                    class="bg-violet-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-violet-700 transition-colors">
+                                    Save
+                                </button>
+                                <button (click)="cancelEditComment()"
+                                    class="bg-gray-200 text-gray-700 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-300 transition-colors">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Display mode -->
+                        <p *ngIf="editingCommentId !== comment.id" class="text-gray-700 leading-relaxed">{{
+                            comment.content }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div *ngIf="comments.length === 0" class="text-center py-8 bg-gray-50 rounded-xl">
+                <i class="ri-chat-3-line text-4xl text-gray-300 mb-2"></i>
+                <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Comment Form -->
+    <div class="bg-white rounded-xl shadow-soft p-6 border-l-4 border-violet-500">
+        <h4 class="font-bold text-gray-800 mb-4">Add a Comment</h4>
+        <div class="relative">
+            <textarea [(ngModel)]="newCommentContent" rows="4" placeholder="Share your thoughts or support..."
+                class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-violet-200 resize-none transition-all"></textarea>
+        </div>
+        <div class="mt-4 flex justify-end">
+            <button (click)="addComment()" [disabled]="!newCommentContent.trim()"
+                class="bg-violet-600 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Post Comment
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading state -->
+<div *ngIf="loading && !post" class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="bg-white rounded-2xl shadow-soft p-12 text-center">
+        <div class="animate-spin w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full mx-auto mb-4">
+        </div>
+        <p class="text-gray-600 font-medium text-lg">One moment, loading this discussion…</p>
+    </div>
+</div>
+
+<!-- Error state -->
+<div *ngIf="error && !post" class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="bg-white rounded-2xl shadow-soft p-12 text-center">
+        <i class="ri-error-warning-line text-6xl text-red-500 mb-4"></i>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Loading error</h3>
+        <p class="text-gray-600 mb-6">{{ error }}</p>
+        <button (click)="navigateBack()"
+            class="px-6 py-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors">
+            <i class="ri-arrow-left-line mr-1"></i> Back
+        </button>
+    </div>
+</div>

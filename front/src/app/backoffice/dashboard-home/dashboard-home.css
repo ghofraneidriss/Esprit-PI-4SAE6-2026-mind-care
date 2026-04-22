@@ -1,0 +1,32 @@
+@import '../../officiel/cvp-officiel-shell.css';
+
+.page {
+  max-width: none;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.dashboard-home-wrap {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.chart-box {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.chart-box canvas {
+  display: block;
+  max-width: 100% !important;
+}

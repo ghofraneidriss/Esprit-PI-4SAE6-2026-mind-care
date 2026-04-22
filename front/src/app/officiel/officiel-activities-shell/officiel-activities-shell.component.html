@@ -1,0 +1,25 @@
+<div class="oas">
+  <aside class="oas-sidebar" aria-label="Activities">
+    <nav class="oas-nav">
+      @for (item of navItems; track item.path; let last = $last) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="oas-link--active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/officiel/dashboard' }"
+          class="oas-link">
+          <span class="oas-link-inner">
+            <i [class]="item.icon + ' oas-ico'" aria-hidden="true"></i>
+            <span class="oas-label">{{ item.label }}</span>
+          </span>
+        </a>
+        @if (!last) {
+          <div class="oas-rule" aria-hidden="true"></div>
+        }
+      }
+    </nav>
+  </aside>
+  <div class="oas-main">
+    <router-outlet></router-outlet>
+  </div>
+  <app-global-overlays />
+</div>

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: alzcare-mysql
+    environment:
+      # Mot de passe root vide (correspond aux application.properties existants)
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      # Autoriser la connexion root depuis n'importe quelle adresse (dev local)
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - "3306:3306"
+    volumes:
+      # Persistance des données entre redémarrages
+      - mysql_data:/var/lib/mysql
+      # Script d'initialisation : crée les 3 bases de données au premier démarrage
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    name: alzcare-mysql-data

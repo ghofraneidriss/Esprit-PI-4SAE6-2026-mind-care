@@ -1,0 +1,127 @@
+@import '../cvp-officiel-shell.css';
+
+.page {
+  max-width: none;
+}
+
+/* Page shell + titles: ../quiz-management + ../mgmt-shared */
+
+/* ===== Loading / Error / Empty ===== */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 64px 24px;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(124,107,255,.2);
+  border-top-color: #7c6bff;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 16px; color: #334155; margin: 0 0 6px; }
+.empty-state span { color: #64748b; font-size: 13px; }
+
+.error-state {
+  background: rgba(239,68,68,.12);
+  color: #ef4444;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dismiss-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Level labels in table */
+.rc-level.level-excellent { color: #10b981 !important; font-weight: 600; }
+.rc-level.level-bon { color: #34d399 !important; font-weight: 600; }
+.rc-level.level-moyen { color: #fbbf24 !important; font-weight: 600; }
+.rc-level.level-faible { color: #fb923c !important; font-weight: 600; }
+.rc-level.level-critique { color: #ef4444 !important; font-weight: 600; }
+
+.btn-download {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #7c6bff, #5e4fd1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-download:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124,107,255,.3);
+}
+.btn-download:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+.btn-download.downloading {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+.dl-icon { font-size: 16px; }
+.dl-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+.btn-download--table {
+  padding: 6px 12px;
+  font-size: 11px;
+  gap: 6px;
+}
+
+/* ===== Info Card ===== */
+.info-card {
+  margin-top: 28px;
+  background: #f5f3ff;
+  border: 1px solid #e9e5ff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.ic-icon { font-size: 20px; flex-shrink: 0; padding-top: 2px; color: #6366f1; }
+.ic-content strong {
+  display: block;
+  color: #0f172a;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.ic-content ul {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: disc;
+}
+.ic-content li {
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+

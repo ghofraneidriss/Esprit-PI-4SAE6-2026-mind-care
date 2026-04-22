@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.track-map-wrap {
+  position: relative;
+  width: 100%;
+  min-height: min(32dvh, 320px);
+}
+
+.track-map-wrap.patient-mode {
+  min-height: min(30dvh, 300px);
+}
+
+.map-container {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  width: 100%;
+  height: clamp(180px, 32dvh, 400px);
+  min-height: 180px;
+  border-radius: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(145deg, #e8eef5 0%, #f1f5f9 100%);
+  box-shadow:
+    0 4px 6px -1px rgba(15, 23, 42, 0.06),
+    0 12px 24px -4px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.patient-mode .map-container {
+  height: clamp(170px, 30dvh, 380px);
+  min-height: 170px;
+  border-radius: 0.95rem;
+}
+
+.map-hint {
+  margin: 0.65rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.patient-hint {
+  margin-top: 0.75rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+:host ::ng-deep .leaflet-container {
+  font-family: inherit;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 170px;
+  border-radius: inherit;
+  background: #dfe7f0;
+}
+
+:host ::ng-deep .leaflet-tile-container img {
+  max-width: none !important;
+}
+
+:host ::ng-deep .staff-join-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.staff-join-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ea580c;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.45);
+}
+
+/* Phones: shorter map so the rest of the page fits */
+@media (max-width: 639px) {
+  .track-map-wrap,
+  .track-map-wrap.patient-mode {
+    min-height: unset;
+  }
+
+  .map-container {
+    height: min(30dvh, 260px);
+    min-height: 170px;
+  }
+
+  .patient-mode .map-container {
+    height: min(28dvh, 240px);
+    min-height: 160px;
+  }
+}
+
+/* Large desktop: staff map capped; patient map uses more viewport (wide PC screens) */
+@media (min-width: 1200px) {
+  .track-map-wrap.patient-mode {
+    min-height: min(38dvh, 420px);
+  }
+
+  .map-container {
+    height: clamp(220px, 28dvh, 420px);
+  }
+
+  .patient-mode .map-container {
+    height: clamp(220px, 40dvh, 480px);
+    min-height: 220px;
+  }
+}
+
+/* Staff (caregiver / volunteer / doctor): map plus compacte qu’avant */
+.track-map-wrap.staff-map-wide {
+  min-height: min(40dvh, 520px);
+}
+
+.track-map-wrap.staff-map-wide .map-container {
+  height: clamp(260px, min(45dvh, calc(100dvh - 24rem)), 620px);
+  min-height: 240px;
+}
+
+@media (min-width: 900px) {
+  .track-map-wrap.staff-map-wide {
+    min-height: min(44dvh, 560px);
+  }
+
+  .track-map-wrap.staff-map-wide .map-container {
+    height: clamp(300px, min(48dvh, calc(100dvh - 20rem)), 680px);
+    min-height: 280px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .track-map-wrap.staff-map-wide .map-container {
+    height: clamp(320px, min(52dvh, calc(100dvh - 18rem)), 720px);
+  }
+}

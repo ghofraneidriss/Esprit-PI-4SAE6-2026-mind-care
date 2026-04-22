@@ -1,0 +1,185 @@
+<section class="incident-page" aria-label="Report an incident">
+    <div class="incident-split">
+        <!-- Left column: visual + identity (full width) -->
+        <aside class="incident-hero" aria-hidden="false">
+            <div class="incident-hero__pattern" aria-hidden="true"></div>
+            <div class="incident-hero__glow incident-hero__glow--1" aria-hidden="true"></div>
+            <div class="incident-hero__glow incident-hero__glow--2" aria-hidden="true"></div>
+
+            <div class="incident-hero__inner">
+                <a routerLink="/incidents/history" class="incident-hero__back">
+                    <i class="ri-arrow-left-s-line" aria-hidden="true"></i>
+                    <span>History</span>
+                </a>
+
+                <div class="incident-hero__badge">
+                    <i class="ri-shield-check-line" aria-hidden="true"></i>
+                    <span>Safety Center</span>
+                </div>
+
+                <h1 class="incident-hero__title">Report an incident</h1>
+                <p class="incident-hero__lead">
+                    Share what happened in a few steps — our team uses this to respond with clarity and care.
+                </p>
+
+                <ul class="incident-hero__features">
+                    <li>
+                        <span class="incident-hero__feat-icon"><i class="ri-time-line" aria-hidden="true"></i></span>
+                        <span class="incident-hero__feat-text">Fast triage &amp; follow-up</span>
+                    </li>
+                    <li>
+                        <span class="incident-hero__feat-icon"><i class="ri-lock-2-line" aria-hidden="true"></i></span>
+                        <span class="incident-hero__feat-text">Handled with discretion</span>
+                    </li>
+                    <li>
+                        <span class="incident-hero__feat-icon"><i class="ri-user-heart-line" aria-hidden="true"></i></span>
+                        <span class="incident-hero__feat-text">Linked to your care profile</span>
+                    </li>
+                </ul>
+
+                <div class="incident-hero__deco" aria-hidden="true">
+                    <i class="ri-heart-pulse-fill"></i>
+                    <i class="ri-first-aid-kit-fill"></i>
+                    <i class="ri-mental-health-fill"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right column: form (no narrow centered card) -->
+        <div class="incident-form-col">
+            <div class="incident-form-surface">
+                <div class="incident-form-head">
+                    <h2 class="incident-form-head__title">
+                        <i class="ri-file-list-3-line" aria-hidden="true"></i>
+                        New report
+                    </h2>
+                    <p class="incident-form-head__hint">Severity, type, and a short description help us act in context.</p>
+                </div>
+
+                <div *ngIf="successMessage" class="alert alert-success incident-alert" role="alert">
+                    <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                    <strong>{{ successMessage }}</strong>
+                </div>
+
+                <div *ngIf="errorMessage" class="alert alert-danger incident-alert" role="alert">
+                    <i class="ri-error-warning-line" aria-hidden="true"></i>
+                    <span>{{ errorMessage }}</span>
+                </div>
+
+                <div *ngIf="warningMessage" class="alert alert-warning incident-alert" role="alert">
+                    <i class="ri-alert-line" aria-hidden="true"></i>
+                    <span>{{ warningMessage }}</span>
+                </div>
+
+                <form [formGroup]="incidentForm" (ngSubmit)="onSubmit()" class="incident-form">
+                    <div class="form-block">
+                        <label class="field-label">{{ isCaregiverOrVolunteer ? 'Patient' : 'Reporting for' }}</label>
+
+                        <div *ngIf="!isCaregiverOrVolunteer" class="reporting-user-card">
+                            <div class="reporting-avatar" aria-hidden="true">
+                                <span class="reporting-avatar-initials">{{ reportingInitials }}</span>
+                            </div>
+                            <div class="reporting-info">
+                                <p class="reporting-name">{{ authService.getFullName() }}</p>
+                                <p class="reporting-email">{{ currentUser?.email }}</p>
+                            </div>
+                        </div>
+
+                        <div *ngIf="isCaregiverOrVolunteer">
+                            <div *ngIf="loadingPatients" class="loading-inline">
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                                Loading patients...
+                            </div>
+                            <div *ngIf="!loadingPatients && assignedPatients.length === 0" class="alert alert-warning small mb-0">
+                                No patients assigned to your account.
+                            </div>
+                            <select
+                                *ngIf="!loadingPatients && assignedPatients.length > 0"
+                                [(ngModel)]="selectedPatientId"
+                                [ngModelOptions]="{standalone: true}"
+                                class="form-select custom-select">
+                                <option *ngFor="let patient of assignedPatients" [ngValue]="patient.userId">
+                                    {{ patient.firstName }} {{ patient.lastName }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="type" class="field-label">
+                            <i class="ri-list-settings-line field-label__icon" aria-hidden="true"></i>
+                            Incident type
+                        </label>
+                        <div *ngIf="loadingTypes" class="loading-inline">
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                            Loading types...
+                        </div>
+                        <select
+                            id="type"
+                            formControlName="type"
+                            class="form-select custom-select"
+                            [disabled]="loadingTypes"
+                            [ngClass]="{'is-invalid': attemptedSubmit && incidentForm.get('type')?.invalid}">
+                            <option value="">Select a type</option>
+                            <option *ngFor="let type of incidentTypes" [value]="type.id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                        <div class="invalid-feedback">Please select an incident type.</div>
+                    </div>
+
+                    <div class="form-block">
+                        <span class="field-label">
+                            <i class="ri-pulse-line field-label__icon" aria-hidden="true"></i>
+                            Severity
+                        </span>
+                        <div class="severity-grid" role="group" aria-label="Severity">
+                            <ng-container *ngFor="let level of severityLevels">
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    [id]="'sev-' + level"
+                                    [value]="level"
+                                    formControlName="severityLevel"
+                                    autocomplete="off">
+                                <label class="severity-pill" [for]="'sev-' + level">
+                                    <i *ngIf="level === 'LOW'" class="ri-checkbox-circle-line low-icon" aria-hidden="true"></i>
+                                    <i *ngIf="level === 'MEDIUM'" class="ri-alert-line medium-icon" aria-hidden="true"></i>
+                                    <i *ngIf="level === 'HIGH'" class="ri-alarm-warning-line high-icon" aria-hidden="true"></i>
+                                    <span>{{ level }}</span>
+                                </label>
+                            </ng-container>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="description" class="field-label">
+                            <i class="ri-edit-2-line field-label__icon" aria-hidden="true"></i>
+                            Description
+                        </label>
+                        <textarea
+                            id="description"
+                            formControlName="description"
+                            rows="5"
+                            class="form-control custom-textarea"
+                            placeholder="Describe what happened (minimum 10 characters)..."
+                            [ngClass]="{'is-invalid': attemptedSubmit && incidentForm.get('description')?.invalid}">
+                        </textarea>
+                        <div class="invalid-feedback">Description must be at least 10 characters.</div>
+                    </div>
+
+                    <button type="submit" class="btn submit-btn w-100" [disabled]="isSubmitting">
+                        <span *ngIf="!isSubmitting">
+                            <i class="ri-send-plane-2-line" aria-hidden="true"></i>
+                            Submit report
+                        </span>
+                        <span *ngIf="isSubmitting" class="d-flex align-items-center justify-content-center">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            Sending...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

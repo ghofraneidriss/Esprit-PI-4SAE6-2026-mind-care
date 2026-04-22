@@ -1,0 +1,106 @@
+﻿/* MindCare auth — align cover + form with home (alzcare) typography */
+
+.auth-cover-mindcare .auth-cover-logo-mindcare {
+  display: block;
+  width: min(72vw, 320px);
+  max-width: 360px;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.25rem;
+  filter: drop-shadow(
+    0 14px 36px color-mix(in srgb, var(--accent-color, #0d6efd), transparent 72%)
+  );
+  animation: auth-cover-logo-float 5.5s ease-in-out infinite;
+}
+
+@keyframes auth-cover-logo-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.2deg) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.4deg) scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-cover-mindcare .auth-cover-logo-mindcare {
+    animation: none;
+  }
+}
+
+.auth-cover-title {
+  font-family: var(--heading-font, 'Ubuntu', sans-serif);
+  font-size: clamp(2rem, 1.55rem + 2.4vw, 3.35rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--heading-color, #1a1a1a);
+  margin-bottom: 1rem;
+}
+
+.auth-cover-lead {
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.35rem);
+  line-height: 1.6;
+  font-weight: 500;
+  color: var(--default-color, #3d3d3d);
+}
+
+.auth-cover-wrapper .auth-cover-mindcare .auth-content .auth-cover-lead {
+  opacity: 1;
+}
+
+.auth-form-panel {
+  max-width: min(94vw, 580px);
+  padding: 2.75rem 2.5rem;
+  background: var(--background-color, #ffffff);
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--accent-color, #0d6efd), transparent 88%);
+  box-shadow:
+    0 8px 40px color-mix(in srgb, var(--accent-color, #0d6efd), transparent 90%),
+    0 1px 0 color-mix(in srgb, var(--accent-color, #0d6efd), transparent 94%);
+}
+
+.auth-form-brand {
+  font-family: var(--heading-font, 'Ubuntu', sans-serif);
+  font-size: clamp(1.45rem, 1.3rem + 0.45vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.auth-form-heading {
+  font-family: var(--heading-font, 'Ubuntu', sans-serif);
+  font-size: clamp(1.7rem, 1.45rem + 0.85vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--heading-color, #1a1a1a);
+}
+
+.auth-form-sub {
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.12rem);
+  font-weight: 500;
+  color: var(--default-color, #555);
+}
+
+.auth-form-panel .form-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.auth-form-panel .form-control,
+.auth-form-panel .form-select {
+  font-size: 1rem;
+  padding: 0.65rem 0.9rem;
+}
+
+@media (max-width: 575.98px) {
+  .auth-form-panel {
+    padding: 2rem 1.35rem;
+  }
+
+  .auth-cover-mindcare .auth-cover-logo-mindcare {
+    width: min(64vw, 260px);
+    margin-bottom: 1.5rem;
+  }
+}

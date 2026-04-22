@@ -1,0 +1,177 @@
+/**
+ * Unified management shell: same title block, spacing, and toolbar alignment
+ * for Quiz, Photos, Users, Reports, Risk analysis (add class `mgmt-page` on root div with `page`).
+ * Use with `cvp-page admin-mgmt-root` to match /admin/results title rhythm.
+ */
+/* Même rythme que /admin/incidents-analytics (DashboardHome: container-fluid py-2 px-3) — titre sous le header fixe, sans grand vide */
+.admin-mgmt-root.cvp-page.mgmt-page.page,
+.admin-mgmt-root.cvp-page > .page.mgmt-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 clamp(0.75rem, 2vw, 1.25rem) 1rem;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f1f5f9 100%);
+}
+
+.admin-mgmt-root .cvp-page-header.page-header,
+.admin-mgmt-root .page-header.cvp-page-header {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  padding-top: 0;
+}
+
+.admin-mgmt-root .cvp-page-header {
+  margin-bottom: 0.75rem;
+}
+
+.admin-mgmt-root .cvp-page-header h1,
+.admin-mgmt-root .cvp-page-header h3 {
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  font-size: clamp(1.35rem, 2.2vw, 1.55rem);
+  font-weight: 500;
+  color: #0f172a;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  line-height: 1.2;
+}
+
+.admin-mgmt-root .cvp-page-header h1 .cvp-title-ico,
+.admin-mgmt-root .cvp-page-header h1 .page-title-icon {
+  font-size: 1.35rem;
+  color: var(--accent-color, #099aa7);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.admin-mgmt-root .cvp-page-header p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.admin-mgmt-root tbody tr.row--placeholder {
+  height: 2.85rem;
+  background: #fcfcfd;
+}
+
+.admin-mgmt-root tbody tr.row--placeholder td.td-placeholder {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.65rem 1rem;
+}
+
+.mgmt-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-top: 1px solid #e2e8f0;
+  background: #fafbfc;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.mgmt-pagination__info {
+  margin-right: auto;
+}
+
+.mgmt-pagination button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.mgmt-pagination button:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.mgmt-pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mgmt-page.page {
+  padding: 0 clamp(0.65rem, 1.8vw, 1.15rem) 0.85rem;
+  box-sizing: border-box;
+}
+
+.mgmt-page .page-header {
+  margin-bottom: 0.65rem;
+  gap: 8px;
+}
+
+.mgmt-page .page-title,
+.mgmt-page .page-header h1.page-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.mgmt-page .page-header p {
+  margin: 0.2rem 0 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.mgmt-page .page-title-icon {
+  font-size: 1.3rem;
+}
+
+/* Single surface: toolbar connects visually to table */
+.mgmt-page .table-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.mgmt-page .table-toolbar {
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+/* Embedded quiz on dashboard: tighter */
+.page.page--embedded.mgmt-page {
+  padding-bottom: 0.35rem;
+}
+
+.page.page--embedded.mgmt-page .page-header {
+  margin-bottom: 0.5rem;
+}
+
+.page.page--embedded.mgmt-page .page-title {
+  font-size: 1.12rem;
+}
+
+.page.page--embedded.mgmt-page .page-header p {
+  font-size: 0.82rem;
+}
+
+/* Optional filter row (reports, risk) — same toolbar look without a table */
+.mgmt-page .mgmt-filter-strip {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  margin-bottom: 12px;
+}
+.mgmt-page .mgmt-filter-strip .table-toolbar {
+  border-bottom: none;
+}

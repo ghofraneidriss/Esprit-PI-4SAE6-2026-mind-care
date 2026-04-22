@@ -1,0 +1,17 @@
+/* Forum shell — même principe que incidents : compense le padding de .alzcare-main (sinon bande blanche sous la navbar) */
+.forum-layout-content {
+  min-height: 0;
+  flex: 1;
+  background: transparent;
+}
+
+.forum-shell {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: calc(-1 * var(--alzcare-header-offset));
+  margin-bottom: calc(-1 * var(--alzcare-main-padding-bottom));
+  padding-top: var(--alzcare-header-offset);
+  padding-bottom: var(--alzcare-main-padding-bottom);
+  min-height: calc(100vh - var(--alzcare-header-offset) - var(--alzcare-footer-offset-forum));
+  background: #f0f2f5;
+}

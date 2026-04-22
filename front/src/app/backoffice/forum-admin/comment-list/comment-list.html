@@ -1,0 +1,118 @@
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a routerLink="/admin">Home</a></li>
+                    <li class="breadcrumb-item">Forum</li>
+                    <li class="breadcrumb-item active">Comments</li>
+                </ol>
+            </nav>
+            <h2 class="page-title mb-0">Comments</h2>
+            <p class="text-muted small mb-0 mt-1" *ngIf="authService.getRole() === 'DOCTOR'">
+              Comments on <strong>your</strong> posts only. For reports, use
+              <a routerLink="/admin/moderation/forum-reports">Moderation → Comment reports</a>.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button (click)="loadComments()" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3"
+                title="Refresh List">
+                <i class="fi fi-rr-refresh"></i>
+                LIST
+            </button>
+            <span class="badge bg-primary d-flex align-items-center px-3 rounded-pill">
+                {{ comments.length }} Records
+            </span>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error"
+        class="alert alert-danger d-flex align-items-center justify-content-between shadow-sm border-0 mb-4">
+        <div>
+            <i class="fi fi-rr-warning me-2"></i>
+            <strong>Connection Issue:</strong> {{ error }}
+        </div>
+        <button (click)="loadComments()" class="btn btn-sm btn-danger px-3">Retry</button>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <!-- Loading State (Only if no data) -->
+            <div *ngIf="loading && comments.length === 0" class="text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status"></div>
+                <h5 class="text-muted">Fetching Comments...</h5>
+                <p class="text-muted small">Accessing forum database...</p>
+            </div>
+
+            <!-- Empty State (Only if not loading) -->
+            <div *ngIf="!loading && comments.length === 0 && !error" class="text-center py-5">
+                <div
+                    class="avatar avatar-lg bg-light text-muted rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center">
+                    <i class="fi fi-rr-comment-slash fs-2"></i>
+                </div>
+                <h5>No Comments Found</h5>
+                <p class="text-muted small">No one has commented on any posts yet.</p>
+                <button (click)="loadComments()" class="btn btn-sm btn-primary px-4 rounded-pill">Check Again</button>
+            </div>
+
+            <!-- Table (Show if data exists, regardless of loading state) -->
+            <div *ngIf="comments.length > 0" class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Comment Discussion</th>
+                            <th style="width: 150px;">User Account</th>
+                            <th style="width: 180px;">Creation Date</th>
+                            <th class="text-end pe-4" style="width: 100px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let comment of comments">
+                            <td class="ps-4">
+                                <div
+                                    *ngIf="isModeratedCommentContent(comment.content)"
+                                    class="cl-mod-notice d-flex align-items-start gap-2"
+                                    [title]="comment.content">
+                                    <span class="cl-mod-notice__icon"><i class="fi fi-rr-shield-check"></i></span>
+                                    <div>
+                                        <div class="cl-mod-notice__title">Comment removed (moderated)</div>
+                                        <div class="cl-mod-notice__hint text-muted small">Stored placeholder; public view shows the English notice.</div>
+                                    </div>
+                                </div>
+                                <div
+                                    *ngIf="!isModeratedCommentContent(comment.content)"
+                                    class="text-dark fw-medium"
+                                    [title]="comment.content">
+                                    {{ comment.content }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="avatar avatar-3xs bg-info-subtle text-info rounded-circle me-2 flex-shrink-0">
+                                        <i class="fi fi-rr-user-md" style="font-size: 10px;"></i>
+                                    </div>
+                                    <span class="small">User #{{ comment.userId }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small text-muted">
+                                    <i class="fi fi-rr-clock-three me-1"></i>
+                                    {{ formatDate(comment.createdAt) }}
+                                </div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <button (click)="deleteComment(comment.id)"
+                                    class="btn btn-sm btn-icon btn-light text-danger rounded-circle border">
+                                    <i class="fi fi-rr-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

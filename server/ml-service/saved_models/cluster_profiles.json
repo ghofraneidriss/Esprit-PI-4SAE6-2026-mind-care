@@ -1,0 +1,44 @@
+{
+  "0": {
+    "label": "Low Risk",
+    "size": 199,
+    "avg_mmse": 14.919,
+    "avg_adl": 4.829,
+    "avg_functional": 5.394,
+    "avg_physical_activity": 5.151,
+    "avg_diet_quality": 4.919,
+    "avg_sleep_quality": 7.026,
+    "avg_bmi": 28.024,
+    "avg_systolic_bp": 134.271,
+    "avg_cholesterol_ldl": 127.974,
+    "diagnosis_rate": 0.322
+  },
+  "1": {
+    "label": "Medium Risk",
+    "size": 568,
+    "avg_mmse": 14.799,
+    "avg_adl": 4.887,
+    "avg_functional": 4.924,
+    "avg_physical_activity": 4.899,
+    "avg_diet_quality": 4.973,
+    "avg_sleep_quality": 7.062,
+    "avg_bmi": 27.802,
+    "avg_systolic_bp": 133.053,
+    "avg_cholesterol_ldl": 123.525,
+    "diagnosis_rate": 0.349
+  },
+  "2": {
+    "label": "High Risk",
+    "size": 1382,
+    "avg_mmse": 14.714,
+    "avg_adl": 5.045,
+    "avg_functional": 5.099,
+    "avg_physical_activity": 4.896,
+    "avg_diet_quality": 5.012,
+    "avg_sleep_quality": 7.05,
+    "avg_bmi": 27.542,
+    "avg_systolic_bp": 134.762,
+    "avg_cholesterol_ldl": 124.145,
+    "diagnosis_rate": 0.36
+  }
+}

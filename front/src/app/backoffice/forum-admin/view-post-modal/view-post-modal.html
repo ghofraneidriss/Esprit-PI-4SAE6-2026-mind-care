@@ -1,0 +1,93 @@
+<div class="view-post-shell">
+  <div class="view-post-shell__head">
+    <div class="view-post-shell__head-inner">
+      <div class="view-post-shell__head-icon" aria-hidden="true">
+        <i class="ri-article-line"></i>
+      </div>
+      <div>
+        <h2 class="view-post-shell__title mb-0">Post preview</h2>
+        <p class="view-post-shell__subtitle mb-0 small text-muted">Content and discussion</p>
+      </div>
+    </div>
+    <button type="button" (click)="onClose()" class="view-post-shell__close btn btn-light rounded-circle" aria-label="Close">
+      <i class="ri-close-line" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <mat-dialog-content class="view-post-shell__content">
+    <div class="view-post-meta">
+      <span class="view-post-badge">{{ data.post.categoryName || 'General' }}</span>
+      <span class="text-muted small d-flex align-items-center gap-1">
+        <i class="ri-calendar-line" aria-hidden="true"></i>
+        {{ data.post.createdAt | date: 'medium' }}
+      </span>
+    </div>
+
+    <h3 class="view-post-title">{{ data.post.title }}</h3>
+
+    <div class="view-post-author">
+      <div class="view-post-author__avatar" aria-hidden="true">{{ authorInitial }}</div>
+      <div>
+        <div class="fw-semibold small">{{ data.post.author || 'User #' + data.post.userId }}</div>
+        <div class="text-muted" style="font-size: 0.75rem;">Thread author</div>
+      </div>
+    </div>
+
+    <div class="view-post-body">
+      {{ data.post.content }}
+    </div>
+
+    <div class="view-post-stats">
+      <span><i class="ri-chat-3-line me-1" aria-hidden="true"></i>{{ data.post.commentCount }} comment(s)</span>
+      <span><i class="ri-eye-line me-1" aria-hidden="true"></i>{{ data.post.viewCount ?? 0 }} views</span>
+    </div>
+
+    <section class="view-post-comments" aria-labelledby="comments-heading">
+      <div class="view-post-comments__header">
+        <h4 id="comments-heading" class="h6 mb-0 fw-bold d-flex align-items-center gap-2">
+          <i class="ri-discuss-line text-primary" aria-hidden="true"></i>
+          Comments
+          <span class="badge bg-light text-dark border">{{ comments.length }}</span>
+        </h4>
+        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0" (click)="loadComments()" [disabled]="commentsLoading">
+          <i class="ri-refresh-line" [class.spin]="commentsLoading" aria-hidden="true"></i>
+          Refresh
+        </button>
+      </div>
+
+      <div *ngIf="commentsLoading" class="view-post-comments__loading py-4 text-center text-muted small">
+        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status" aria-hidden="true"></div>
+        <p class="mb-0">Loading comments…</p>
+      </div>
+
+      <p *ngIf="!commentsLoading && commentsError" class="alert alert-warning small py-2 mb-2">{{ commentsError }}</p>
+
+      <div *ngIf="!commentsLoading && !commentsError && comments.length === 0" class="view-post-comments__empty text-muted small py-3 text-center border rounded-3 bg-light">
+        No comments yet.
+      </div>
+
+      <ul *ngIf="!commentsLoading && comments.length > 0" class="view-post-comments__list list-unstyled mb-0">
+        <li *ngFor="let c of comments; trackBy: trackByCommentId" class="view-post-comment">
+          <div class="view-post-comment__avatar" aria-hidden="true">#{{ c.userId }}</div>
+          <div class="view-post-comment__body">
+            <div class="view-post-comment__meta">
+              <span class="fw-semibold small">User {{ c.userId }}</span>
+              <span class="text-muted small">{{ c.createdAt | date: 'short' }}</span>
+            </div>
+            <p class="view-post-comment__text mb-0">{{ c.content }}</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="view-post-shell__actions">
+    <button type="button" mat-stroked-button (click)="onClose()" class="rounded-pill px-4">Close</button>
+    <button *ngIf="canEditOrDelete" type="button" mat-stroked-button color="accent" (click)="onEdit()" class="rounded-pill px-4">
+      <i class="ri-pencil-line me-1" aria-hidden="true"></i>Edit
+    </button>
+    <button *ngIf="canEditOrDelete" type="button" mat-flat-button color="warn" (click)="onDelete()" class="rounded-pill px-4">
+      <i class="ri-delete-bin-line me-1" aria-hidden="true"></i>Delete
+    </button>
+  </mat-dialog-actions>
+</div>

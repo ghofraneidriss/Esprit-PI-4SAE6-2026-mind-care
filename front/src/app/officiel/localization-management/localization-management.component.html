@@ -1,0 +1,220 @@
+<div class="sz-shell" *ngIf="user">
+<div class="sz-page">
+  <section class="sz-root" *ngIf="canManage">
+    <div class="sz-hero">
+      <div class="sz-hero-text">
+        <p class="sz-kicker">Localization</p>
+        <h1 class="sz-title">Safe zones</h1>
+        <p class="sz-lead">
+          Define safe areas and optionally one <strong>registered home</strong> per patient — the reference location caregivers and
+          volunteers use on the map. When the patient leaves that home circle, an alert is raised every time.
+        </p>
+      </div>
+      <div class="sz-hero-badge" aria-hidden="true">
+        <span class="sz-hero-icon">◎</span>
+      </div>
+    </div>
+
+    <div class="sz-layout">
+      <aside class="sz-panel sz-panel--list">
+        <div class="sz-panel-head">
+          <h2 class="sz-panel-title">Your zones</h2>
+          <div class="sz-panel-head-actions">
+            <button
+              type="button"
+              class="sz-btn-refresh"
+              [disabled]="loading || saving"
+              (click)="loadAll(true)"
+              title="Refresh list"
+            >
+              Refresh
+            </button>
+            <label class="sz-sr-only" for="sz-filter-patient">Filter by patient</label>
+            <select
+              id="sz-filter-patient"
+              class="sz-select"
+              [(ngModel)]="selectedPatientFilter"
+              (ngModelChange)="applyFilter()"
+            >
+            <option [ngValue]="'ALL'">All patients</option>
+            <option *ngFor="let p of patients" [ngValue]="p.userId">
+              {{ p.firstName }} {{ p.lastName }}
+            </option>
+          </select>
+          </div>
+        </div>
+
+        <div class="sz-list-wrap" *ngIf="!loading; else szLoading">
+          <ul class="sz-list" *ngIf="filteredZones.length; else szEmpty">
+            <li
+              class="sz-card"
+              *ngFor="let z of filteredZones; index as i; trackBy: trackByZoneId"
+              [class.sz-card--active]="editing && form.id === z.id"
+            >
+              <div class="sz-card-main">
+                <span class="sz-card-index" aria-hidden="true">{{ i + 1 }}</span>
+                <div class="sz-card-copy">
+                  <h3 class="sz-card-name">
+                    {{ z.name }}
+                    <span class="sz-home-flag" *ngIf="z.homeReference">Registered home</span>
+                  </h3>
+                  <span class="sz-patient-pill">{{ getPatientLabel(z.patientId) }}</span>
+                  <div class="sz-card-stats">
+                    <span class="sz-stat">
+                      <span class="sz-stat-label">Radius</span>
+                      <span class="sz-stat-value">{{ z.radius }} m</span>
+                    </span>
+                    <span class="sz-stat sz-stat--wide">
+                      <span class="sz-stat-label">Center</span>
+                      <span class="sz-stat-value sz-stat-value--mono">
+                        {{ formatCoord(z.centerLatitude) }}, {{ formatCoord(z.centerLongitude) }}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="sz-card-actions">
+                <button type="button" class="sz-btn sz-btn--ghost" (click)="openZoneOnOsm(z)">Map</button>
+                <button type="button" class="sz-btn sz-btn--ghost" (click)="editZone(z)">Edit</button>
+                <button
+                  type="button"
+                  class="sz-btn sz-btn--danger"
+                  [disabled]="deletingId === z.id"
+                  (click)="deleteZone(z)"
+                >
+                  {{ deletingId === z.id ? 'Deleting…' : 'Delete' }}
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="sz-panel sz-panel--form" [attr.aria-busy]="saving">
+        <h2 class="sz-panel-title">{{ editing ? 'Edit safe zone' : 'New safe zone' }}</h2>
+        <p class="sz-form-hint">
+          Choose a patient, name the zone, then adjust the pin and radius on the map. The map loads automatically when you open this page.
+        </p>
+
+        <div class="sz-field">
+          <label class="sz-label" for="sz-patient">Assigned patient</label>
+          <select
+            id="sz-patient"
+            class="sz-input"
+            [(ngModel)]="form.patientId"
+            (ngModelChange)="onPatientChange()"
+            [disabled]="saving"
+            [attr.aria-invalid]="fieldErrors.patient ? true : null"
+          >
+            <option *ngIf="!patients.length" [ngValue]="0" disabled>No patients available</option>
+            <option *ngFor="let p of patients" [ngValue]="p.userId">
+              {{ p.firstName }} {{ p.lastName }} (ID {{ p.userId }})
+            </option>
+          </select>
+          <p *ngIf="fieldErrors.patient" class="sz-field-error" role="alert">{{ fieldErrors.patient }}</p>
+        </div>
+
+        <div class="sz-field">
+          <label class="sz-label" for="sz-name">Zone name</label>
+          <input
+            id="sz-name"
+            type="text"
+            class="sz-input"
+            [(ngModel)]="form.name"
+            (ngModelChange)="onFormFieldChange()"
+            placeholder="e.g. Home, Day center"
+            autocomplete="off"
+            [disabled]="saving"
+            [attr.aria-invalid]="fieldErrors.name ? true : null"
+          />
+          <p *ngIf="fieldErrors.name" class="sz-field-error" role="alert">{{ fieldErrors.name }}</p>
+        </div>
+
+        <div class="sz-field sz-field--home" *ngIf="showRegisteredHomeOption">
+          <label class="sz-label" for="sz-home-ref">Registered home (one per patient)</label>
+          <label class="sz-check-row">
+            <input
+              id="sz-home-ref"
+              type="checkbox"
+              [(ngModel)]="form.homeReference"
+              (ngModelChange)="onFormFieldChange()"
+              [disabled]="saving"
+            />
+            <span>
+              Use this zone as the patient’s <strong>registered home</strong> (reference for caregivers and volunteers on the map).
+              Leaving this circle triggers an alert every time. Only one zone can be home — saving updates which zone it is.
+            </span>
+          </label>
+        </div>
+
+        <p class="sz-home-hint" *ngIf="showRegisteredHomeOption && hasOtherRegisteredHome && !form.homeReference">
+          Another zone is currently the registered home. Check the box above to move the home address to
+          <strong>this</strong> zone (the previous one is cleared when you save).
+        </p>
+
+        <div class="sz-map-block">
+          <div class="sz-map-head">
+            <span class="sz-map-label">Area on map</span>
+            <span class="sz-map-coords">
+              {{ formatCoord(form.centerLatitude) }}, {{ formatCoord(form.centerLongitude) }}
+            </span>
+          </div>
+          <p *ngIf="fieldErrors.location" class="sz-field-error sz-field-error--map" role="alert">
+            {{ fieldErrors.location }}
+          </p>
+
+          <div class="sz-map-lazy" *ngIf="!mapVisible">
+            <p class="sz-map-lazy-text">The map is hidden to save resources. Load it to place or move the zone.</p>
+            <button type="button" class="sz-btn sz-btn--primary" (click)="revealMap()">Load map</button>
+          </div>
+
+          <div class="sz-map-host" *ngIf="mapVisible">
+            <app-safe-zone-osm-map
+              [centerLatitude]="form.centerLatitude"
+              [centerLongitude]="form.centerLongitude"
+              [radius]="form.radius"
+              (centerChange)="onMapCenter($event)"
+              (radiusChange)="onMapRadiusMeters($event)"
+            />
+          </div>
+        </div>
+
+        <div class="sz-form-actions">
+          <button type="button" class="sz-btn sz-btn--primary" [disabled]="saving" (click)="saveZone()">
+            {{
+              saving
+                ? 'Saving…'
+                : editing
+                  ? 'Save changes'
+                  : 'Create zone'
+            }}
+          </button>
+          <button type="button" class="sz-btn sz-btn--ghost" [disabled]="saving" (click)="resetForm()">Reset form</button>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <section *ngIf="!canManage" class="sz-denied">
+    <h2 class="sz-title">Access denied</h2>
+    <p>
+      Safe zone management is only available to clinical staff (admin, doctor), caregivers, and volunteers. If you believe this is a mistake, sign in with an authorized account.
+    </p>
+  </section>
+</div>
+</div>
+
+<ng-template #szLoading>
+  <div class="sz-skeleton" aria-busy="true">
+    <div class="sz-skel-line"></div>
+    <div class="sz-skel-line sz-skel-line--mid"></div>
+    <div class="sz-skel-line sz-skel-line--short"></div>
+  </div>
+</ng-template>
+
+<ng-template #szEmpty>
+  <div class="sz-empty">
+    <p class="sz-empty-title">No zones yet</p>
+    <p class="sz-empty-text">Create your first safe zone using the form on the right.</p>
+  </div>
+</ng-template>

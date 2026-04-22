@@ -1,0 +1,194 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+          <li class="breadcrumb-item"><a routerLink="/admin">Home</a></li>
+          <li class="breadcrumb-item active">User Management</li>
+        </ol>
+      </nav>
+      <h2 class="page-title mb-0">User Management</h2>
+    </div>
+    <button (click)="loadUsers()" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+      <i class="fi fi-rr-refresh"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Success -->
+  <div *ngIf="successMessage" class="alert alert-success border-0 shadow-sm mb-3">
+    <i class="fi fi-rr-check-circle me-2"></i> {{ successMessage }}
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger border-0 shadow-sm mb-3">
+    <i class="fi fi-rr-exclamation me-2"></i> {{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div *ngIf="!loading" class="row g-4">
+
+    <!-- PATIENTS TABLE -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+          <h5 class="mb-0 fw-bold">
+            <i class="fi fi-rr-user-injured me-2 text-info"></i>
+            Patients
+            <span class="badge bg-info bg-opacity-10 text-info ms-2">{{ patients.length }}</span>
+          </h5>
+          <small class="text-muted">Click "Assign" to link a patient to a caregiver</small>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr>
+                <th class="ps-4">Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Assigned Caregiver</th>
+                <th class="text-end pe-4">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let patient of patients">
+                <td class="ps-4">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-info-subtle text-info d-flex align-items-center justify-content-center fw-bold"
+                         style="width:36px;height:36px;font-size:0.85rem;flex-shrink:0">
+                      {{ patient.firstName.charAt(0) }}{{ patient.lastName.charAt(0) }}
+                    </div>
+                    <div>
+                      <div class="fw-bold">{{ patient.firstName }} {{ patient.lastName }}</div>
+                      <small class="badge bg-info bg-opacity-10 text-info">PATIENT</small>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-muted small">{{ patient.email }}</td>
+                <td class="text-muted small">{{ patient.phone || '—' }}</td>
+                <td>
+                  <span *ngIf="patient.caregiverId" class="badge bg-success bg-opacity-10 text-success px-3 py-2">
+                    <i class="fi fi-rr-user-nurse me-1"></i>
+                    {{ getCaregiverName(patient.caregiverId) }}
+                  </span>
+                  <span *ngIf="!patient.caregiverId" class="badge bg-warning bg-opacity-10 text-warning px-3 py-2">
+                    <i class="fi fi-rr-exclamation me-1"></i> Not assigned
+                  </span>
+                </td>
+                <td class="text-end pe-4">
+                  <button (click)="openAssignModal(patient)" class="btn btn-sm btn-outline-primary px-3">
+                    <i class="fi fi-rr-user-add me-1"></i> Assign
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="patients.length === 0">
+                <td colspan="5" class="text-center py-4 text-muted">No patients found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL USERS TABLE -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 fw-bold">
+            <i class="fi fi-rr-users me-2 text-primary"></i>
+            All Users
+            <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ users.length }}</span>
+          </h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr>
+                <th class="ps-4">Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td class="ps-4">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
+                         style="width:34px;height:34px;font-size:0.8rem;flex-shrink:0">
+                      {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+                    </div>
+                    <span class="fw-medium">{{ user.firstName }} {{ user.lastName }}</span>
+                  </div>
+                </td>
+                <td class="text-muted small">{{ user.email }}</td>
+                <td>
+                  <span class="badge px-2 py-1" [ngClass]="getRoleBadgeClass(user.role)">
+                    {{ user.role }}
+                  </span>
+                </td>
+                <td class="text-muted small">{{ user.phone || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ASSIGN CAREGIVER MODAL -->
+<div class="modal fade" [class.show]="isAssignModalOpen" [style.display]="isAssignModalOpen ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow border-0">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold">
+          <i class="fi fi-rr-user-add me-2 text-primary"></i>
+          Assign Caregiver
+        </h5>
+        <button type="button" class="btn-close" (click)="isAssignModalOpen = false"></button>
+      </div>
+      <div class="modal-body px-4 pb-2">
+
+        <div *ngIf="selectedPatient" class="d-flex align-items-center gap-3 p-3 bg-light rounded mb-4">
+          <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center fw-bold"
+               style="width:44px;height:44px;font-size:1rem;flex-shrink:0">
+            {{ selectedPatient.firstName.charAt(0) }}{{ selectedPatient.lastName.charAt(0) }}
+          </div>
+          <div>
+            <div class="fw-bold">{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</div>
+            <small class="text-muted">{{ selectedPatient.email }}</small>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Select Caregiver</label>
+          <select class="form-select" [(ngModel)]="selectedCaregiverId">
+            <option [ngValue]="null">— Remove assignment —</option>
+            <option *ngFor="let cg of caregivers" [ngValue]="cg.userId">
+              {{ cg.firstName }} {{ cg.lastName }}
+            </option>
+          </select>
+          <div class="form-text text-muted">
+            Currently: <strong>{{ getCaregiverName(selectedPatient?.caregiverId) }}</strong>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer border-0 pb-4">
+        <button type="button" class="btn btn-light px-4" (click)="isAssignModalOpen = false">Cancel</button>
+        <button type="button" class="btn btn-primary px-4" (click)="saveAssignment()" [disabled]="assigning">
+          <span *ngIf="assigning" class="spinner-border spinner-border-sm me-2"></span>
+          {{ assigning ? 'Saving...' : 'Save Assignment' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isAssignModalOpen"></div>

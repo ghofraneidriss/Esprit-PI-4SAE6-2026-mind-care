@@ -1,0 +1,279 @@
+<div class="cvp-page admin-mgmt-root">
+  <div class="page mgmt-page">
+    <div class="cvp-page-header page-header">
+      <div>
+        <h1>
+          <i class="ri-team-line cvp-title-ico" aria-hidden="true"></i>
+          User management
+        </h1>
+        <p>{{ users.length }} registered user(s)</p>
+      </div>
+    </div>
+
+    <div class="table-card" *ngIf="!showForm">
+    <div class="table-toolbar">
+      <div class="table-toolbar__filters">
+        <input
+          type="search"
+          name="usearch"
+          [(ngModel)]="filterSearch"
+          (ngModelChange)="userFiltersChanged()"
+          placeholder="Search first name, last name, email…"
+          autocomplete="off"
+        />
+        <div>
+          <span class="filter-label">Role</span>
+          <select [(ngModel)]="filterRole" name="frole" (ngModelChange)="userFiltersChanged()">
+            <option value="">All</option>
+            <option value="PATIENT">Patient</option>
+            <option value="DOCTOR">Doctor</option>
+            <option value="CAREGIVER">Caregiver</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+        <div>
+          <span class="filter-label">From</span>
+          <input type="date" [(ngModel)]="filterDateFrom" name="dfrom" (ngModelChange)="userFiltersChanged()" />
+        </div>
+        <div>
+          <span class="filter-label">To</span>
+          <input type="date" [(ngModel)]="filterDateTo" name="dto" (ngModelChange)="userFiltersChanged()" />
+        </div>
+        <label class="filter-check">
+          <input
+            type="checkbox"
+            [(ngModel)]="filterCriticalPatientsOnly"
+            name="critonly"
+            (ngModelChange)="userFiltersChanged()"
+          />
+          <span>Critical patients only (&gt; {{ clinicalMovementAlertThreshold }} movement alerts, all types)</span>
+        </label>
+      </div>
+      <div class="table-toolbar__actions">
+        <button type="button" class="btn-ghost" (click)="resetFilters()">Reset</button>
+        <button type="button" class="btn-danger" (click)="deleteSelected()" [disabled]="!selectedIds.length">
+          Delete selected ({{ selectedIds.length }})
+        </button>
+        <button type="button" class="btn-primary" (click)="openCreate()">+ New user</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="th-check">
+              <input
+                type="checkbox"
+                [checked]="allFilteredSelected"
+                (change)="toggleSelectAll($any($event.target).checked)"
+              />
+            </th>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Movement alerts</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="!loading && filteredUsers.length">
+            <tr *ngFor="let u of userTableRows" [class.row--placeholder]="u === null">
+              <ng-container *ngIf="u !== null; else userEmptyRow">
+                <td class="th-check">
+                  <input
+                    type="checkbox"
+                    [checked]="isSelected(u.id)"
+                    (change)="toggleRow(u.id, $any($event.target).checked)"
+                  />
+                </td>
+                <td>{{ u.id }}</td>
+                <td>
+                  <strong>{{ u.firstname }} {{ u.lastname }}</strong>
+                </td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.phone || '—' }}</td>
+                <td><span class="badge" [ngClass]="getRoleClass(u.role)">{{ getRoleBadge(u.role) }} {{ u.role }}</span></td>
+                <td>
+                  <ng-container *ngIf="u.role === 'PATIENT'; else szNa">
+                    <span *ngIf="movementAlertsLoaded; else szPending" [class.text-critical]="safeZoneExitsForUser(u)! > clinicalMovementAlertThreshold">
+                      {{ safeZoneExitsForUser(u) }}
+                    </span>
+                    <ng-template #szPending>—</ng-template>
+                  </ng-container>
+                  <ng-template #szNa>—</ng-template>
+                </td>
+                <td>{{ u.createdAt | date : 'dd/MM/yyyy' }}</td>
+                <td class="actions">
+                  <button type="button" class="btn-icon edit" (click)="openEdit(u)" title="Edit">✏️</button>
+                  <button
+                    type="button"
+                    class="btn-icon limit"
+                    (click)="openLimitModal(u)"
+                    *ngIf="u.role === 'PATIENT'"
+                    title="Quiz limit"
+                  >
+                    🎯
+                  </button>
+                  <button type="button" class="btn-icon del" (click)="deleteOne(u.id)" title="Delete">🗑️</button>
+                </td>
+              </ng-container>
+            </tr>
+          </ng-container>
+          <tr *ngIf="!loading && !filteredUsers.length">
+            <td colspan="9" class="empty">No users match your filters</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mgmt-pagination" *ngIf="!loading && filteredUsers.length">
+      <span class="mgmt-pagination__info">{{ userRangeLabel }}</span>
+      <span>Page {{ pageIndex + 1 }} / {{ userTotalPages }}</span>
+      <button type="button" (click)="userPrevPage()" [disabled]="pageIndex === 0">Previous</button>
+      <button type="button" (click)="userNextPage()" [disabled]="pageIndex >= userTotalPages - 1">Next</button>
+    </div>
+    <div class="loading" *ngIf="loading"><div class="spinner"></div></div>
+  </div>
+
+  <ng-template #userEmptyRow>
+    <td colspan="9" class="td-placeholder">&nbsp;</td>
+  </ng-template>
+
+  <div class="form-card" *ngIf="showForm">
+    <div class="form-header">
+      <h2>{{ editing ? 'Edit user' : 'New user' }}</h2>
+      <button type="button" class="btn-ghost" (click)="showForm = false">✕ Close</button>
+    </div>
+    <form (ngSubmit)="save()">
+      <div class="form-grid">
+        <div class="field">
+          <label>First name *</label>
+          <input [(ngModel)]="form.firstname" name="fn" required />
+        </div>
+        <div class="field">
+          <label>Last name *</label>
+          <input [(ngModel)]="form.lastname" name="ln" required />
+        </div>
+        <div class="field">
+          <label>Email *</label>
+          <input type="email" [(ngModel)]="form.email" name="em" required />
+        </div>
+        <div class="field">
+          <label>{{ editing ? 'New password (optional)' : 'Password *' }}</label>
+          <input type="password" [(ngModel)]="form.password" name="pw" [required]="!editing" />
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="tel" [(ngModel)]="form.phone" name="ph" />
+        </div>
+        <div class="field">
+          <label>Role</label>
+          <select [(ngModel)]="form.role" name="role">
+            <option value="PATIENT">🧠 Patient</option>
+            <option value="DOCTOR">🩺 Doctor</option>
+            <option value="CAREGIVER">🤝 Caregiver</option>
+            <option value="ADMIN">🛡️ Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" (click)="showForm = false">Cancel</button>
+        <button type="submit" class="btn-primary">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Quiz limit modal -->
+  <div class="limit-overlay" *ngIf="showLimitModal" (click)="closeLimitModal()">
+    <div class="limit-modal" (click)="$event.stopPropagation()">
+      <div class="limit-header">
+        <h2>🎯 Quiz limit</h2>
+        <button type="button" class="btn-ghost" (click)="closeLimitModal()">✕</button>
+      </div>
+
+      <div class="limit-patient-info" *ngIf="limitPatient">
+        <div class="lp-avatar">🧠</div>
+        <div>
+          <strong>{{ limitPatient.firstname }} {{ limitPatient.lastname }}</strong>
+          <span class="lp-email">{{ limitPatient.email }}</span>
+        </div>
+      </div>
+
+      <div class="limit-loading" *ngIf="limitLoading">
+        <div class="spinner"></div>
+        <p>Loading status…</p>
+      </div>
+
+      <div class="limit-body" *ngIf="!limitLoading && limitStatus">
+        <div class="limit-status-grid">
+          <div class="ls-card">
+            <span class="ls-icon">📝</span>
+            <span class="ls-value">{{ limitStatus.completedQuizzes }}</span>
+            <span class="ls-label">Quizzes completed</span>
+          </div>
+          <div class="ls-card">
+            <span class="ls-icon">🔒</span>
+            <span class="ls-value">{{ limitStatus.hasLimit ? limitStatus.maxQuizzes : '∞' }}</span>
+            <span class="ls-label">Max limit</span>
+          </div>
+          <div class="ls-card">
+            <span class="ls-icon">{{ limitStatus.canPlay ? '✅' : '🚫' }}</span>
+            <span class="ls-value">{{ limitStatus.hasLimit ? limitStatus.remaining : '∞' }}</span>
+            <span class="ls-label">Remaining</span>
+          </div>
+        </div>
+
+        <div class="limit-progress" *ngIf="limitStatus.hasLimit">
+          <div class="lp-bar">
+            <div
+              class="lp-fill"
+              [style.width.%]="(limitStatus.completedQuizzes / limitStatus.maxQuizzes) * 100"
+              [class.lp-full]="limitStatus.remaining <= 0"
+              [class.lp-warning]="limitStatus.remaining > 0 && limitStatus.remaining <= 2"
+            ></div>
+          </div>
+          <span class="lp-text">{{ limitStatus.completedQuizzes }} / {{ limitStatus.maxQuizzes }}</span>
+        </div>
+
+        <div class="limit-no-limit" *ngIf="!limitStatus.hasLimit">
+          <span>ℹ️</span> No limit set — the patient can play without restriction.
+        </div>
+
+        <div class="limit-form">
+          <label>Maximum quizzes allowed</label>
+          <div class="limit-input-row">
+            <button type="button" class="limit-btn" (click)="limitValue = limitValue > 1 ? limitValue - 1 : 1">−</button>
+            <input type="number" [(ngModel)]="limitValue" min="1" max="9999" class="limit-input" />
+            <button type="button" class="limit-btn" (click)="limitValue = limitValue + 1">+</button>
+          </div>
+          <div class="limit-presets">
+            <button
+              *ngFor="let p of [5, 10, 15, 20, 30, 50]"
+              type="button"
+              class="preset-chip"
+              [class.active]="limitValue === p"
+              (click)="limitValue = p"
+            >
+              {{ p }}
+            </button>
+          </div>
+        </div>
+
+        <div class="limit-actions">
+          <button type="button" class="btn-danger" (click)="removeLimit()" *ngIf="limitStatus.hasLimit" [disabled]="limitSaving">
+            🗑️ Remove limit
+          </button>
+          <div class="limit-actions-right">
+            <button type="button" class="btn-ghost" (click)="closeLimitModal()">Cancel</button>
+            <button type="button" class="btn-primary" (click)="saveLimit()" [disabled]="limitSaving">
+              {{ limitSaving ? '⏳ …' : '💾 Save' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

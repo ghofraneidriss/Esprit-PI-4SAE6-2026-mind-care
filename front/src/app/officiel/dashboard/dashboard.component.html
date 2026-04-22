@@ -1,0 +1,304 @@
+<!-- Staff back-office: global analytics only (no quiz embed). -->
+<ng-container *ngIf="isStaffAnalyticsHome">
+  <div class="cvp-page admin-mgmt-root admin-analytics-root">
+    <div class="page mgmt-page">
+      <div class="cvp-page-header page-header">
+        <div>
+          <h1>
+            <i class="ri-pulse-line cvp-title-ico" aria-hidden="true"></i>
+            Global analytics
+          </h1>
+          <p class="admin-analytics-sub">
+            Cross-patient cognitive performance, risk distribution, and incident overview. Use the sidebar for
+            quiz management, detailed results, and reports.
+          </p>
+        </div>
+      </div>
+
+    <div class="stats-grid admin-analytics-stats">
+      <div class="stat-card">
+        <span class="cvp-ico cvp-ico--violet" aria-hidden="true"><i class="ri-questionnaire-line"></i></span>
+        <div class="stat-info">
+          <div class="stat-val">{{ stats.totalQuizzes || 0 }}</div>
+          <div class="stat-lbl">Active quizzes</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="cvp-ico" aria-hidden="true"><i class="ri-camera-lens-line"></i></span>
+        <div class="stat-info">
+          <div class="stat-val">{{ stats.totalPhotos || 0 }}</div>
+          <div class="stat-lbl">Photo discrimination</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="cvp-ico cvp-ico--emerald" aria-hidden="true"><i class="ri-focus-3-line"></i></span>
+        <div class="stat-info">
+          <div class="stat-val">{{ stats.avgScore || 0 }}%</div>
+          <div class="stat-lbl">Average score (all)</div>
+        </div>
+      </div>
+      <div class="stat-card" [class.stat-card--alert]="(stats.criticalCount ?? 0) > 0">
+        <span
+          class="cvp-ico"
+          [class.cvp-ico--rose]="(stats.criticalCount ?? 0) > 0"
+          [class.cvp-ico--emerald]="(stats.criticalCount ?? 0) === 0"
+          aria-hidden="true"
+        >
+          <i [class]="(stats.criticalCount ?? 0) > 0 ? 'ri-alarm-warning-line' : 'ri-shield-check-line'"></i>
+        </span>
+        <div class="stat-info">
+          <div class="stat-val">{{ stats.criticalCount || 0 }}</div>
+          <div class="stat-lbl">High / critical risk flags</div>
+        </div>
+      </div>
+      <div class="stat-card" *ngIf="user?.role === 'ADMIN'">
+        <span class="cvp-ico cvp-ico--violet" aria-hidden="true"><i class="ri-team-line"></i></span>
+        <div class="stat-info">
+          <div class="stat-val">{{ stats.totalUsers || 0 }}</div>
+          <div class="stat-lbl">Users</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="cvp-ico cvp-ico--amber" aria-hidden="true"><i class="ri-bar-chart-box-line"></i></span>
+        <div class="stat-info">
+          <div class="stat-val">{{ stats.totalResults || 0 }}</div>
+          <div class="stat-lbl">Recorded sessions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-charts-grid" *ngIf="!loading">
+      <div class="chart-panel">
+        <h2 class="chart-panel__title"><i class="ri-pie-chart-2-line me-1"></i> Risk distribution</h2>
+        <p class="chart-panel__hint">From all game / activity results</p>
+        <div class="chart-panel__canvas-wrap">
+          <canvas #chartRisk></canvas>
+        </div>
+        <p class="chart-panel__empty" *ngIf="!stats.totalResults">No results yet — charts populate when patients complete activities.</p>
+      </div>
+      <div class="chart-panel">
+        <h2 class="chart-panel__title"><i class="ri-line-chart-line me-1"></i> Average score trend</h2>
+        <p class="chart-panel__hint">Monthly mean weighted score (%)</p>
+        <div class="chart-panel__canvas-wrap">
+          <canvas #chartScoreTrend></canvas>
+        </div>
+      </div>
+      <div class="chart-panel">
+        <h2 class="chart-panel__title"><i class="ri-stack-line me-1"></i> Activity types</h2>
+        <p class="chart-panel__hint">Quiz sessions vs photo discrimination (distinct result types)</p>
+        <div class="chart-panel__canvas-wrap">
+          <canvas #chartActivity></canvas>
+        </div>
+      </div>
+      <div class="chart-panel">
+        <h2 class="chart-panel__title"><i class="ri-alarm-warning-line me-1"></i> Incidents by severity</h2>
+        <p class="chart-panel__hint">From incident tracking</p>
+        <div class="chart-panel__canvas-wrap">
+          <canvas #chartIncidents></canvas>
+        </div>
+        <p class="chart-panel__empty" *ngIf="incidentStats && !hasIncidentSeverityData">
+          No incident severity data.
+        </p>
+      </div>
+    </div>
+
+    <div class="section" *ngIf="recentResults.length && !loading">
+      <h2><i class="ri-history-line me-2 text-accent"></i> Latest sessions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>Score</th>
+              <th>Difficulty</th>
+              <th>Risk</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of recentResults">
+              <td><strong>{{ r.activityTitle || 'Quiz' }}</strong></td>
+              <td>{{ r.weightedScore | number : '1.0-0' }}%</td>
+              <td><span class="badge diff-{{ r.difficulty?.toLowerCase() }}">{{ r.difficulty }}</span></td>
+              <td><span class="badge" [ngClass]="getRiskClass(r.riskLevel)">{{ r.riskLevel }}</span></td>
+              <td>{{ r.completedAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <nav class="admin-analytics-tools" aria-label="Management shortcuts">
+      <span class="admin-analytics-tools__lbl">Tools</span>
+      <a routerLink="/admin/quiz-management">Quiz management</a>
+      <a routerLink="/admin/photo-management">Photo discrimination</a>
+      <a routerLink="/admin/results">Results &amp; risk</a>
+      <a routerLink="/admin/reports">PDF reports</a>
+      <a routerLink="/admin/forum" *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'">Forum</a>
+      <a routerLink="/admin/forum/categories" *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+        >Forum categories</a
+      >
+      <a
+        routerLink="/admin/moderation/forum-reports"
+        *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+        >Comment reports</a
+      >
+      <a routerLink="/admin/users" *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'">Users</a>
+      <a routerLink="/admin/critical-patients" *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+        >Critical patients</a
+      >
+      <a routerLink="/admin/safe-zones" *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'">Safe zones</a>
+      <a routerLink="/admin/patient-movement">Movement</a>
+      <a routerLink="/admin/incidents-reported" *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+        >Incident reports</a
+      >
+    </nav>
+
+    <div class="loading-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading analytics…</p>
+    </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Patient / CVP dashboard (unchanged behaviour). -->
+<ng-container *ngIf="!isStaffAnalyticsHome">
+  <div class="cvp-page">
+    <div class="page mgmt-page">
+      <div class="dashboard">
+      <div class="cvp-page-header welcome">
+        <h1>
+          <i class="ri-hand-heart-line cvp-title-ico" aria-hidden="true"></i>
+          {{ greeting }}, {{ user?.firstName }}
+        </h1>
+        <p>Welcome to your Mind Care dashboard</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="cvp-ico cvp-ico--violet" aria-hidden="true"><i class="ri-questionnaire-line"></i></span>
+          <div class="stat-info">
+            <div class="stat-val">{{ stats.totalQuizzes || 0 }}</div>
+            <div class="stat-lbl">Active quizzes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="cvp-ico" aria-hidden="true"><i class="ri-camera-lens-line"></i></span>
+          <div class="stat-info">
+            <div class="stat-val">{{ stats.totalPhotos || 0 }}</div>
+            <div class="stat-lbl">Photo discrimination</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="cvp-ico cvp-ico--emerald" aria-hidden="true"><i class="ri-focus-3-line"></i></span>
+          <div class="stat-info">
+            <div class="stat-val">{{ stats.avgScore || 0 }}%</div>
+            <div class="stat-lbl">Average score</div>
+          </div>
+        </div>
+        <div class="stat-card" [class.stat-card--alert]="(stats.criticalCount ?? 0) > 0">
+          <span
+            class="cvp-ico"
+            [class.cvp-ico--rose]="(stats.criticalCount ?? 0) > 0"
+            [class.cvp-ico--emerald]="(stats.criticalCount ?? 0) === 0"
+            aria-hidden="true"
+          >
+            <i [class]="(stats.criticalCount ?? 0) > 0 ? 'ri-alarm-warning-line' : 'ri-shield-check-line'"></i>
+          </span>
+          <div class="stat-info">
+            <div class="stat-val">{{ stats.criticalCount || 0 }}</div>
+            <div class="stat-lbl">Risk alerts</div>
+          </div>
+        </div>
+        <div class="stat-card" *ngIf="user?.role === 'ADMIN'">
+          <span class="cvp-ico cvp-ico--violet" aria-hidden="true"><i class="ri-team-line"></i></span>
+          <div class="stat-info">
+            <div class="stat-val">{{ stats.totalUsers || 0 }}</div>
+            <div class="stat-lbl">Users</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="cvp-ico cvp-ico--amber" aria-hidden="true"><i class="ri-bar-chart-box-line"></i></span>
+          <div class="stat-info">
+            <div class="stat-val">{{ stats.totalResults || 0 }}</div>
+            <div class="stat-lbl">Results</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2><i class="ri-flashlight-line me-2 text-accent"></i>Quick actions</h2>
+        <div class="actions-grid">
+          <a [routerLink]="cvpPrefix + '/quiz-list'" class="action-card" *ngIf="user?.role === 'PATIENT'">
+            <i class="ri-gamepad-line action-ico" aria-hidden="true"></i><span>Play a quiz</span>
+          </a>
+          <a
+            [routerLink]="cvpPrefix + '/quiz-management'"
+            class="action-card"
+            *ngIf="(user?.role === 'ADMIN' || user?.role === 'DOCTOR') && cvpPrefix === '/officiel'"
+          >
+            <i class="ri-add-circle-line action-ico" aria-hidden="true"></i><span>Manage quizzes</span>
+          </a>
+          <a
+            [routerLink]="cvpPrefix + '/photo-management'"
+            class="action-card"
+            *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+          >
+            <i class="ri-image-add-line action-ico" aria-hidden="true"></i><span>Photo discrimination</span>
+          </a>
+          <a [routerLink]="cvpPrefix + '/results'" class="action-card">
+            <i class="ri-line-chart-line action-ico" aria-hidden="true"></i><span>View results</span>
+          </a>
+          <a
+            [routerLink]="cvpPrefix + '/results'"
+            class="action-card"
+            *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+            [queryParams]="{ tab: 'risk' }"
+          >
+            <i class="ri-microscope-line action-ico" aria-hidden="true"></i><span>Risk analysis</span>
+          </a>
+          <a
+            [routerLink]="cvpPrefix + '/users'"
+            class="action-card"
+            *ngIf="user?.role === 'ADMIN' || user?.role === 'DOCTOR'"
+          >
+            <i class="ri-user-settings-line action-ico" aria-hidden="true"></i><span>Users</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="recentResults.length">
+        <h2><i class="ri-history-line me-2 text-accent"></i>Recent results</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Score</th>
+                <th>Difficulty</th>
+                <th>Risk</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of recentResults">
+                <td><strong>{{ r.activityTitle || 'Quiz' }}</strong></td>
+                <td>{{ r.weightedScore | number : '1.0-0' }}%</td>
+                <td><span class="badge diff-{{ r.difficulty?.toLowerCase() }}">{{ r.difficulty }}</span></td>
+                <td><span class="badge" [ngClass]="getRiskClass(r.riskLevel)">{{ r.riskLevel }}</span></td>
+                <td>{{ r.completedAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+      </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,165 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a routerLink="/admin">Home</a></li>
+                    <li class="breadcrumb-item active">Management</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold mb-0">Active Incident Management</h2>
+            <p class="text-muted small">Monitor and respond to real-time incident reports from caregivers.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button (click)="toggleCaregiverReports()" class="btn btn-outline-primary"
+                [class.active]="showCaregiverReports">
+                <i class="fi fi-rr-users me-2"></i> Caregiver Filter
+            </button>
+            <button (click)="isHistoryMode = !isHistoryMode; loadIncidents()" class="btn btn-outline-secondary">
+                <i class="fi fi-rr-time-past me-2"></i> {{ isHistoryMode ? 'Back to Active' : 'View History' }}
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Incidents List -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Current Reports Queue</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Category</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let incident of incidents">
+                                <td class="ps-4">
+                                    <div class="fw-medium">{{ incident.type.name }}</div>
+                                    <small class="text-muted d-block text-truncate" style="max-width: 200px;">{{
+                                        incident.description }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="{
+                                        'bg-danger': incident.severityLevel === 'HIGH' || incident.severityLevel === 'CRITICAL',
+                                        'bg-warning text-dark': incident.severityLevel === 'MEDIUM',
+                                        'bg-success': incident.severityLevel === 'LOW'
+                                    }">{{ incident.severityLevel }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill" [ngClass]="{
+                                        'bg-primary': incident.status === 'OPEN',
+                                        'bg-info': incident.status === 'IN_PROGRESS',
+                                        'bg-success': incident.status === 'RESOLVED'
+                                    }">{{ incident.status }}</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <button (click)="openEditModal(incident)"
+                                            class="btn btn-sm btn-icon btn-light me-1"><i
+                                                class="fi fi-rr-edit"></i></button>
+                                        <button (click)="confirmDelete(incident.id!)"
+                                            class="btn btn-sm btn-icon btn-light text-danger"><i
+                                                class="fi fi-rr-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="incidents.length === 0">
+                                <td colspan="4" class="py-5 text-center text-muted">
+                                    <i class="fi fi-rr-shield-check fs-1 d-block mb-2"></i>
+                                    No reports found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Form (Matches Image 1 design) -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold">{{ isEditMode ? 'Edit Incident' : 'New Incident' }}</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form [formGroup]="incidentForm" (ngSubmit)="saveIncident()">
+                        <!-- TYPE -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase mb-1 ls-1">Type</label>
+                            <select formControlName="type" class="form-select border-0 bg-light py-2">
+                                <option [ngValue]="null">Select Type...</option>
+                                <option *ngFor="let t of incidentTypes" [ngValue]="t">{{ t.name }}</option>
+                            </select>
+                        </div>
+
+                        <!-- SEVERITY & STATUS -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label
+                                    class="form-label small fw-bold text-muted text-uppercase mb-1 ls-1">Severity</label>
+                                <select formControlName="severityLevel" class="form-select border-0 bg-light py-2">
+                                    <option *ngFor="let s of severityLevels" [value]="s">{{ s }}</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label
+                                    class="form-label small fw-bold text-muted text-uppercase mb-1 ls-1">Status</label>
+                                <select formControlName="status" class="form-select border-0 bg-light py-2">
+                                    <option *ngFor="let st of statuses" [value]="st">{{ st }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="mb-4">
+                            <label
+                                class="form-label small fw-bold text-muted text-uppercase mb-1 ls-1">Description</label>
+                            <textarea formControlName="description" rows="4" class="form-control border-0 bg-light"
+                                placeholder="Explain what happened..."></textarea>
+                        </div>
+
+                        <!-- ACTIONS -->
+                        <div class="d-grid gap-2 pt-2">
+                            <button type="submit" [disabled]="incidentForm.invalid"
+                                class="btn btn-primary py-2 fw-bold shadow-sm">
+                                {{ isEditMode ? 'UPDATE INCIDENT' : 'SAVE INCIDENT' }}
+                            </button>
+                            <button *ngIf="isEditMode" type="button" (click)="openAddModal()"
+                                class="btn btn-light btn-sm">
+                                Cancel Edit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deletion Confirmation -->
+<div class="modal fade" [class.show]="isDeleteModalOpen" [style.display]="isDeleteModalOpen ? 'block' : 'none'"
+    tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0">
+            <div class="modal-body text-center p-4">
+                <i class="fi fi-rr-exclamation text-danger fs-1 d-block mb-3"></i>
+                <h5 class="fw-bold">Archive Incident?</h5>
+                <p class="text-muted small">This record will be moved to history.</p>
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <button type="button" class="btn btn-sm btn-light px-3" (click)="isDeleteModalOpen = false">No,
+                        Keep</button>
+                    <button type="button" class="btn btn-sm btn-danger px-3" (click)="deleteIncident()">Yes,
+                        Archive</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

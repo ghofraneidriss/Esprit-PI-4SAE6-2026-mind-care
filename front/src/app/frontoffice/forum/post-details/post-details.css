@@ -1,0 +1,187 @@
+/* Extra styles for Post Details not covered by Global/Home/Category */
+.max-w-4xl {
+    max-width: 56rem;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.hover\:underline:hover {
+    text-decoration: underline;
+}
+
+.bg-rose-100 {
+    background-color: #FFE4E6;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+.leading-tight {
+    line-height: 1.25;
+}
+
+.border-b {
+    border-bottom-width: 1px;
+}
+
+.prose {
+    color: #374151;
+    max-width: 65ch;
+}
+
+.max-w-none {
+    max-width: none;
+}
+
+.leading-relaxed {
+    line-height: 1.625;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.text-amber-500 {
+    color: var(--secondary-amber);
+}
+
+.bg-blue-100 {
+    background-color: #DBEAFE;
+}
+
+.text-blue-600 {
+    color: #2563EB;
+}
+
+.border-transparent {
+    border-color: transparent;
+}
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1;
+}
+
+.hover\:text-red-500:hover {
+    color: #EF4444;
+}
+
+.border-violet-500 {
+    border-color: var(--accent-violet);
+}
+
+.focus\:outline-none:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+    box-shadow: 0 0 0 2px var(--violet-light);
+}
+
+.focus\:ring-violet-200:focus {
+    --tw-ring-color: #DDD6FE;
+}
+
+.resize-none {
+    resize: none;
+}
+
+.bg-violet-600 {
+    background-color: #7C3AED;
+}
+
+.hover\:bg-violet-700:hover {
+    background-color: #6D28D9;
+}
+
+.disabled\:opacity-50:disabled {
+    opacity: 0.5;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+    cursor: not-allowed;
+}
+
+/* Additional Styles for Comments */
+.bg-rose-50 {
+    background-color: #FFF1F2;
+}
+
+.bg-amber-100 {
+    background-color: #FEF3C7;
+}
+
+.hover\:text-amber-500:hover {
+    color: #F59E0B;
+}
+
+.hover\:text-rose-500:hover {
+    color: #F43F5E;
+}
+
+.focus\:ring-rose-200:focus {
+    --tw-ring-color: #FECDD3;
+}
+
+.focus\:ring-amber-200:focus {
+    --tw-ring-color: #FDE68A;
+}
+
+/* Gradient backgrounds for avatars */
+.bg-gradient-to-br {
+    background: linear-gradient(to bottom right, var(--primary-rose), var(--pink-400));
+}
+
+.from-rose-400 {
+    --tw-gradient-from: #FB7185;
+}
+
+.to-pink-500 {
+    --tw-gradient-to: #EC4899;
+}
+
+/* Animation for new comments */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Glass effect */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Shadow soft */
+.shadow-soft {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}

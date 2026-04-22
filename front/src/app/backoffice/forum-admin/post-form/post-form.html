@@ -1,0 +1,140 @@
+<div class="fb-composer">
+  <div class="fb-composer__head">
+    <h2 class="fb-composer__title">{{ isEditMode ? 'Edit post' : 'Create post' }}</h2>
+    <button type="button" class="fb-composer__close" (click)="onCancel()" aria-label="Close">
+      <i class="ri-close-fill" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <mat-dialog-content class="fb-composer__body">
+    <div *ngIf="categoriesLoading" class="fb-composer__loading text-center py-4">
+      <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+      <p class="text-muted small mb-0 mt-2">Loading…</p>
+    </div>
+
+    <div *ngIf="!categoriesLoading && categoriesUnavailable" class="alert alert-warning small py-2 mb-3" role="alert">
+      Categories unavailable — start <strong>forums-service</strong> (port 8082).
+    </div>
+
+    <div *ngIf="!categoriesLoading" class="fb-composer__user-row">
+      <div class="fb-composer__avatar" aria-hidden="true">{{ userInitials }}</div>
+      <div class="fb-composer__user-meta">
+        <div class="fb-composer__user-name">{{ displayName }}</div>
+        <div class="fb-composer__audience">
+          <i class="ri-earth-line" aria-hidden="true"></i>
+          <span>MindCare Forum</span>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="postForm" class="fb-composer__form" *ngIf="!categoriesLoading">
+      <input
+        type="text"
+        class="fb-composer__title-input"
+        formControlName="title"
+        placeholder="Title (required)"
+        autocomplete="off"
+      />
+      <p *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched" class="fb-composer__error">Title is required</p>
+
+      <textarea
+        class="fb-composer__textarea"
+        formControlName="content"
+        rows="5"
+        placeholder="What’s on your mind?"
+      ></textarea>
+      <p *ngIf="postForm.get('content')?.invalid && postForm.get('content')?.touched" class="fb-composer__error">Body text is required</p>
+
+      <div class="fb-composer__category-row">
+        <label class="fb-composer__label" for="fbCat">Category</label>
+        <select id="fbCat" class="fb-composer__select" formControlName="categoryId">
+          <option [ngValue]="null">Choose a category…</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+      <p *ngIf="postForm.get('categoryId')?.invalid && postForm.get('categoryId')?.touched" class="fb-composer__error">Please choose a category</p>
+
+      <div class="fb-composer__toolbar">
+        <label class="fb-composer__tool fb-composer__tool--photo">
+          <i class="ri-image-2-line" aria-hidden="true"></i>
+          <span>Photo</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            class="visually-hidden"
+            [disabled]="totalAttachedPhotos >= 8"
+            (change)="onPhotosSelected($event)"
+          />
+        </label>
+      </div>
+
+      <p
+        *ngIf="(photoItems.length > 0 || existingMedia.length > 0) && photosBusy"
+        class="fb-composer__photo-hint text-muted small mb-0 mt-1"
+      >
+        Processing photo… you can keep editing the rest of the post.
+      </p>
+
+      <div class="fb-composer__previews" *ngIf="existingMedia.length > 0">
+        <div class="fb-composer__preview" *ngFor="let ex of existingMedia; let i = index">
+          <img [src]="ex.url" alt="" />
+          <button
+            type="button"
+            class="fb-composer__preview-remove"
+            (click)="removeExistingPhoto(i)"
+            aria-label="Remove photo"
+          >
+            <i class="ri-close-line" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="fb-composer__previews" *ngIf="photoItems.length > 0">
+        <div
+          class="fb-composer__preview"
+          *ngFor="let item of photoItems; let i = index"
+          [class.fb-composer__preview--busy]="item.processing"
+        >
+          <img [src]="item.previewUrl" alt="" />
+          <div *ngIf="item.processing" class="fb-composer__preview-overlay" aria-live="polite">
+            <span class="spinner-border spinner-border-sm text-light" role="status"></span>
+            <span class="fb-composer__preview-overlay-text">Processing photo…</span>
+          </div>
+          <button type="button" class="fb-composer__preview-remove" (click)="removePhoto(i)" aria-label="Remove photo">
+            <i class="ri-close-line" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="fb-composer__tags" *ngIf="!isEditMode">
+        <span class="fb-composer__label">Tags (optional)</span>
+        <div class="fb-composer__tag-row">
+          <button
+            *ngFor="let tag of availableTags"
+            type="button"
+            class="fb-composer__tag"
+            [class.fb-composer__tag--on]="isTagSelected(tag.id)"
+            (click)="toggleTag(tag.id)"
+          >
+            {{ tag.label }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="fb-composer__footer">
+    <button type="button" mat-stroked-button (click)="onCancel()" class="fb-composer__btn-cancel">Cancel</button>
+    <button
+      type="button"
+      mat-flat-button
+      class="fb-composer__btn-post"
+      [disabled]="postForm.invalid || loading || categoriesLoading || categoriesUnavailable || photosBusy"
+      (click)="onSubmit()"
+    >
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+      {{ isEditMode ? 'Save' : 'Publish' }}
+    </button>
+  </mat-dialog-actions>
+</div>

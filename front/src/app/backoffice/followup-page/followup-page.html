@@ -1,0 +1,314 @@
+<div class="followup-container">
+  <!-- Success Message -->
+  <div *ngIf="successMsg" class="alert alert-success">{{ successMsg }}</div>
+
+  <!-- Error Message -->
+  <div *ngIf="pageError" class="alert alert-danger">{{ pageError }}</div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Follow-Up Management</h1>
+    <button class="btn btn-primary" (click)="openCreateModal()" *ngIf="!isFormOpen">
+      <i class="bi bi-plus-lg"></i> New Follow-Up
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by patient, caregiver, mood, or date..."
+      [(ngModel)]="filters.query"
+      (change)="applyFilters()"
+    />
+    <select class="form-control" [(ngModel)]="filters.mood" (change)="applyFilters()">
+      <option value="">All Moods</option>
+      <option *ngFor="let m of moodOptions" [value]="m.value">{{ m.label }}</option>
+    </select>
+    <select class="form-control" [(ngModel)]="filters.sleepQuality" (change)="applyFilters()">
+      <option value="">All Sleep Qualities</option>
+      <option *ngFor="let s of sleepQualityOptions" [value]="s.value">{{ s.label }}</option>
+    </select>
+    <button class="btn btn-secondary" (click)="toggleStats()">
+      {{ showStats ? 'Hide' : 'Show' }} Stats
+    </button>
+  </div>
+
+  <!-- Stats Panel -->
+  <div *ngIf="showStats && statistics" class="stats-panel">
+    <div class="stat-card">
+      <h4>Total Follow-Ups</h4>
+      <p class="stat-value">{{ statistics.totalFollowUps }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Calm / Happy</h4>
+      <p class="stat-value">{{ getCalmCount() }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Agitated / Anxious</h4>
+      <p class="stat-value">{{ getAgitatedCount() }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Avg Cognitive Score</h4>
+      <p class="stat-value">{{ getAvgCognitive() }}/30</p>
+    </div>
+  </div>
+
+  <!-- Risk Analysis Panel -->
+  <div class="risk-analysis-section">
+    <div class="risk-input-group">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Patient ID for risk analysis"
+        [(ngModel)]="riskPatientId"
+        min="1"
+      />
+      <button class="btn btn-warning" (click)="loadPatientRisk()">Check Risk</button>
+      <button class="btn btn-info" (click)="checkCognitiveDecline()">Cognitive Decline</button>
+    </div>
+
+    <div *ngIf="showRiskPanel && riskData" class="risk-panel" [style.border-left]="'4px solid ' + getRiskColor()">
+      <h4>Risk Assessment for Patient #{{ riskPatientId }}</h4>
+      <p><strong>Risk Level:</strong> {{ riskData.riskLevel }}</p>
+      <p><strong>Risk Score:</strong> {{ riskData.riskScore }}/100</p>
+      <div *ngIf="riskData.riskFactors?.length">
+        <strong>Risk Factors:</strong>
+        <ul>
+          <li *ngFor="let factor of riskData.riskFactors">{{ factor }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Follow-Ups Table -->
+  <div class="table-section">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Patient ID</th>
+          <th>Caregiver ID</th>
+          <th>Date</th>
+          <th>Mood</th>
+          <th>Cognitive</th>
+          <th>Sleep Quality</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fu of filteredFollowUps; trackBy: trackById">
+          <td>{{ fu.id }}</td>
+          <td>{{ fu.patientId }}</td>
+          <td>{{ fu.caregiverId }}</td>
+          <td>{{ fu.followUpDate | date: 'short' }}</td>
+          <td>
+            <span *ngIf="fu.mood">{{ getMoodIcon(fu.mood) }} {{ fu.mood }}</span>
+          </td>
+          <td>
+            <span *ngIf="fu.cognitiveScore" [class]="getCognitiveClass(fu.cognitiveScore)">
+              {{ fu.cognitiveScore }}/30
+            </span>
+          </td>
+          <td>{{ fu.sleepQuality ?? '-' }}</td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="openViewModal(fu)">View</button>
+            <button class="btn btn-sm btn-warning" (click)="openEditModal(fu)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteFollowUp(fu)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="filteredFollowUps.length === 0" class="text-center text-muted">
+      No follow-ups found. Create one to get started.
+    </p>
+  </div>
+
+  <!-- View Modal -->
+  <div *ngIf="isViewOpen && viewFollowUp" class="modal-overlay" (click)="closeViewModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Follow-Up #{{ viewFollowUp.id }}</h3>
+        <button class="btn-close" (click)="closeViewModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Patient ID:</strong> {{ viewFollowUp.patientId }}</p>
+        <p><strong>Caregiver ID:</strong> {{ viewFollowUp.caregiverId }}</p>
+        <p><strong>Date:</strong> {{ viewFollowUp.followUpDate | date: 'medium' }}</p>
+        <p *ngIf="viewFollowUp.mood"><strong>Mood:</strong> {{ getMoodIcon(viewFollowUp.mood) }} {{ viewFollowUp.mood }}</p>
+        <p *ngIf="viewFollowUp.cognitiveScore"><strong>Cognitive Score:</strong> {{ viewFollowUp.cognitiveScore }}/30</p>
+        <p *ngIf="viewFollowUp.hoursSlept"><strong>Hours Slept:</strong> {{ viewFollowUp.hoursSlept }}</p>
+        <p *ngIf="viewFollowUp.sleepQuality"><strong>Sleep Quality:</strong> {{ viewFollowUp.sleepQuality }}</p>
+        <p *ngIf="viewFollowUp.notes"><strong>Notes:</strong> {{ viewFollowUp.notes }}</p>
+        <p *ngIf="viewFollowUp.vitalSigns"><strong>Vital Signs:</strong> {{ viewFollowUp.vitalSigns }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Modal -->
+  <div *ngIf="isFormOpen" class="modal-overlay" (click)="closeFormModal()">
+    <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ formMode === 'create' ? 'New Follow-Up' : 'Edit Follow-Up' }}</h3>
+        <button class="btn-close" (click)="closeFormModal()">×</button>
+      </div>
+
+      <!-- Stepper -->
+      <div class="stepper">
+        <button
+          *ngFor="let step of formSteps; let i = index"
+          class="stepper-item"
+          [class.active]="formStep === i"
+          [class.completed]="formStep > i"
+          (click)="goToStep(i)"
+        >
+          {{ step }}
+        </button>
+      </div>
+
+      <form [formGroup]="form" class="modal-body">
+        <!-- Step 1: Patient Info -->
+        <div *ngIf="formStep === 0">
+          <h5>Patient Information</h5>
+          <div class="form-group">
+            <label>Patient ID *</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="patientId"
+              min="1"
+              [class.is-invalid]="controlHasError('patientId')"
+            />
+            <div class="invalid-feedback" *ngIf="controlHasError('patientId')">
+              Patient ID is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Caregiver ID *</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="caregiverId"
+              min="1"
+              [class.is-invalid]="controlHasError('caregiverId')"
+            />
+            <div class="invalid-feedback" *ngIf="controlHasError('caregiverId')">
+              Caregiver ID is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Follow-Up Date *</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="followUpDate"
+              [class.is-invalid]="controlHasError('followUpDate')"
+            />
+            <div class="invalid-feedback" *ngIf="controlHasError('followUpDate')">
+              Date is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Cognitive & Mood -->
+        <div *ngIf="formStep === 1">
+          <h5>Cognitive & Mood Assessment</h5>
+          <div class="form-group">
+            <label>Cognitive Score (0-30)</label>
+            <input type="number" class="form-control" formControlName="cognitiveScore" min="0" max="30" />
+          </div>
+          <div class="form-group">
+            <label>Mood</label>
+            <select class="form-control" formControlName="mood">
+              <option value="">Select Mood</option>
+              <option *ngFor="let m of moodOptions" [value]="m.value">{{ m.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" formControlName="agitationObserved" />
+              Agitation Observed
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" formControlName="confusionObserved" />
+              Confusion Observed
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: ADL & Sleep -->
+        <div *ngIf="formStep === 2">
+          <h5>Activities of Daily Living & Sleep</h5>
+          <div class="form-group">
+            <label>Eating</label>
+            <select class="form-control" formControlName="eating">
+              <option value="">Select Level</option>
+              <option *ngFor="let l of independenceLevels" [value]="l.value">{{ l.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Dressing</label>
+            <select class="form-control" formControlName="dressing">
+              <option value="">Select Level</option>
+              <option *ngFor="let l of independenceLevels" [value]="l.value">{{ l.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mobility</label>
+            <select class="form-control" formControlName="mobility">
+              <option value="">Select Level</option>
+              <option *ngFor="let l of independenceLevels" [value]="l.value">{{ l.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Hours Slept</label>
+            <input type="number" class="form-control" formControlName="hoursSlept" min="0" max="24" />
+          </div>
+          <div class="form-group">
+            <label>Sleep Quality</label>
+            <select class="form-control" formControlName="sleepQuality">
+              <option value="">Select Quality</option>
+              <option *ngFor="let s of sleepQualityOptions" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 4: Vital Signs & Notes -->
+        <div *ngIf="formStep === 3">
+          <h5>Vital Signs & Notes</h5>
+          <div class="form-group">
+            <label>Vital Signs</label>
+            <textarea class="form-control" formControlName="vitalSigns" rows="3" placeholder="e.g., BP: 120/80, HR: 75"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea class="form-control" formControlName="notes" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
+      </form>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="prevStep()" [disabled]="formStep === 0">
+          Previous
+        </button>
+        <button class="btn btn-primary" (click)="nextStep()" *ngIf="formStep < formSteps.length - 1">
+          Next
+        </button>
+        <button
+          class="btn btn-success"
+          (click)="validateAndSave()"
+          *ngIf="formStep === formSteps.length - 1"
+          [disabled]="isSaving"
+        >
+          {{ isSaving ? 'Saving...' : 'Save Follow-Up' }}
+        </button>
+        <button class="btn btn-secondary" (click)="closeFormModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
