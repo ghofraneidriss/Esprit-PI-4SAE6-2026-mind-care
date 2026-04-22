@@ -22,6 +22,8 @@ import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { FollowUpPageComponent } from './followup-page/followup-page';
 import { AlertPageComponent } from './alert-page/alert-page';
+
+// Lost Item — all views
 import { LostItemListComponent } from './lost-item/lost-item-list/lost-item-list';
 import { LostItemFormComponent } from './lost-item/lost-item-form/lost-item-form';
 import { LostItemDetailComponent } from './lost-item/lost-item-detail/lost-item-detail';
@@ -29,9 +31,11 @@ import { SearchReportFormComponent } from './lost-item/search-report-form/search
 import { SearchReportCardComponent } from './lost-item/search-report-card/search-report-card';
 import { CriticalLostItemsComponent } from './lost-item/critical-lost-items/critical-lost-items';
 import { ItemAlertsComponent } from './lost-item/item-alerts/item-alerts';
+import { SearchLogComponent } from './lost-item/search-log/search-log';
+import { RecoveryStrategyComponent } from './lost-item/recovery-strategy/recovery-strategy';
 import { ItemStatsComponent } from './lost-item/item-stats/item-stats';
 import { PatientRiskComponent } from './lost-item/patient-risk/patient-risk';
-import { SearchLogComponent } from './lost-item/search-log/search-log';
+import { MlRecommendationComponent } from './ml-recommendation/ml-recommendation';
 
 @NgModule({
   declarations: [
@@ -54,6 +58,7 @@ import { SearchLogComponent } from './lost-item/search-log/search-log';
     Footer,
     FollowUpPageComponent,
     AlertPageComponent,
+    // Lost Item
     LostItemListComponent,
     LostItemFormComponent,
     LostItemDetailComponent,
@@ -61,9 +66,11 @@ import { SearchLogComponent } from './lost-item/search-log/search-log';
     SearchReportCardComponent,
     CriticalLostItemsComponent,
     ItemAlertsComponent,
+    SearchLogComponent,
+    RecoveryStrategyComponent,
     ItemStatsComponent,
     PatientRiskComponent,
-    SearchLogComponent,
+    MlRecommendationComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })

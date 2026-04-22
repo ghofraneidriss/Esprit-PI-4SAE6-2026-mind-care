@@ -22,6 +22,18 @@ spring:
   docker:
     compose:
       enabled: false
+  # ── Email (Gmail SMTP) ───────────────────────────────────────────────────
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jaafer.bbj@gmail.com
+    password: zsvd wuip fniz apvm
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 eureka:
   client:

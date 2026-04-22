@@ -47,4 +47,27 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ── Password Reset ────────────────────────────────────────────────────────
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody java.util.Map<String, String> body) {
+        String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body("Email is required.");
+        }
+        userService.forgotPassword(email);
+        return ResponseEntity.ok("Password reset email sent. Please check your inbox.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody java.util.Map<String, String> body) {
+        String token    = body.get("token");
+        String password = body.get("password");
+        if (token == null || token.isBlank() || password == null || password.isBlank()) {
+            return ResponseEntity.badRequest().body("Token and password are required.");
+        }
+        userService.resetPassword(token, password);
+        return ResponseEntity.ok("Password has been reset successfully. You can now log in.");
+    }
 }

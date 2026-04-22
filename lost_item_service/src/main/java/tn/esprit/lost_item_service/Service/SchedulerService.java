@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.lost_item_service.Entity.*;
-import tn.esprit.lost_item_service.Repository.ItemAlertRepository;
+import tn.esprit.lost_item_service.Repository.LostItemAlertRepository;
 import tn.esprit.lost_item_service.Repository.LostItemRepository;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ import java.util.List;
 public class SchedulerService {
 
     private final LostItemRepository lostItemRepository;
-    private final ItemAlertRepository itemAlertRepository;
+    private final LostItemAlertRepository itemAlertRepository;
 
     @Scheduled(cron = "0 0 8 * * *")
     @Transactional
@@ -69,7 +69,7 @@ public class SchedulerService {
         boolean alreadyExists = itemAlertRepository
                 .existsByLostItemIdAndTitleAndStatusNot(item.getId(), title, AlertStatus.RESOLVED);
         if (!alreadyExists) {
-            ItemAlert alert = ItemAlert.builder()
+            LostItemAlert alert = LostItemAlert.builder()
                     .lostItemId(item.getId())
                     .patientId(item.getPatientId())
                     .title(title)

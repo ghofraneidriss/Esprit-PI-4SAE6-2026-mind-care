@@ -1,148 +1,541 @@
-<div class="container-fluid py-4">
+<div class="li-layout" data-bs-theme="light">
 
-  <!-- Page Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4">
-    <div>
-      <h4 class="mb-1" style="color:#6b1fad;font-weight:700;">
-        <i class="fi fi-rr-search me-2"></i> Lost Items
-      </h4>
-      <small class="text-muted">Track and manage patient lost items</small>
-    </div>
-    <div class="d-flex gap-2">
-      <a routerLink="/admin/lost-items/critical" class="btn btn-sm btn-outline-danger">
-        <i class="fi fi-rr-bell me-1"></i> Critical Items
-      </a>
-      <a routerLink="/admin/lost-items/new" class="btn btn-sm" style="background:#6b1fad;color:#fff;">
-        <i class="fi fi-rr-plus me-1"></i> Report Lost Item
+  <!-- Sidebar -->
+  <aside class="li-sidebar">
+    <div class="li-sidebar-brand">
+      <a routerLink="/admin" class="li-brand-link">
+        <span class="li-brand-icon"><i class="bi bi-heart-pulse"></i></span>
+        <span class="li-brand-text">MindCare</span>
       </a>
     </div>
-  </div>
+    <nav class="li-sidebar-nav">
+      <span class="li-nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="li-nav-link">
+        <i class="bi bi-house"></i><span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/lost-items" class="li-nav-link li-nav-active">
+        <i class="bi bi-search"></i><span>Lost Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/alerts" class="li-nav-link">
+        <i class="bi bi-bell"></i><span>Alerts</span>
+      </a>
+      <a routerLink="/admin/lost-items/critical" class="li-nav-link">
+        <i class="bi bi-exclamation-triangle"></i><span>Critical Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/search-log" class="li-nav-link">
+        <i class="bi bi-bar-chart"></i><span>Search Log</span>
+      </a>
+      <span class="li-nav-heading">Admin</span>
+      <button class="li-nav-link li-nav-btn" (click)="openStats()">
+        <i class="bi bi-pie-chart"></i><span>Statistics</span>
+      </button>
+      <button class="li-nav-link li-nav-btn" (click)="openIntelligence()">
+        <i class="bi bi-robot"></i><span>AI Intelligence</span>
+      </button>
+      <a routerLink="/admin/lost-items/risk" class="li-nav-link">
+        <i class="bi bi-shield-exclamation"></i><span>Patient Risk</span>
+      </a>
+    </nav>
+    <div class="li-sidebar-footer">
+      <a routerLink="/" class="li-nav-link">
+        <i class="bi bi-arrow-left-circle"></i><span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
 
-  <!-- Alerts -->
-  <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
-    <i class="fi fi-rr-check me-2"></i>{{ successMsg }}
-  </div>
-  <div *ngIf="pageError" class="alert alert-danger alert-dismissible">
-    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
-    <button type="button" class="btn-close" (click)="pageError=''"></button>
-  </div>
+  <!-- Main -->
+  <div class="li-main">
 
-  <!-- Filters -->
-  <div class="card mb-4 shadow-sm">
-    <div class="card-body py-3">
-      <div class="row g-2 align-items-end">
-        <div class="col-md-4">
-          <label class="form-label mb-1 small fw-semibold">Filter by Status</label>
-          <select class="form-select form-select-sm" [(ngModel)]="filters.status">
-            <option value="">All Statuses</option>
-            <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
-          </select>
+    <div class="li-hero">
+      <div class="li-hero-left">
+        <div class="li-hero-icon"><i class="bi bi-search"></i></div>
+        <div>
+          <h1 class="li-hero-title">Lost Items</h1>
+          <p class="li-hero-sub">Track and manage patient lost items</p>
         </div>
-        <div class="col-md-4">
-          <label class="form-label mb-1 small fw-semibold">Filter by Category</label>
-          <select class="form-select form-select-sm" [(ngModel)]="filters.category">
-            <option value="">All Categories</option>
-            <option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</option>
-          </select>
+      </div>
+      <div class="li-hero-right">
+        <div class="li-stat-box"><div class="li-stat-num">{{ items.length }}</div><div class="li-stat-label">Total</div></div>
+        <div class="li-stat-box"><div class="li-stat-num">{{ lostCount }}</div><div class="li-stat-label">Lost</div></div>
+        <div class="li-stat-box"><div class="li-stat-num">{{ searchingCount }}</div><div class="li-stat-label">Searching</div></div>
+        <div class="li-stat-box"><div class="li-stat-num">{{ foundCount }}</div><div class="li-stat-label">Found</div></div>
+        <div class="li-user-card">
+          <div class="li-user-avatar">{{ userInitials }}</div>
+          <div class="li-user-info">
+            <div class="li-user-name">{{ userFullName }}</div>
+            <span class="li-user-role">{{ currentRole }}</span>
+          </div>
         </div>
-        <div class="col-md-4 d-flex gap-2">
-          <button class="btn btn-sm btn-primary w-100" (click)="applyFilters()">
-            <i class="fi fi-rr-filter me-1"></i> Apply
-          </button>
-          <button class="btn btn-sm btn-outline-secondary w-100" (click)="resetFilters()">
-            Reset
-          </button>
+        <button class="li-hero-btn li-hero-btn-outline" (click)="openStats()">
+          <i class="bi bi-bar-chart-line"></i> Statistics
+        </button>
+        <button class="li-hero-btn li-hero-btn-ai" (click)="openIntelligence()">
+          <i class="bi bi-robot"></i> AI Intelligence
+        </button>
+        <a routerLink="/admin/lost-items/new" class="li-hero-btn">
+          <i class="bi bi-plus-lg"></i> Report Item
+        </a>
+      </div>
+    </div>
+
+    <div class="container-fluid py-4">
+
+      <!-- Alerts -->
+      <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
+        <i class="bi bi-check-lg me-2"></i>{{ successMsg }}
+      </div>
+      <div *ngIf="pageError" class="alert alert-danger alert-dismissible">
+        <i class="bi bi-exclamation-circle me-2"></i>{{ pageError }}
+        <button type="button" class="btn-close" (click)="pageError=''"></button>
+      </div>
+
+      <!-- Filters -->
+      <div class="li-filter-bar mb-3">
+        <select class="form-select form-select-sm" [(ngModel)]="filters.status" (change)="applyFilters()">
+          <option value="">All Statuses</option>
+          <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+        </select>
+        <select class="form-select form-select-sm" [(ngModel)]="filters.category" (change)="applyFilters()">
+          <option value="">All Categories</option>
+          <option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.label }}</option>
+        </select>
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="searchText"
+               placeholder="Search title or description…" (input)="applyFilters()">
+        <button class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">
+          <i class="bi bi-x"></i> Reset
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border" style="color:#6b1fad;"></div>
+          </div>
+          <div *ngIf="!isLoading && items.length === 0" class="text-center py-5 text-muted">
+            <i class="bi bi-search fs-1 d-block mb-2" style="color:#efd5c8;"></i>
+            No lost items found. <a routerLink="/admin/lost-items/new" style="color:#6b1fad;">Report one now.</a>
+          </div>
+          <div *ngIf="!isLoading && items.length > 0" class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead style="background:#f8f4fc;">
+                <tr>
+                  <th class="ps-4">Item</th>
+                  <th>Category</th>
+                  <th>Last Seen</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Date Reported</th>
+                  <th class="text-end pe-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of items">
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-2">
+                      <div style="background:#efd5c8;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="bi bi-box" style="color:#6b1fad;"></i>
+                      </div>
+                      <div>
+                        <div class="fw-semibold" style="color:#1f2937;">{{ item.title }}</div>
+                        <small class="text-muted">{{ item.description | slice:0:40 }}{{ (item.description?.length ?? 0) > 40 ? '…' : '' }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="badge" style="background:#efd5c8;color:#6b1fad;">{{ item.category }}</span></td>
+                  <td>
+                    <div class="small" style="color:#374151;">{{ item.lastSeenLocation || '—' }}</div>
+                    <small class="text-muted">{{ item.lastSeenDate || '' }}</small>
+                  </td>
+                  <td><span [class]="getPriorityClass(item.priority)">{{ item.priority }}</span></td>
+                  <td><span [class]="getStatusClass(item.status)">{{ item.status }}</span></td>
+                  <td><small class="text-muted">{{ item.createdAt | slice:0:10 }}</small></td>
+                  <td class="text-end pe-4">
+                    <div class="d-flex justify-content-end gap-1">
+                      <button class="btn btn-xs btn-outline-primary" (click)="viewItem(item.id!)">View</button>
+                      <button class="btn btn-xs btn-outline-secondary" (click)="editItem(item.id!)"
+                              [disabled]="item.status === 'CLOSED' || item.status === 'FOUND'">Edit</button>
+                      <button class="btn btn-xs btn-outline-success" (click)="markFound(item.id!)"
+                              [disabled]="item.status === 'FOUND' || item.status === 'CLOSED'">Found</button>
+                      <button class="btn btn-xs btn-outline-danger" (click)="deleteItem(item.id!)"
+                              [disabled]="item.status === 'CLOSED'">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="card-footer d-flex align-items-center justify-content-between">
+          <small class="text-muted">Showing {{ items.length }} of {{ totalElements }} items</small>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 0">
+                <button class="page-link" (click)="goToPage(currentPage - 1)">‹</button>
+              </li>
+              <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
+                <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                <button class="page-link" (click)="goToPage(currentPage + 1)">›</button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
+
+  </div><!-- end li-main -->
+</div><!-- end li-layout -->
+
+
+<!-- ══════════════════════════════════════════════════
+     STATISTICS MODAL OVERLAY
+══════════════════════════════════════════════════ -->
+<div class="sm-backdrop" *ngIf="showStatsModal" (click)="closeStats()"></div>
+
+<div class="sm-panel" *ngIf="showStatsModal" role="dialog" aria-modal="true">
+
+  <!-- Header -->
+  <div class="sm-header">
+    <div class="sm-header-left">
+      <div class="sm-header-icon"><i class="bi bi-bar-chart-line-fill"></i></div>
+      <div>
+        <h2 class="sm-title">Lost Item Statistics</h2>
+        <p class="sm-subtitle">Global overview of all lost item activity</p>
+      </div>
+    </div>
+    <div class="sm-header-right">
+      <button class="sm-refresh-btn" (click)="refreshStats()" [disabled]="statsLoading">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+      <button class="sm-close-btn" (click)="closeStats()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
-      <div *ngIf="isLoading" class="text-center py-5">
-        <div class="spinner-border" style="color:#6b1fad;"></div>
+  <!-- Body -->
+  <div class="sm-body">
+
+    <!-- Loading -->
+    <div *ngIf="statsLoading" class="sm-loading">
+      <div class="spinner-border sm-spinner"></div>
+      <p>Loading statistics…</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="statsError && !statsLoading" class="sm-error">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ statsError }}
+      <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadStats()">Retry</button>
+    </div>
+
+    <ng-container *ngIf="!statsLoading && globalStats as s">
+
+      <!-- ── KPI Tiles ── -->
+      <div class="sm-kpi-grid">
+        <div class="sm-kpi sm-kpi-purple">
+          <div class="sm-kpi-num">{{ s.totalItems }}</div>
+          <div class="sm-kpi-label">Total Items</div>
+          <i class="bi bi-box sm-kpi-icon"></i>
+        </div>
+        <div class="sm-kpi sm-kpi-red">
+          <div class="sm-kpi-num">{{ s.lostCount }}</div>
+          <div class="sm-kpi-label">Lost</div>
+          <i class="bi bi-exclamation-circle sm-kpi-icon"></i>
+        </div>
+        <div class="sm-kpi sm-kpi-orange">
+          <div class="sm-kpi-num">{{ s.searchingCount }}</div>
+          <div class="sm-kpi-label">Searching</div>
+          <i class="bi bi-search sm-kpi-icon"></i>
+        </div>
+        <div class="sm-kpi sm-kpi-green">
+          <div class="sm-kpi-num">{{ s.foundCount }}</div>
+          <div class="sm-kpi-label">Found</div>
+          <i class="bi bi-check-circle sm-kpi-icon"></i>
+        </div>
+        <div class="sm-kpi sm-kpi-grey">
+          <div class="sm-kpi-num">{{ s.closedCount }}</div>
+          <div class="sm-kpi-label">Closed</div>
+          <i class="bi bi-archive sm-kpi-icon"></i>
+        </div>
+        <div class="sm-kpi sm-kpi-red">
+          <div class="sm-kpi-num">{{ s.criticalUnresolvedAlerts }}</div>
+          <div class="sm-kpi-label">Critical Alerts</div>
+          <i class="bi bi-bell-fill sm-kpi-icon"></i>
+        </div>
       </div>
 
-      <div *ngIf="!isLoading && items.length === 0" class="text-center py-5 text-muted">
-        <i class="fi fi-rr-search fs-1 d-block mb-2" style="color:#efd5c8;"></i>
-        No lost items found. <a routerLink="/admin/lost-items/new" style="color:#6b1fad;">Report one now.</a>
-      </div>
+      <!-- ── Recovery Rate + Avg Days ── -->
+      <div class="sm-row-2">
 
-      <div *ngIf="!isLoading && items.length > 0" class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead style="background:#f8f4fc;">
-            <tr>
-              <th class="ps-4">Item</th>
-              <th>Category</th>
-              <th>Last Seen</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Date Reported</th>
-              <th class="text-end pe-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of items">
-              <td class="ps-4">
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar avatar-sm rounded-circle d-flex align-items-center justify-content-center"
-                       style="background:#efd5c8;width:36px;height:36px;">
-                    <i class="fi fi-rr-box-alt" style="color:#6b1fad;"></i>
-                  </div>
-                  <div>
-                    <div class="fw-semibold">{{ item.title }}</div>
-                    <small class="text-muted">{{ item.description | slice:0:40 }}{{ (item.description?.length ?? 0) > 40 ? '…' : '' }}</small>
-                  </div>
+        <div class="sm-card">
+          <div class="sm-card-title"><i class="bi bi-graph-up me-2"></i>Recovery Rate</div>
+          <div class="sm-recovery-body">
+            <div class="sm-recovery-pct" [style.color]="getRecoveryColor()">
+              {{ s.recoveryRate }}%
+            </div>
+            <div class="sm-recovery-bar-wrap">
+              <div class="sm-recovery-track">
+                <div class="sm-recovery-fill"
+                     [style.width.%]="s.recoveryRate"
+                     [style.background]="getRecoveryColor()">
                 </div>
-              </td>
-              <td>
-                <span class="badge" style="background:#efd5c8;color:#6b1fad;">{{ item.category }}</span>
-              </td>
-              <td>
-                <div class="small">{{ item.lastSeenLocation || '—' }}</div>
-                <small class="text-muted">{{ item.lastSeenDate || '' }}</small>
-              </td>
-              <td><span [class]="getPriorityClass(item.priority)">{{ item.priority }}</span></td>
-              <td><span [class]="getStatusClass(item.status)">{{ item.status }}</span></td>
-              <td>
-                <small class="text-muted">{{ item.createdAt | slice:0:10 }}</small>
-              </td>
-              <td class="text-end pe-4">
-                <div class="d-flex justify-content-end gap-1">
-                  <button class="btn btn-xs btn-outline-primary" title="View" (click)="viewItem(item.id!)">View</button>
-                  <button class="btn btn-xs btn-outline-secondary" title="Edit" (click)="editItem(item.id!)"
-                          [disabled]="item.status === 'CLOSED' || item.status === 'FOUND'">Edit</button>
-                  <button class="btn btn-xs btn-outline-success" title="Mark as Found" (click)="markFound(item.id!)"
-                          [disabled]="item.status === 'FOUND' || item.status === 'CLOSED'">Found</button>
-                  <button class="btn btn-xs btn-outline-danger" title="Delete" (click)="deleteItem(item.id!)"
-                          [disabled]="item.status === 'CLOSED'">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+              <small class="sm-recovery-sub">
+                {{ s.foundCount }} found out of {{ s.totalItems }} items
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-card sm-card-center">
+          <div class="sm-card-title"><i class="bi bi-clock me-2"></i>Avg Days to Find</div>
+          <div class="sm-avg-num" style="color:#6b1fad;">{{ s.averageDaysToFind }}</div>
+          <div class="sm-avg-sub">days from report to recovery</div>
+        </div>
+
+      </div>
+
+      <!-- ── Distributions ── -->
+      <div class="sm-row-2">
+
+        <div class="sm-card">
+          <div class="sm-card-title"><i class="bi bi-grid me-2"></i>Items by Category</div>
+          <div *ngFor="let e of categoryEntries()" class="sm-dist-row">
+            <span class="sm-dist-label">{{ e.key }}</span>
+            <div class="sm-dist-track">
+              <div class="sm-dist-fill" [style.width.%]="categoryBarWidth(e.value)"
+                   style="background:#6b1fad;"></div>
+            </div>
+            <span class="sm-dist-val">{{ e.value }}</span>
+          </div>
+          <div *ngIf="categoryEntries().length === 0" class="sm-empty">No data</div>
+        </div>
+
+        <div class="sm-card">
+          <div class="sm-card-title"><i class="bi bi-flag me-2"></i>Items by Priority</div>
+          <div *ngFor="let e of priorityEntries()" class="sm-dist-row">
+            <span class="sm-dist-label">{{ e.key }}</span>
+            <div class="sm-dist-track">
+              <div class="sm-dist-fill"
+                   [style.width.%]="priorityBarWidth(e.value)"
+                   [style.background]="getPriorityBarColor(e.key)">
+              </div>
+            </div>
+            <span class="sm-dist-val">{{ e.value }}</span>
+          </div>
+          <div *ngIf="priorityEntries().length === 0" class="sm-empty">No data</div>
+        </div>
+
+      </div>
+
+      <!-- ── Alert Overview ── -->
+      <div class="sm-card" *ngIf="alertStats as a">
+        <div class="sm-card-title"><i class="bi bi-bell me-2"></i>Alert Overview</div>
+        <div class="sm-alert-kpis">
+          <div class="sm-alert-kpi">
+            <div class="sm-alert-num" style="color:#6b7280;">{{ a.totalAlerts }}</div>
+            <div class="sm-alert-label">Total</div>
+          </div>
+          <div class="sm-alert-kpi">
+            <div class="sm-alert-num" style="color:#dc3545;">{{ a.newCount }}</div>
+            <div class="sm-alert-label">New</div>
+          </div>
+          <div class="sm-alert-kpi">
+            <div class="sm-alert-num" style="color:#0dcaf0;">{{ a.viewedCount }}</div>
+            <div class="sm-alert-label">Viewed</div>
+          </div>
+          <div class="sm-alert-kpi">
+            <div class="sm-alert-num" style="color:#198754;">{{ a.resolvedCount }}</div>
+            <div class="sm-alert-label">Resolved</div>
+          </div>
+          <div class="sm-alert-kpi">
+            <div class="sm-alert-num" style="color:#dc3545;">{{ a.criticalUnresolvedCount }}</div>
+            <div class="sm-alert-label">Critical Unresolved</div>
+          </div>
+        </div>
+        <div *ngIf="alertLevelEntries().length > 0" class="mt-3">
+          <p class="sm-section-label">Alerts by Level</p>
+          <div *ngFor="let e of alertLevelEntries()" class="sm-dist-row">
+            <span class="sm-dist-label">{{ e.key }}</span>
+            <div class="sm-dist-track">
+              <div class="sm-dist-fill"
+                   [style.width.%]="alertLevelBarWidth(e.value)"
+                   [style.background]="getPriorityBarColor(e.key)">
+              </div>
+            </div>
+            <span class="sm-dist-val">{{ e.value }}</span>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </div><!-- sm-body -->
+</div><!-- sm-panel -->
+
+
+<!-- ══════════════════════════════════════════════════
+     AI PATIENT INTELLIGENCE MODAL
+══════════════════════════════════════════════════ -->
+<div class="sm-backdrop" *ngIf="showIntelligenceModal" (click)="closeIntelligence()"></div>
+
+<div class="sm-panel ai-panel" *ngIf="showIntelligenceModal" role="dialog" aria-modal="true">
+
+  <!-- Header -->
+  <div class="sm-header ai-header">
+    <div class="sm-header-left">
+      <div class="sm-header-icon ai-header-icon"><i class="bi bi-robot"></i></div>
+      <div>
+        <h2 class="sm-title">Patient Behavioral Intelligence</h2>
+        <p class="sm-subtitle">AI-powered clinical analysis via Groq LLM</p>
       </div>
     </div>
-
-    <!-- Pagination -->
-    <div *ngIf="totalPages > 1" class="card-footer d-flex align-items-center justify-content-between">
-      <small class="text-muted">
-        Showing {{ items.length }} of {{ totalElements }} items
-      </small>
-      <nav>
-        <ul class="pagination pagination-sm mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 0">
-            <button class="page-link" (click)="goToPage(currentPage - 1)">‹</button>
-          </li>
-          <li *ngFor="let p of pages" class="page-item" [class.active]="p === currentPage">
-            <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-            <button class="page-link" (click)="goToPage(currentPage + 1)">›</button>
-          </li>
-        </ul>
-      </nav>
+    <div class="sm-header-right">
+      <button class="sm-close-btn" (click)="closeIntelligence()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
   </div>
-</div>
+
+  <!-- Patient Selector -->
+  <div class="ai-selector-bar">
+    <label class="ai-selector-label"><i class="bi bi-person me-1"></i>Analyze Patient:</label>
+    <select class="ai-patient-select"
+            [(ngModel)]="intelligencePatientId"
+            (change)="onIntelligencePatientChange()">
+      <option [value]="null" disabled>Select patient…</option>
+      <option *ngFor="let pid of uniquePatientIds" [value]="pid">
+        {{ getPatientName(pid) }} (#{{ pid }})
+      </option>
+    </select>
+    <button class="ai-analyze-btn" (click)="loadIntelligence()" [disabled]="!intelligencePatientId || intelligenceLoading">
+      <span *ngIf="intelligenceLoading" class="spinner-border spinner-border-sm me-1"></span>
+      <i *ngIf="!intelligenceLoading" class="bi bi-play-fill me-1"></i>
+      {{ intelligenceLoading ? 'Analyzing…' : 'Analyze' }}
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="sm-body">
+
+    <!-- Loading -->
+    <div *ngIf="intelligenceLoading" class="sm-loading">
+      <div class="spinner-border ai-spinner"></div>
+      <p>Running behavioral analysis with Groq AI…</p>
+      <small class="text-muted">This may take a few seconds</small>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="intelligenceError && !intelligenceLoading" class="sm-error">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ intelligenceError }}
+      <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadIntelligence()">Retry</button>
+    </div>
+
+    <!-- Prompt -->
+    <div *ngIf="!intelligenceLoading && !intelligence && !intelligenceError" class="ai-prompt-box">
+      <i class="bi bi-robot ai-prompt-icon"></i>
+      <p>Select a patient above and click <strong>Analyze</strong> to run the AI behavioral analysis.</p>
+    </div>
+
+    <ng-container *ngIf="!intelligenceLoading && intelligence as intel">
+
+      <!-- ── KPI Row ── -->
+      <div class="sm-kpi-grid ai-kpi-grid">
+        <div class="sm-kpi" [style.border-top-color]="getRiskColor(intel.overallRiskLevel)"
+             style="border-top: 3px solid;">
+          <div class="sm-kpi-num" [style.color]="getRiskColor(intel.overallRiskLevel)">
+            {{ intel.overallRiskLevel }}
+          </div>
+          <div class="sm-kpi-label">Overall Risk</div>
+        </div>
+        <div class="sm-kpi sm-kpi-purple">
+          <div class="sm-kpi-num">{{ intel.totalItemsLost }}</div>
+          <div class="sm-kpi-label">Total Lost</div>
+        </div>
+        <div class="sm-kpi sm-kpi-green">
+          <div class="sm-kpi-num">{{ intel.recoveryRate }}%</div>
+          <div class="sm-kpi-label">Recovery Rate</div>
+        </div>
+        <div class="sm-kpi sm-kpi-red">
+          <div class="sm-kpi-num">{{ intel.unresolvedCritical }}</div>
+          <div class="sm-kpi-label">Unresolved Critical</div>
+        </div>
+        <div class="sm-kpi" [style.border-top-color]="getTrendColor(intel.trendDirection)"
+             style="border-top: 3px solid;">
+          <div class="sm-kpi-num" [style.color]="getTrendColor(intel.trendDirection)">
+            <i [class]="'bi ' + getTrendIcon(intel.trendDirection)"></i>
+          </div>
+          <div class="sm-kpi-label">{{ intel.trendDirection }}</div>
+        </div>
+        <div class="sm-kpi sm-kpi-orange">
+          <div class="sm-kpi-num">{{ intel.longestUnresolvedDays }}d</div>
+          <div class="sm-kpi-label">Longest Unresolved</div>
+        </div>
+      </div>
+
+      <!-- ── Monthly Trend + Category Risk ── -->
+      <div class="sm-row-2">
+
+        <div class="sm-card">
+          <div class="sm-card-title"><i class="bi bi-calendar3 me-2"></i>Monthly Loss Trend</div>
+          <div *ngFor="let m of intel.monthlyTrend" class="sm-dist-row">
+            <span class="sm-dist-label ai-month-label">{{ m.month }}</span>
+            <div class="sm-dist-track">
+              <div class="sm-dist-fill ai-trend-bar"
+                   [style.width.%]="monthlyBarWidth(m.count)">
+              </div>
+            </div>
+            <span class="sm-dist-val">{{ m.count }}</span>
+          </div>
+          <div *ngIf="intel.monthlyTrend.length === 0" class="sm-empty">No trend data</div>
+        </div>
+
+        <div class="sm-card">
+          <div class="sm-card-title"><i class="bi bi-grid me-2"></i>Category Risk (90 days)</div>
+          <div *ngFor="let c of intel.categoryRisk" class="ai-risk-row">
+            <span class="sm-dist-label">{{ c.category }}</span>
+            <span class="badge ai-risk-badge"
+                  [style.background]="getCategoryRiskColor(c.riskLevel)">
+              {{ c.riskLevel }}
+            </span>
+            <span class="sm-dist-val">{{ c.count }}</span>
+          </div>
+          <div *ngIf="intel.categoryRisk.length === 0" class="sm-empty">No category data</div>
+
+          <div *ngIf="intel.dangerZones.length > 0" class="mt-3">
+            <p class="sm-section-label"><i class="bi bi-geo-alt me-1"></i>Danger Zones</p>
+            <div *ngFor="let z of intel.dangerZones" class="ai-zone-row">
+              <i class="bi bi-pin-map-fill ai-zone-icon"></i>
+              <span class="ai-zone-loc">{{ z.location }}</span>
+              <span class="ai-zone-count">{{ z.lossCount }} losses</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── AI Analysis ── -->
+      <div class="sm-card ai-analysis-card" *ngIf="intel.aiAnalysis">
+        <div class="sm-card-title ai-analysis-title">
+          <i class="bi bi-stars me-2"></i>AI Clinical Analysis
+          <span class="ai-powered-badge">Powered by Groq LLM</span>
+        </div>
+        <div *ngFor="let section of aiSections" class="ai-section">
+          <div class="ai-section-label">{{ section.label }}</div>
+          <div class="ai-section-content">{{ section.content }}</div>
+        </div>
+      </div>
+
+      <!-- AI error note (LLM call failed but stats loaded) -->
+      <div *ngIf="!intel.aiAnalysis && intel.aiError" class="ai-no-analysis">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        {{ intel.aiError }}
+        <p class="mt-1 mb-0 small text-muted">Statistics above are computed locally — only the AI narrative failed.</p>
+      </div>
+
+    </ng-container>
+  </div><!-- sm-body -->
+</div><!-- ai-panel -->

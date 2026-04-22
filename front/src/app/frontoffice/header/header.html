@@ -2,78 +2,81 @@
   <div class="container position-relative d-flex align-items-center justify-content-between">
 
     <a routerLink="/" class="logo d-flex align-items-center me-auto me-xl-0">
-      <!-- Uncomment the line below if you also wish to use an image logo -->
-      <!-- <img src="assets/frontoffice/img/logo.webp" alt=""> -->
       <h1 class="sitename">Medi<span>Nest</span></h1>
     </a>
 
     <nav id="navmenu" class="navmenu">
       <ul>
-        <li><a routerLink="/" class="active">Home</a></li>
-        <li><a routerLink="/about">About</a></li>
-        <li><a routerLink="/departments">Departments</a></li>
-        <li><a routerLink="/services">Services</a></li>
-        <li><a routerLink="/doctors">Doctors</a></li>
-        <li><a routerLink="/activities">Activities</a></li>
-        <li><a routerLink="/forums">Forums</a></li>
-        <li><a routerLink="/incidents">Incidents</a></li>
-        <li><a routerLink="/incident-list-front">incident-list-front</a></li>
-        <li><a routerLink="/incident-report">incident-report</a></li>
-        <li><a routerLink="/movement">Movement</a></li>
-        <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a></li>
+        <li><a routerLink="/about" routerLinkActive="active">About</a></li>
+        <li><a routerLink="/doctors" routerLinkActive="active">Doctors</a></li>
+        <li><a routerLink="/departments" routerLinkActive="active">Departments</a></li>
+        <li><a routerLink="/services" routerLinkActive="active">Services</a></li>
+        <li><a routerLink="/activities" routerLinkActive="active">Activities</a></li>
+        <li><a routerLink="/forums" routerLinkActive="active">Forums</a></li>
+        <li><a routerLink="/movement" routerLinkActive="active">Movement</a></li>
+
+        <!-- Incidents dropdown -->
+        <li class="dropdown">
+          <a href="#"><span>Incidents</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
           <ul>
-            <li><a routerLink="/department-details">Department Details</a></li>
-            <li><a routerLink="/service-details">Service Details</a></li>
+            <li><a routerLink="/incidents">All Incidents</a></li>
+            <li><a routerLink="/incident-list-front">My Incidents</a></li>
+            <li><a routerLink="/incident-report">Report an Incident</a></li>
+          </ul>
+        </li>
+
+        <!-- Lost Items — visible to logged-in patients -->
+        <li *ngIf="isLoggedIn && isPatient">
+          <a routerLink="/lost-items" routerLinkActive="active">My Lost Items</a>
+        </li>
+
+        <!-- More Pages -->
+        <li class="dropdown">
+          <a href="#"><span>More</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          <ul>
             <li><a routerLink="/appointment">Appointment</a></li>
             <li><a routerLink="/testimonials">Testimonials</a></li>
-            <li><a routerLink="/faq">Frequently Asked Questions</a></li>
+            <li><a routerLink="/faq">FAQ</a></li>
             <li><a routerLink="/gallery">Gallery</a></li>
-            <li><a routerLink="/terms">Terms</a></li>
-            <li><a routerLink="/privacy">Privacy</a></li>
-            <li><a routerLink="/404">404</a></li>
+            <li><a routerLink="/contact">Contact</a></li>
           </ul>
         </li>
-        <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a href="#">Dropdown 1</a></li>
-            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i
-                  class="bi bi-chevron-down toggle-dropdown"></i></a>
-              <ul>
-                <li><a href="#">Deep Dropdown 1</a></li>
-                <li><a href="#">Deep Dropdown 2</a></li>
-                <li><a href="#">Deep Dropdown 3</a></li>
-                <li><a href="#">Deep Dropdown 4</a></li>
-                <li><a href="#">Deep Dropdown 5</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Dropdown 2</a></li>
-            <li><a href="#">Dropdown 3</a></li>
-            <li><a href="#">Dropdown 4</a></li>
-          </ul>
-        </li>
-        <li><a routerLink="/contact">Contact</a></li>
-        <li *ngIf="isLoggedIn"><a routerLink="/reports">My Reports</a></li>
+
+        <!-- My Reports — logged in users -->
+        <li *ngIf="isLoggedIn"><a routerLink="/reports" routerLinkActive="active">My Reports</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
 
     <!-- Header CTA group -->
     <div class="header-cta-group">
-      <a class="btn-getstarted" routerLink="/appointment">Appointment</a>
+      <!-- Dashboard shortcut for backoffice roles -->
+      <a *ngIf="isLoggedIn && isBackofficeUser" class="btn-getstarted" routerLink="/admin">
+        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+      </a>
 
-      <!-- Logout button — shown only when a user session exists -->
-      <button *ngIf="isLoggedIn" id="btn-frontoffice-logout" type="button" class="btn-logout" (click)="logout()"
-        title="Log out" aria-label="Log out">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-          <polyline points="16 17 21 12 16 7" />
-          <line x1="21" y1="12" x2="9" y2="12" />
-        </svg>
-        <span class="logout-label">Log Out</span>
-      </button>
+      <!-- Appointment CTA for patients/guests -->
+      <a *ngIf="!isBackofficeUser" class="btn-getstarted" routerLink="/appointment">Appointment</a>
 
-      <!-- Login link — shown only when NOT logged in -->
+      <!-- User greeting + logout when logged in -->
+      <ng-container *ngIf="isLoggedIn">
+        <span *ngIf="loggedUserName" class="d-none d-xl-inline small fw-semibold" style="color:#6b1fad;">
+          Hi, {{ loggedUserName }}
+        </span>
+        <button id="btn-frontoffice-logout" type="button" class="btn-logout" (click)="logout()"
+          title="Log out" aria-label="Log out">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span class="logout-label">Log Out</span>
+        </button>
+      </ng-container>
+
+      <!-- Login link — not logged in -->
       <a *ngIf="!isLoggedIn" id="btn-frontoffice-login" class="btn-login" routerLink="/auth/login" title="Log in">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -1,0 +1,72 @@
+{
+  "thresholds": {
+    "MMSE": 24.01,
+    "ADL": 5.12,
+    "FunctionalAssessment": 5.0,
+    "PhysicalActivity": 3.45,
+    "DietQuality": 8.06,
+    "SleepQuality": 7.48,
+    "BMI": 26.22,
+    "SystolicBP": 98.8,
+    "DiastolicBP": 65.0,
+    "CholesterolLDL": 113.76,
+    "CholesterolHDL": 84.01,
+    "CholesterolTriglycerides": 317.65,
+    "AlcoholConsumption": 5.32
+  },
+  "group_means": {
+    "MMSE": {
+      "diagnosed": 11.99,
+      "not_diagnosed": 16.27
+    },
+    "ADL": {
+      "diagnosed": 3.66,
+      "not_diagnosed": 5.71
+    },
+    "FunctionalAssessment": {
+      "diagnosed": 3.65,
+      "not_diagnosed": 5.86
+    },
+    "PhysicalActivity": {
+      "diagnosed": 4.94,
+      "not_diagnosed": 4.91
+    },
+    "DietQuality": {
+      "diagnosed": 5.03,
+      "not_diagnosed": 4.97
+    },
+    "SleepQuality": {
+      "diagnosed": 6.92,
+      "not_diagnosed": 7.12
+    },
+    "BMI": {
+      "diagnosed": 27.91,
+      "not_diagnosed": 27.52
+    },
+    "SystolicBP": {
+      "diagnosed": 133.72,
+      "not_diagnosed": 134.56
+    },
+    "DiastolicBP": {
+      "diagnosed": 89.97,
+      "not_diagnosed": 89.78
+    },
+    "CholesterolLDL": {
+      "diagnosed": 122.46,
+      "not_diagnosed": 125.36
+    },
+    "CholesterolHDL": {
+      "diagnosed": 60.8,
+      "not_diagnosed": 58.73
+    },
+    "CholesterolTriglycerides": {
+      "diagnosed": 231.41,
+      "not_diagnosed": 226.57
+    },
+    "AlcoholConsumption": {
+      "diagnosed": 9.98,
+      "not_diagnosed": 10.07
+    }
+  },
+  "tree_accuracy": 0.941
+}

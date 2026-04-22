@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.lost_item_service.Entity.*;
-import tn.esprit.lost_item_service.Repository.ItemAlertRepository;
+import tn.esprit.lost_item_service.Repository.LostItemAlertRepository;
 import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import tn.esprit.lost_item_service.Repository.SearchReportRepository;
 
@@ -25,7 +25,7 @@ public class LostItemService {
 
     private final LostItemRepository lostItemRepository;
     private final SearchReportRepository searchReportRepository;
-    private final ItemAlertRepository itemAlertRepository;
+    private final LostItemAlertRepository itemAlertRepository;
 
     // ── CRUD ──────────────────────────────────────────────────────────────────
 
@@ -202,7 +202,7 @@ public class LostItemService {
             boolean alreadyExists = itemAlertRepository
                     .existsByLostItemIdAndTitleAndStatusNot(item.getId(), spec.title(), AlertStatus.RESOLVED);
             if (!alreadyExists) {
-                ItemAlert alert = ItemAlert.builder()
+                LostItemAlert alert = LostItemAlert.builder()
                         .lostItemId(item.getId())
                         .patientId(item.getPatientId())
                         .caregiverId(item.getCaregiverId())
@@ -219,7 +219,7 @@ public class LostItemService {
     private record AlertSpec(String title, String description, AlertLevel level) {}
 
     private void resolveItemAlerts(Long lostItemId) {
-        List<ItemAlert> active = itemAlertRepository.findByLostItemIdAndStatus(lostItemId, AlertStatus.NEW);
+        List<LostItemAlert> active = itemAlertRepository.findByLostItemIdAndStatus(lostItemId, AlertStatus.NEW);
         active.addAll(itemAlertRepository.findByLostItemIdAndStatus(lostItemId, AlertStatus.VIEWED));
         active.forEach(a -> a.setStatus(AlertStatus.RESOLVED));
         itemAlertRepository.saveAll(active);
@@ -248,7 +248,7 @@ public class LostItemService {
                 .filter(i -> i.getStatus() == ItemStatus.FOUND)
                 .toList();
 
-        List<ItemAlert> unresolvedAlerts = itemAlertRepository.findByPatientIdAndStatus(patientId, AlertStatus.NEW);
+        List<LostItemAlert> unresolvedAlerts = itemAlertRepository.findByPatientIdAndStatus(patientId, AlertStatus.NEW);
         unresolvedAlerts.addAll(itemAlertRepository.findByPatientIdAndStatus(patientId, AlertStatus.VIEWED));
 
         int score = 0;
@@ -358,7 +358,7 @@ public class LostItemService {
                     .findByPatientIdAndStatus(patientId, AlertStatus.NEW).stream()
                     .anyMatch(a -> a.getTitle().equals(alertTitle));
             if (!alreadyExists) {
-                ItemAlert trendAlert = ItemAlert.builder()
+                LostItemAlert trendAlert = LostItemAlert.builder()
                         .lostItemId(0L)
                         .patientId(patientId)
                         .title(alertTitle)

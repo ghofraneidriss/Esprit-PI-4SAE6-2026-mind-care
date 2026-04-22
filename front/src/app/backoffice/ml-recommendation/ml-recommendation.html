@@ -1,0 +1,385 @@
+<div class="ml-rec-page" data-bs-theme="light">
+
+  <!-- Brand bar -->
+  <div class="li-brand-bar">
+    <a routerLink="/admin">MindCare</a>
+    <span class="mx-2">&rsaquo;</span>
+    <span>AI Recommendation System</span>
+  </div>
+
+  <div class="container-fluid py-4 px-4">
+
+    <!-- Header -->
+    <div class="page-header mb-4">
+      <div>
+        <h2 class="page-title">
+          <i class="bi bi-robot me-2"></i>Alzheimer Care Recommendation System
+        </h2>
+        <p class="page-subtitle">Enter patient data to generate personalized care recommendations powered by Random Forest &amp; Gradient Boosting ensemble</p>
+      </div>
+    </div>
+
+    <!-- Error banner -->
+    <div *ngIf="error" class="alert alert-danger d-flex align-items-center mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+    </div>
+
+    <!-- Two-column layout: form | results -->
+    <div class="row g-4">
+
+      <!-- LEFT: Form -->
+      <div [class]="result ? 'col-lg-5' : 'col-lg-8 mx-auto'">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+          <!-- Demographics -->
+          <div class="form-card mb-3">
+            <div class="form-card-header">
+              <i class="bi bi-person-fill me-2"></i>Demographics
+            </div>
+            <div class="form-card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label">Age <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" formControlName="Age" min="60" max="90"
+                    [class.is-invalid]="submitted && form.get('Age')?.invalid">
+                  <div class="form-text">60–90</div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Gender</label>
+                  <select class="form-select" formControlName="Gender">
+                    <option [value]="0">Male</option>
+                    <option [value]="1">Female</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Ethnicity</label>
+                  <select class="form-select" formControlName="Ethnicity">
+                    <option [value]="0">Caucasian</option>
+                    <option [value]="1">African American</option>
+                    <option [value]="2">Asian</option>
+                    <option [value]="3">Other</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Education Level</label>
+                  <select class="form-select" formControlName="EducationLevel">
+                    <option [value]="0">None</option>
+                    <option [value]="1">High School</option>
+                    <option [value]="2">Bachelor's</option>
+                    <option [value]="3">Higher</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lifestyle -->
+          <div class="form-card mb-3">
+            <div class="form-card-header">
+              <i class="bi bi-heart-pulse-fill me-2"></i>Lifestyle
+            </div>
+            <div class="form-card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label">BMI</label>
+                  <input type="number" step="0.1" class="form-control" formControlName="BMI">
+                  <div class="form-text">15–40</div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Smoking</label>
+                  <select class="form-select" formControlName="Smoking">
+                    <option [value]="0">No</option>
+                    <option [value]="1">Yes</option>
+                  </select>
+                </div>
+                <div class="col-4">
+                  <label class="form-label">Alcohol <small>(units/wk)</small></label>
+                  <input type="number" step="0.5" class="form-control" formControlName="AlcoholConsumption">
+                </div>
+                <div class="col-4">
+                  <label class="form-label">Physical Activity <small>(h/wk)</small></label>
+                  <input type="number" step="0.5" class="form-control" formControlName="PhysicalActivity">
+                </div>
+                <div class="col-4">
+                  <label class="form-label">Diet Quality <small>(0-10)</small></label>
+                  <input type="number" step="0.1" class="form-control" formControlName="DietQuality">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Sleep Quality <small>(4-10)</small></label>
+                  <input type="number" step="0.1" class="form-control" formControlName="SleepQuality">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical History -->
+          <div class="form-card mb-3">
+            <div class="form-card-header">
+              <i class="bi bi-clipboard2-pulse-fill me-2"></i>Medical History
+            </div>
+            <div class="form-card-body">
+              <div class="row g-2">
+                <div class="col-6" *ngFor="let field of [
+                  {key:'FamilyHistoryAlzheimers', label:'Family History Alzheimer\'s'},
+                  {key:'CardiovascularDisease',   label:'Cardiovascular Disease'},
+                  {key:'Diabetes',                label:'Diabetes'},
+                  {key:'Depression',              label:'Depression'},
+                  {key:'HeadInjury',              label:'Head Injury'},
+                  {key:'Hypertension',            label:'Hypertension'}
+                ]">
+                  <div class="toggle-field">
+                    <span class="toggle-label">{{ field.label }}</span>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <input type="radio" class="btn-check" [formControlName]="field.key"
+                        [id]="field.key+'_no'" [value]="0">
+                      <label class="btn btn-outline-secondary" [for]="field.key+'_no'">No</label>
+                      <input type="radio" class="btn-check" [formControlName]="field.key"
+                        [id]="field.key+'_yes'" [value]="1">
+                      <label class="btn btn-outline-danger" [for]="field.key+'_yes'">Yes</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clinical Measurements -->
+          <div class="form-card mb-3">
+            <div class="form-card-header">
+              <i class="bi bi-droplet-fill me-2"></i>Clinical Measurements
+            </div>
+            <div class="form-card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="form-label">Systolic BP <small>(mmHg)</small></label>
+                  <input type="number" class="form-control" formControlName="SystolicBP">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Diastolic BP <small>(mmHg)</small></label>
+                  <input type="number" class="form-control" formControlName="DiastolicBP">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Total Cholesterol <small>(mg/dL)</small></label>
+                  <input type="number" class="form-control" formControlName="CholesterolTotal">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">LDL Cholesterol <small>(mg/dL)</small></label>
+                  <input type="number" class="form-control" formControlName="CholesterolLDL">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">HDL Cholesterol <small>(mg/dL)</small></label>
+                  <input type="number" class="form-control" formControlName="CholesterolHDL">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Triglycerides <small>(mg/dL)</small></label>
+                  <input type="number" class="form-control" formControlName="CholesterolTriglycerides">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cognitive Assessments -->
+          <div class="form-card mb-3">
+            <div class="form-card-header">
+              <i class="bi bi-brain me-2"></i>Cognitive Assessments
+            </div>
+            <div class="form-card-body">
+              <div class="row g-3">
+                <div class="col-4">
+                  <label class="form-label">MMSE <small>(0-30)</small></label>
+                  <input type="number" class="form-control" formControlName="MMSE">
+                </div>
+                <div class="col-4">
+                  <label class="form-label">Functional Assessment <small>(0-10)</small></label>
+                  <input type="number" step="0.1" class="form-control" formControlName="FunctionalAssessment">
+                </div>
+                <div class="col-4">
+                  <label class="form-label">ADL <small>(0-10)</small></label>
+                  <input type="number" step="0.1" class="form-control" formControlName="ADL">
+                </div>
+                <div class="col-6">
+                  <div class="toggle-field">
+                    <span class="toggle-label">Memory Complaints</span>
+                    <div class="btn-group btn-group-sm">
+                      <input type="radio" class="btn-check" formControlName="MemoryComplaints" id="mc_no" [value]="0">
+                      <label class="btn btn-outline-secondary" for="mc_no">No</label>
+                      <input type="radio" class="btn-check" formControlName="MemoryComplaints" id="mc_yes" [value]="1">
+                      <label class="btn btn-outline-danger" for="mc_yes">Yes</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="toggle-field">
+                    <span class="toggle-label">Behavioral Problems</span>
+                    <div class="btn-group btn-group-sm">
+                      <input type="radio" class="btn-check" formControlName="BehavioralProblems" id="bp_no" [value]="0">
+                      <label class="btn btn-outline-secondary" for="bp_no">No</label>
+                      <input type="radio" class="btn-check" formControlName="BehavioralProblems" id="bp_yes" [value]="1">
+                      <label class="btn btn-outline-danger" for="bp_yes">Yes</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Symptoms -->
+          <div class="form-card mb-4">
+            <div class="form-card-header">
+              <i class="bi bi-exclamation-circle-fill me-2"></i>Symptoms
+            </div>
+            <div class="form-card-body">
+              <div class="row g-2">
+                <div class="col-6" *ngFor="let field of [
+                  {key:'Confusion',                 label:'Confusion'},
+                  {key:'Disorientation',            label:'Disorientation'},
+                  {key:'PersonalityChanges',        label:'Personality Changes'},
+                  {key:'DifficultyCompletingTasks', label:'Difficulty Completing Tasks'},
+                  {key:'Forgetfulness',             label:'Forgetfulness'}
+                ]">
+                  <div class="toggle-field">
+                    <span class="toggle-label">{{ field.label }}</span>
+                    <div class="btn-group btn-group-sm">
+                      <input type="radio" class="btn-check" [formControlName]="field.key"
+                        [id]="field.key+'_no'" [value]="0">
+                      <label class="btn btn-outline-secondary" [for]="field.key+'_no'">No</label>
+                      <input type="radio" class="btn-check" [formControlName]="field.key"
+                        [id]="field.key+'_yes'" [value]="1">
+                      <label class="btn btn-outline-danger" [for]="field.key+'_yes'">Yes</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-analyze flex-fill" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!loading" class="bi bi-robot me-2"></i>
+              {{ loading ? 'Analyzing...' : 'Generate Recommendations' }}
+            </button>
+            <button type="button" class="btn btn-outline-secondary" (click)="reset()" *ngIf="result">
+              <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="col-lg-7" *ngIf="result">
+
+        <!-- Risk Score Card -->
+        <div class="risk-score-card mb-4" [style.border-left-color]="clusterColor">
+          <div class="risk-score-left">
+            <div class="risk-icon" [style.background]="clusterColor">
+              <i class="bi bi-activity"></i>
+            </div>
+            <div>
+              <div class="risk-label-text">AI Risk Assessment</div>
+              <div class="risk-name" [style.color]="clusterColor">{{ result.risk_label }}</div>
+              <div class="risk-meta">
+                RF Prob: <b>{{ (result.prob_rf * 100).toFixed(1) }}%</b>
+                &nbsp;&bull;&nbsp;
+                GB Prob: <b>{{ (result.prob_gb * 100).toFixed(1) }}%</b>
+              </div>
+            </div>
+          </div>
+          <div class="risk-score-right">
+            <div class="risk-score-number" [style.color]="clusterColor">{{ result.risk_score }}</div>
+            <div class="risk-score-sub">/ 100 risk score</div>
+            <div class="risk-progress mt-2">
+              <div class="risk-progress-bar"
+                   [style.width.%]="result.risk_score"
+                   [style.background]="clusterColor"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Model info chips -->
+        <div class="model-info-bar mb-4">
+          <span class="model-chip">
+            <i class="bi bi-tree-fill me-1"></i>RF AUC {{ result.model_info.rf_cv_auc.toFixed(3) }}
+          </span>
+          <span class="model-chip">
+            <i class="bi bi-bar-chart-fill me-1"></i>GB AUC {{ result.model_info.gb_cv_auc.toFixed(3) }}
+          </span>
+          <span class="model-chip best">
+            <i class="bi bi-trophy-fill me-1"></i>Best: {{ result.model_info.best_model.toUpperCase() }}
+          </span>
+          <span class="model-chip recs">
+            <i class="bi bi-list-check me-1"></i>{{ result.total_recommendations }} Recommendations
+          </span>
+        </div>
+
+        <!-- Risk Drivers -->
+        <div class="form-card mb-4" *ngIf="result.risk_drivers?.length">
+          <div class="form-card-header">
+            <i class="bi bi-graph-up-arrow me-2"></i>Top Risk Drivers
+          </div>
+          <div class="form-card-body">
+            <div class="risk-driver" *ngFor="let d of result.risk_drivers; let i = index">
+              <div class="driver-rank" [style.background]="i === 0 ? clusterColor : '#e2e8f0'"
+                   [style.color]="i === 0 ? '#fff' : '#475569'">#{{ i + 1 }}</div>
+              <div class="driver-body">
+                <div class="driver-top">
+                  <span class="driver-name">{{ d.feature }}</span>
+                  <span class="driver-vals">
+                    Patient: <b>{{ d.patient_value?.toFixed(1) }}</b>
+                    &nbsp;&bull;&nbsp; Healthy avg: {{ d.healthy_avg?.toFixed(1) }}
+                  </span>
+                </div>
+                <div class="driver-bar-bg">
+                  <div class="driver-bar-fill"
+                       [style.width.%]="(d.contribution / result.risk_drivers[0].contribution) * 100"
+                       [style.background]="clusterColor"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Priority summary pills -->
+        <div class="priority-summary mb-4">
+          <span class="priority-pill high">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            {{ priorityHighCount }} High Priority
+          </span>
+          <span class="priority-pill medium">
+            <i class="bi bi-dash-circle-fill"></i>
+            {{ priorityMedCount }} Medium Priority
+          </span>
+        </div>
+
+        <!-- Recommendations by category -->
+        <div class="rec-category-block mb-3" *ngFor="let cat of categories">
+          <div class="rec-category-title">
+            <i class="bi" [class]="categoryIcon(cat)"></i> {{ cat }}
+          </div>
+          <div class="rec-item" *ngFor="let rec of recsByCategory(cat)"
+               [class]="'priority-' + rec.priority.toLowerCase()">
+            <div class="rec-header">
+              <span class="rec-badge" [class]="'badge-' + rec.priority.toLowerCase()">
+                {{ rec.priority }}
+              </span>
+              <strong>{{ rec.recommendation }}</strong>
+            </div>
+            <p class="rec-detail">{{ rec.detail }}</p>
+            <div class="contrib-row" *ngIf="rec.contribution_score > 0">
+              <span class="contrib-label">Risk contribution</span>
+              <div class="contrib-bar-bg">
+                <div class="contrib-bar-fill"
+                     [class]="'contrib-' + rec.priority.toLowerCase()"
+                     [style.width.%]="(rec.contribution_score / maxContribution) * 100"></div>
+              </div>
+              <span class="contrib-val">{{ rec.contribution_score.toFixed(3) }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

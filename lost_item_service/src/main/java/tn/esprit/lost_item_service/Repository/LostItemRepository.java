@@ -72,6 +72,12 @@ public interface LostItemRepository extends JpaRepository<LostItem, Long> {
             @Param("to") LocalDateTime to
     );
 
+    // ── Category queries ──────────────────────────────────────────────────────
+
+    List<LostItem> findByCategory(ItemCategory category);
+
+    List<LostItem> findByPatientIdOrderByCreatedAtDesc(Long patientId);
+
     // ── Global statistics ─────────────────────────────────────────────────────
 
     @Query("SELECT l.status, COUNT(l) FROM LostItem l GROUP BY l.status")

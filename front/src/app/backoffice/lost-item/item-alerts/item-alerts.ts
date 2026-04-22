@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LostItemService } from '../lost-item.service';
-import { ItemAlert, AlertLevel, AlertStatus } from '../lost-item.model';
-import { AuthService } from '../../../frontoffice/auth/auth.service';
+import { LostItemAlert, AlertLevel, AlertStatus } from '../lost-item.model';
+import { AuthService, AuthUser } from '../../../frontoffice/auth/auth.service';
 
 @Component({
   selector: 'app-item-alerts',
@@ -12,8 +12,9 @@ import { AuthService } from '../../../frontoffice/auth/auth.service';
 })
 export class ItemAlertsComponent implements OnInit {
 
-  alerts: ItemAlert[] = [];
-  filteredAlerts: ItemAlert[] = [];
+  alerts: LostItemAlert[] = [];
+  filteredAlerts: LostItemAlert[] = [];
+  loggedUser: AuthUser | null = null;
   isLoading = false;
   pageError = '';
   successMsg = '';
@@ -31,12 +32,13 @@ export class ItemAlertsComponent implements OnInit {
   constructor(
     private readonly svc: LostItemService,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    const user = this.authService.getLoggedUser();
-    this.currentUserId = user?.userId ?? null;
+    this.loggedUser = this.authService.getLoggedUser();
+    this.currentUserId = this.loggedUser?.userId ?? null;
     this.currentRole = this.authService.getLoggedRole();
     this.isCaregiver = this.currentRole === 'CAREGIVER';
     this.loadAlerts();
@@ -55,10 +57,12 @@ export class ItemAlertsComponent implements OnInit {
         this.alerts = data;
         this.applyFilters();
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.pageError = 'Failed to load alerts.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -77,7 +81,7 @@ export class ItemAlertsComponent implements OnInit {
     this.applyFilters();
   }
 
-  markViewed(alert: ItemAlert): void {
+  markViewed(alert: LostItemAlert): void {
     if (!alert.id || alert.status !== 'NEW') return;
     this.svc.markAlertViewed(alert.id).subscribe({
       next: updated => {
@@ -91,7 +95,7 @@ export class ItemAlertsComponent implements OnInit {
     });
   }
 
-  resolveAlert(alert: ItemAlert): void {
+  resolveAlert(alert: LostItemAlert): void {
     if (!alert.id) return;
     this.svc.resolveAlert(alert.id).subscribe({
       next: updated => {
@@ -105,7 +109,7 @@ export class ItemAlertsComponent implements OnInit {
     });
   }
 
-  escalateAlert(alert: ItemAlert): void {
+  escalateAlert(alert: LostItemAlert): void {
     if (!alert.id || alert.level === 'CRITICAL') return;
     this.svc.escalateAlert(alert.id).subscribe({
       next: updated => {
@@ -141,6 +145,11 @@ export class ItemAlertsComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/admin/lost-items']);
+  }
+
+  get userInitials(): string {
+    if (!this.loggedUser) return '?';
+    return (this.loggedUser.firstName?.charAt(0) ?? '') + (this.loggedUser.lastName?.charAt(0) ?? '');
   }
 
   getLevelClass(level?: AlertLevel): string {

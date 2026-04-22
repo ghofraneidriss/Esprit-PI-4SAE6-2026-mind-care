@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LostItem, ItemCategory, ItemStatus, ItemPriority } from '../lost-item.model';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { LostItem, ItemCategory, ItemStatus, ItemPriority, SearchSuggestion } from '../lost-item.model';
 import { LostItemService } from '../lost-item.service';
 import { UserApiService, UserSummary } from '../user-api.service';
-import { AuthService } from '../../../frontoffice/auth/auth.service';
+import { AuthService, AuthUser } from '../../../frontoffice/auth/auth.service';
 
 @Component({
   selector: 'app-lost-item-form',
@@ -12,7 +14,7 @@ import { AuthService } from '../../../frontoffice/auth/auth.service';
   templateUrl: './lost-item-form.html',
   styleUrls: ['./lost-item-form.css'],
 })
-export class LostItemFormComponent implements OnInit {
+export class LostItemFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isEditMode = false;
   editingId: number | null = null;
@@ -20,10 +22,18 @@ export class LostItemFormComponent implements OnInit {
   formError = '';
   submitAttempted = false;
 
+  loggedUser: AuthUser | null = null;
   currentRole = '';
   isCaregiver = false;
   patients: UserSummary[] = [];
   patientsLoading = false;
+
+  // ── Smart Search Suggestions ──────────────────────────────────────────────
+  suggestions: SearchSuggestion[] = [];
+  suggestionsLoading = false;
+  showSuggestions = false;
+  private readonly suggestTrigger$ = new Subject<{ patientId: number | null; category: string }>();
+  private readonly destroy$ = new Subject<void>();
 
   readonly categoryOptions: Array<{ label: string; value: ItemCategory }> = [
     { label: 'Clothing', value: 'CLOTHING' },
@@ -72,8 +82,19 @@ export class LostItemFormComponent implements OnInit {
 
   get isPatient(): boolean { return this.currentRole === 'PATIENT'; }
 
+  get userInitials(): string {
+    if (!this.loggedUser) return '?';
+    return (this.loggedUser.firstName?.charAt(0) ?? '') + (this.loggedUser.lastName?.charAt(0) ?? '');
+  }
+
+  get userFullName(): string {
+    if (!this.loggedUser) return 'Unknown';
+    return `${this.loggedUser.firstName ?? ''} ${this.loggedUser.lastName ?? ''}`.trim();
+  }
+
   ngOnInit(): void {
-    const user = this.authService.getLoggedUser();
+    this.loggedUser = this.authService.getLoggedUser();
+    const user = this.loggedUser;
     this.currentRole = this.authService.getLoggedRole();
     this.isCaregiver = this.currentRole === 'CAREGIVER';
 
@@ -105,6 +126,70 @@ export class LostItemFormComponent implements OnInit {
         error: () => { this.formError = 'Failed to load item.'; },
       });
     }
+
+    // ── Wire up suggestion debounce (only on create mode) ────────────────────
+    if (!this.isEditMode) {
+      this.suggestTrigger$.pipe(
+        debounceTime(500),
+        distinctUntilChanged((a, b) => a.patientId === b.patientId && a.category === b.category),
+        takeUntil(this.destroy$)
+      ).subscribe(({ patientId, category }) => {
+        if (patientId && category) {
+          this.fetchSuggestions(patientId, category);
+        } else {
+          this.suggestions = [];
+          this.showSuggestions = false;
+        }
+      });
+
+      // React to form changes
+      this.form.get('patientId')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.triggerSuggestions();
+      });
+      this.form.get('category')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.triggerSuggestions();
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  triggerSuggestions(): void {
+    const raw = this.form.getRawValue();
+    this.suggestTrigger$.next({ patientId: raw.patientId ?? null, category: raw.category ?? '' });
+  }
+
+  fetchSuggestions(patientId: number, category: string): void {
+    this.suggestionsLoading = true;
+    this.showSuggestions = true;
+    this.lostItemService.getSearchSuggestions(patientId, category).subscribe({
+      next: data => {
+        this.suggestions = data;
+        this.suggestionsLoading = false;
+      },
+      error: () => {
+        this.suggestions = [];
+        this.suggestionsLoading = false;
+      }
+    });
+  }
+
+  getConfidenceColor(score: number): string {
+    if (score >= 60) return '#16a34a';
+    if (score >= 35) return '#d97706';
+    return '#dc2626';
+  }
+
+  dismissSuggestions(): void {
+    this.showSuggestions = false;
+  }
+
+  useSuggestion(location: string): void {
+    this.form.patchValue({ lastSeenLocation: location });
+    this.showSuggestions = false;
   }
 
   isInvalid(field: string): boolean {

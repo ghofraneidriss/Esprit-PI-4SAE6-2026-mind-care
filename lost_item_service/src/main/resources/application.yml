@@ -16,6 +16,16 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  # ── Spring AI — Groq (OpenAI-compatible) ────────────────────────────────
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY:your-groq-api-key-here}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.3
+          max-tokens: 1024
 
 eureka:
   client:

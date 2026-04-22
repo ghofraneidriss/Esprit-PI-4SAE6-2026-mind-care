@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SearchReport, SearchLogStats, SearchTimeline } from '../lost-item.model';
 import { LostItemService } from '../lost-item.service';
@@ -60,6 +60,7 @@ export class SearchLogComponent implements OnInit {
     private readonly lostItemService: LostItemService,
     private readonly userApiService: UserApiService,
     private readonly authService: AuthService,
+    private readonly cdr: ChangeDetectorRef,
   ) {
     this.filterForm = this.fb.group({
       lostItemId:      [null],
@@ -99,8 +100,8 @@ export class SearchLogComponent implements OnInit {
     // PATIENT: always scope by their patientId (items belong to them)
     if (this.isPatient && this.currentUserId) {
       this.lostItemService.getReportsByPatient(this.currentUserId).subscribe({
-        next: (data) => { this.reports = data; this.isLoading = false; },
-        error: (err) => { this.pageError = err?.error?.message ?? 'Failed to load reports.'; this.isLoading = false; },
+        next: (data) => { this.reports = data; this.isLoading = false; this.cdr.detectChanges(); },
+        error: (err) => { this.pageError = err?.error?.message ?? 'Failed to load reports.'; this.isLoading = false; this.cdr.detectChanges(); },
       });
       return;
     }
@@ -119,8 +120,8 @@ export class SearchLogComponent implements OnInit {
       from:            v.from         || undefined,
       to:              v.to           || undefined,
     }).subscribe({
-      next: (data) => { this.reports = data; this.isLoading = false; },
-      error: (err) => { this.pageError = err?.error?.message ?? 'Failed to load reports.'; this.isLoading = false; },
+      next: (data) => { this.reports = data; this.isLoading = false; this.cdr.detectChanges(); },
+      error: (err) => { this.pageError = err?.error?.message ?? 'Failed to load reports.'; this.isLoading = false; this.cdr.detectChanges(); },
     });
   }
 
@@ -135,8 +136,8 @@ export class SearchLogComponent implements OnInit {
   loadStats(): void {
     this.isStatsLoading = true;
     this.lostItemService.getSearchLogStats().subscribe({
-      next: (s) => { this.stats = s; this.isStatsLoading = false; },
-      error: () => { this.isStatsLoading = false; },
+      next: (s) => { this.stats = s; this.isStatsLoading = false; this.cdr.detectChanges(); },
+      error: () => { this.isStatsLoading = false; this.cdr.detectChanges(); },
     });
   }
 
@@ -144,8 +145,8 @@ export class SearchLogComponent implements OnInit {
     if (!this.timelineLostItemId) return;
     this.isLoading = true;
     this.lostItemService.getSearchTimeline(this.timelineLostItemId).subscribe({
-      next: (t) => { this.timeline = t; this.isLoading = false; },
-      error: (err) => { this.pageError = err?.error?.message ?? 'Failed to load timeline.'; this.isLoading = false; },
+      next: (t) => { this.timeline = t; this.isLoading = false; this.cdr.detectChanges(); },
+      error: (err) => { this.pageError = err?.error?.message ?? 'Failed to load timeline.'; this.isLoading = false; this.cdr.detectChanges(); },
     });
   }
 
@@ -184,6 +185,15 @@ export class SearchLogComponent implements OnInit {
       case 'PARTIALLY_FOUND':  return 'badge bg-warning text-dark';
       case 'NOT_FOUND':        return 'badge bg-danger';
       default:                 return 'badge bg-secondary';
+    }
+  }
+
+  getResultLabel(result?: string): string {
+    switch (result) {
+      case 'FOUND':            return 'Found';
+      case 'PARTIALLY_FOUND':  return 'Partially Found';
+      case 'NOT_FOUND':        return 'Not Found';
+      default:                 return result ?? '—';
     }
   }
 

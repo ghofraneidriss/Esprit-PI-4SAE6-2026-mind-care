@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LostItemService } from '../lost-item.service';
 import { PatientRisk, FrequencyTrend } from '../lost-item.model';
@@ -20,7 +20,8 @@ export class PatientRiskComponent implements OnInit {
   constructor(
     private readonly svc: LostItemService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -46,10 +47,12 @@ export class PatientRiskComponent implements OnInit {
       next: data => {
         this.risk = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.pageError = 'Failed to load risk assessment.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
 

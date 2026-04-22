@@ -35,7 +35,7 @@ export interface SearchReport {
   updatedAt?: string | null;
 }
 
-export interface ItemAlert {
+export interface LostItemAlert {
   id?: number;
   lostItemId: number;
   patientId: number;
@@ -121,6 +121,45 @@ export interface SearchTimeline {
   timeline: SearchTimelineDay[];
 }
 
+export interface RecommendedLocation {
+  location: string;
+  successRate: number;
+  totalSearches: number;
+  rank: number;
+}
+
+export interface RecoveryStrategy {
+  itemId: number;
+  itemTitle: string;
+  category: string;
+  status: string;
+  priority: string;
+  daysElapsed: number;
+  searchAttemptsCount: number;
+  recoveryProbability: number;
+  probabilityLevel: 'HIGH' | 'MODERATE' | 'LOW' | 'CRITICAL';
+  estimatedDaysToRecover: number | null;
+  recommendedLocations: RecommendedLocation[];
+  alreadySearchedLocations: string[];
+  categoryInsights: {
+    totalItems: number;
+    foundCount: number;
+    recoveryRate: number;
+    avgDaysToFind: number | null;
+    topSuccessLocation: string;
+    totalSearchReportsAnalyzed: number;
+  };
+  patientProfile: {
+    patientId: number;
+    totalItemsLost: number;
+    foundItems: number;
+    recoveryRate: number;
+    isFrequentLoser: boolean;
+    recentMonthLostCount: number;
+  };
+  strategyTips: string[];
+}
+
 export interface SearchLogStats {
   totalReports: number;
   resultDistribution: Record<string, number>;
@@ -128,4 +167,53 @@ export interface SearchLogStats {
   globalSuccessRate: number;
   topSearchedItems: Array<{ lostItemId: number; itemTitle: string; searchCount: number }>;
   topReporters: Array<{ reportedBy: number; reportCount: number }>;
+}
+
+// ── Option A: Patient Behavioral Intelligence ───────────────────────────────
+
+export interface MonthlyTrendEntry {
+  month: string;
+  count: number;
+}
+
+export interface CategoryRiskEntry {
+  category: string;
+  count: number;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+}
+
+export interface DangerZoneEntry {
+  location: string;
+  lossCount: number;
+}
+
+export interface PatientIntelligence {
+  patientId: number;
+  totalItemsLost: number;
+  totalFound: number;
+  recoveryRate: number;
+  recentMonthCount: number;
+  previousMonthCount: number;
+  trendDirection: 'INCREASING' | 'STABLE' | 'DECREASING';
+  trendMultiplier: number;
+  monthlyTrend: MonthlyTrendEntry[];
+  categoryRisk: CategoryRiskEntry[];
+  dangerZones: DangerZoneEntry[];
+  unresolvedCritical: number;
+  longestUnresolvedDays: number;
+  overallRiskLevel: 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+  aiAnalysis: string | null;
+  aiError?: string;
+}
+
+// ── Option B: Smart Search Suggestions ─────────────────────────────────────
+
+export interface SearchSuggestion {
+  location: string;
+  totalSearches: number;
+  foundCount: number;
+  partialCount: number;
+  confidenceScore: number;   // 0 – 100
+  rank: number;
+  tip: string;
 }

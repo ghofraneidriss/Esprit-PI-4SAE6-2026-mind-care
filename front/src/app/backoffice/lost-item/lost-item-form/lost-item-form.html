@@ -1,8 +1,65 @@
+<div class="li-layout" data-bs-theme="light">
+
+  <!-- Sidebar -->
+  <aside class="li-sidebar">
+    <div class="li-sidebar-brand">
+      <a routerLink="/admin" class="li-brand-link">
+        <span class="li-brand-icon"><i class="bi bi-heart-pulse"></i></span>
+        <span class="li-brand-text">MindCare</span>
+      </a>
+    </div>
+    <nav class="li-sidebar-nav">
+      <span class="li-nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="li-nav-link">
+        <i class="bi bi-house"></i><span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/lost-items" class="li-nav-link li-nav-active">
+        <i class="bi bi-search"></i><span>Lost Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/alerts" class="li-nav-link ">
+        <i class="bi bi-bell"></i><span>Alerts</span>
+      </a>
+      <a routerLink="/admin/lost-items/critical" class="li-nav-link ">
+        <i class="bi bi-exclamation-triangle"></i><span>Critical Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/search-log" class="li-nav-link ">
+        <i class="bi bi-bar-chart"></i><span>Search Log</span>
+      </a>
+      <span class="li-nav-heading">Admin</span>
+      <a routerLink="/admin/lost-items/statistics" class="li-nav-link">
+        <i class="bi bi-pie-chart"></i><span>Statistics</span>
+      </a>
+      <a routerLink="/admin/lost-items/risk" class="li-nav-link">
+        <i class="bi bi-shield-exclamation"></i><span>Patient Risk</span>
+      </a>
+    </nav>
+    <div class="li-sidebar-footer">
+      <a routerLink="/" class="li-nav-link">
+        <i class="bi bi-arrow-left-circle"></i><span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="li-main">
+
+<div class="li-hero">
+  <div class="li-hero-left">
+    <div class="li-hero-icon"><i class="bi bi-file-plus"></i></div>
+    <div>
+      <h1 class="li-hero-title">{{ isEditMode ? 'Edit Lost Item' : 'Report Lost Item' }}</h1>
+      <p class="li-hero-sub">{{ isEditMode ? 'Update item details' : 'Fill in the details to report a lost item' }}</p>
+    </div>
+  </div>
+  <div class="li-hero-right">
+    <a routerLink="/admin/lost-items" class="li-hero-btn"><i class="bi bi-arrow-left"></i> All Items</a>
+  </div>
+</div>
 <div class="container-fluid py-4" style="max-width:760px;">
 
   <div class="d-flex align-items-center mb-4 gap-3">
     <button class="btn btn-sm btn-outline-secondary" (click)="cancel()">
-      <i class="fi fi-rr-arrow-left me-1"></i> Back
+      <i class="bi bi-arrow-left me-1"></i> Back
     </button>
     <h5 class="mb-0" style="color:#6b1fad;font-weight:700;">
       {{ isEditMode ? 'Edit Lost Item' : 'Report a Lost Item' }}
@@ -10,7 +67,7 @@
   </div>
 
   <div *ngIf="formError" class="alert alert-danger">
-    <i class="fi fi-rr-exclamation me-2"></i>{{ formError }}
+    <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
   </div>
 
   <div class="card shadow-sm">
@@ -58,7 +115,7 @@
             <!-- PATIENT: read-only, auto-filled -->
             <ng-container *ngIf="isPatient">
               <input type="number" class="form-control bg-light" formControlName="patientId" readonly>
-              <small class="text-muted"><i class="fi fi-rr-lock me-1"></i>Auto-filled — this is your account</small>
+              <small class="text-muted"><i class="bi bi-lock me-1"></i>Auto-filled — this is your account</small>
             </ng-container>
 
             <!-- CAREGIVER: dropdown of assigned patients -->
@@ -99,6 +156,59 @@
             <input type="date" class="form-control" formControlName="lastSeenDate">
           </div>
 
+          <!-- ── Smart Search Suggestions panel ── -->
+          <div class="col-12" *ngIf="!isEditMode && showSuggestions">
+            <div class="sug-panel">
+              <div class="sug-header">
+                <div class="sug-header-left">
+                  <i class="bi bi-lightbulb-fill sug-icon"></i>
+                  <span class="sug-title">Smart Search Suggestions</span>
+                  <span class="sug-badge">AI-powered</span>
+                </div>
+                <button type="button" class="sug-dismiss" (click)="dismissSuggestions()" aria-label="Dismiss">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+
+              <div *ngIf="suggestionsLoading" class="sug-loading">
+                <span class="spinner-border spinner-border-sm me-2" style="color:#6b1fad;"></span>
+                Analyzing search history…
+              </div>
+
+              <div *ngIf="!suggestionsLoading && suggestions.length === 0" class="sug-empty">
+                <i class="bi bi-search me-1"></i>No historical data yet for this patient/category combination.
+              </div>
+
+              <div *ngIf="!suggestionsLoading && suggestions.length > 0">
+                <p class="sug-intro">Based on this patient's search history, here are the most likely locations:</p>
+                <div *ngFor="let s of suggestions" class="sug-item" (click)="useSuggestion(s.location)">
+                  <div class="sug-rank">#{{ s.rank }}</div>
+                  <div class="sug-content">
+                    <div class="sug-loc-row">
+                      <span class="sug-loc">{{ s.location }}</span>
+                      <span class="sug-conf" [style.color]="getConfidenceColor(s.confidenceScore)">
+                        {{ s.confidenceScore }}% success
+                      </span>
+                    </div>
+                    <div class="sug-bar-wrap">
+                      <div class="sug-bar-track">
+                        <div class="sug-bar-fill"
+                             [style.width.%]="s.confidenceScore"
+                             [style.background]="getConfidenceColor(s.confidenceScore)">
+                        </div>
+                      </div>
+                      <span class="sug-meta">{{ s.foundCount }}/{{ s.totalSearches }} found</span>
+                    </div>
+                    <p class="sug-tip"><i class="bi bi-info-circle me-1"></i>{{ s.tip }}</p>
+                  </div>
+                  <button type="button" class="sug-use-btn">
+                    <i class="bi bi-arrow-right-circle"></i> Use
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Status (edit mode only) -->
           <div class="col-md-6" *ngIf="isEditMode">
             <label class="form-label fw-semibold">Status</label>
@@ -128,3 +238,6 @@
     </div>
   </div>
 </div>
+
+  </div><!-- end li-main -->
+</div><!-- end li-layout -->

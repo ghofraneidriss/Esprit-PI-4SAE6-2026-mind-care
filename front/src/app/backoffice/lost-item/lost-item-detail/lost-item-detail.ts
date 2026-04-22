@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LostItem, SearchReport } from '../lost-item.model';
 import { LostItemService } from '../lost-item.service';
+import { AuthService, AuthUser } from '../../../frontoffice/auth/auth.service';
+import { UserApiService, UserSummary } from '../user-api.service';
 
 @Component({
   selector: 'app-lost-item-detail',
@@ -21,17 +23,50 @@ export class LostItemDetailComponent implements OnInit {
   showReportForm = false;
   editingReport: SearchReport | null = null;
 
+  loggedUser: AuthUser | null = null;
+  currentRole = '';
+  userNameMap: Record<number, string> = {};
+
   constructor(
     private readonly lostItemService: LostItemService,
+    private readonly authService: AuthService,
+    private readonly userApiService: UserApiService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.loggedUser = this.authService.getLoggedUser();
+    this.currentRole = this.authService.getLoggedRole();
+    this.loadUsers();
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadItem(+id);
-    }
+    if (id) this.loadItem(+id);
+  }
+
+  get userInitials(): string {
+    if (!this.loggedUser) return '?';
+    return (this.loggedUser.firstName?.charAt(0) ?? '') + (this.loggedUser.lastName?.charAt(0) ?? '');
+  }
+
+  get userFullName(): string {
+    if (!this.loggedUser) return 'Unknown';
+    return `${this.loggedUser.firstName ?? ''} ${this.loggedUser.lastName ?? ''}`.trim();
+  }
+
+  loadUsers(): void {
+    this.userApiService.getAllUsers().subscribe({
+      next: (users: UserSummary[]) => {
+        users.forEach(u => { this.userNameMap[u.userId] = `${u.firstName} ${u.lastName}`; });
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
+  }
+
+  getUserName(id?: number | null): string {
+    if (!id) return '—';
+    return this.userNameMap[id] ?? `#${id}`;
   }
 
   loadItem(id: number): void {
@@ -41,27 +76,28 @@ export class LostItemDetailComponent implements OnInit {
       next: (item) => {
         this.item = item;
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.loadReports(id);
         this.loadOpenCount(id);
       },
       error: (err) => {
-        console.error('[Detail] error loading item:', err);
         this.pageError = err?.error?.message ?? 'Failed to load item. Make sure the service is running.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
 
   loadReports(itemId: number): void {
     this.lostItemService.getSearchReportsByLostItemId(itemId).subscribe({
-      next: (reports) => (this.reports = reports),
+      next: (reports) => { this.reports = reports; this.cdr.detectChanges(); },
       error: () => {},
     });
   }
 
   loadOpenCount(itemId: number): void {
     this.lostItemService.getOpenReportsCount(itemId).subscribe({
-      next: (data) => (this.openReportsCount = data.openCount),
+      next: (data) => { this.openReportsCount = data.openCount; this.cdr.detectChanges(); },
       error: () => {},
     });
   }
@@ -82,9 +118,7 @@ export class LostItemDetailComponent implements OnInit {
   }
 
   editItem(): void {
-    if (this.item?.id) {
-      this.router.navigate(['/admin/lost-items', this.item.id, 'edit']);
-    }
+    if (this.item?.id) this.router.navigate(['/admin/lost-items', this.item.id, 'edit']);
   }
 
   showAddReport(): void {
@@ -146,6 +180,20 @@ export class LostItemDetailComponent implements OnInit {
       case 'CLOSED': return 'badge bg-secondary';
       default: return 'badge bg-secondary';
     }
+  }
+
+  getRoleClass(role: string): string {
+    switch (role) {
+      case 'ADMIN': return 'badge bg-danger';
+      case 'DOCTOR': return 'badge bg-primary';
+      case 'CAREGIVER': return 'badge bg-info text-dark';
+      case 'PATIENT': return 'badge bg-success';
+      default: return 'badge bg-secondary';
+    }
+  }
+
+  viewRecoveryStrategy(): void {
+    if (this.item?.id) this.router.navigate(['/admin/lost-items', this.item.id, 'recovery-strategy']);
   }
 
   goBack(): void {

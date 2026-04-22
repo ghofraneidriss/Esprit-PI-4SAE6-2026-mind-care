@@ -1,27 +1,86 @@
+<div class="li-layout" data-bs-theme="light">
+
+  <!-- Sidebar -->
+  <aside class="li-sidebar">
+    <div class="li-sidebar-brand">
+      <a routerLink="/admin" class="li-brand-link">
+        <span class="li-brand-icon"><i class="bi bi-heart-pulse"></i></span>
+        <span class="li-brand-text">MindCare</span>
+      </a>
+    </div>
+    <nav class="li-sidebar-nav">
+      <span class="li-nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="li-nav-link">
+        <i class="bi bi-house"></i><span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/lost-items" class="li-nav-link ">
+        <i class="bi bi-search"></i><span>Lost Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/alerts" class="li-nav-link ">
+        <i class="bi bi-bell"></i><span>Alerts</span>
+      </a>
+      <a routerLink="/admin/lost-items/critical" class="li-nav-link ">
+        <i class="bi bi-exclamation-triangle"></i><span>Critical Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/search-log" class="li-nav-link li-nav-active">
+        <i class="bi bi-bar-chart"></i><span>Search Log</span>
+      </a>
+      <span class="li-nav-heading">Admin</span>
+      <a routerLink="/admin/lost-items/statistics" class="li-nav-link">
+        <i class="bi bi-pie-chart"></i><span>Statistics</span>
+      </a>
+      <a routerLink="/admin/lost-items/risk" class="li-nav-link">
+        <i class="bi bi-shield-exclamation"></i><span>Patient Risk</span>
+      </a>
+    </nav>
+    <div class="li-sidebar-footer">
+      <a routerLink="/" class="li-nav-link">
+        <i class="bi bi-arrow-left-circle"></i><span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="li-main">
+
+<div class="li-hero">
+  <div class="li-hero-left">
+    <div class="li-hero-icon"><i class="bi bi-bar-chart"></i></div>
+    <div>
+      <h1 class="li-hero-title">Search Log</h1>
+      <p class="li-hero-sub">All search reports, timelines and statistics</p>
+    </div>
+  </div>
+  <div class="li-hero-right">
+    <div class="li-stat-box"><div class="li-stat-num">{{ reports.length }}</div><div class="li-stat-label">Reports</div></div>
+    <div class="li-stat-box" *ngIf="stats"><div class="li-stat-num">{{ stats.resultDistribution["FOUND"] || 0 }}</div><div class="li-stat-label">Found</div></div>
+    <a routerLink="/admin/lost-items" class="li-hero-btn"><i class="bi bi-arrow-left"></i> All Items</a>
+  </div>
+</div>
 <div class="container-fluid py-4">
 
   <!-- Header -->
   <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
       <h4 class="mb-1" style="color:#6b1fad;font-weight:700;">
-        <i class="fi fi-rr-document-signed me-2"></i> Search Log
+        <i class="bi bi-file-text-signed me-2"></i> Search Log
       </h4>
       <small class="text-muted">Advanced log of all item search reports</small>
     </div>
     <div class="d-flex gap-2">
       <a routerLink="/admin/lost-items" class="btn btn-sm btn-outline-secondary">
-        <i class="fi fi-rr-arrow-left me-1"></i> Back to Items
+        <i class="bi bi-arrow-left me-1"></i> Back to Items
       </a>
     </div>
   </div>
 
   <!-- Alerts -->
   <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
-    <i class="fi fi-rr-check me-2"></i>{{ successMsg }}
+    <i class="bi bi-check-lg me-2"></i>{{ successMsg }}
     <button type="button" class="btn-close" (click)="successMsg=''"></button>
   </div>
   <div *ngIf="pageError" class="alert alert-danger alert-dismissible">
-    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <i class="bi bi-exclamation-circle me-2"></i>{{ pageError }}
     <button type="button" class="btn-close" (click)="pageError=''"></button>
   </div>
 
@@ -29,17 +88,17 @@
   <ul class="nav nav-pills mb-4 gap-1">
     <li class="nav-item">
       <button class="nav-link" [class.active]="activeTab==='list'" (click)="setTab('list')">
-        <i class="fi fi-rr-list me-1"></i> Report List
+        <i class="bi bi-list-ul me-1"></i> Report List
       </button>
     </li>
     <li class="nav-item">
       <button class="nav-link" [class.active]="activeTab==='timeline'" (click)="setTab('timeline')">
-        <i class="fi fi-rr-time-past me-1"></i> Item Timeline
+        <i class="bi bi-clock-history me-1"></i> Item Timeline
       </button>
     </li>
     <li class="nav-item" *ngIf="isAdminOrDoctor">
       <button class="nav-link" [class.active]="activeTab==='stats'" (click)="setTab('stats')">
-        <i class="fi fi-rr-chart-pie me-1"></i> Global Stats
+        <i class="bi bi-pie-chart me-1"></i> Global Stats
       </button>
     </li>
   </ul>
@@ -52,7 +111,7 @@
       <div class="card-header d-flex align-items-center justify-content-between py-2 px-3"
            style="background:#f8f4fc;cursor:pointer;" (click)="showFilters=!showFilters">
         <span class="fw-semibold small" style="color:#6b1fad;">
-          <i class="fi fi-rr-filter me-1"></i> Filters
+          <i class="bi bi-funnel me-1"></i> Filters
         </span>
         <i class="fi" [class.fi-rr-angle-up]="showFilters" [class.fi-rr-angle-down]="!showFilters"></i>
       </div>
@@ -103,7 +162,7 @@
           </div>
           <div class="col-md-4 d-flex align-items-end gap-2">
             <button class="btn btn-sm btn-primary" (click)="applyFilters()">
-              <i class="fi fi-rr-search me-1"></i> Search
+              <i class="bi bi-search me-1"></i> Search
             </button>
             <button class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">Reset</button>
           </div>
@@ -135,7 +194,7 @@
         </div>
 
         <div *ngIf="!isLoading && reports.length === 0" class="text-center py-5 text-muted">
-          <i class="fi fi-rr-document-signed d-block mb-2" style="font-size:2.5rem;color:#efd5c8;"></i>
+          <i class="bi bi-file-text-signed d-block mb-2" style="font-size:2.5rem;color:#efd5c8;"></i>
           No reports match your filters.
         </div>
 
@@ -179,7 +238,7 @@
                 </td>
                 <td *ngIf="isAdminOrDoctor" class="text-end pe-4">
                   <button class="btn btn-xs btn-outline-danger" (click)="deleteReport(r.id!)">
-                    <i class="fi fi-rr-trash"></i>
+                    <i class="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
@@ -220,7 +279,7 @@
           <div class="col-md-3">
             <button class="btn btn-primary" (click)="loadTimeline()" [disabled]="!timelineLostItemId || isLoading">
               <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></span>
-              <i *ngIf="!isLoading" class="fi fi-rr-time-past me-1"></i> Load Timeline
+              <i *ngIf="!isLoading" class="bi bi-clock-history me-1"></i> Load Timeline
             </button>
           </div>
         </div>
@@ -284,7 +343,7 @@
       <div class="card shadow-sm mb-4" *ngIf="objectKeys(timeline.locationFrequency).length > 0">
         <div class="card-header py-2 px-3" style="background:#f8f4fc;">
           <span class="fw-semibold small" style="color:#6b1fad;">
-            <i class="fi fi-rr-map-marker me-1"></i> Location Heatmap
+            <i class="bi bi-geo-alt me-1"></i> Location Heatmap
           </span>
         </div>
         <div class="card-body">
@@ -307,7 +366,7 @@
       <div class="card shadow-sm">
         <div class="card-header py-2 px-3" style="background:#f8f4fc;">
           <span class="fw-semibold small" style="color:#6b1fad;">
-            <i class="fi fi-rr-time-past me-1"></i> Chronological Timeline
+            <i class="bi bi-clock-history me-1"></i> Chronological Timeline
           </span>
         </div>
         <div class="card-body p-0">
@@ -323,7 +382,7 @@
             <!-- Reports that day -->
             <div class="flex-grow-1">
               <div *ngFor="let r of day.results" class="d-flex align-items-start gap-2 mb-1">
-                <span [class]="getResultClass(r.result)" style="font-size:0.72rem;">{{ r.result | resultLabel }}</span>
+                <span [class]="getResultClass(r.result)" style="font-size:0.72rem;">{{ getResultLabel(r.result) }}</span>
                 <small class="text-muted">{{ r.location || 'Location not specified' }}</small>
                 <span [class]="getStatusClass(r.status)" style="font-size:0.7rem;">{{ r.status }}</span>
               </div>
@@ -337,7 +396,7 @@
     </ng-container>
 
     <div *ngIf="!timeline && !isLoading" class="text-center py-5 text-muted">
-      <i class="fi fi-rr-time-past d-block mb-2" style="font-size:2.5rem;color:#efd5c8;"></i>
+      <i class="bi bi-clock-history d-block mb-2" style="font-size:2.5rem;color:#efd5c8;"></i>
       Enter a Lost Item ID above to view its search timeline.
     </div>
   </ng-container>
@@ -494,3 +553,6 @@
   </ng-container>
 
 </div>
+
+  </div><!-- end li-main -->
+</div><!-- end li-layout -->

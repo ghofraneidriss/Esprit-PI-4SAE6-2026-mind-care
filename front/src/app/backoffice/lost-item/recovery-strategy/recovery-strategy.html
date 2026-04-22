@@ -1,0 +1,298 @@
+<div class="li-layout" data-bs-theme="light">
+
+  <!-- Sidebar -->
+  <aside class="li-sidebar">
+    <div class="li-sidebar-brand">
+      <a routerLink="/admin" class="li-brand-link">
+        <span class="li-brand-icon"><i class="bi bi-heart-pulse"></i></span>
+        <span class="li-brand-text">MindCare</span>
+      </a>
+    </div>
+    <nav class="li-sidebar-nav">
+      <span class="li-nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="li-nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+      <a routerLink="/admin/lost-items" class="li-nav-link li-nav-active"><i class="bi bi-search"></i><span>Lost Items</span></a>
+      <a routerLink="/admin/lost-items/alerts" class="li-nav-link"><i class="bi bi-bell"></i><span>Alerts</span></a>
+      <a routerLink="/admin/lost-items/critical" class="li-nav-link"><i class="bi bi-exclamation-triangle"></i><span>Critical Items</span></a>
+      <a routerLink="/admin/lost-items/search-log" class="li-nav-link"><i class="bi bi-bar-chart"></i><span>Search Log</span></a>
+      <span class="li-nav-heading">Admin</span>
+      <a routerLink="/admin/lost-items/statistics" class="li-nav-link"><i class="bi bi-pie-chart"></i><span>Statistics</span></a>
+      <a routerLink="/admin/lost-items/risk" class="li-nav-link"><i class="bi bi-shield-exclamation"></i><span>Patient Risk</span></a>
+    </nav>
+    <div class="li-sidebar-footer">
+      <a routerLink="/" class="li-nav-link"><i class="bi bi-arrow-left-circle"></i><span>Back to Site</span></a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="li-main">
+
+    <!-- Hero -->
+    <div class="li-hero">
+      <div class="li-hero-left">
+        <div class="li-hero-icon"><i class="bi bi-lightbulb"></i></div>
+        <div>
+          <h1 class="li-hero-title">Recovery Strategy</h1>
+          <p class="li-hero-sub">AI-powered recovery recommendations</p>
+        </div>
+      </div>
+      <div class="li-hero-right">
+        <ng-container *ngIf="strategy">
+          <div class="li-stat-box">
+            <div class="li-stat-num">{{ strategy.recoveryProbability | number:'1.0-0' }}%</div>
+            <div class="li-stat-label">Probability</div>
+          </div>
+          <div class="li-stat-box">
+            <div class="li-stat-num">{{ strategy.searchAttemptsCount }}</div>
+            <div class="li-stat-label">Searches</div>
+          </div>
+          <div class="li-stat-box">
+            <div class="li-stat-num">{{ strategy.recommendedLocations.length }}</div>
+            <div class="li-stat-label">Locations</div>
+          </div>
+        </ng-container>
+        <button class="li-hero-btn li-hero-btn-outline" (click)="refresh()" [disabled]="isLoading">
+          <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+        <button class="li-hero-btn" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i> Back to Item
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="rs-body">
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="rs-loading">
+        <div class="spinner-border rs-spinner"></div>
+        <p class="rs-loading-text">Computing recovery strategy…</p>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="!isLoading && pageError" class="alert alert-danger mx-3 mt-3">
+        <i class="bi bi-exclamation-circle me-2"></i>{{ pageError }}
+        <button class="btn btn-sm btn-outline-danger ms-3" (click)="refresh()">Retry</button>
+      </div>
+
+      <!-- Content — uses "strategy as s" so all accesses inside are non-null -->
+      <ng-container *ngIf="!isLoading && strategy as s">
+        <div class="rs-grid">
+
+          <!-- ═══ LEFT COLUMN ═══ -->
+          <div class="rs-col-left">
+
+            <!-- Item Summary -->
+            <div class="rs-card">
+              <div class="rs-card-header">
+                <i class="bi bi-box me-2"></i>Item Summary
+              </div>
+              <div class="rs-card-body">
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Title</span>
+                  <span class="rs-kv-value fw-semibold">{{ s.itemTitle }}</span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Category</span>
+                  <span class="badge rs-cat-badge">{{ s.category }}</span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Status</span>
+                  <span [class]="getStatusClass(s.status)">{{ s.status }}</span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Priority</span>
+                  <span [class]="getPriorityClass(s.priority)">{{ s.priority }}</span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Days Elapsed</span>
+                  <span class="rs-kv-value">
+                    <span class="rs-days-chip" [class.rs-days-urgent]="s.daysElapsed >= 14">
+                      {{ s.daysElapsed }} days
+                    </span>
+                  </span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Search Attempts</span>
+                  <span class="rs-kv-value">{{ s.searchAttemptsCount }}</span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Est. Recovery</span>
+                  <span class="rs-kv-value">
+                    {{ s.estimatedDaysToRecover != null ? s.estimatedDaysToRecover + ' days' : 'Unknown' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recovery Probability Gauge -->
+            <div class="rs-card">
+              <div class="rs-card-header">
+                <i class="bi bi-speedometer2 me-2"></i>Recovery Probability
+              </div>
+              <div class="rs-card-body rs-gauge-section">
+                <!-- Gauge ring using inline style with sanitized conic-gradient -->
+                <div class="rs-gauge-ring" [style]="gaugeStyle">
+                  <div class="rs-gauge-inner" [style.background]="probabilityBg">
+                    <div class="rs-gauge-pct" [style.color]="probabilityColor">
+                      {{ s.recoveryProbability | number:'1.0-0' }}%
+                    </div>
+                    <div class="rs-gauge-level" [style.color]="probabilityColor">
+                      {{ s.probabilityLevel }}
+                    </div>
+                  </div>
+                </div>
+                <div class="rs-gauge-legend">
+                  <span class="rs-legend-dot" style="background:#198754;"></span><span>HIGH ≥ 75%</span>
+                  <span class="rs-legend-dot" style="background:#fd7e14;"></span><span>MODERATE ≥ 45%</span>
+                  <span class="rs-legend-dot" style="background:#dc3545;"></span><span>LOW ≥ 20%</span>
+                  <span class="rs-legend-dot" style="background:#6f42c1;"></span><span>CRITICAL &lt; 20%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Patient Profile -->
+            <div class="rs-card">
+              <div class="rs-card-header">
+                <i class="bi bi-person-circle me-2"></i>Patient Profile
+              </div>
+              <div class="rs-card-body">
+                <div class="rs-profile-stats">
+                  <div class="rs-profile-stat">
+                    <div class="rs-profile-num">{{ s.patientProfile.totalItemsLost }}</div>
+                    <div class="rs-profile-label">Total Lost</div>
+                  </div>
+                  <div class="rs-profile-stat">
+                    <div class="rs-profile-num" style="color:#198754;">{{ s.patientProfile.foundItems }}</div>
+                    <div class="rs-profile-label">Found</div>
+                  </div>
+                  <div class="rs-profile-stat">
+                    <div class="rs-profile-num" style="color:#6b1fad;">{{ s.patientProfile.recoveryRate | number:'1.0-0' }}%</div>
+                    <div class="rs-profile-label">Recovery</div>
+                  </div>
+                  <div class="rs-profile-stat">
+                    <div class="rs-profile-num">{{ s.patientProfile.recentMonthLostCount }}</div>
+                    <div class="rs-profile-label">This Month</div>
+                  </div>
+                </div>
+                <div class="rs-frequent-badge" *ngIf="s.patientProfile.isFrequentLoser">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                  Frequent loser — daily checklist recommended
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end col-left -->
+
+          <!-- ═══ RIGHT COLUMN ═══ -->
+          <div class="rs-col-right">
+
+            <!-- Recommended Locations -->
+            <div class="rs-card">
+              <div class="rs-card-header">
+                <i class="bi bi-geo-alt me-2"></i>Recommended Search Locations
+                <span class="rs-card-badge">{{ s.recommendedLocations.length }} locations</span>
+              </div>
+              <div class="rs-card-body">
+                <div *ngIf="s.recommendedLocations.length === 0" class="rs-empty">
+                  <i class="bi bi-geo fs-3 d-block mb-2" style="color:#d1c4e9;"></i>
+                  No unsearched locations yet.<br>
+                  <small class="text-muted">Add more search reports to generate recommendations.</small>
+                </div>
+                <div *ngFor="let loc of s.recommendedLocations" class="rs-location-row">
+                  <div class="rs-location-top">
+                    <span class="rs-location-rank">{{ getRankIcon(loc.rank) }}</span>
+                    <span class="rs-location-name">{{ loc.location }}</span>
+                    <span class="rs-location-meta">
+                      {{ loc.successRate | number:'1.0-0' }}% success &middot; {{ loc.totalSearches }} search(es)
+                    </span>
+                  </div>
+                  <div class="rs-progress-track">
+                    <div class="rs-progress-fill"
+                         [style.width.%]="getBarWidth(loc.successRate)"
+                         [style.background]="getBarColor(loc.successRate)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Already Searched (no result) -->
+            <div class="rs-card rs-card-warn" *ngIf="s.alreadySearchedLocations.length > 0">
+              <div class="rs-card-header rs-card-header-warn">
+                <i class="bi bi-x-circle me-2"></i>Already Searched — No Result
+              </div>
+              <div class="rs-card-body">
+                <div class="rs-searched-chips">
+                  <span *ngFor="let loc of s.alreadySearchedLocations" class="rs-chip-searched">
+                    <i class="bi bi-x me-1"></i>{{ loc }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Strategy Tips -->
+            <div class="rs-card">
+              <div class="rs-card-header">
+                <i class="bi bi-stars me-2"></i>AI Strategy Tips
+                <span class="rs-card-badge">{{ s.strategyTips.length }} tips</span>
+              </div>
+              <div class="rs-card-body">
+                <div *ngIf="s.strategyTips.length === 0" class="rs-empty">
+                  No tips available yet.
+                </div>
+                <div *ngFor="let tip of s.strategyTips; let i = index" class="rs-tip-row">
+                  <div class="rs-tip-num">{{ i + 1 }}</div>
+                  <div class="rs-tip-text">{{ tip }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category Insights -->
+            <div class="rs-card">
+              <div class="rs-card-header">
+                <i class="bi bi-pie-chart me-2"></i>Category Insights
+                <span class="rs-cat-badge ms-2">{{ s.category }}</span>
+              </div>
+              <div class="rs-card-body">
+                <div class="rs-cat-stats">
+                  <div class="rs-cat-stat">
+                    <div class="rs-cat-num" style="color:#6b1fad;">{{ s.categoryInsights.totalItems }}</div>
+                    <div class="rs-cat-label">Total Items</div>
+                  </div>
+                  <div class="rs-cat-stat">
+                    <div class="rs-cat-num" style="color:#198754;">{{ s.categoryInsights.foundCount }}</div>
+                    <div class="rs-cat-label">Found</div>
+                  </div>
+                  <div class="rs-cat-stat">
+                    <div class="rs-cat-num" style="color:#0d6efd;">{{ s.categoryInsights.recoveryRate | number:'1.0-0' }}%</div>
+                    <div class="rs-cat-label">Recovery Rate</div>
+                  </div>
+                  <div class="rs-cat-stat">
+                    <div class="rs-cat-num">{{ s.categoryInsights.totalSearchReportsAnalyzed }}</div>
+                    <div class="rs-cat-label">Reports Analyzed</div>
+                  </div>
+                </div>
+                <div class="rs-kv-divider"></div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Avg Days to Find</span>
+                  <span class="rs-kv-value">
+                    {{ s.categoryInsights.avgDaysToFind != null ? (s.categoryInsights.avgDaysToFind | number:'1.0-1') + ' days' : '—' }}
+                  </span>
+                </div>
+                <div class="rs-kv-row">
+                  <span class="rs-kv-label">Top Success Location</span>
+                  <span class="rs-kv-value fw-semibold" style="color:#6b1fad;">
+                    {{ s.categoryInsights.topSuccessLocation || '—' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end col-right -->
+        </div><!-- end rs-grid -->
+      </ng-container>
+
+    </div><!-- end rs-body -->
+  </div><!-- end li-main -->
+</div><!-- end li-layout -->

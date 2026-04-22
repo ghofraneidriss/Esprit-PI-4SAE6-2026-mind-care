@@ -1,21 +1,32 @@
 package tn.esprit.users_service.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tn.esprit.users_service.entity.PasswordResetToken;
 import tn.esprit.users_service.entity.Role;
 import tn.esprit.users_service.entity.User;
+import tn.esprit.users_service.repository.PasswordResetTokenRepository;
 import tn.esprit.users_service.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final JavaMailSender mailSender;
 
 
     public User registerUser(User user) {
@@ -70,7 +81,7 @@ public class UserService {
     public User login(String email, String password, Role role) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
@@ -78,5 +89,74 @@ public class UserService {
             throw new RuntimeException("Invalid role for this account");
         }
         return user;
+    }
+
+    // ── Forgot Password ───────────────────────────────────────────────────────
+
+    @Transactional
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with this email address."));
+
+        // Delete any existing token for this email
+        tokenRepository.deleteByEmail(email);
+
+        // Generate a secure token valid for 30 minutes
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = PasswordResetToken.builder()
+                .token(token)
+                .email(email)
+                .expiresAt(LocalDateTime.now().plusMinutes(30))
+                .used(false)
+                .build();
+        tokenRepository.save(resetToken);
+
+        // Send email
+        String resetLink = "http://localhost:4200/auth/new-password-cover?token=" + token;
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("MindCare — Password Reset Request");
+        message.setText(
+            "Hello " + user.getFirstName() + ",\n\n" +
+            "We received a request to reset your MindCare account password.\n\n" +
+            "Click the link below to set a new password (valid for 30 minutes):\n" +
+            resetLink + "\n\n" +
+            "If you did not request this, please ignore this email.\n\n" +
+            "— The MindCare Team"
+        );
+
+        try {
+            mailSender.send(message);
+            log.info("Password reset email sent to {}", email);
+        } catch (Exception e) {
+            log.error("Failed to send reset email to {}: {}", email, e.getMessage());
+            throw new RuntimeException("Failed to send reset email. Please try again later.");
+        }
+    }
+
+    // ── Reset Password ────────────────────────────────────────────────────────
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid or expired reset link."));
+
+        if (resetToken.isUsed()) {
+            throw new RuntimeException("This reset link has already been used.");
+        }
+        if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("This reset link has expired. Please request a new one.");
+        }
+
+        User user = userRepository.findByEmail(resetToken.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        resetToken.setUsed(true);
+        tokenRepository.save(resetToken);
+
+        log.info("Password successfully reset for {}", resetToken.getEmail());
     }
 }

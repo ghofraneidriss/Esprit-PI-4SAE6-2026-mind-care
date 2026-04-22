@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
 import tn.esprit.lost_item_service.Entity.ItemStatus;
 import tn.esprit.lost_item_service.Entity.LostItem;
+import tn.esprit.lost_item_service.Service.AuthorizationService;
 import tn.esprit.lost_item_service.Service.LostItemService;
 
 import java.util.HashMap;
@@ -22,14 +23,13 @@ import java.util.Map;
 public class LostItemController {
 
     private final LostItemService lostItemService;
+    private final AuthorizationService authorizationService;
 
     /**
      * GET /api/lost-items
      * - ADMIN / DOCTOR: returns all items
      * - CAREGIVER: returns only items for their assigned patients
      * - PATIENT: returns only their own items
-     *
-     * Angular sends X-User-Id and X-User-Role headers via HTTP interceptor.
      */
     @GetMapping
     public ResponseEntity<List<LostItem>> getAllLostItems(
@@ -53,8 +53,13 @@ public class LostItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LostItem> getLostItemById(@PathVariable Long id) {
-        return ResponseEntity.ok(lostItemService.getLostItemById(id));
+    public ResponseEntity<LostItem> getLostItemById(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-User-Id",   required = false) Long userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole
+    ) {
+        LostItem item = authorizationService.checkItemAccess(id, userId, userRole);
+        return ResponseEntity.ok(item);
     }
 
     @GetMapping("/patient/{patientId}")
@@ -76,12 +81,23 @@ public class LostItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LostItem> updateLostItem(@PathVariable Long id, @Valid @RequestBody LostItem lostItem) {
+    public ResponseEntity<LostItem> updateLostItem(
+            @PathVariable Long id,
+            @Valid @RequestBody LostItem lostItem,
+            @RequestHeader(value = "X-User-Id",   required = false) Long userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole
+    ) {
+        authorizationService.checkItemAccess(id, userId, userRole);
         return ResponseEntity.ok(lostItemService.updateLostItem(id, lostItem));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteLostItem(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteLostItem(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-User-Id",   required = false) Long userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole
+    ) {
+        authorizationService.checkItemAccess(id, userId, userRole);
         lostItemService.deleteLostItem(id);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Lost item id=" + id + " has been closed (soft deleted).");
@@ -89,7 +105,12 @@ public class LostItemController {
     }
 
     @PatchMapping("/{id}/mark-found")
-    public ResponseEntity<LostItem> markAsFound(@PathVariable Long id) {
+    public ResponseEntity<LostItem> markAsFound(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-User-Id",   required = false) Long userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole
+    ) {
+        authorizationService.checkItemAccess(id, userId, userRole);
         return ResponseEntity.ok(lostItemService.markAsFound(id));
     }
 

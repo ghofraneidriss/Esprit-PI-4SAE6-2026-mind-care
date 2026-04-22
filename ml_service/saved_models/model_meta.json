@@ -1,0 +1,42 @@
+{
+  "k": 3,
+  "label_map": {
+    "0": "Low Risk",
+    "1": "Medium Risk",
+    "2": "High Risk"
+  },
+  "feature_cols": [
+    "Age",
+    "Gender",
+    "Ethnicity",
+    "EducationLevel",
+    "BMI",
+    "Smoking",
+    "AlcoholConsumption",
+    "PhysicalActivity",
+    "DietQuality",
+    "SleepQuality",
+    "FamilyHistoryAlzheimers",
+    "CardiovascularDisease",
+    "Diabetes",
+    "Depression",
+    "HeadInjury",
+    "Hypertension",
+    "SystolicBP",
+    "DiastolicBP",
+    "CholesterolTotal",
+    "CholesterolLDL",
+    "CholesterolHDL",
+    "CholesterolTriglycerides",
+    "MMSE",
+    "FunctionalAssessment",
+    "MemoryComplaints",
+    "BehavioralProblems",
+    "ADL",
+    "Confusion",
+    "Disorientation",
+    "PersonalityChanges",
+    "DifficultyCompletingTasks",
+    "Forgetfulness"
+  ]
+}

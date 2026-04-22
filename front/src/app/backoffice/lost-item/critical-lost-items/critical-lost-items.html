@@ -1,23 +1,68 @@
-<div class="container-fluid py-4">
+<div class="li-layout" data-bs-theme="light">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center gap-3 mb-4">
-    <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
-      <i class="fi fi-rr-arrow-left me-1"></i> Back
-    </button>
+  <!-- Sidebar -->
+  <aside class="li-sidebar">
+    <div class="li-sidebar-brand">
+      <a routerLink="/admin" class="li-brand-link">
+        <span class="li-brand-icon"><i class="bi bi-heart-pulse"></i></span>
+        <span class="li-brand-text">MindCare</span>
+      </a>
+    </div>
+    <nav class="li-sidebar-nav">
+      <span class="li-nav-heading">Main Menu</span>
+      <a routerLink="/admin" class="li-nav-link">
+        <i class="bi bi-house"></i><span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/lost-items" class="li-nav-link ">
+        <i class="bi bi-search"></i><span>Lost Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/alerts" class="li-nav-link ">
+        <i class="bi bi-bell"></i><span>Alerts</span>
+      </a>
+      <a routerLink="/admin/lost-items/critical" class="li-nav-link li-nav-active">
+        <i class="bi bi-exclamation-triangle"></i><span>Critical Items</span>
+      </a>
+      <a routerLink="/admin/lost-items/search-log" class="li-nav-link ">
+        <i class="bi bi-bar-chart"></i><span>Search Log</span>
+      </a>
+      <span class="li-nav-heading">Admin</span>
+      <a routerLink="/admin/lost-items/statistics" class="li-nav-link">
+        <i class="bi bi-pie-chart"></i><span>Statistics</span>
+      </a>
+      <a routerLink="/admin/lost-items/risk" class="li-nav-link">
+        <i class="bi bi-shield-exclamation"></i><span>Patient Risk</span>
+      </a>
+    </nav>
+    <div class="li-sidebar-footer">
+      <a routerLink="/" class="li-nav-link">
+        <i class="bi bi-arrow-left-circle"></i><span>Back to Site</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="li-main">
+
+<div class="li-hero">
+  <div class="li-hero-left">
+    <div class="li-hero-icon"><i class="bi bi-exclamation-triangle"></i></div>
     <div>
-      <h4 class="mb-0 d-flex align-items-center gap-2" style="color:#dc3545;font-weight:700;">
-        <i class="fi fi-rr-bell-ring"></i>
-        Critical & Urgent Items
-        <span class="badge bg-danger ms-1 fs-6">{{ urgentCount }}</span>
-      </h4>
-      <small class="text-muted">Items with CRITICAL priority or SEARCHING status</small>
+      <h1 class="li-hero-title">Critical &amp; Urgent Items</h1>
+      <p class="li-hero-sub">Items requiring immediate attention</p>
     </div>
   </div>
+  <div class="li-hero-right">
+    <div class="li-stat-box"><div class="li-stat-num">{{ items.length }}</div><div class="li-stat-label">Total</div></div>
+    <div class="li-stat-box"><div class="li-stat-num">{{ urgentCount }}</div><div class="li-stat-label">Urgent</div></div>
+    <a routerLink="/admin/lost-items" class="li-hero-btn"><i class="bi bi-arrow-left"></i> All Items</a>
+  </div>
+</div>
+<div class="container-fluid py-4">
+
 
   <!-- Error -->
   <div *ngIf="pageError" class="alert alert-danger">
-    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <i class="bi bi-exclamation-circle me-2"></i>{{ pageError }}
   </div>
 
   <!-- Loading -->
@@ -27,7 +72,7 @@
 
   <!-- Empty -->
   <div *ngIf="!isLoading && items.length === 0" class="text-center py-5">
-    <i class="fi fi-rr-shield-check fs-1 d-block mb-2 text-success"></i>
+    <i class="bi bi-shield-check fs-1 d-block mb-2 text-success"></i>
     <p class="text-muted">No critical or urgent items. All clear!</p>
   </div>
 
@@ -51,10 +96,10 @@
           </div>
 
           <div *ngIf="item.lastSeenLocation" class="small text-muted">
-            <i class="fi fi-rr-marker me-1"></i>{{ item.lastSeenLocation }}
+            <i class="bi bi-geo-alt me-1"></i>{{ item.lastSeenLocation }}
           </div>
           <div *ngIf="item.lastSeenDate" class="small text-muted">
-            <i class="fi fi-rr-calendar me-1"></i>{{ item.lastSeenDate }}
+            <i class="bi bi-calendar me-1"></i>{{ item.lastSeenDate }}
           </div>
           <div *ngIf="item.description" class="small mt-2 text-body">
             {{ item.description | slice:0:80 }}{{ (item.description?.length ?? 0) > 80 ? '…' : '' }}
@@ -70,3 +115,6 @@
   </div>
 
 </div>
+
+  </div><!-- end li-main -->
+</div><!-- end li-layout -->

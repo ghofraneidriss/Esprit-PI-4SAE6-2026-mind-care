@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FrontofficeRoutingModule } from './frontoffice-routing-module';
 import { Home1 } from './home1/home1';
@@ -45,6 +45,6 @@ import { Footer } from './footer/footer';
     Header,
     Footer,
   ],
-  imports: [CommonModule, FormsModule, FrontofficeRoutingModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FrontofficeRoutingModule],
 })
 export class FrontofficeModule { }

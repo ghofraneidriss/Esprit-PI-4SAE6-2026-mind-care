@@ -72,4 +72,6 @@ public interface SearchReportRepository extends JpaRepository<SearchReport, Long
     long countBySearchResult(SearchResult searchResult);
 
     long countByLostItemId(Long lostItemId);
+
+    List<SearchReport> findByLostItemIdIn(java.util.Collection<Long> lostItemIds);
 }

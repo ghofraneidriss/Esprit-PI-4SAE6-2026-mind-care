@@ -3,9 +3,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   LostItem, SearchReport, ItemStatus, ItemCategory, PagedLostItems,
-  ItemAlert, AlertLevel, AlertStatus,
+  LostItemAlert, AlertLevel, AlertStatus,
   GlobalStats, AlertStats, PatientRisk, FrequencyTrend,
-  SearchTimeline, SearchLogStats
+  SearchTimeline, SearchLogStats, RecoveryStrategy,
+  PatientIntelligence, SearchSuggestion
 } from './lost-item.model';
 
 @Injectable({ providedIn: 'root' })
@@ -75,8 +76,8 @@ export class LostItemService {
     );
   }
 
-  getAlertsByCaregiverId(caregiverId: number): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(`${this.alertsUrl}/caregiver/${caregiverId}`);
+  getAlertsByCaregiverId(caregiverId: number): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(`${this.alertsUrl}/caregiver/${caregiverId}`);
   }
 
   // ── Advanced: Statistics, Risk, Trend ──────────────────────────────────────
@@ -161,56 +162,56 @@ export class LostItemService {
 
   // ── Item Alerts ─────────────────────────────────────────────────────────────
 
-  getAllItemAlerts(): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(this.alertsUrl);
+  getAllItemAlerts(): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(this.alertsUrl);
   }
 
-  getItemAlertById(id: number): Observable<ItemAlert> {
-    return this.http.get<ItemAlert>(`${this.alertsUrl}/${id}`);
+  getItemAlertById(id: number): Observable<LostItemAlert> {
+    return this.http.get<LostItemAlert>(`${this.alertsUrl}/${id}`);
   }
 
-  getAlertsByLostItemId(lostItemId: number): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(`${this.alertsUrl}/lost-item/${lostItemId}`);
+  getAlertsByLostItemId(lostItemId: number): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(`${this.alertsUrl}/lost-item/${lostItemId}`);
   }
 
-  getAlertsByPatientId(patientId: number): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(`${this.alertsUrl}/patient/${patientId}`);
+  getAlertsByPatientId(patientId: number): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(`${this.alertsUrl}/patient/${patientId}`);
   }
 
-  getAlertsByLevel(level: AlertLevel): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(`${this.alertsUrl}/level/${level}`);
+  getAlertsByLevel(level: AlertLevel): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(`${this.alertsUrl}/level/${level}`);
   }
 
-  getAlertsByStatus(status: AlertStatus): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(`${this.alertsUrl}/status/${status}`);
+  getAlertsByStatus(status: AlertStatus): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(`${this.alertsUrl}/status/${status}`);
   }
 
-  getCriticalNewAlerts(): Observable<ItemAlert[]> {
-    return this.http.get<ItemAlert[]>(`${this.alertsUrl}/critical/new`);
+  getCriticalNewAlerts(): Observable<LostItemAlert[]> {
+    return this.http.get<LostItemAlert[]>(`${this.alertsUrl}/critical/new`);
   }
 
-  createItemAlert(alert: Partial<ItemAlert>): Observable<ItemAlert> {
-    return this.http.post<ItemAlert>(this.alertsUrl, alert);
+  createItemAlert(alert: Partial<LostItemAlert>): Observable<LostItemAlert> {
+    return this.http.post<LostItemAlert>(this.alertsUrl, alert);
   }
 
-  updateItemAlert(id: number, alert: Partial<ItemAlert>): Observable<ItemAlert> {
-    return this.http.put<ItemAlert>(`${this.alertsUrl}/${id}`, alert);
+  updateItemAlert(id: number, alert: Partial<LostItemAlert>): Observable<LostItemAlert> {
+    return this.http.put<LostItemAlert>(`${this.alertsUrl}/${id}`, alert);
   }
 
   deleteItemAlert(id: number): Observable<any> {
     return this.http.delete(`${this.alertsUrl}/${id}`);
   }
 
-  markAlertViewed(id: number): Observable<ItemAlert> {
-    return this.http.patch<ItemAlert>(`${this.alertsUrl}/${id}/view`, {});
+  markAlertViewed(id: number): Observable<LostItemAlert> {
+    return this.http.patch<LostItemAlert>(`${this.alertsUrl}/${id}/view`, {});
   }
 
-  resolveAlert(id: number): Observable<ItemAlert> {
-    return this.http.patch<ItemAlert>(`${this.alertsUrl}/${id}/resolve`, {});
+  resolveAlert(id: number): Observable<LostItemAlert> {
+    return this.http.patch<LostItemAlert>(`${this.alertsUrl}/${id}/resolve`, {});
   }
 
-  escalateAlert(id: number): Observable<ItemAlert> {
-    return this.http.patch<ItemAlert>(`${this.alertsUrl}/${id}/escalate`, {});
+  escalateAlert(id: number): Observable<LostItemAlert> {
+    return this.http.patch<LostItemAlert>(`${this.alertsUrl}/${id}/escalate`, {});
   }
 
   resolveAllAlertsByLostItem(lostItemId: number): Observable<{ resolved: number; lostItemId: number }> {
@@ -227,5 +228,25 @@ export class LostItemService {
 
   getAlertStatistics(): Observable<AlertStats> {
     return this.http.get<AlertStats>(`${this.alertsUrl}/statistics`);
+  }
+
+  // ── Recovery Intelligence ───────────────────────────────────────────────────
+
+  getRecoveryStrategy(itemId: number): Observable<RecoveryStrategy> {
+    return this.http.get<RecoveryStrategy>(`${this.itemsUrl}/${itemId}/recovery-strategy`);
+  }
+
+  // ── Option A: Patient Behavioral Intelligence (AI) ─────────────────────────
+
+  getPatientIntelligence(patientId: number): Observable<PatientIntelligence> {
+    return this.http.get<PatientIntelligence>(`${this.itemsUrl}/patients/${patientId}/intelligence`);
+  }
+
+  // ── Option B: Smart Search Suggestions ─────────────────────────────────────
+
+  getSearchSuggestions(patientId: number, category?: string): Observable<SearchSuggestion[]> {
+    let params = new HttpParams().set('patientId', patientId);
+    if (category) params = params.set('category', category);
+    return this.http.get<SearchSuggestion[]>(`${this.itemsUrl}/search-suggestions`, { params });
   }
 }
