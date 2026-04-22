@@ -45,6 +45,9 @@ import { MoodTrackerComponent } from './mood-tracker/mood-tracker';
 import { MedicalEventsPage } from './medical-events/medical-events';
 import { RecommendationPage } from './recommendation/recommendation';
 import { SouvenirsPage } from './souvenirs/souvenirs';
+import { FollowUpPage } from './followup-page/followup-page';
+import { LostItemPage } from './lost-item/lost-item';
+import { MlRecommendationPage } from './ml-recommendation/ml-recommendation';
 
 @NgModule({
   declarations: [
@@ -73,7 +76,10 @@ import { SouvenirsPage } from './souvenirs/souvenirs';
     MoodTrackerComponent,
     MedicalEventsPage,
     RecommendationPage,
-    SouvenirsPage
+    SouvenirsPage,
+    FollowUpPage,
+    LostItemPage,
+    MlRecommendationPage
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,297 @@
+<div class="ml-recommendation-container">
+  <div class="page-header">
+    <h1>🧠 Alzheimer's Risk Assessment & ML Recommendations</h1>
+    <p class="subtitle">AI-powered patient risk analysis and personalized recommendations</p>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Form Section -->
+    <div class="form-section" [class.disabled]="loading">
+      <h2>Patient Data Input</h2>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <!-- Demographics -->
+        <div class="form-group-section">
+          <h3>Demographics</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age (60-90) *</label>
+              <input type="number" class="form-control" formControlName="Age" min="60" max="90" />
+            </div>
+            <div class="form-group">
+              <label>Gender</label>
+              <select class="form-control" formControlName="Gender">
+                <option value="0">Female</option>
+                <option value="1">Male</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ethnicity</label>
+              <select class="form-control" formControlName="Ethnicity">
+                <option value="0">Other</option>
+                <option value="1">Caucasian</option>
+                <option value="2">African American</option>
+                <option value="3">Hispanic</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Education Level</label>
+              <select class="form-control" formControlName="EducationLevel">
+                <option value="0">Elementary</option>
+                <option value="1">High School</option>
+                <option value="2">College</option>
+                <option value="3">Graduate</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lifestyle -->
+        <div class="form-group-section">
+          <h3>Lifestyle Factors</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>BMI *</label>
+              <input type="number" class="form-control" formControlName="BMI" step="0.1" min="10" max="50" />
+            </div>
+            <div class="form-group">
+              <label>Smoking (0-4)</label>
+              <select class="form-control" formControlName="Smoking">
+                <option value="0">Never</option>
+                <option value="1">Former</option>
+                <option value="2">Current (< 10/day)</option>
+                <option value="3">Current (10-20/day)</option>
+                <option value="4">Current (> 20/day)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Alcohol Consumption *</label>
+              <input type="number" class="form-control" formControlName="AlcoholConsumption" min="0" max="10" />
+            </div>
+            <div class="form-group">
+              <label>Physical Activity *</label>
+              <input type="number" class="form-control" formControlName="PhysicalActivity" step="0.5" min="0" max="10" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Diet Quality *</label>
+              <input type="number" class="form-control" formControlName="DietQuality" step="0.5" min="0" max="10" />
+            </div>
+            <div class="form-group">
+              <label>Sleep Quality *</label>
+              <input type="number" class="form-control" formControlName="SleepQuality" step="0.5" min="0" max="10" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Medical History -->
+        <div class="form-group-section">
+          <h3>Medical History</h3>
+          <div class="form-row checkbox-row">
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="FamilyHistoryAlzheimers" />
+                Family History of Alzheimer's
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="CardiovascularDisease" />
+                Cardiovascular Disease
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="Diabetes" />
+                Diabetes
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="Depression" />
+                Depression
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="HeadInjury" />
+                Head Injury History
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="Hypertension" />
+                Hypertension
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical -->
+        <div class="form-group-section">
+          <h3>Clinical Measurements</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Systolic BP *</label>
+              <input type="number" class="form-control" formControlName="SystolicBP" min="80" max="200" />
+            </div>
+            <div class="form-group">
+              <label>Diastolic BP *</label>
+              <input type="number" class="form-control" formControlName="DiastolicBP" min="40" max="130" />
+            </div>
+            <div class="form-group">
+              <label>Total Cholesterol *</label>
+              <input type="number" class="form-control" formControlName="CholesterolTotal" min="100" max="400" />
+            </div>
+            <div class="form-group">
+              <label>LDL Cholesterol *</label>
+              <input type="number" class="form-control" formControlName="CholesterolLDL" min="0" max="300" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>HDL Cholesterol *</label>
+              <input type="number" class="form-control" formControlName="CholesterolHDL" min="0" max="150" />
+            </div>
+            <div class="form-group">
+              <label>Triglycerides *</label>
+              <input type="number" class="form-control" formControlName="CholesterolTriglycerides" min="0" max="500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Cognitive -->
+        <div class="form-group-section">
+          <h3>Cognitive Assessment</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>MMSE Score (0-30) *</label>
+              <input type="number" class="form-control" formControlName="MMSE" min="0" max="30" />
+            </div>
+            <div class="form-group">
+              <label>Functional Assessment *</label>
+              <input type="number" class="form-control" formControlName="FunctionalAssessment" min="0" max="10" />
+            </div>
+            <div class="form-group">
+              <label>ADL Score *</label>
+              <input type="number" class="form-control" formControlName="ADL" min="0" max="10" />
+            </div>
+          </div>
+          <div class="form-row checkbox-row">
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="MemoryComplaints" />
+                Memory Complaints
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="BehavioralProblems" />
+                Behavioral Problems
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="Confusion" />
+                Confusion
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="Disorientation" />
+                Disorientation
+              </label>
+            </div>
+          </div>
+          <div class="form-row checkbox-row">
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="PersonalityChanges" />
+                Personality Changes
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="DifficultyCompletingTasks" />
+                Difficulty Completing Tasks
+              </label>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" formControlName="Forgetfulness" />
+                Forgetfulness
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+        <!-- Buttons -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            {{ loading ? 'Analyzing...' : '🚀 Get AI Recommendations' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="reset()" [disabled]="loading">
+            Reset Form
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Section -->
+    <div *ngIf="result" class="results-section">
+      <h2>AI Analysis Results</h2>
+
+      <!-- Risk Level Card -->
+      <div class="risk-card" [style.border-left]="'5px solid ' + clusterColor">
+        <div class="risk-header">
+          <h3>{{ result.cluster_label }}</h3>
+          <div class="risk-badge" [style.background-color]="clusterColor">{{ result.risk_level }}</div>
+        </div>
+        <p class="risk-total">Total Recommendations: <strong>{{ result.total_recommendations }}</strong></p>
+        <div class="risk-stats">
+          <div class="stat">
+            <span class="label">High Priority</span>
+            <span class="value">{{ priorityHighCount }}</span>
+          </div>
+          <div class="stat">
+            <span class="label">Medium Priority</span>
+            <span class="value">{{ priorityMedCount }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations by Category -->
+      <div *ngFor="let cat of categories" class="category-section">
+        <h3>{{ categoryIcon(cat) }} {{ cat }}</h3>
+        <div class="recommendations-list">
+          <div *ngFor="let rec of recsByCategory(cat)" class="recommendation-card">
+            <div class="rec-header">
+              <h4>{{ rec.description }}</h4>
+              <span [class]="'priority-badge priority-' + rec.priority.toLowerCase()">
+                {{ rec.priority }}
+              </span>
+            </div>
+            <div class="rec-contribution">
+              <div class="contribution-bar-container">
+                <div
+                  class="contribution-bar"
+                  [style.width.%]="getContributionPercent(rec.contribution_score)"
+                ></div>
+              </div>
+              <span class="contribution-score">{{ (rec.contribution_score * 100).toFixed(1) }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results Yet -->
+    <div *ngIf="submitted && !result && !loading && !error" class="no-results">
+      <p>Click "Get AI Recommendations" to analyze the patient data and receive personalized recommendations.</p>
+    </div>
+  </div>
+</div>

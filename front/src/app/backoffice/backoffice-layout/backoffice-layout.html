@@ -59,6 +59,25 @@
                 <span class="menu-label">Medical events</span>
               </a>
             </li>
+            <!-- Your Individual Work Integration -->
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/followup-management" routerLinkActive="active" role="button">
+                <i class="ri-check-double-line"></i>
+                <span class="menu-label">Follow-Up Management</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/lost-items" routerLinkActive="active" role="button">
+                <i class="ri-search-line"></i>
+                <span class="menu-label">Lost Items</span>
+              </a>
+            </li>
+            <li class="menu-item" *ngIf="role === 'ADMIN' || role === 'DOCTOR'">
+              <a class="menu-link" routerLink="/admin/ml-recommendations" routerLinkActive="active" role="button">
+                <i class="ri-brain-line"></i>
+                <span class="menu-label">ML Recommendations</span>
+              </a>
+            </li>
             <li class="menu-item">
               <a class="menu-link" routerLink="/admin/reports" routerLinkActive="active" role="button">
                 <i class="ri-file-pdf-2-line"></i>

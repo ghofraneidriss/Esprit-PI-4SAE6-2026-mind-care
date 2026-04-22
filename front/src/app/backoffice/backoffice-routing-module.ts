@@ -23,6 +23,9 @@ import { ForumReports } from './forum-admin/forum-reports/forum-reports';
 import { MedicalEventsPage } from './medical-events/medical-events';
 import { RecommendationPage } from './recommendation/recommendation';
 import { SouvenirsPage } from './souvenirs/souvenirs';
+import { FollowUpPage } from './followup-page/followup-page';
+import { LostItemPage } from './lost-item/lost-item';
+import { MlRecommendationPage } from './ml-recommendation/ml-recommendation';
 
 import { BackofficeLayoutComponent } from './backoffice-layout/backoffice-layout';
 import { MoodTrackerComponent } from './mood-tracker/mood-tracker';
@@ -121,6 +124,9 @@ const routes: Routes = [
       { path: 'medical-events', component: MedicalEventsPage },
       { path: 'recommendations', component: RecommendationPage },
       { path: 'souvenirs', component: SouvenirsPage },
+      { path: 'followup-management', component: FollowUpPage, canActivate: [adminGuard], title: 'Follow-Up Management' },
+      { path: 'lost-items', component: LostItemPage, canActivate: [adminGuard], title: 'Lost Item Management' },
+      { path: 'ml-recommendations', component: MlRecommendationPage, canActivate: [adminGuard], title: 'ML Recommendations' },
       { path: 'customers', component: CustomersPage },
       { path: 'deals', component: DealsPage },
       { path: 'employee', component: EmployeePage },
