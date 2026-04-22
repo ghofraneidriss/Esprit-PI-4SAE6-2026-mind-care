@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = '/usr/share/maven'
+        JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo '========== Checking out code =========='
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo '========== Building lost-item-service =========='
+                dir('server/lost-item-service') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo '========== Running Unit Tests =========='
+                dir('server/lost-item-service') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo '========== Packaging Application =========='
+                dir('server/lost-item-service') {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '========== Pipeline Execution Completed =========='
+            junit 'server/lost-item-service/target/surefire-reports/*.xml'
+        }
+        success {
+            echo '✓ lost-item-service pipeline SUCCESS'
+        }
+        failure {
+            echo '✗ lost-item-service pipeline FAILED'
+        }
+    }
+}
