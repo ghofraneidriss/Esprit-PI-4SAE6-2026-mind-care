@@ -27,7 +27,7 @@ pipeline {
             steps {
                 echo '========== Running Unit Tests =========='
                 dir('server/lost-item-service') {
-                    sh 'mvn test'
+                    sh 'mvn test -Dspring.profiles.active=test'
                 }
             }
         }
