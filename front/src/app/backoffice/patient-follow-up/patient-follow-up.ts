@@ -1,9 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-patient-follow-up',
-    standalone: false,
+    standalone: true,
+    imports: [CommonModule, FormsModule],
     templateUrl: './patient-follow-up.html',
     styleUrls: ['./patient-follow-up.css']
 })

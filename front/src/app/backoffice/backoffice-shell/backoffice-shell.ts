@@ -1,11 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { AuthService } from '../../frontoffice/auth/auth.service';
 
 @Component({
   selector: 'app-backoffice-shell',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './backoffice-shell.html',
   styleUrls: ['./backoffice-shell.css'],
 })

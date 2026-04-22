@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Consultation, AlzheimerStage } from './consultation.model';
 import { ConsultationService } from './consultation.service';
@@ -8,7 +10,8 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
 
 @Component({
     selector: 'app-doctor-consultations',
-    standalone: false,
+    standalone: true,
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
     templateUrl: './doctor-consultations.html',
     styleUrls: ['./doctor-consultations.css']
 })

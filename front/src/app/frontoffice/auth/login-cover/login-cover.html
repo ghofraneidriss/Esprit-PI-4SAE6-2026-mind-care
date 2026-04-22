@@ -46,6 +46,13 @@
                        placeholder="you@example.com" required>
               </div>
               <div class="mb-4">
+                <label class="form-label" for="loginRole">Role</label>
+                <select class="form-select" id="loginRole" [(ngModel)]="role" name="role" required>
+                  <option *ngFor="let r of roles" [ngValue]="r.value">{{ r.label }}</option>
+                </select>
+                <small class="text-muted d-block mt-1">Use the role linked to your account.</small>
+              </div>
+              <div class="mb-4">
                 <label class="form-label" for="loginPassword">Password</label>
                 <input type="password" class="form-control" id="loginPassword"
                        [(ngModel)]="password" name="password"
@@ -64,6 +71,12 @@
               <p class="mb-3 text-center">
                 No account yet? <a routerLink="/register-cover">Create one</a>
               </p>
+              <div class="d-flex flex-wrap gap-2 justify-content-center quick-fill">
+                <button type="button" (click)="fill('admin@alzcare.com','Admin@123','ADMIN')">Admin</button>
+                <button type="button" (click)="fill('patient1@alzcare.com','Patient@123','PATIENT')">Patient</button>
+                <button type="button" (click)="fill('caregiver@alzcare.com','Caregiver@123','CAREGIVER')">Caregiver</button>
+                <button type="button" (click)="fill('doctor@alzcare.com','Doctor@123','DOCTOR')">Doctor</button>
+              </div>
             </form>
             </div>
           </div>

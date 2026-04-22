@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { DoctorPrescriptionService } from './doctor-prescription.service';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 
@@ -8,7 +10,8 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
  */
 @Component({
   selector: 'app-doctor-prescription-history',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   template: `
     <!-- SHARED FLOATING SIDEBAR NAVIGATION -->
     <nav class="floating-sidebar d-flex flex-column align-items-center py-4 position-fixed z-3 h-100 bg-white shadow-sm"
@@ -54,7 +57,7 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
     </nav>
 
     <div class="glass-dashboard-wrapper" style="margin-left: 80px; background: #F4F7F7; min-height: 100vh; padding: 20px;">
-        <div class="glass-header d-flex justify-content-between align-items-center mb-4" 
+        <div class="glass-header d-flex justify-content-between align-items-center mb-4"
              style="background: #2D9A9B; border-radius: 16px; padding: 25px; color: white; box-shadow: 0 4px 20px rgba(45,154,155,0.25);">
             <div>
                 <button class="btn btn-sm btn-light rounded-pill px-3 mb-2 fw-bold" style="color: #2D9A9B;" (click)="goBack()">
@@ -68,11 +71,11 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
             </button>
         </div>
 
-        <div *ngIf="statusMessage" class="alert alert-info py-2 mb-3 border-0 shadow-sm" 
+        <div *ngIf="statusMessage" class="alert alert-info py-2 mb-3 border-0 shadow-sm"
              style="background: #e0f2f1; color: #00796b; border-radius: 12px; font-weight: 500;">
             <i class="bi bi-info-circle me-2"></i> {{ statusMessage }}
         </div>
-        
+
         <div *ngIf="isLoading" class="text-center py-5">
             <div class="spinner-border text-teal" role="status"></div>
             <p class="mt-2 text-muted fw-bold">Fetching patient medical history...</p>
@@ -102,7 +105,7 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
                             <td>{{ p.createdAt | date:'mediumDate' }} <br><small class="text-muted">{{ p.createdAt | date:'shortTime' }}</small></td>
                             <td><span class="badge bg-light text-dark shadow-sm border">#C-{{ p.consultationId }}</span></td>
                             <td>
-                                <span class="badge rounded-pill px-3 py-2" 
+                                <span class="badge rounded-pill px-3 py-2"
                                       [ngClass]="p.status === 'COMPLETED' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
                                     {{ p.status }}
                                 </span>
@@ -214,8 +217,8 @@ export class DoctorPrescriptionHistory implements OnInit {
   }
 
   addNew(): void {
-    this.router.navigate(['/admin/prescriptions/new'], { 
-        queryParams: { patientId: this.patientId, patientName: this.patientName } 
+    this.router.navigate(['/admin/prescriptions/new'], {
+        queryParams: { patientId: this.patientId, patientName: this.patientName }
     });
   }
 

@@ -13,6 +13,12 @@
         <input type="email" [(ngModel)]="email" name="email" placeholder="you@email.com" />
       </div>
       <div class="field">
+        <label>Role</label>
+        <select [(ngModel)]="role" name="role" required>
+          <option *ngFor="let r of roles" [ngValue]="r.value">{{ r.label }}</option>
+        </select>
+      </div>
+      <div class="field">
         <label>Password</label>
         <div class="pwd-wrap">
           <input [type]="showPwd?'text':'password'" [(ngModel)]="password" name="password" placeholder="••••••" />
@@ -26,9 +32,10 @@
     <p class="switch-link">No account yet? <a routerLink="/officiel/register">Create an account</a></p>
     <div class="quick-fill">
       <span>Quick test:</span>
-      <button (click)="fill('admin@mindcare.com','admin123')">👑 Admin</button>
-      <button (click)="fill('doctor@mindcare.com','doctor123')">🩺 Doctor</button>
-      <button (click)="fill('patient@mindcare.com','patient123')">🧑 Patient</button>
+      <button type="button" (click)="fill('admin@alzcare.com','Admin@123','ADMIN')">Admin</button>
+      <button type="button" (click)="fill('caregiver@alzcare.com','Caregiver@123','CAREGIVER')">Caregiver</button>
+      <button type="button" (click)="fill('doctor@alzcare.com','Doctor@123','DOCTOR')">Doctor</button>
+      <button type="button" (click)="fill('patient1@alzcare.com','Patient@123','PATIENT')">Patient</button>
     </div>
   </div>
 </div>

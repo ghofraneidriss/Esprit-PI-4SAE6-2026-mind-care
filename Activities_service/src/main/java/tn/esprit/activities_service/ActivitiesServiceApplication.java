@@ -1,13 +1,13 @@
-package tn.esprit.users_service;
+package tn.esprit.activities_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UsersServiceApplication {
+public class ActivitiesServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UsersServiceApplication.class, args);
+        SpringApplication.run(ActivitiesServiceApplication.class, args);
     }
 
 }

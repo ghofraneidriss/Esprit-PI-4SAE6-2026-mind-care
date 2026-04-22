@@ -279,10 +279,16 @@ export class Header implements OnInit, OnDestroy {
   }
 
   get activitiesNavLink(): string {
+    if (!this.authService.isLoggedIn()) {
+      return '/login-cover';
+    }
     return this.authService.hasStaffDashboardAccess() ? '/admin' : '/officiel/quiz-list';
   }
 
   get isActivitiesNavActive(): boolean {
+    if (!this.authService.isLoggedIn()) {
+      return false;
+    }
     const path = this.router.url.split('?')[0];
     if (this.authService.hasStaffDashboardAccess()) {
       return path === '/admin' || path.startsWith('/admin/');
@@ -291,22 +297,31 @@ export class Header implements OnInit, OnDestroy {
   }
 
   get showIncidentReportLink(): boolean {
+    if (!this.authService.isLoggedIn()) {
+      return false;
+    }
     const r = this.authService.getRole();
     return r === 'CAREGIVER' || r === 'VOLUNTEER';
   }
 
   get showMovementLink(): boolean {
+    if (!this.authService.isLoggedIn()) {
+      return false;
+    }
     const r = this.authService.getRole();
     return r === 'PATIENT' || r === 'CAREGIVER' || r === 'VOLUNTEER';
   }
 
   get showSafeZonesLink(): boolean {
+    if (!this.authService.isLoggedIn()) {
+      return false;
+    }
     const r = this.authService.getRole();
     return r === 'CAREGIVER' || r === 'VOLUNTEER';
   }
 
   get isCaregiverVolunteerIncidentsMenu(): boolean {
-    return this.showIncidentReportLink;
+    return this.authService.isLoggedIn() && this.showIncidentReportLink;
   }
 
   get isIncidentsDropdownActive(): boolean {

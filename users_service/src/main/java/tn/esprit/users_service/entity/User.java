@@ -40,6 +40,9 @@ public class User {
 
     private String phone;
 
+    @Column(name = "caregiver_id")
+    private Long caregiverId;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

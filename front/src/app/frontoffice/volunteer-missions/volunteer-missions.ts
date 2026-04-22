@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { VolunteerService } from '../../backoffice/volunteering/volunteer.service';
 import { Mission } from '../../backoffice/volunteering/volunteering';
@@ -22,7 +24,8 @@ export interface AssignmentHistory {
 
 @Component({
     selector: 'app-volunteer-missions',
-    standalone: false,
+    standalone: true,
+    imports: [CommonModule, FormsModule],
     templateUrl: './volunteer-missions.html',
     styleUrls: ['./volunteer-missions.css']
 })
@@ -172,7 +175,7 @@ export class VolunteerMissionsComponent implements OnInit, OnDestroy {
                 }
             });
         }
-        
+
         // Clean up intervals
         if ((this as any).presenceInterval) {
             clearInterval((this as any).presenceInterval);

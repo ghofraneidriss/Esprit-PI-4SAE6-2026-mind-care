@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Appointment, AppointmentService, AppointmentStatus } from '../../frontoffice/appointment/appointment.service';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 
 @Component({
   selector: 'app-doctor-appointments',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './doctor-appointments.html',
   styleUrls: ['./doctor-appointments.css']
 })

@@ -24,13 +24,18 @@ export class RegisterCoverAuthPage {
   assignedPatientId: number | null = null;
 
   roles: { value: UserRole; label: string }[] = [
+    { value: 'ADMIN', label: 'Admin' },
     { value: 'PATIENT', label: 'Patient' },
     { value: 'CAREGIVER', label: 'Caregiver' },
-    { value: 'DOCTOR', label: 'Doctor' },
     { value: 'VOLUNTEER', label: 'Volunteer' },
+    { value: 'DOCTOR', label: 'Doctor' },
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigateByUrl(this.authService.getLandingRouteForRole(this.authService.getCurrentUser()?.role));
+    }
+  }
 
   onRoleChange(): void {
     this.assignedPatientId = null;
@@ -81,14 +86,23 @@ export class RegisterCoverAuthPage {
       assignedPatientId:
         this.role === 'CAREGIVER' || this.role === 'VOLUNTEER' ? this.assignedPatientId : undefined,
     }).subscribe({
-      next: () => {
+      next: (user) => {
         this.loading = false;
-        this.successMessage = 'Account created. Redirecting…';
-        setTimeout(() => this.router.navigate(['/login-cover']), 800);
+        this.authService.setCurrentUser(user);
+        this.successMessage = 'Account created. Redirecting to your space...';
+        setTimeout(() => this.router.navigateByUrl(this.authService.getLandingRouteForRole(user.role)), 500);
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Registration failed. Email already in use?';
+        const e = err as { status?: number; error?: { message?: string } };
+        const message = String(e.error?.message ?? '').trim();
+        if (message) {
+          this.errorMessage = message;
+        } else if (e.status === 409) {
+          this.errorMessage = 'Email already in use.';
+        } else {
+          this.errorMessage = 'Registration failed. Email already in use?';
+        }
       }
     });
   }

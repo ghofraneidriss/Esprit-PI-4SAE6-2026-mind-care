@@ -15,7 +15,7 @@
           <li>
             <a routerLink="/forum" routerLinkActive="active">Forum</a>
           </li>
-          <li [class.active]="isActivitiesNavActive">
+          <li *ngIf="authService.isLoggedIn()" [class.active]="isActivitiesNavActive">
             <a [routerLink]="activitiesNavLink">Activities</a>
           </li>
           <li *ngIf="authService.isLoggedIn() && authService.isPatient()">
@@ -33,7 +33,7 @@
           <li *ngIf="authService.isLoggedIn() && showSafeZonesLink">
             <a routerLink="/safe-zones" routerLinkActive="active">Safe zones</a>
           </li>
-          <li *ngIf="!authService.isLoggedIn() || !isCaregiverVolunteerIncidentsMenu">
+          <li *ngIf="authService.isLoggedIn() && !isCaregiverVolunteerIncidentsMenu">
             <a routerLink="/incidents/history" routerLinkActive="active">Incidents</a>
           </li>
           <li *ngIf="authService.isLoggedIn() && isCaregiverVolunteerIncidentsMenu" class="dropdown" [class.active]="isIncidentsDropdownActive">

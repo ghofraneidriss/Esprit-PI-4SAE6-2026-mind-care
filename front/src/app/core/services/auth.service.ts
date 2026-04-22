@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, shareReplay, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { PatientRegistrationOption, User } from '../models/user.model';
+import { PatientRegistrationOption, User, UserRole } from '../models/user.model';
 import { environment } from '../../../environments/environment';
 import { NotificationService } from './notification.service';
 
@@ -29,8 +29,8 @@ export class AuthService {
     return `${environment.apiUrl}/users`;
   }
 
-  login(email: string, password: string): Observable<User> {
-    return this.http.post<User>(`${this.usersApi()}/login`, { email, password }).pipe(
+  login(email: string, password: string, role: UserRole): Observable<User> {
+    return this.http.post<User>(`${this.usersApi()}/login`, { email, password, role }).pipe(
       tap(user => localStorage.setItem(this.storageKey, JSON.stringify(user)))
     );
   }
@@ -91,6 +91,17 @@ export class AuthService {
   /** Convenience alias for screens imported from other branches (e.g. cognitive activities). */
   get currentUser(): User | null {
     return this.getCurrentUser();
+  }
+
+  getLandingRouteForRole(role?: string | null): string {
+    const normalized = String(role ?? '').trim().toUpperCase().replace(/^ROLE_/, '');
+    if (normalized === 'ADMIN' || normalized === 'DOCTOR') {
+      return '/admin';
+    }
+    if (normalized === 'PATIENT' || normalized === 'CAREGIVER' || normalized === 'VOLUNTEER') {
+      return '/officiel/dashboard';
+    }
+    return '/';
   }
 
   isLoggedIn(): boolean {

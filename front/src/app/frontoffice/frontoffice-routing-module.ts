@@ -74,6 +74,7 @@ const routes: Routes = [
       },
       {
         path: 'community-activities',
+        canActivate: [authGuard],
         component: FrontofficeActivitiesPage,
       },
       {
@@ -155,13 +156,13 @@ const routes: Routes = [
       { path: 'activities/quiz', redirectTo: 'officiel/quiz-list', pathMatch: 'full' },
       {
         path: 'activities/metiers',
-        canActivate: [redirectStaffFromOfficielGuard],
+        canActivate: [authGuard, redirectStaffFromOfficielGuard],
         loadComponent: () =>
           import('./officiel-tab-redirect.component').then((m) => m.OfficielTabRedirectComponent),
       },
       {
         path: 'activities/play/:type/:id',
-        canActivate: [redirectStaffFromOfficielGuard],
+        canActivate: [authGuard, redirectStaffFromOfficielGuard],
         loadComponent: () =>
           import('../officiel/quiz-player/quiz-player.component').then((m) => m.QuizPlayerComponent),
       },
@@ -169,7 +170,7 @@ const routes: Routes = [
       // --- Officiel / CVP (same URLs as the original project) ---
       {
         path: 'officiel/play/:type/:id',
-        canActivate: [redirectStaffFromOfficielGuard],
+        canActivate: [authGuard, redirectStaffFromOfficielGuard],
         loadComponent: () =>
           import('../officiel/quiz-player/quiz-player.component').then((m) => m.QuizPlayerComponent),
       },
@@ -226,7 +227,7 @@ const routes: Routes = [
       /** CVP patient : sidebar commune (dashboard, quiz-list, results, performance) */
       {
         path: 'officiel',
-        canActivate: [redirectStaffFromOfficielGuard],
+        canActivate: [authGuard, redirectStaffFromOfficielGuard],
         loadComponent: () =>
           import('../officiel/officiel-activities-shell/officiel-activities-shell.component').then(
             (m) => m.OfficielActivitiesShellComponent

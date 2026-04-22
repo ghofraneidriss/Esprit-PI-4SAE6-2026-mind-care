@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { DoctorPrescriptionService } from './doctor-prescription.service';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 
@@ -9,7 +11,8 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
  */
 @Component({
   selector: 'app-doctor-prescription-detail',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   template: `
     <!-- SHARED FLOATING SIDEBAR NAVIGATION -->
     <nav class="floating-sidebar d-flex flex-column align-items-center py-4 position-fixed z-3 h-100 bg-white shadow-sm d-print-none"
@@ -65,7 +68,7 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
                     #PR-{{ prescription.id }} - {{ prescription.status }}
                 </span>
             </div>
-            
+
             <div class="d-flex gap-2">
                 <!-- Signature buttons (only for DOCTOR role and if not already signed) -->
                 <ng-container *ngIf="showSignatureControl()">
@@ -119,7 +122,7 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
 
         <!-- The actual paper sheet -->
         <div class="prescription-paper mx-auto shadow-lg position-relative" id="prescriptionSheet" *ngIf="!isLoading && prescription">
-            
+
             <!-- Finalized Status Badge (Ribbon Style) -->
             <div class="signed-ribbon" *ngIf="prescription.status === 'SIGNED'">
                 <i class="bi bi-check-all me-1"></i> SIGNED FOR PATIENT
@@ -192,7 +195,7 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
             <!-- Footer / Signature -->
             <div class="paper-footer border-top pt-5 d-flex justify-content-between align-items-end">
                 <div class="legal-notice small text-muted opacity-50" style="max-width: 300px; font-size: 11px;">
-                    This document is electronically generated and belongs to the MindCare secure medical network. 
+                    This document is electronically generated and belongs to the MindCare secure medical network.
                     Verify validity at mindcare.portal/rxv-{{ prescription.id }}.
                 </div>
                 <div class="signature-box text-center" style="min-width: 250px;">
@@ -221,10 +224,10 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
     .btn-teal-solid:hover { background-color: #1a6d6d; transform: translateY(-2px); }
     .btn-signature { background: #fff; border: 2px dashed #2D9A9B; color: #2D9A9B; transition: 0.2s; }
     .btn-signature:hover { background: #2D9A9B; color: #fff; }
-    
+
     .prescription-paper {
         background: white;
-        width: 850px; 
+        width: 850px;
         min-height: 1100px;
         padding: 60px 80px;
         border-radius: 4px;
@@ -264,22 +267,22 @@ import { AuthService } from '../../frontoffice/auth/auth.service';
     .nav-icon-link:hover { background: #f8fafc; color: #1e293b !important; transform: translateY(-2px); }
     .active-nav-link, .active-nav-link:visited, .active-nav-link:focus, .active-nav-link:active { color: #2D9A9B !important; }
     .cursor-pointer { cursor: pointer; }
-    
+
     @media print {
         /* Hide all UI elements including toolbar and sidebar */
         .d-print-none, .sidebar, .app-sidebar, nav, header { display: none !important; }
         .d-print-block { display: block !important; }
         .signed-ribbon { right: 20px !important; transform: none !important; box-shadow: none !important; border: 1px solid #2D9A9B !important; color: #2D9A9B !important; background: transparent !important; }
-        
+
         @page { size: A4; margin: 0; }
         body { margin: 0; padding: 0; background: white !important; }
-        
+
         .prescription-container { margin: 0 !important; padding: 0 !important; }
-        .prescription-paper { 
-            width: 100% !important; 
-            min-height: 100% !important; 
-            margin: 0 !important; 
-            box-shadow: none !important; 
+        .prescription-paper {
+            width: 100% !important;
+            min-height: 100% !important;
+            margin: 0 !important;
+            box-shadow: none !important;
             border-radius: 0 !important;
             padding: 40px !important;
             border: none !important;
@@ -355,7 +358,7 @@ export class DoctorPrescriptionDetail implements OnInit {
     } else {
         this.fallbackDoctor();
     }
-    
+
     this.isLoading = false;
     this.cdr.detectChanges();
   }
@@ -369,7 +372,7 @@ export class DoctorPrescriptionDetail implements OnInit {
   showSignatureControl(): boolean {
     const role = this.authService.getLoggedRole();
     if (role !== 'DOCTOR') return false;
-    
+
     const user = this.authService.getLoggedUser();
     return !!(user && user.userId == this.prescription?.doctorId);
   }

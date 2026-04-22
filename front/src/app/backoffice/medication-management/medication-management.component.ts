@@ -1,13 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AdminMedicineService } from './admin-medicine.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { DoctorPrescriptionService } from '../doctor-prescriptions/doctor-prescription.service';
 
 @Component({
   selector: 'app-medication-management',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   template: `
     <!-- SHARED FLOATING SIDEBAR NAVIGATION -->
     <nav class="floating-sidebar d-flex flex-column align-items-center py-4 position-fixed z-3 h-100 bg-white shadow-sm"
@@ -59,7 +63,7 @@ import { DoctorPrescriptionService } from '../doctor-prescriptions/doctor-prescr
                 <i class="bi bi-arrow-left-circle me-2"></i> Back to Dashboard
             </button>
         </div>
-        <div class="glass-header d-flex justify-content-between align-items-center mb-4" 
+        <div class="glass-header d-flex justify-content-between align-items-center mb-4"
              style="background: #2D9A9B; border-radius: 16px; padding: 25px; color: white;">
             <div>
                 <h3 class="fw-bold mb-0">Medication Management</h3>
@@ -77,7 +81,7 @@ import { DoctorPrescriptionService } from '../doctor-prescriptions/doctor-prescr
         </div>
 
         <!-- Prescription Draft Resume -->
-        <div *ngIf="prescriptionDraft" class="alert alert-warning py-3 mb-4 border-0 shadow-sm d-flex justify-content-between align-items-center" 
+        <div *ngIf="prescriptionDraft" class="alert alert-warning py-3 mb-4 border-0 shadow-sm d-flex justify-content-between align-items-center"
              style="background: #fff8e1; color: #856404; border-radius: 16px; border-left: 5px solid #ffc107 !important;">
             <div class="d-flex align-items-center">
                 <div class="bg-white rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 45px; height: 45px; color: #ffc107;">
@@ -93,7 +97,7 @@ import { DoctorPrescriptionService } from '../doctor-prescriptions/doctor-prescr
             </button>
         </div>
 
-        <div *ngIf="statusMessage" class="alert alert-info py-2 mb-3 border-0 shadow-sm" 
+        <div *ngIf="statusMessage" class="alert alert-info py-2 mb-3 border-0 shadow-sm"
              style="background: #e0f2f1; color: #00796b; border-radius: 12px; font-weight: 500;">
             <i class="bi bi-info-circle me-2"></i> {{ statusMessage }}
         </div>
@@ -369,10 +373,10 @@ export class MedicationManagement implements OnInit {
       });
     } else {
       this.medService.create(this.medicineForm.value).subscribe({
-        next: (resp) => { 
-          this.statusMessage = resp.message; 
-          this.loadAll(); 
-          this.closeModal(); 
+        next: (resp) => {
+          this.statusMessage = resp.message;
+          this.loadAll();
+          this.closeModal();
           this.cdr.detectChanges();
         },
         error: (err) => {

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Client } from '@stomp/stompjs';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { Mission } from './volunteering';
 
@@ -40,7 +39,6 @@ export class VolunteerService {
     private readonly volunteersBase = 'http://localhost:8085/api/volunteers';
     private readonly assignmentUrl = 'http://localhost:8085/api/volunteer/assignments';
 
-    private stompClient: Client | null = null;
     private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
     private sessionHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
     private currentUserId: number | null = null;
@@ -53,91 +51,11 @@ export class VolunteerService {
     ) { }
 
     connectWebSocket(): void {
-        if (!this.realtimePresenceEnabled) {
-            return;
-        }
-
-        if (this.stompClient && this.stompClient.active) {
-            return;
-        }
-
-        const user = this.authService.getLoggedUser();
-        if (!user) {
-            return;
-        }
-
-        this.currentUserId = user.userId;
-        this.currentSessionId = this.currentSessionId || this.buildSessionId(user.userId);
-
-        void import('sockjs-client')
-            .then((module) => {
-                const SockJsCtor = (module.default || module) as unknown as { new(url: string): WebSocket };
-
-                this.stompClient = new Client({
-                    webSocketFactory: () => new SockJsCtor('http://localhost:8085/ws'),
-                    connectHeaders: {
-                        userId: String(user.userId),
-                        displayName: `${user.firstName} ${user.lastName}`,
-                    },
-                    reconnectDelay: 5000,
-                    heartbeatIncoming: 4000,
-                    heartbeatOutgoing: 4000,
-                    debug: () => { },
-                });
-
-                this.stompClient.onConnect = () => {
-                    this.stompClient?.publish({
-                        destination: '/app/presence.connect',
-                        body: JSON.stringify({
-                            userId: this.currentUserId,
-                            displayName: `${user.firstName} ${user.lastName}`,
-                            sessionId: this.currentSessionId,
-                        }),
-                    });
-                    this.heartbeatInterval = setInterval(() => {
-                        if (!this.currentUserId) return;
-                        this.stompClient?.publish({
-                            destination: '/app/presence.heartbeat',
-                            body: JSON.stringify({ userId: this.currentUserId }),
-                        });
-                    }, 20000);
-                    this.startSessionHeartbeat();
-                };
-
-                this.stompClient.onDisconnect = () => {
-                    if (this.heartbeatInterval) {
-                        clearInterval(this.heartbeatInterval);
-                        this.heartbeatInterval = null;
-                    }
-                    this.stopSessionHeartbeat();
-                };
-
-                this.stompClient.activate();
-            })
-            .catch((error) => {
-                console.error('Failed to initialize volunteer WebSocket client', error);
-                this.stompClient = null;
-            });
+        void this.realtimePresenceEnabled;
     }
 
     disconnectWebSocket(): void {
-        if (!this.realtimePresenceEnabled) {
-            return;
-        }
-
-        if (this.stompClient && this.stompClient.active) {
-            if (this.currentUserId) {
-                this.stompClient.publish({
-                    destination: '/app/presence.disconnect',
-                    body: JSON.stringify({ userId: this.currentUserId }),
-                });
-            }
-            this.stompClient.deactivate();
-        }
-
-        this.currentUserId = null;
-        this.currentSessionId = null;
-        this.stopSessionHeartbeat();
+        void this.realtimePresenceEnabled;
     }
 
     markOnline(userId: number, displayName?: string): Observable<void> {

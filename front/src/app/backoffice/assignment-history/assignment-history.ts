@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { VolunteerService } from '../volunteering/volunteer.service';
 import { createPdfBlob, downloadPdfBlob } from '../shared/pdf-utils';
@@ -42,7 +44,8 @@ interface BackendAssignment {
 
 @Component({
     selector: 'app-assignment-history-page',
-    standalone: false,
+    standalone: true,
+    imports: [CommonModule, FormsModule],
     templateUrl: './assignment-history.html',
     styleUrls: ['./assignment-history.css'],
 })

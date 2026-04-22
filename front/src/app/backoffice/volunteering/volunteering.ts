@@ -1,5 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { VolunteerDirectoryEntry, VolunteerService } from './volunteer.service';
 
@@ -74,7 +77,8 @@ function iconForCategory(category: string): string {
 
 @Component({
     selector: 'app-volunteering-page',
-    standalone: false,
+    standalone: true,
+    imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: './volunteering.html',
     styleUrls: ['./volunteering.css'],
 })
@@ -270,7 +274,7 @@ export class VolunteeringPageComponent implements OnInit {
         const lastHeartbeat = presence.lastHeartbeat ? new Date(presence.lastHeartbeat) : null;
         const now = new Date();
         const diffSeconds = lastHeartbeat ? (now.getTime() - lastHeartbeat.getTime()) / 1000 : Infinity;
-        
+
         // If last heartbeat was within 90 seconds, consider online
         return diffSeconds < 90 ? 'Online' : 'Offline';
     }

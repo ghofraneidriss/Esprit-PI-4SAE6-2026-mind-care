@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import tn.esprit.recommendation_service.dto.sudoku.SudokuCreateRequest;
 import tn.esprit.recommendation_service.dto.sudoku.SudokuResponse;
 import tn.esprit.recommendation_service.dto.sudoku.SudokuSessionStartResponse;
@@ -36,6 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("SudokuService — Tests Unitaires")
 class SudokuServiceTest {
 

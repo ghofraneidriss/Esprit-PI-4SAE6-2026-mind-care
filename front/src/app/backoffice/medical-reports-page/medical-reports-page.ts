@@ -1,6 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MedicalReport, ReportStatus } from './medical-report.model';
 import { MedicalReportService } from './medical-report.service';
 import { AuthService } from '../../frontoffice/auth/auth.service';
@@ -15,7 +17,8 @@ interface UserOption {
 
 @Component({
   selector: 'app-medical-reports-page',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './medical-reports-page.html',
   styleUrls: ['./medical-reports-page.css'],
 })

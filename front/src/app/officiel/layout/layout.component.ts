@@ -40,7 +40,6 @@ export class LayoutComponent implements OnInit {
 
   logout() {
     this.auth.logout();
-    this.router.navigate(['/officiel/quiz-list']);
   }
 
   get initials(): string {

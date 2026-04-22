@@ -1,6 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrescriptionService } from '../prescription.service';
+import { SharedModule } from '../../shared/shared.module';
 
 /**
  * Composant affichant le détail d'une prescription.
@@ -8,7 +10,8 @@ import { PrescriptionService } from '../prescription.service';
  */
 @Component({
   selector: 'app-patient-prescription-detail',
-  standalone: false,
+    standalone: true,
+    imports: [CommonModule, SharedModule],
   template: `
     <app-header></app-header>
     <main class="main" style="padding-top: 100px; background: #f4f7f7; min-height: 100vh;">

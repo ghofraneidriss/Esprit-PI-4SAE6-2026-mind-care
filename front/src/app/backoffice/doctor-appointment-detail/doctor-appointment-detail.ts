@@ -1,19 +1,23 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { Appointment, AppointmentService } from '../../frontoffice/appointment/appointment.service';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { PatientProfileService } from '../../frontoffice/patient-profile/patient-profile.service';
 
 @Component({
   selector: 'app-doctor-appointment-detail',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './doctor-appointment-detail.html',
   styleUrls: ['./doctor-appointment-detail.css']
 })
 export class DoctorAppointmentDetail implements OnInit {
-  appointment: Appointment | null = null;
-  patientUser: any = null;
-  patientProfile: any = null;
+  appointment: Appointment = {} as Appointment;
+  patientUser: any = {};
+  patientProfile: any = {};
   editMode = false;
   updatedDate = '';
   minDateTime = '';

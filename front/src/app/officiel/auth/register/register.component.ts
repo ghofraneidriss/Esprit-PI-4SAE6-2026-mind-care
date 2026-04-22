@@ -30,10 +30,11 @@ export class OfficielRegisterComponent {
   loadingPatients = false;
   assignedPatientId: number | null = null;
   roles: { v: UserRole; l: string; d: string }[] = [
-    { v: 'PATIENT', l: '🧑 Patient', d: 'Cognitive follow-up' },
-    { v: 'CAREGIVER', l: '🤝 Caregiver', d: 'Family / support' },
-    { v: 'DOCTOR', l: '🩺 Doctor', d: 'Medical follow-up' },
-    { v: 'VOLUNTEER', l: '🙋 Volunteer', d: 'Community help' },
+    { v: 'ADMIN', l: 'Admin', d: 'Platform management' },
+    { v: 'PATIENT', l: 'Patient', d: 'Cognitive follow-up' },
+    { v: 'CAREGIVER', l: 'Caregiver', d: 'Family / support' },
+    { v: 'VOLUNTEER', l: 'Volunteer', d: 'Community help' },
+    { v: 'DOCTOR', l: 'Doctor', d: 'Medical follow-up' },
   ];
 
   constructor(
@@ -41,7 +42,7 @@ export class OfficielRegisterComponent {
     private router: Router
   ) {
     if (this.auth.isLoggedIn()) {
-      this.router.navigate(['/officiel/dashboard']);
+      this.router.navigateByUrl(this.auth.getLandingRouteForRole(this.auth.getCurrentUser()?.role));
     }
   }
 
@@ -105,18 +106,26 @@ export class OfficielRegisterComponent {
           this.role === 'CAREGIVER' || this.role === 'VOLUNTEER' ? this.assignedPatientId : undefined,
       })
       .subscribe({
-        next: () => {
+        next: (user) => {
           this.loading = false;
-          this.success = 'Account created! Sign in.';
-          setTimeout(() => this.router.navigate(['/officiel/login']), 800);
+          this.auth.setCurrentUser(user);
+          this.success = 'Account created. Redirecting to your space...';
+          setTimeout(
+            () => this.router.navigateByUrl(this.auth.getLandingRouteForRole(user.role)),
+            500
+          );
         },
         error: (e: unknown) => {
           this.loading = false;
           const err = e as { status?: number; error?: { message?: string } };
-          this.error =
-            err.status === 409
-              ? 'Email already in use.'
-              : err.error?.message || 'Error.';
+          const message = String(err.error?.message ?? '').trim();
+          if (message) {
+            this.error = message;
+          } else if (err.status === 409) {
+            this.error = 'Email already in use.';
+          } else {
+            this.error = 'Error.';
+          }
         },
       });
   }

@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { PatientProfileService, PatientProfile as ProfileModel } from './patient-profile.service';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-patient-profile',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, SharedModule],
   templateUrl: './patient-profile.html',
   styleUrl: './patient-profile.css',
 })

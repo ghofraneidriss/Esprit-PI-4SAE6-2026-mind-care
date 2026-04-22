@@ -1,7 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { DoctorPrescriptionService } from './doctor-prescription.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../frontoffice/auth/auth.service';
 import { PatientProfileService } from '../../frontoffice/patient-profile/patient-profile.service';
 
@@ -11,7 +14,8 @@ import { PatientProfileService } from '../../frontoffice/patient-profile/patient
  */
 @Component({
   selector: 'app-doctor-prescription-create',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   template: `
     <!-- SIDEBAR -->
     <nav class="floating-sidebar d-flex flex-column align-items-center py-4 position-fixed z-3 h-100 bg-white shadow-sm"
