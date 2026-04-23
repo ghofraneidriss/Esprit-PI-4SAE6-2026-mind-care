@@ -21,7 +21,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Vérifier si des données existent déjà
         if (quizActivityRepository.count() == 0) {
             // Créer des quiz de test
             QuizActivity quiz1 = new QuizActivity();
@@ -34,13 +33,26 @@ public class DataInitializer implements CommandLineRunner {
             quiz1.setCreatedAt(new Date());
             quiz1.setUpdatedAt(new Date());
 
-            Question q1 = new Question(null, "Quelle est la capitale de la France ?", "Paris", "Londres", "Berlin",
-                    null,
-                    "Paris", 10, quiz1);
-            Question q2 = new Question(null, "Quelle est la couleur du ciel par beau temps ?", "Bleu", "Vert", "Rouge",
-                    null,
-                    "Bleu", 10, quiz1);
-            quiz1.setQuestions(Arrays.asList(q1, q2));
+            Question q1 = new Question();
+            q1.setText("Quelle est la capitale de la France ?");
+            q1.setOptionA("Paris");
+            q1.setOptionB("Londres");
+            q1.setOptionC("Berlin");
+            q1.setCorrectAnswer("Paris");
+            q1.setScore(10);
+            q1.setQuiz(quiz1);
+
+            Question q2 = new Question();
+            q2.setText("Quelle est la couleur du ciel par beau temps ?");
+            q2.setOptionA("Bleu");
+            q2.setOptionB("Vert");
+            q2.setOptionC("Rouge");
+            q2.setCorrectAnswer("Bleu");
+            q2.setScore(10);
+            q2.setQuiz(quiz1);
+
+            quiz1.getQuestions().add(q1);
+            quiz1.getQuestions().add(q2);
 
             QuizActivity quiz2 = new QuizActivity();
             quiz2.setTitle("Quiz Logique");
@@ -52,24 +64,21 @@ public class DataInitializer implements CommandLineRunner {
             quiz2.setCreatedAt(new Date());
             quiz2.setUpdatedAt(new Date());
 
-            Question q3 = new Question(null, "Si A=1 et B=2, combien vaut A+B ?", "2", "3", "4", null, "3", 10, quiz2);
-            quiz2.setQuestions(Arrays.asList(q3));
+            Question q3 = new Question();
+            q3.setText("Si A=1 et B=2, combien vaut A+B ?");
+            q3.setOptionA("2");
+            q3.setOptionB("3");
+            q3.setOptionC("4");
+            q3.setCorrectAnswer("3");
+            q3.setScore(10);
+            q3.setQuiz(quiz2);
 
-            QuizActivity quiz3 = new QuizActivity();
-            quiz3.setTitle("Quiz Mathématiques");
-            quiz3.setDescription("Problèmes mathématiques simples");
-            quiz3.setType("QUIZ");
-            quiz3.setTheme("MATH");
-            quiz3.setLevel("HARD");
-            quiz3.setDifficulty("HARD");
-            quiz3.setCreatedAt(new Date());
-            quiz3.setUpdatedAt(new Date());
+            quiz2.getQuestions().add(q3);
 
             quizActivityRepository.save(quiz1);
             quizActivityRepository.save(quiz2);
-            quizActivityRepository.save(quiz3);
 
-            System.out.println("Données de test initialisées avec succès avec des questions !");
+            System.out.println("Données de test initialisées avec succès !");
         }
     }
 }

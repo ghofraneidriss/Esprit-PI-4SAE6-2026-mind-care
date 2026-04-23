@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/quiz")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Tag(name = "Quiz Activities Management", description = "API pour la gestion des activités quiz")
 public class QuizActivityController {
 

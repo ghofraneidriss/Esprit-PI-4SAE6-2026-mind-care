@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=alzheimer_db
+    ports:
+      - "3306:3306"
+    networks:
+      - mind-network
+
+  activities-ms:
+    image: localhost:80/quiz-app/activities-service:v1
+    container_name: activities-ms
+    depends_on:
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/alzheimer_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    ports:
+      - "8084:8084"
+    networks:
+      - mind-network
+
+  movement-ms:
+    image: localhost:80/quiz-app/movement-service:v1
+    container_name: movement-ms
+    depends_on:
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/alzheimer_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    ports:
+      - "8085:8085"
+    networks:
+      - mind-network
+
+networks:
+  mind-network:
+    driver: bridge
