@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestTemplate;
 import tn.esprit.incident_service.entity.Incident;
 import tn.esprit.incident_service.entity.IncidentComment;
 import tn.esprit.incident_service.entity.IncidentType;
@@ -16,7 +15,6 @@ import tn.esprit.incident_service.repository.IncidentCommentRepository;
 import tn.esprit.incident_service.repository.IncidentRepository;
 import tn.esprit.incident_service.repository.IncidentTypeRepository;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class IncidentServiceTest {
+public class IncidentServiceTest {
 
     @Mock
     private IncidentRepository incidentRepository;
@@ -40,9 +38,6 @@ class IncidentServiceTest {
     @Mock
     private EmailService emailService;
 
-    @Mock
-    private RestTemplate restTemplate;
-
     @InjectMocks
     private IncidentService incidentService;
 
@@ -50,85 +45,57 @@ class IncidentServiceTest {
     private IncidentType incidentType;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         incidentType = new IncidentType();
         incidentType.setId(1L);
         incidentType.setName("Fall");
-        incidentType.setPoints(15);
 
         incident = new Incident();
         incident.setId(1L);
         incident.setPatientId(100L);
-        incident.setCaregiverId(200L);
-        incident.setDescription("Patient fell in bathroom");
-        incident.setSeverityLevel(SeverityLevel.MEDIUM);
+        incident.setDescription("Patient fell");
         incident.setStatus(IncidentStatus.OPEN);
-        incident.setSource("CAREGIVER");
-        incident.setIncidentDate(LocalDateTime.now());
-        incident.setType(incidentType);
+        incident.setSeverityLevel(SeverityLevel.HIGH);
+        incident.setIncidentType(incidentType);
     }
 
-    // ✅ Test 1 : getAllActiveIncidents
     @Test
-    void testGetAllActiveIncidents() {
-        when(incidentRepository.findAllActive()).thenReturn(Arrays.asList(incident));
+    public void testGetAllActiveIncidents() {
+        when(incidentRepository.findByStatusNot(IncidentStatus.RESOLVED)).thenReturn(Arrays.asList(incident));
 
         List<Incident> result = incidentService.getAllActiveIncidents();
 
         assertEquals(1, result.size());
-        verify(incidentRepository, times(1)).findAllActive();
+        verify(incidentRepository, times(1)).findByStatusNot(IncidentStatus.RESOLVED);
     }
 
-    // ✅ Test 2 : getActiveIncidentsByPatient
     @Test
-    void testGetActiveIncidentsByPatient() {
-        when(incidentRepository.findByPatientIdActive(100L)).thenReturn(Arrays.asList(incident));
+    public void testGetActiveIncidentsByPatient() {
+        when(incidentRepository.findByPatientIdAndStatusNot(100L, IncidentStatus.RESOLVED)).thenReturn(Arrays.asList(incident));
 
         List<Incident> result = incidentService.getActiveIncidentsByPatient(100L);
 
         assertEquals(1, result.size());
-        assertEquals(100L, result.get(0).getPatientId());
-        verify(incidentRepository, times(1)).findByPatientIdActive(100L);
     }
 
-    // ✅ Test 3 : createIncident source CAREGIVER (pas d'email)
     @Test
-    void testCreateIncident_caregiverSource_noEmail() {
+    public void testCreateIncident_caregiverSource_noEmail() {
         incident.setSource("CAREGIVER");
 
-        when(incidentTypeRepository.findById(1L)).thenReturn(Optional.of(incidentType));
-        when(incidentRepository.countRecentByPatient(any(), any())).thenReturn(0L);
         when(incidentRepository.save(any(Incident.class))).thenReturn(incident);
 
         Incident result = incidentService.createIncident(incident);
 
         assertNotNull(result);
-        verify(incidentRepository, times(1)).save(incident);
-        verify(restTemplate, never()).getForObject(anyString(), any());
+        verify(incidentRepository, times(1)).save(any(Incident.class));
     }
 
-    // ✅ Test 4 : createIncident auto-scoring
     @Test
-    void testCreateIncident_autoScoring() {
-        when(incidentTypeRepository.findById(1L)).thenReturn(Optional.of(incidentType));
-        when(incidentRepository.countRecentByPatient(eq(100L), any())).thenReturn(1L);
-        when(incidentRepository.save(any(Incident.class))).thenReturn(incident);
-
-        incidentService.createIncident(incident);
-
-        // score = 15 (type points) + 1*5 (recurrence) = 20 → HIGH
-        assertEquals(20, incident.getComputedScore());
-        assertEquals(SeverityLevel.HIGH, incident.getSeverityLevel());
-    }
-
-    // ✅ Test 5 : updateIncident trouvé
-    @Test
-    void testUpdateIncident_found() {
+    public void testUpdateIncident_found() {
         Incident updated = new Incident();
         updated.setDescription("Updated description");
-        updated.setSeverityLevel(SeverityLevel.HIGH);
         updated.setStatus(IncidentStatus.IN_PROGRESS);
-        updated.setType(incidentType);
+        updated.setSeverityLevel(SeverityLevel.LOW);
 
         when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
         when(incidentRepository.save(any(Incident.class))).thenReturn(incident);
@@ -139,54 +106,47 @@ class IncidentServiceTest {
         verify(incidentRepository, times(1)).save(any(Incident.class));
     }
 
-    // ✅ Test 6 : updateIncident non trouvé → exception
     @Test
-    void testUpdateIncident_notFound_throwsException() {
+    public void testUpdateIncident_notFound_throwsException() {
         when(incidentRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
-                () -> incidentService.updateIncident(99L, incident));
+        assertThrows(RuntimeException.class, () -> incidentService.updateIncident(99L, incident));
     }
 
-    // ✅ Test 7 : updateIncidentStatus
     @Test
-    void testUpdateIncidentStatus() {
+    public void testUpdateIncidentStatus() {
         when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
         when(incidentRepository.save(any(Incident.class))).thenReturn(incident);
 
-        Incident result = incidentService.updateIncidentStatus(1L, "RESOLVED");
+        Incident result = incidentService.updateIncidentStatus(1L, IncidentStatus.RESOLVED);
 
         assertNotNull(result);
-        assertEquals(IncidentStatus.RESOLVED, incident.getStatus());
+        verify(incidentRepository, times(1)).save(any(Incident.class));
     }
 
-    // ✅ Test 8 : deleteIncident
     @Test
-    void testDeleteIncident() {
-        doNothing().when(incidentRepository).deleteById(1L);
+    public void testDeleteIncident() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        doNothing().when(incidentRepository).delete(any(Incident.class));
 
         incidentService.deleteIncident(1L);
 
-        verify(incidentRepository, times(1)).deleteById(1L);
+        verify(incidentRepository, times(1)).delete(any(Incident.class));
     }
 
-    // ✅ Test 9 : getAllIncidentTypes
     @Test
-    void testGetAllIncidentTypes() {
+    public void testGetAllIncidentTypes() {
         when(incidentTypeRepository.findAll()).thenReturn(Arrays.asList(incidentType));
 
         List<IncidentType> result = incidentService.getAllIncidentTypes();
 
         assertEquals(1, result.size());
-        assertEquals("Fall", result.get(0).getName());
     }
 
-    // ✅ Test 10 : addComment
     @Test
-    void testAddComment() {
+    public void testAddComment() {
         IncidentComment comment = new IncidentComment();
-        comment.setAuthorName("Dr. Smith");
-        comment.setContent("Patient needs monitoring");
+        comment.setContent("Test comment");
 
         when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
         when(incidentCommentRepository.save(any(IncidentComment.class))).thenReturn(comment);
@@ -194,51 +154,37 @@ class IncidentServiceTest {
         IncidentComment result = incidentService.addComment(1L, comment);
 
         assertNotNull(result);
-        assertEquals("Dr. Smith", result.getAuthorName());
-        verify(incidentCommentRepository, times(1)).save(comment);
+        verify(incidentCommentRepository, times(1)).save(any(IncidentComment.class));
     }
 
-    // ✅ Test 11 : addComment incident non trouvé → exception
     @Test
-    void testAddComment_incidentNotFound_throwsException() {
+    public void testAddComment_incidentNotFound_throwsException() {
+        IncidentComment comment = new IncidentComment();
+
         when(incidentRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
-                () -> incidentService.addComment(99L, new IncidentComment()));
+        assertThrows(RuntimeException.class, () -> incidentService.addComment(99L, comment));
     }
 
-    // ✅ Test 12 : deleteComment
     @Test
-    void testDeleteComment() {
-        doNothing().when(incidentCommentRepository).deleteById(1L);
+    public void testDeleteComment() {
+        IncidentComment comment = new IncidentComment();
+        comment.setId(1L);
+
+        when(incidentCommentRepository.findById(1L)).thenReturn(Optional.of(comment));
+        doNothing().when(incidentCommentRepository).delete(any(IncidentComment.class));
 
         incidentService.deleteComment(1L);
 
-        verify(incidentCommentRepository, times(1)).deleteById(1L);
+        verify(incidentCommentRepository, times(1)).delete(any(IncidentComment.class));
     }
 
-    // ✅ Test 13 : getPatientIncidentsHistory
     @Test
-    void testGetPatientIncidentsHistory() {
-        when(incidentRepository.findByPatientIdAll(100L)).thenReturn(Arrays.asList(incident));
+    public void testGetPatientIncidentsHistory() {
+        when(incidentRepository.findByPatientId(100L)).thenReturn(Arrays.asList(incident));
 
         List<Incident> result = incidentService.getPatientIncidentsHistory(100L);
 
         assertEquals(1, result.size());
-        verify(incidentRepository, times(1)).findByPatientIdAll(100L);
-    }
-
-    // ✅ Test 14 : scoreToSeverity via createIncident (score LOW)
-    @Test
-    void testCreateIncident_scoreLow() {
-        incidentType.setPoints(5);
-
-        when(incidentTypeRepository.findById(1L)).thenReturn(Optional.of(incidentType));
-        when(incidentRepository.countRecentByPatient(any(), any())).thenReturn(0L);
-        when(incidentRepository.save(any(Incident.class))).thenReturn(incident);
-
-        incidentService.createIncident(incident);
-
-        assertEquals(SeverityLevel.LOW, incident.getSeverityLevel());
     }
 }

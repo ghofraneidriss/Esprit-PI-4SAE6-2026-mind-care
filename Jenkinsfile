@@ -57,6 +57,15 @@ pipeline {
             }
         }
 
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t mindcare-alzheimer-forums:1.0 server/forums_service/'
+                sh 'docker build -t mindcare-alzheimer-incident:1.0 server/incident_service/'
+                sh 'docker tag mindcare-alzheimer-forums:1.0 mindcare-alzheimer-forums:latest'
+                sh 'docker tag mindcare-alzheimer-incident:1.0 mindcare-alzheimer-incident:latest'
+            }
+        }
+
         stage('Deploy to Artifactory') {
             steps {
                 withCredentials([usernamePassword(
