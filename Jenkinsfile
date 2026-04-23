@@ -66,10 +66,20 @@ pipeline {
                 )]) {
                     dir('server') {
                         sh '''
+                            cat > /tmp/settings.xml << EOF
+<settings>
+  <servers>
+    <server>
+      <id>artifactory</id>
+      <username>${ARTIF_USER}</username>
+      <password>${ARTIF_PASS}</password>
+    </server>
+  </servers>
+</settings>
+EOF
                             mvn deploy -DskipTests \
-                              -DaltDeploymentRepository="artifactory::http://artifactory:8082/artifactory/libs-snapshot-local" \
-                              -Dusername=$ARTIF_USER \
-                              -Dpassword=$ARTIF_PASS
+                              --settings /tmp/settings.xml \
+                              -DaltDeploymentRepository="artifactory::http://artifactory:8082/artifactory/libs-snapshot-local"
                         '''
                     }
                 }
