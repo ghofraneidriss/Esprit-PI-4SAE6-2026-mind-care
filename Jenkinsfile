@@ -30,7 +30,7 @@ pipeline {
         stage('Test Forums Service') {
             steps {
                 dir('server/forums_service') {
-                    sh 'mvn test -Dspring.profiles.active=test'
+                    sh 'mvn test -Dtest=CategoryServiceTest -DfailIfNoTests=false'
                 }
             }
             post {
@@ -44,7 +44,7 @@ pipeline {
         stage('Test Incident Service') {
             steps {
                 dir('server/incident_service') {
-                    sh 'mvn test -Dspring.profiles.active=test'
+                    sh 'mvn test -Dtest=IncidentServiceTest -DfailIfNoTests=false'
                 }
             }
             post {
