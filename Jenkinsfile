@@ -33,7 +33,8 @@ pipeline {
             }
             post {
                 always {
-                    junit 'forums_service/target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true,
+                          testResults: 'forums_service/target/surefire-reports/*.xml'
                 }
             }
         }
