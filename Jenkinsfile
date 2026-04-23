@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        ARTIFACTORY_URL = 'http://artifactory:8082/artifactory'
-        ARTIF_USER      = 'admin'
-        ARTIF_PASS      = credentials('artifactory-creds')
-    }
-
     tools {
         maven 'Maven'
     }
@@ -65,22 +59,19 @@ pipeline {
 
         stage('Deploy to Artifactory') {
             steps {
-                dir('server') {
-                    rtMavenDeployer(
-                        id: 'maven-deployer',
-                        serverId: 'artifactory',
-                        releaseRepo: 'libs-release-local',
-                        snapshotRepo: 'libs-snapshot-local'
-                    )
-                    rtMavenRun(
-                        tool: 'Maven',
-                        pom: 'pom.xml',
-                        goals: 'install -DskipTests',
-                        deployerId: 'maven-deployer'
-                    )
-                    rtPublishBuildInfo(
-                        serverId: 'artifactory'
-                    )
+                withCredentials([usernamePassword(
+                    credentialsId: 'artifactory-creds',
+                    usernameVariable: 'ARTIF_USER',
+                    passwordVariable: 'ARTIF_PASS'
+                )]) {
+                    dir('server') {
+                        sh '''
+                            mvn deploy -DskipTests \
+                              -DaltDeploymentRepository="artifactory::http://artifactory:8082/artifactory/libs-snapshot-local" \
+                              -Dusername=$ARTIF_USER \
+                              -Dpassword=$ARTIF_PASS
+                        '''
+                    }
                 }
             }
         }
