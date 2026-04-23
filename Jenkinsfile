@@ -21,39 +21,59 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile -DskipTests'
+                dir('server') {
+                    sh 'mvn clean compile -DskipTests'
+                }
             }
         }
 
-        stage('Test') {
+        stage('Test Forums Service') {
             steps {
-                dir('forums_service') {
-                    sh 'mvn test'
+                dir('server/forums_service') {
+                    sh 'mvn test -Dspring.profiles.active=test'
                 }
             }
             post {
                 always {
                     junit allowEmptyResults: true,
-                          testResults: 'forums_service/target/surefire-reports/*.xml'
+                          testResults: 'server/forums_service/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Test Incident Service') {
+            steps {
+                dir('server/incident_service') {
+                    sh 'mvn test -Dspring.profiles.active=test'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true,
+                          testResults: 'server/incident_service/target/surefire-reports/*.xml'
                 }
             }
         }
 
         stage('Package') {
             steps {
-                sh 'mvn package -DskipTests'
+                dir('server') {
+                    sh 'mvn package -DskipTests'
+                }
             }
         }
 
         stage('Deploy to Artifactory') {
             steps {
-                sh """
-                    mvn deploy \
-                      -DskipTests \
-                      -DaltDeploymentRepository=artifactory::default::${ARTIFACTORY_URL}/libs-snapshot-local \
-                      -Dusername=${ARTIF_USER} \
-                      -Dpassword=${ARTIF_PASS}
-                """
+                dir('server') {
+                    sh """
+                        mvn deploy \
+                          -DskipTests \
+                          -DaltDeploymentRepository=artifactory::default::${ARTIFACTORY_URL}/libs-snapshot-local \
+                          -Dusername=${ARTIF_USER} \
+                          -Dpassword=${ARTIF_PASS}
+                    """
+                }
             }
         }
     }
