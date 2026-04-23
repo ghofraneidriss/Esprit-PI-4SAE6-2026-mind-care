@@ -30,7 +30,7 @@ pipeline {
         stage('Test Forums Service') {
             steps {
                 dir('server/forums_service') {
-                    sh 'mvn test -Dtest=CategoryServiceTest -DfailIfNoTests=false'
+                    sh 'mvn test -Dtest=tn.esprit.forums_service.service.CategoryServiceTest -Dsurefire.failIfNoSpecifiedTests=false'
                 }
             }
             post {
@@ -44,7 +44,7 @@ pipeline {
         stage('Test Incident Service') {
             steps {
                 dir('server/incident_service') {
-                    sh 'mvn test -Dtest=IncidentServiceTest -DfailIfNoTests=false'
+                    sh 'mvn test -Dtest=tn.esprit.incident_service.service.IncidentServiceTest -Dsurefire.failIfNoSpecifiedTests=false'
                 }
             }
             post {
