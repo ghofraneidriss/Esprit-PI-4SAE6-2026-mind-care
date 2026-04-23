@@ -66,13 +66,21 @@ pipeline {
         stage('Deploy to Artifactory') {
             steps {
                 dir('server') {
-                    sh """
-                        mvn deploy \
-                          -DskipTests \
-                          -DaltDeploymentRepository=artifactory::default::${ARTIFACTORY_URL}/libs-snapshot-local \
-                          -Dusername=${ARTIF_USER} \
-                          -Dpassword=${ARTIF_PASS}
-                    """
+                    rtMavenDeployer(
+                        id: 'maven-deployer',
+                        serverId: 'artifactory',
+                        releaseRepo: 'libs-release-local',
+                        snapshotRepo: 'libs-snapshot-local'
+                    )
+                    rtMavenRun(
+                        tool: 'Maven',
+                        pom: 'pom.xml',
+                        goals: 'install -DskipTests',
+                        deployerId: 'maven-deployer'
+                    )
+                    rtPublishBuildInfo(
+                        serverId: 'artifactory'
+                    )
                 }
             }
         }
