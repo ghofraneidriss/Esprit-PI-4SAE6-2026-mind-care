@@ -24,7 +24,7 @@ pipeline {
         stage('Test Forums Service') {
             steps {
                 dir('server/forums_service') {
-                    sh 'mvn test -Dtest=tn.esprit.forums_service.service.CategoryServiceTest'
+                    sh 'mvn test'
                 }
             }
             post {
@@ -38,7 +38,7 @@ pipeline {
         stage('Test Incident Service') {
             steps {
                 dir('server/incident_service') {
-                    sh 'mvn test -Dtest=tn.esprit.incident_service.service.IncidentServiceTest'
+                    sh 'mvn test'
                 }
             }
             post {
@@ -115,7 +115,7 @@ pipeline {
             echo '✅ Pipeline réussi — Tests + SonarQube + Docker + Artifactory OK !'
         }
         failure {
-            echo '❌ Pipeline échoué — Vérifiez la connexion à Artifactory ou SonarQube.'
+            echo '❌ Pipeline échoué — Regardez les logs.'
         }
     }
 }
