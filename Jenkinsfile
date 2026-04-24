@@ -78,7 +78,7 @@ pipeline {
                             echo '<settings><servers><server><id>artifactory</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>' > /tmp/settings.xml
                             mvn deploy -DskipTests \
                               --settings /tmp/settings.xml \
-                              -DaltDeploymentRepository="artifactory::http://artifactory:8081/artifactory/libs-snapshot-local"
+                              -DaltDeploymentRepository="artifactory::http://192.168.31.155:8081/artifactory/libs-snapshot-local"
                         """
                     }
                 }
@@ -88,7 +88,6 @@ pipeline {
 
     post {
         success {
-            // Archive les fichiers JAR pour les voir dans l'interface Jenkins
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
             echo '✅ Pipeline réussi — artifact déployé sur Artifactory !'
         }
