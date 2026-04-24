@@ -101,7 +101,7 @@ pipeline {
                             echo '<settings><servers><server><id>artifactory</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>' > /tmp/settings.xml
                             mvn deploy -DskipTests \
                               --settings /tmp/settings.xml \
-                              -DaltDeploymentRepository="artifactory::http://192.168.31.155:8081/artifactory/libs-snapshot-local"
+                              -DaltDeploymentRepository="artifactory::http://172.19.224.221:8081/artifactory/libs-snapshot-local"
                         """
                     }
                 }
@@ -112,10 +112,10 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline réussi — Tests + SonarQube + Artifacts OK !'
+            echo '✅ Pipeline réussi — Tests + SonarQube + Docker + Artifactory OK !'
         }
         failure {
-            echo '❌ Pipeline échoué — Regardez les logs.'
+            echo '❌ Pipeline échoué — Vérifiez la connexion à Artifactory ou SonarQube.'
         }
     }
 }
