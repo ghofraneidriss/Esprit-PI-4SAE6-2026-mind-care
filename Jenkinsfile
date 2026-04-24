@@ -13,10 +13,10 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build & Install Parent') {
             steps {
                 dir('server') {
-                    sh 'mvn clean compile -DskipTests'
+                    sh 'mvn clean install -DskipTests'
                 }
             }
         }
@@ -24,7 +24,7 @@ pipeline {
         stage('Test Forums Service') {
             steps {
                 dir('server/forums_service') {
-                    sh 'mvn test -Dtest=tn.esprit.forums_service.service.CategoryServiceTest -Dsurefire.failIfNoSpecifiedTests=false'
+                    sh 'mvn test -Dtest=tn.esprit.forums_service.service.CategoryServiceTest'
                 }
             }
             post {
@@ -38,7 +38,7 @@ pipeline {
         stage('Test Incident Service') {
             steps {
                 dir('server/incident_service') {
-                    sh 'mvn test -Dtest=tn.esprit.incident_service.service.IncidentServiceTest -Dsurefire.failIfNoSpecifiedTests=false'
+                    sh 'mvn test -Dtest=tn.esprit.incident_service.service.IncidentServiceTest'
                 }
             }
             post {
@@ -49,16 +49,9 @@ pipeline {
             }
         }
 
-        stage('Package') {
-            steps {
-                dir('server') {
-                    sh 'mvn package -DskipTests'
-                }
-            }
-        }
-
         stage('Docker Build') {
             steps {
+                // On s'assure que les JARs sont là avant de build les images
                 sh 'docker build -t mindcare-alzheimer-forums:1.0 server/forums_service/'
                 sh 'docker build -t mindcare-alzheimer-incident:1.0 server/incident_service/'
                 sh 'docker tag mindcare-alzheimer-forums:1.0 mindcare-alzheimer-forums:latest'
@@ -89,10 +82,10 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline réussi — artifact déployé sur Artifactory !'
+            echo '✅ Pipeline réussi — Tests validés et Artifacts sur Artifactory !'
         }
         failure {
-            echo '❌ Pipeline échoué — vérifier les logs.'
+            echo '❌ Pipeline échoué — Regardez les logs de tests ou de déploiement.'
         }
     }
 }

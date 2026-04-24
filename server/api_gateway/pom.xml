@@ -39,7 +39,7 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!-- Load Balancer — nécessaire pour lb://service-name dans les routes -->
+        <!-- Load Balancer — nécessaire pour ://service-name dans les routes -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
