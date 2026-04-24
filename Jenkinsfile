@@ -88,7 +88,7 @@ pipeline {
 EOF
                             mvn deploy -DskipTests \
                               --settings /tmp/settings.xml \
-                              -DaltDeploymentRepository="artifactory::http://artifactory:8082/artifactory/libs-snapshot-local"
+                              -DaltDeploymentRepository="artifactory::http://artifactory:8081/artifactory/libs-snapshot-local"
                         '''
                     }
                 }
