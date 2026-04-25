@@ -255,16 +255,22 @@ class AlertServiceTest {
         Alert alert2 = new Alert();
         alert2.setPatientId(1L);
         alert2.setLevel(AlertLevel.HIGH);
-        alert2.setStatus(AlertStatus.VIEWED);
+        alert2.setStatus(AlertStatus.NEW);
         alert2.setTitle("Alert 2");
         alertService.createAlert(alert2);
+
+        // Mark alert2 as viewed to change its status
+        alertService.markAsViewed(alert2.getId());
 
         Alert alert3 = new Alert();
         alert3.setPatientId(2L);
         alert3.setLevel(AlertLevel.LOW);
-        alert3.setStatus(AlertStatus.RESOLVED);
+        alert3.setStatus(AlertStatus.NEW);
         alert3.setTitle("Alert 3");
         alertService.createAlert(alert3);
+
+        // Resolve alert3
+        alertService.resolveAlert(alert3.getId());
 
         Map<String, Object> stats = alertService.getStatistics();
 

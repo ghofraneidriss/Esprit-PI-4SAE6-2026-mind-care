@@ -314,12 +314,12 @@ class FollowUpServiceTest {
 
     @Test
     void testCalculatePatientRiskHigh() {
-        testFollowUp.setCognitiveScore(10);
-        testFollowUp.setMood(MoodState.AGITATED);
-        testFollowUp.setAgitationObserved(true);
-        testFollowUp.setConfusionObserved(true);
-        testFollowUp.setSleepQuality(SleepQuality.POOR);
-        testFollowUp.setEating(IndependenceLevel.DEPENDENT);
+        testFollowUp.setCognitiveScore(18); // Moderate cognitive impairment (20 pts)
+        testFollowUp.setMood(MoodState.ANXIOUS); // Anxious (10 pts)
+        testFollowUp.setAgitationObserved(false);
+        testFollowUp.setConfusionObserved(false);
+        testFollowUp.setSleepQuality(SleepQuality.FAIR); // No extra points
+        testFollowUp.setEating(IndependenceLevel.NEEDS_ASSISTANCE); // No extra points
 
         followUpService.createFollowUp(testFollowUp);
 
