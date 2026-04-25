@@ -49,9 +49,9 @@ class RecoveryStrategyServiceIntegrationTest {
 
     @Test
     void testGenerateRecoveryStrategy() {
-        Map<String, Object> strategy = recoveryStrategyService.generateRecoveryStrategy(testItem.getId());
+        Map<String, Object> strategy = recoveryStrategyService.getRecoveryStrategy(testItem.getId());
         assertNotNull(strategy);
-        assertNotNull(strategy.get("strategy"));
+        assertNotNull(strategy.get("itemId"));
     }
 
     @Test
@@ -68,7 +68,7 @@ class RecoveryStrategyServiceIntegrationTest {
             searchReportRepository.save(report);
         }
 
-        Map<String, Object> strategy = recoveryStrategyService.generateRecoveryStrategy(testItem.getId());
+        Map<String, Object> strategy = recoveryStrategyService.getRecoveryStrategy(testItem.getId());
         assertNotNull(strategy);
         assertTrue(strategy.size() > 0);
     }
@@ -86,7 +86,7 @@ class RecoveryStrategyServiceIntegrationTest {
             item.setCreatedAt(LocalDateTime.now());
             LostItem saved = lostItemRepository.save(item);
 
-            Map<String, Object> strategy = recoveryStrategyService.generateRecoveryStrategy(saved.getId());
+            Map<String, Object> strategy = recoveryStrategyService.getRecoveryStrategy(saved.getId());
             assertNotNull(strategy);
         }
     }

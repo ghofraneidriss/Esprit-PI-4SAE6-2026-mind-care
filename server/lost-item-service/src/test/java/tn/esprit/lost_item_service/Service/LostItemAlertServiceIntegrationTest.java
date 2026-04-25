@@ -60,7 +60,7 @@ class LostItemAlertServiceIntegrationTest {
     }
 
     @Test
-    void testGetAlertsByPatient() {
+    void testGetAlertsByPatientId() {
         LostItemAlert alert = new LostItemAlert();
         alert.setPatientId(1L);
         alert.setLostItemId(testItem.getId());
@@ -69,7 +69,7 @@ class LostItemAlertServiceIntegrationTest {
         alert.setStatus(AlertStatus.NEW);
         lostItemAlertService.createAlert(alert);
 
-        List<LostItemAlert> alerts = lostItemAlertService.getAlertsByPatient(1L);
+        List<LostItemAlert> alerts = lostItemAlertService.getAlertsByPatientId(1L);
         assertTrue(alerts.size() > 0);
     }
 
