@@ -7,7 +7,6 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = 'docker.io'
-        DOCKER_CREDENTIALS = credentials('docker-credentials')
         GITHUB_REPO = 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
         GITHUB_BRANCH = 'volunteer'
     }
@@ -63,14 +62,16 @@ pipeline {
             }
             steps {
                 echo '📤 Pushing images to Docker Hub...'
-                sh '''
-                    echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin
-                    docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER}
-                    docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
-                    docker push ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER}
-                    docker push ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
-                    docker logout
-                '''
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USR', passwordVariable: 'DOCKER_PSW')]) {
+                    sh '''
+                        echo $DOCKER_PSW | docker login -u $DOCKER_USR --password-stdin
+                        docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER}
+                        docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
+                        docker push ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER}
+                        docker push ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
+                        docker logout
+                    '''
+                }
             }
         }
 
