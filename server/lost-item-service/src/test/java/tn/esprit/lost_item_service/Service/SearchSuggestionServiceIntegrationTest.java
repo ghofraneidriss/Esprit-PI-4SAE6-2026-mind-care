@@ -87,7 +87,7 @@ class SearchSuggestionServiceIntegrationTest {
     }
 
     @Test
-    void testGetSuggestionsFiltered ByCategory() {
+    void testGetSuggestionsFilteredByCategory() {
         // Create items of different categories
         for (int i = 0; i < 2; i++) {
             LostItem item = new LostItem();
