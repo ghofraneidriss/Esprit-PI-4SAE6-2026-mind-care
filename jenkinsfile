@@ -2,20 +2,18 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'
-        nodejs 'Node18'
-        git 'git'
+        git 'Default'
     }
 
     environment {
         DOCKER_REGISTRY = 'docker.io'
-        DOCKER_CREDENTIALS = credentials('dockerhub-creds')
+        DOCKER_CREDENTIALS = credentials('docker-credentials')
         GITHUB_REPO = 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
         GITHUB_BRANCH = 'volunteer'
     }
 
     stages {
-
+        
         stage('Checkout Code') {
             steps {
                 echo '📥 Cloning repository...'
@@ -50,7 +48,7 @@ pipeline {
                     docker build -t ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} .
                     docker tag ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
                     cd ..
-
+                    
                     cd volunteer
                     docker build -t ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} .
                     docker tag ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
