@@ -314,9 +314,9 @@ class FollowUpServiceTest {
 
     @Test
     void testCalculatePatientRiskHigh() {
-        testFollowUp.setCognitiveScore(18); // Moderate cognitive impairment (20 pts)
-        testFollowUp.setMood(MoodState.ANXIOUS); // Anxious (10 pts)
-        testFollowUp.setAgitationObserved(false);
+        testFollowUp.setCognitiveScore(15); // Moderate cognitive impairment (20 pts)
+        testFollowUp.setMood(MoodState.AGITATED); // Agitated (15 pts)
+        testFollowUp.setAgitationObserved(true); // (10 pts)
         testFollowUp.setConfusionObserved(false);
         testFollowUp.setSleepQuality(SleepQuality.FAIR); // No extra points
         testFollowUp.setEating(IndependenceLevel.NEEDS_ASSISTANCE); // No extra points
@@ -325,7 +325,7 @@ class FollowUpServiceTest {
 
         Map<String, Object> risk = followUpService.calculatePatientRisk(1L);
         int riskScore = (int) risk.get("riskScore");
-        assertTrue(riskScore >= 45);
+        assertTrue(riskScore >= 45, "Risk score " + riskScore + " should be >= 45");
         assertEquals("HIGH", risk.get("riskLevel"));
     }
 
