@@ -322,6 +322,97 @@ class LostItemServiceIntegrationTest {
         assertTrue(result.get("trend") instanceof String);
     }
 
+    // ==================== CRITICAL ITEMS TESTS ====================
+
+    @Test
+    void testGetCriticalLostItems() {
+        LostItem critical = new LostItem();
+        critical.setTitle("Critical Item");
+        critical.setCategory(ItemCategory.MEDICATION);
+        critical.setPatientId(1L);
+        critical.setStatus(ItemStatus.SEARCHING);
+        critical.setPriority(ItemPriority.CRITICAL);
+        critical.setCreatedAt(LocalDateTime.now());
+        lostItemService.createLostItem(critical);
+
+        List<LostItem> criticalItems = lostItemService.getCriticalLostItems(1L);
+        assertTrue(criticalItems.size() > 0);
+    }
+
+    @Test
+    void testGetAllCriticalItems() {
+        // Create critical priority item
+        LostItem critical = new LostItem();
+        critical.setTitle("Critical Item");
+        critical.setCategory(ItemCategory.DOCUMENT);
+        critical.setPatientId(2L);
+        critical.setStatus(ItemStatus.LOST);
+        critical.setPriority(ItemPriority.CRITICAL);
+        critical.setCreatedAt(LocalDateTime.now());
+        lostItemService.createLostItem(critical);
+
+        // Create searching status item
+        LostItem searching = new LostItem();
+        searching.setTitle("Searching Item");
+        searching.setCategory(ItemCategory.CLOTHING);
+        searching.setPatientId(3L);
+        searching.setStatus(ItemStatus.SEARCHING);
+        searching.setPriority(ItemPriority.LOW);
+        searching.setCreatedAt(LocalDateTime.now());
+        lostItemService.createLostItem(searching);
+
+        List<LostItem> allCritical = lostItemService.getAllCriticalItems();
+        assertTrue(allCritical.size() >= 2);
+    }
+
+    // ==================== PATIENT/CAREGIVER ITEMS TESTS ====================
+
+    @Test
+    void testGetItemsByPatientIdFlat() {
+        // Create multiple items
+        for (int i = 0; i < 3; i++) {
+            LostItem item = new LostItem();
+            item.setTitle("Item " + i);
+            item.setCategory(ItemCategory.CLOTHING);
+            item.setPatientId(1L);
+            item.setStatus(ItemStatus.LOST);
+            item.setPriority(ItemPriority.MEDIUM);
+            item.setCreatedAt(LocalDateTime.now().minusDays(i));
+            lostItemService.createLostItem(item);
+        }
+
+        List<LostItem> items = lostItemService.getItemsByPatientIdFlat(1L);
+        assertEquals(3, items.size());
+        // Verify sorted by created date descending
+        assertTrue(items.get(0).getCreatedAt().isAfter(items.get(1).getCreatedAt()));
+    }
+
+    @Test
+    void testGetItemsByCaregiverId() {
+        lostItemService.createLostItem(testItem);
+
+        List<LostItem> items = lostItemService.getItemsByCaregiverId(10L);
+        assertTrue(items.size() > 0);
+        assertTrue(items.stream().allMatch(i -> i.getCaregiverId().equals(10L)));
+    }
+
+    @Test
+    void testGetCriticalItemsByCaregiverId() {
+        LostItem critical = new LostItem();
+        critical.setTitle("Critical Item");
+        critical.setCategory(ItemCategory.MEDICATION);
+        critical.setPatientId(1L);
+        critical.setCaregiverId(10L);
+        critical.setStatus(ItemStatus.LOST);
+        critical.setPriority(ItemPriority.CRITICAL);
+        critical.setCreatedAt(LocalDateTime.now());
+        lostItemService.createLostItem(critical);
+
+        List<LostItem> criticalItems = lostItemService.getCriticalItemsByCaregiverId(10L);
+        assertTrue(criticalItems.size() > 0);
+        assertTrue(criticalItems.stream().allMatch(i -> i.getCaregiverId().equals(10L)));
+    }
+
     // ==================== EDGE CASE TESTS ====================
 
     @Test
