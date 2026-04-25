@@ -42,6 +42,7 @@ pipeline {
                             -Dsonar.projectName="Followup Alert Service" \
                             -Dsonar.host.url=http://localhost:9000 \
                             -Dsonar.token=squ_dff9542226b4cffdf2772f4212689ed2879cb019 \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
                             -Dsonar.exclusions=**/*Test.java \
                             -Dsonar.coverage.exclusions=**/*Test.java
                     '''
