@@ -57,7 +57,7 @@ pipeline {
                             mvn sonar:sonar \
                               -Dsonar.projectKey=forums-service \
                               -Dsonar.projectName="Forums Service" \
-                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                              -Dsonar.coverage.jacoco.xmlReportPaths=\${WORKSPACE}/server/forums_service/target/site/jacoco/jacoco.xml
                         """
                     }
                     dir('server/incident_service') {
@@ -65,7 +65,7 @@ pipeline {
                             mvn sonar:sonar \
                               -Dsonar.projectKey=incident-service \
                               -Dsonar.projectName="Incident Service" \
-                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                              -Dsonar.coverage.jacoco.xmlReportPaths=\${WORKSPACE}/server/incident_service/target/site/jacoco/jacoco.xml
                         """
                     }
                 }
