@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.lost_item_service.DTO.DTOMapper;
+import tn.esprit.lost_item_service.DTO.LostItemDTO;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
 import tn.esprit.lost_item_service.Entity.ItemStatus;
 import tn.esprit.lost_item_service.Entity.LostItem;
@@ -31,34 +33,35 @@ public class LostItemController {
      * - PATIENT: returns only their own items
      */
     @GetMapping
-    public ResponseEntity<List<LostItem>> getAllLostItems(
+    public ResponseEntity<List<LostItemDTO>> getAllLostItems(
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         String role = userRole != null ? userRole.toUpperCase() : "ADMIN";
 
         if ("PATIENT".equals(role) && userId != null) {
-            return ResponseEntity.ok(lostItemService.getItemsByPatientIdFlat(userId));
+            return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getItemsByPatientIdFlat(userId)));
         }
         if ("CAREGIVER".equals(role) && userId != null) {
-            return ResponseEntity.ok(lostItemService.getItemsByCaregiverId(userId));
+            return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getItemsByCaregiverId(userId)));
         }
-        return ResponseEntity.ok(lostItemService.getAllLostItems());
+        return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getAllLostItems()));
     }
 
     @PostMapping
-    public ResponseEntity<LostItem> createLostItem(@Valid @RequestBody LostItem lostItem) {
-        return new ResponseEntity<>(lostItemService.createLostItem(lostItem), HttpStatus.CREATED);
+    public ResponseEntity<LostItemDTO> createLostItem(@Valid @RequestBody LostItem lostItem) {
+        LostItem created = lostItemService.createLostItem(lostItem);
+        return new ResponseEntity<>(DTOMapper.toLostItemDTO(created), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LostItem> getLostItemById(
+    public ResponseEntity<LostItemDTO> getLostItemById(
             @PathVariable Long id,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         LostItem item = authorizationService.checkItemAccess(id, userId, userRole);
-        return ResponseEntity.ok(item);
+        return ResponseEntity.ok(DTOMapper.toLostItemDTO(item));
     }
 
     @GetMapping("/patient/{patientId}")
@@ -71,7 +74,7 @@ public class LostItemController {
     ) {
         Page<LostItem> resultPage = lostItemService.getPatientLostItems(patientId, status, category, page, size);
         Map<String, Object> response = new HashMap<>();
-        response.put("content", resultPage.getContent());
+        response.put("content", DTOMapper.toLostItemDTOList(resultPage.getContent()));
         response.put("totalElements", resultPage.getTotalElements());
         response.put("totalPages", resultPage.getTotalPages());
         response.put("currentPage", resultPage.getNumber());
@@ -80,14 +83,15 @@ public class LostItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LostItem> updateLostItem(
+    public ResponseEntity<LostItemDTO> updateLostItem(
             @PathVariable Long id,
             @Valid @RequestBody LostItem lostItem,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkItemAccess(id, userId, userRole);
-        return ResponseEntity.ok(lostItemService.updateLostItem(id, lostItem));
+        LostItem updated = lostItemService.updateLostItem(id, lostItem);
+        return ResponseEntity.ok(DTOMapper.toLostItemDTO(updated));
     }
 
     @DeleteMapping("/{id}")

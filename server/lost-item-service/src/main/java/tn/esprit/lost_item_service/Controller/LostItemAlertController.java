@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.lost_item_service.DTO.DTOMapper;
+import tn.esprit.lost_item_service.DTO.LostItemAlertDTO;
 import tn.esprit.lost_item_service.Entity.AlertLevel;
 import tn.esprit.lost_item_service.Entity.AlertStatus;
 import tn.esprit.lost_item_service.Entity.LostItemAlert;
@@ -23,8 +25,9 @@ public class LostItemAlertController {
     private final AuthorizationService authorizationService;
 
     @PostMapping
-    public ResponseEntity<LostItemAlert> createAlert(@Valid @RequestBody LostItemAlert alert) {
-        return new ResponseEntity<>(lostItemAlertService.createAlert(alert), HttpStatus.CREATED);
+    public ResponseEntity<LostItemAlertDTO> createAlert(@Valid @RequestBody LostItemAlert alert) {
+        LostItemAlert created = lostItemAlertService.createAlert(alert);
+        return new ResponseEntity<>(DTOMapper.toLostItemAlertDTO(created), HttpStatus.CREATED);
     }
 
     /**
@@ -34,80 +37,81 @@ public class LostItemAlertController {
      * PATIENT: only their alerts.
      */
     @GetMapping
-    public ResponseEntity<List<LostItemAlert>> getAllAlerts(
+    public ResponseEntity<List<LostItemAlertDTO>> getAllAlerts(
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         String role = userRole != null ? userRole.toUpperCase() : "ADMIN";
 
         if ("CAREGIVER".equals(role) && userId != null) {
-            return ResponseEntity.ok(lostItemAlertService.getAlertsByCaregiverId(userId));
+            return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByCaregiverId(userId)));
         }
         if ("PATIENT".equals(role) && userId != null) {
-            return ResponseEntity.ok(lostItemAlertService.getAlertsByPatientId(userId));
+            return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByPatientId(userId)));
         }
-        return ResponseEntity.ok(lostItemAlertService.getAllAlerts());
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAllAlerts()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LostItemAlert> getAlertById(
+    public ResponseEntity<LostItemAlertDTO> getAlertById(
             @PathVariable Long id,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         LostItemAlert alert = authorizationService.checkAlertAccess(id, userId, userRole);
-        return ResponseEntity.ok(alert);
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTO(alert));
     }
 
     @GetMapping("/lost-item/{lostItemId}")
-    public ResponseEntity<List<LostItemAlert>> getAlertsByLostItemId(
+    public ResponseEntity<List<LostItemAlertDTO>> getAlertsByLostItemId(
             @PathVariable Long lostItemId,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkItemIdAccess(lostItemId, userId, userRole);
-        return ResponseEntity.ok(lostItemAlertService.getAlertsByLostItemId(lostItemId));
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByLostItemId(lostItemId)));
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<LostItemAlert>> getAlertsByPatientId(
+    public ResponseEntity<List<LostItemAlertDTO>> getAlertsByPatientId(
             @PathVariable Long patientId,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkPatientAlertAccess(patientId, userId, userRole);
-        return ResponseEntity.ok(lostItemAlertService.getAlertsByPatientId(patientId));
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByPatientId(patientId)));
     }
 
     @GetMapping("/level/{level}")
-    public ResponseEntity<List<LostItemAlert>> getAlertsByLevel(@PathVariable AlertLevel level) {
-        return ResponseEntity.ok(lostItemAlertService.getAlertsByLevel(level));
+    public ResponseEntity<List<LostItemAlertDTO>> getAlertsByLevel(@PathVariable AlertLevel level) {
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByLevel(level)));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<LostItemAlert>> getAlertsByStatus(@PathVariable AlertStatus status) {
-        return ResponseEntity.ok(lostItemAlertService.getAlertsByStatus(status));
+    public ResponseEntity<List<LostItemAlertDTO>> getAlertsByStatus(@PathVariable AlertStatus status) {
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByStatus(status)));
     }
 
     @GetMapping("/critical/new")
-    public ResponseEntity<List<LostItemAlert>> getCriticalNewAlerts() {
-        return ResponseEntity.ok(lostItemAlertService.getCriticalNewAlerts());
+    public ResponseEntity<List<LostItemAlertDTO>> getCriticalNewAlerts() {
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getCriticalNewAlerts()));
     }
 
     @GetMapping("/caregiver/{caregiverId}")
-    public ResponseEntity<List<LostItemAlert>> getAlertsByCaregiverId(@PathVariable Long caregiverId) {
-        return ResponseEntity.ok(lostItemAlertService.getAlertsByCaregiverId(caregiverId));
+    public ResponseEntity<List<LostItemAlertDTO>> getAlertsByCaregiverId(@PathVariable Long caregiverId) {
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByCaregiverId(caregiverId)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LostItemAlert> updateAlert(
+    public ResponseEntity<LostItemAlertDTO> updateAlert(
             @PathVariable Long id,
             @Valid @RequestBody LostItemAlert alert,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkAlertAccess(id, userId, userRole);
-        return ResponseEntity.ok(lostItemAlertService.updateAlert(id, alert));
+        LostItemAlert updated = lostItemAlertService.updateAlert(id, alert);
+        return ResponseEntity.ok(DTOMapper.toLostItemAlertDTO(updated));
     }
 
     @DeleteMapping("/{id}")

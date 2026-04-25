@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.lost_item_service.DTO.DTOMapper;
+import tn.esprit.lost_item_service.DTO.SearchReportDTO;
 import tn.esprit.lost_item_service.Entity.LostItem;
 import tn.esprit.lost_item_service.Entity.ReportStatus;
 import tn.esprit.lost_item_service.Entity.SearchReport;
@@ -58,7 +60,7 @@ public class SearchReportController {
         List<Map<String, Object>> suggestions = searchSuggestionService.getSuggestions(item.getPatientId(), category);
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("report", saved);
+        response.put("report", DTOMapper.toSearchReportDTO(saved));
         response.put("recoveryStrategy", recoveryStrategy);
         response.put("searchSuggestions", suggestions);
 
@@ -66,34 +68,35 @@ public class SearchReportController {
     }
 
     @GetMapping("/lost-item/{lostItemId}")
-    public ResponseEntity<List<SearchReport>> getSearchReportsByLostItemId(
+    public ResponseEntity<List<SearchReportDTO>> getSearchReportsByLostItemId(
             @PathVariable Long lostItemId,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkReportListAccess(lostItemId, userId, userRole);
-        return ResponseEntity.ok(searchReportService.getSearchReportsByLostItemId(lostItemId));
+        return ResponseEntity.ok(DTOMapper.toSearchReportDTOList(searchReportService.getSearchReportsByLostItemId(lostItemId)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SearchReport> getSearchReportById(
+    public ResponseEntity<SearchReportDTO> getSearchReportById(
             @PathVariable Long id,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         SearchReport report = authorizationService.checkReportAccess(id, userId, userRole);
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok(DTOMapper.toSearchReportDTO(report));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SearchReport> updateSearchReport(
+    public ResponseEntity<SearchReportDTO> updateSearchReport(
             @PathVariable Long id,
             @Valid @RequestBody SearchReport report,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkReportAccess(id, userId, userRole);
-        return ResponseEntity.ok(searchReportService.updateSearchReport(id, report));
+        SearchReport updated = searchReportService.updateSearchReport(id, report);
+        return ResponseEntity.ok(DTOMapper.toSearchReportDTO(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -131,7 +134,7 @@ public class SearchReportController {
      *   &status=OPEN&locationKeyword=kitchen&from=2025-01-01&to=2025-12-31
      */
     @GetMapping("/search")
-    public ResponseEntity<List<SearchReport>> advancedSearch(
+    public ResponseEntity<List<SearchReportDTO>> advancedSearch(
             @RequestParam(required = false) Long lostItemId,
             @RequestParam(required = false) Long reportedBy,
             @RequestParam(required = false) SearchResult searchResult,
@@ -140,9 +143,9 @@ public class SearchReportController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
     ) {
-        return ResponseEntity.ok(searchReportService.advancedSearch(
+        return ResponseEntity.ok(DTOMapper.toSearchReportDTOList(searchReportService.advancedSearch(
                 lostItemId, reportedBy, searchResult, status, locationKeyword, from, to
-        ));
+        )));
     }
 
     /**
@@ -173,8 +176,8 @@ public class SearchReportController {
      * GET /api/search-reports/reporter/{reportedBy}
      */
     @GetMapping("/reporter/{reportedBy}")
-    public ResponseEntity<List<SearchReport>> getReportsByReporter(@PathVariable Long reportedBy) {
-        return ResponseEntity.ok(searchReportService.getReportsByReporter(reportedBy));
+    public ResponseEntity<List<SearchReportDTO>> getReportsByReporter(@PathVariable Long reportedBy) {
+        return ResponseEntity.ok(DTOMapper.toSearchReportDTOList(searchReportService.getReportsByReporter(reportedBy)));
     }
 
     /**
@@ -183,7 +186,7 @@ public class SearchReportController {
      * GET /api/search-reports/patient/{patientId}
      */
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<SearchReport>> getReportsByPatient(@PathVariable Long patientId) {
-        return ResponseEntity.ok(searchReportService.getReportsByPatient(patientId));
+    public ResponseEntity<List<SearchReportDTO>> getReportsByPatient(@PathVariable Long patientId) {
+        return ResponseEntity.ok(DTOMapper.toSearchReportDTOList(searchReportService.getReportsByPatient(patientId)));
     }
 }
