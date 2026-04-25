@@ -112,6 +112,10 @@ class LostItemAlertServiceIntegrationTest {
         LostItemAlert created = lostItemAlertService.createAlert(alert);
 
         lostItemAlertService.deleteAlert(created.getId());
-        assertThrows(RuntimeException.class, () -> lostItemAlertService.getAlertById(created.getId()));
+        assertAlertNotFound(created.getId());
+    }
+
+    private void assertAlertNotFound(Long alertId) {
+        assertThrows(RuntimeException.class, () -> lostItemAlertService.getAlertById(alertId));
     }
 }
