@@ -21,35 +21,17 @@ pipeline {
             }
         }
 
-        stage('Build Medical Report Service') {
-            steps {
-                echo '🏗️ Building medical_report_service...'
-                dir('medical_report_service') {
-                    sh 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Volunteer Service') {
-            steps {
-                echo '🏗️ Building volunteer service...'
-                dir('volunteer') {
-                    sh 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
         stage('Build Docker Images') {
             steps {
                 echo '🐳 Building Docker images...'
                 sh '''
                     cd medical_report_service
-                    docker build -t ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} .
+                    docker build -t ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} . --progress=plain
                     docker tag ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
                     cd ..
                     
                     cd volunteer
-                    docker build -t ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} .
+                    docker build -t ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} . --progress=plain
                     docker tag ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
                     cd ..
                 '''
