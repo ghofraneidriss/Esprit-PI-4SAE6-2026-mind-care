@@ -2,16 +2,14 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'
-        nodejs 'Node18'
-        git 'git'
+        git 'Default'
     }
 
     environment {
         DOCKER_REGISTRY = 'docker.io'
         DOCKER_CREDENTIALS = credentials('docker-credentials')
         GITHUB_REPO = 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
-        GITHUB_BRANCH = 'main'
+        GITHUB_BRANCH = 'volunteer'
     }
 
     stages {
@@ -61,7 +59,7 @@ pipeline {
 
         stage('Push to Docker Hub') {
             when {
-                branch 'main'
+                branch 'volunteer'
             }
             steps {
                 echo '📤 Pushing images to Docker Hub...'
@@ -78,7 +76,7 @@ pipeline {
 
         stage('Deploy Services') {
             when {
-                branch 'main'
+                branch 'volunteer'
             }
             steps {
                 echo '🚀 Deploying services...'
