@@ -62,7 +62,7 @@ pipeline {
             }
             steps {
                 echo '📤 Pushing images to Docker Hub...'
-                withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USR', passwordVariable: 'DOCKER_PSW')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USR', passwordVariable: 'DOCKER_PSW')]) {
                     sh '''
                         echo $DOCKER_PSW | docker login -u $DOCKER_USR --password-stdin
                         docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER}
