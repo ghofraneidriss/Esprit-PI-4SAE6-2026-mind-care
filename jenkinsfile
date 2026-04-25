@@ -2,74 +2,101 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'      // configure in Jenkins
-        nodejs 'Node18'     // configure in Jenkins
+        maven 'Maven3'
+        nodejs 'Node18'
+        git 'git'
     }
 
     environment {
-        BACKEND_DIR = 'backend'   // change if needed
-        FRONTEND_DIR = 'frontend'
+        DOCKER_REGISTRY = 'docker.io'
+        DOCKER_CREDENTIALS = credentials('dockerhub-creds')
+        GITHUB_REPO = 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
+        GITHUB_BRANCH = 'volunteer'
     }
 
     stages {
 
-        // 🔹 1. GIT CLONE
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                url: 'hhttps://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
+                echo '📥 Cloning repository...'
+                git branch: "${GITHUB_BRANCH}",
+                    url: "${GITHUB_REPO}"
             }
         }
 
-        // 🔹 2. BUILD BACKEND
-        stage('Build Backend') {
+        stage('Build Medical Report Service') {
             steps {
-                dir("${BACKEND_DIR}") {
-                    sh 'mvn clean install -DskipTests'
-                }
-            }
-        }
-
-        // 🔹 3. TEST BACKEND (JUnit + Mockito)
-        stage('Test Backend') {
-            steps {
-                dir("${BACKEND_DIR}") {
-                    sh 'mvn test'
-                }
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
+                echo '🏗️ Building medical_report_service...'
+                dir('medical_report_service') {
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
 
-        // 🔹 4. BUILD FRONTEND
-        stage('Build Frontend') {
+        stage('Build Volunteer Service') {
             steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'npm install'
-                    sh 'npm run build --prod'
+                echo '🏗️ Building volunteer service...'
+                dir('volunteer') {
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
 
-        // 🔹 5. TEST FRONTEND (Karma / Jasmine)
-        stage('Test Frontend') {
+        stage('Build Docker Images') {
             steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
-                }
+                echo '🐳 Building Docker images...'
+                sh '''
+                    cd medical_report_service
+                    docker build -t ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} .
+                    docker tag ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
+                    cd ..
+
+                    cd volunteer
+                    docker build -t ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} .
+                    docker tag ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
+                    cd ..
+                '''
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            when {
+                branch 'volunteer'
+            }
+            steps {
+                echo '📤 Pushing images to Docker Hub...'
+                sh '''
+                    echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin
+                    docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:${BUILD_NUMBER}
+                    docker push ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
+                    docker push ${DOCKER_REGISTRY}/ghofrane/volunteer-service:${BUILD_NUMBER}
+                    docker push ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
+                    docker logout
+                '''
+            }
+        }
+
+        stage('Deploy Services') {
+            when {
+                branch 'volunteer'
+            }
+            steps {
+                echo '🚀 Deploying services...'
+                sh '''
+                    docker rm -f medical-report-service volunteer-service 2>/dev/null || true
+                    docker run -d -p 8081:8080 --name medical-report-service ${DOCKER_REGISTRY}/ghofrane/medical-report-service:latest
+                    docker run -d -p 8082:8080 --name volunteer-service ${DOCKER_REGISTRY}/ghofrane/volunteer-service:latest
+                '''
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build & Tests Passed Successfully!'
+            echo '✅ Pipeline completed successfully!'
         }
         failure {
-            echo '❌ Pipeline Failed!'
+            echo '❌ Pipeline failed!'
         }
     }
 }
