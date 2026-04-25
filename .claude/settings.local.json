@@ -18,7 +18,10 @@
       "Bash(git remote *)",
       "Bash(git checkout *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(docker --version)",
+      "Bash(apt-get update *)",
+      "Bash(apt-get install *)"
     ]
   }
 }
