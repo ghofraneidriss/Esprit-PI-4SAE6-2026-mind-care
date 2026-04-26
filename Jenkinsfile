@@ -23,46 +23,29 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            when {
-                expression {
-                    // Skip this stage if credential doesn't exist
-                    try {
-                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                            return true
-                        }
-                    } catch (Exception e) {
-                        echo "⏭️ Skipping SonarQube Analysis: Credential 'SONAR_AUTH_TOKEN' not found"
-                        return false
-                    }
-                }
-            }
-            steps {
-                echo '🔍 Running SonarQube code analysis...'
-                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        # Analyze medical_report_service
-                        cd medical_report_service
-                        sonar-scanner \
-                            -Dsonar.projectKey=medical-report-service \
-                            -Dsonar.projectName="Medical Report Service" \
-                            -Dsonar.sources=src \
-                            -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                            -Dsonar.login=${SONAR_TOKEN}
-                        cd ..
+    steps {
+        echo '🔍 Running SonarQube analysis with Maven...'
+        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+            sh '''
+                # Medical Report Service
+                cd medical-report-service
+                mvn clean verify sonar:sonar \
+                  -Dsonar.projectKey=medical-report-service \
+                  -Dsonar.host.url=${SONARQUBE_HOST_URL} \
+                  -Dsonar.login=${SONAR_TOKEN}
+                cd ..
 
-                        # Analyze volunteer service
-                        cd volunteer
-                        sonar-scanner \
-                            -Dsonar.projectKey=volunteer-service \
-                            -Dsonar.projectName="Volunteer Service" \
-                            -Dsonar.sources=src \
-                            -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                            -Dsonar.login=${SONAR_TOKEN}
-                        cd ..
-                    '''
-                }
-            }
+                # Volunteering Service
+                cd volunteering-service
+                mvn clean verify sonar:sonar \
+                  -Dsonar.projectKey=volunteer-service \
+                  -Dsonar.host.url=${SONARQUBE_HOST_URL} \
+                  -Dsonar.login=${SONAR_TOKEN}
+                cd ..
+            '''
         }
+    }
+}
 
         stage('Build Docker Images') {
             steps {
