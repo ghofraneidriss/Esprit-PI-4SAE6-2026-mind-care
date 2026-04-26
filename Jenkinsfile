@@ -2,22 +2,20 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'   // configure in Jenkins (Global Tool Config)
-        jdk 'Java17'    // configure in Jenkins
+        maven 'M2_HOME'
+        jdk 'jdk17'
     }
 
     environment {
         DOCKER_REGISTRY = 'docker.io'
-        DOCKER_USERNAME = 'ghofrane'   // your Docker Hub username
-        SONARQUBE_HOST_URL = 'http://localhost:9000'
+        IMAGE_NAME_BACK = 'ghofrane/medical-report-service'
+        IMAGE_NAME_VOL = 'ghofrane/volunteer-service'
+        SONARQUBE_HOST_URL = 'http://sonarqube:9000'
     }
 
     stages {
 
-        // ========================
-        // 1. CHECKOUT
-        // ========================
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 echo '📥 Cloning repository...'
                 git branch: 'volunteer',
@@ -25,140 +23,115 @@ pipeline {
             }
         }
 
-        // ========================
-        // 2. BUILD (JAR)
-        // ========================
-        stage('Build JARs') {
+        // ---------------- BUILD ----------------
+        stage('Build Backend') {
             steps {
-                echo '⚙️ Building microservices...'
+                echo '🔨 Building services...'
                 sh '''
-                    cd medical-report-service
+                    cd medical_report_service
                     mvn clean package -DskipTests
                     cd ..
 
-                    cd volunteering-service
+                    cd volunteer
                     mvn clean package -DskipTests
                     cd ..
                 '''
             }
         }
 
-        // ========================
-        // 3. TEST
-        // ========================
+        // ---------------- TEST ----------------
         stage('Run Tests') {
             steps {
                 echo '🧪 Running tests...'
                 sh '''
-                    cd medical-report-service
+                    cd medical_report_service
                     mvn test
                     cd ..
 
-                    cd volunteering-service
+                    cd volunteer
                     mvn test
                     cd ..
                 '''
             }
         }
 
-        // ========================
-        // 4. SONARQUBE
-        // ========================
+        // ---------------- SONAR ----------------
         stage('SonarQube Analysis') {
+            agent {
+                docker {
+                    image 'sonarsource/sonar-scanner-cli:latest'
+                }
+            }
             steps {
-                echo '🔍 Running SonarQube analysis...'
+                echo '🔍 Running SonarQube...'
                 withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
                     sh '''
-                        cd medical-report-service
-                        mvn sonar:sonar \
+                        cd medical_report_service
+                        sonar-scanner \
                           -Dsonar.projectKey=medical-report-service \
-                          -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                          -Dsonar.login=${SONAR_TOKEN}
+                          -Dsonar.sources=src \
+                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.login=$SONAR_TOKEN
                         cd ..
 
-                        cd volunteering-service
-                        mvn sonar:sonar \
+                        cd volunteer
+                        sonar-scanner \
                           -Dsonar.projectKey=volunteer-service \
-                          -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                          -Dsonar.login=${SONAR_TOKEN}
+                          -Dsonar.sources=src \
+                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.login=$SONAR_TOKEN
                         cd ..
                     '''
                 }
             }
         }
 
-        // ========================
-        // 5. DOCKER BUILD
-        // ========================
+        // ---------------- DOCKER ----------------
         stage('Build Docker Images') {
             steps {
                 echo '🐳 Building Docker images...'
                 sh '''
-                    docker build -t ${DOCKER_USERNAME}/medical-report-service:${BUILD_NUMBER} ./medical-report-service
-                    docker tag ${DOCKER_USERNAME}/medical-report-service:${BUILD_NUMBER} ${DOCKER_USERNAME}/medical-report-service:latest
-
-                    docker build -t ${DOCKER_USERNAME}/volunteering-service:${BUILD_NUMBER} ./volunteering-service
-                    docker tag ${DOCKER_USERNAME}/volunteering-service:${BUILD_NUMBER} ${DOCKER_USERNAME}/volunteering-service:latest
+                    docker build -t $IMAGE_NAME_BACK:latest ./medical_report_service
+                    docker build -t $IMAGE_NAME_VOL:latest ./volunteer
                 '''
             }
         }
 
-        // ========================
-        // 6. PUSH DOCKER
-        // ========================
-        stage('Push to Docker Hub') {
-            when {
-                branch 'volunteer'
-            }
+        // ---------------- PUSH ----------------
+        stage('Push Images') {
             steps {
                 echo '📤 Pushing images...'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USR', passwordVariable: 'DOCKER_PSW')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh '''
-                        echo $DOCKER_PSW | docker login -u $DOCKER_USR --password-stdin
-
-                        docker push ${DOCKER_USERNAME}/medical-report-service:${BUILD_NUMBER}
-                        docker push ${DOCKER_USERNAME}/medical-report-service:latest
-
-                        docker push ${DOCKER_USERNAME}/volunteering-service:${BUILD_NUMBER}
-                        docker push ${DOCKER_USERNAME}/volunteering-service:latest
-
+                        echo $PASS | docker login -u $USER --password-stdin
+                        docker push $IMAGE_NAME_BACK:latest
+                        docker push $IMAGE_NAME_VOL:latest
                         docker logout
                     '''
                 }
             }
         }
 
-        // ========================
-        // 7. DEPLOY (SIMULATION)
-        // ========================
-        stage('Deploy Services') {
-            when {
-                branch 'volunteer'
-            }
+        // ---------------- DEPLOY ----------------
+        stage('Deploy (Simulation)') {
             steps {
-                echo '🚀 Deploying services...'
+                echo '🚀 Deploying...'
                 sh '''
-                    docker rm -f medical-report-service volunteering-service 2>/dev/null || true
+                    docker rm -f medical-report-service volunteer-service || true
 
-                    docker run -d -p 8081:8080 --name medical-report-service \
-                        ${DOCKER_USERNAME}/medical-report-service:latest
-
-                    docker run -d -p 8082:8080 --name volunteering-service \
-                        ${DOCKER_USERNAME}/volunteering-service:latest
+                    docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
+                    docker run -d -p 8082:8080 --name volunteer-service $IMAGE_NAME_VOL:latest
                 '''
             }
         }
     }
 
-    // ========================
-    // POST ACTIONS
-    // ========================
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo '✅ CI/CD PIPELINE SUCCESS'
         }
         failure {
-            echo '❌ Pipeline failed!'
+            echo '❌ PIPELINE FAILED'
         }
     }
 }
