@@ -57,34 +57,27 @@ pipeline {
 
         // ---------------- SONAR ----------------
         stage('SonarQube Analysis') {
-            agent {
-                docker {
-                    image 'sonarsource/sonar-scanner-cli:latest'
-                }
-            }
-            steps {
-                echo '🔍 Running SonarQube...'
-                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        cd medical_report_service
-                        sonar-scanner \
-                          -Dsonar.projectKey=medical-report-service \
-                          -Dsonar.sources=src \
-                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                          -Dsonar.login=$SONAR_TOKEN
-                        cd ..
+    steps {
+        echo '🔍 Running SonarQube...'
+        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+            sh '''
+                cd medical_report_service
+                mvn sonar:sonar \
+                  -Dsonar.projectKey=medical-report-service \
+                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                  -Dsonar.login=$SONAR_TOKEN
+                cd ..
 
-                        cd volunteer
-                        sonar-scanner \
-                          -Dsonar.projectKey=volunteer-service \
-                          -Dsonar.sources=src \
-                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                          -Dsonar.login=$SONAR_TOKEN
-                        cd ..
-                    '''
-                }
-            }
+                cd volunteer
+                mvn sonar:sonar \
+                  -Dsonar.projectKey=volunteer-service \
+                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                  -Dsonar.login=$SONAR_TOKEN
+                cd ..
+            '''
         }
+    }
+}
 
         // ---------------- DOCKER ----------------
         stage('Build Docker Images') {
