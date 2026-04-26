@@ -25,40 +25,41 @@ pipeline {
         stage('SonarQube Analysis') {
             when {
                 expression {
-                    return fileExists('sonar-project.properties') || true
+                    // Skip this stage if credential doesn't exist
+                    try {
+                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                            return true
+                        }
+                    } catch (Exception e) {
+                        echo "⏭️ Skipping SonarQube Analysis: Credential 'SONAR_AUTH_TOKEN' not found"
+                        return false
+                    }
                 }
             }
             steps {
                 echo '🔍 Running SonarQube code analysis...'
-                script {
-                    try {
-                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                            sh '''
-                                # Analyze medical_report_service
-                                cd medical_report_service
-                                sonar-scanner \
-                                    -Dsonar.projectKey=medical-report-service \
-                                    -Dsonar.projectName="Medical Report Service" \
-                                    -Dsonar.sources=src \
-                                    -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                                    -Dsonar.login=${SONAR_TOKEN}
-                                cd ..
+                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        # Analyze medical_report_service
+                        cd medical_report_service
+                        sonar-scanner \
+                            -Dsonar.projectKey=medical-report-service \
+                            -Dsonar.projectName="Medical Report Service" \
+                            -Dsonar.sources=src \
+                            -Dsonar.host.url=${SONARQUBE_HOST_URL} \
+                            -Dsonar.login=${SONAR_TOKEN}
+                        cd ..
 
-                                # Analyze volunteer service
-                                cd volunteer
-                                sonar-scanner \
-                                    -Dsonar.projectKey=volunteer-service \
-                                    -Dsonar.projectName="Volunteer Service" \
-                                    -Dsonar.sources=src \
-                                    -Dsonar.host.url=${SONARQUBE_HOST_URL} \
-                                    -Dsonar.login=${SONAR_TOKEN}
-                                cd ..
-                            '''
-                        }
-                    } catch (Exception e) {
-                        echo "⚠️ SonarQube analysis skipped: Credential 'sonarqube-token' not found"
-                        echo "To enable SonarQube: Create a credential with ID 'sonarqube-token' in Jenkins"
-                    }
+                        # Analyze volunteer service
+                        cd volunteer
+                        sonar-scanner \
+                            -Dsonar.projectKey=volunteer-service \
+                            -Dsonar.projectName="Volunteer Service" \
+                            -Dsonar.sources=src \
+                            -Dsonar.host.url=${SONARQUBE_HOST_URL} \
+                            -Dsonar.login=${SONAR_TOKEN}
+                        cd ..
+                    '''
                 }
             }
         }
