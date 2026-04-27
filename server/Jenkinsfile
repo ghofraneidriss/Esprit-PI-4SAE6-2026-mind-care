@@ -6,6 +6,13 @@ pipeline {
     }
 
     stages {
+        stage('Cleanup') {
+            steps {
+                // Supprime les anciens rapports pour éviter les conflits Sonar/Quality Gate
+                sh 'find . -name "report-task.txt" -delete'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'Amena-Farah-Finale',
@@ -42,20 +49,10 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     dir('server/forums_service') {
-                        sh """
-                            mvn sonar:sonar \
-                              -Dsonar.projectKey=forums-service \
-                              -Dsonar.projectName="Forums Service" \
-                              -Dsonar.coverage.jacoco.xmlReportPaths=\${WORKSPACE}/server/forums_service/target/site/jacoco/jacoco.xml
-                        """
+                        sh "mvn sonar:sonar -Dsonar.projectKey=forums-service -Dsonar.projectName='Forums Service' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/forums_service/target/site/jacoco/jacoco.xml"
                     }
                     dir('server/incident_service') {
-                        sh """
-                            mvn sonar:sonar \
-                              -Dsonar.projectKey=incident-service \
-                              -Dsonar.projectName="Incident Service" \
-                              -Dsonar.coverage.jacoco.xmlReportPaths=\${WORKSPACE}/server/incident_service/target/site/jacoco/jacoco.xml
-                        """
+                        sh "mvn sonar:sonar -Dsonar.projectKey=incident-service -Dsonar.projectName='Incident Service' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/incident_service/target/site/jacoco/jacoco.xml"
                     }
                 }
             }
@@ -63,7 +60,8 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
+                // On attend que Sonar finisse de calculer les résultats (même si Coverage est bas)
+                timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
                 }
             }
@@ -86,36 +84,21 @@ pipeline {
                     passwordVariable: 'ARTIF_PASS'
                 )]) {
                     dir('server') {
-                        sh '''
-                            cat > settings_jenkins.xml << SETTINGSEOF
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
-  <servers>
-    <server>
-      <id>artifactory</id>
-      <username>ARTIF_USER_PLACEHOLDER</username>
-      <password>ARTIF_PASS_PLACEHOLDER</password>
-    </server>
-  </servers>
-</settings>
-SETTINGSEOF
-
-                            sed -i "s/ARTIF_USER_PLACEHOLDER/${ARTIF_USER}/" settings_jenkins.xml
-                            sed -i "s/ARTIF_PASS_PLACEHOLDER/${ARTIF_PASS}/" settings_jenkins.xml
+                        sh """
+                            # Création du settings.xml de manière sécurisée
+                            echo "<settings><servers><server><id>artifactory</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>" > settings_jenkins.xml
 
                             SERVICES="eureka_server users_service forums_service incident_service activities_service localization_service movement_service api_gateway"
 
-                            for service in $SERVICES; do
-                                echo "🚀 Déploiement de : $service"
-                                mvn deploy -DskipTests \
-                                  --settings ./settings_jenkins.xml \
-                                  -Dmaven.resolver.transport=wagon \
-                                  -Daether.checksums.algorithms=MD5,SHA-1 \
-                                  -DaltDeploymentRepository="artifactory::default::http://172.19.224.221:8082/artifactory/libs-snapshot-local" \
-                                  -f $service/pom.xml || echo "⚠️ $service deploy failed, continuing..."
+                            for service in \$SERVICES; do
+                                echo "🚀 Déploiement de : \$service"
+                                # -U force l'update, -Dmaven.metadata.legacy=true aide avec les erreurs 500 de métadonnées
+                                mvn deploy -DskipTests -U \\
+                                  --settings ./settings_jenkins.xml \\
+                                  -DaltDeploymentRepository="artifactory::default::http://172.19.224.221:8082/artifactory/libs-snapshot-local" \\
+                                  -f \$service/pom.xml -Dmaven.metadata.legacy=true || echo "⚠️ \$service deploy failed"
                             done
-
-                            echo "✅ Déploiement terminé !"
-                        '''
+                        """
                     }
                 }
             }
@@ -125,10 +108,10 @@ SETTINGSEOF
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline réussi — Tests + JaCoCo + SonarQube + Docker + Artifactory OK !'
+            echo '✅ Pipeline terminé avec succès !'
         }
         failure {
-            echo '❌ Pipeline échoué — Vérifie les logs.'
+            echo '❌ Pipeline échoué.'
         }
     }
 }
