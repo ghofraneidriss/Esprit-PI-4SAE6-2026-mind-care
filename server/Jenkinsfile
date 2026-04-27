@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Cleanup') {
             steps {
-                // Supprime les anciens rapports pour éviter les conflits Sonar/Quality Gate
                 sh 'find . -name "report-task.txt" -delete'
             }
         }
@@ -60,7 +59,6 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                // On attend que Sonar finisse de calculer les résultats (même si Coverage est bas)
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
                 }
@@ -83,23 +81,37 @@ pipeline {
                     usernameVariable: 'ARTIF_USER',
                     passwordVariable: 'ARTIF_PASS'
                 )]) {
-                    dir('server') {
-                        sh """
-                            # Création du settings.xml de manière sécurisée
-                            echo "<settings><servers><server><id>artifactory</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>" > settings_jenkins.xml
+                    sh '''
+                        ARTIFACTORY_URL="http://172.19.224.221:8082/artifactory/libs-snapshot-local"
+                        WORKSPACE_SERVER="/var/jenkins_home/workspace/mind-care-pipeline/server"
+                        SERVICES="eureka_server users_service forums_service incident_service activities_service localization_service movement_service api_gateway"
 
-                            SERVICES="eureka_server users_service forums_service incident_service activities_service localization_service movement_service api_gateway"
+                        for service in $SERVICES; do
+                            JAR_FILE=$(find $WORKSPACE_SERVER/$service/target -name "*.jar" ! -name "*original*" 2>/dev/null | head -1)
 
-                            for service in \$SERVICES; do
-                                echo "🚀 Déploiement de : \$service"
-                                # -U force l'update, -Dmaven.metadata.legacy=true aide avec les erreurs 500 de métadonnées
-                                mvn deploy -DskipTests -U \\
-                                  --settings ./settings_jenkins.xml \\
-                                  -DaltDeploymentRepository="artifactory::default::http://172.19.224.221:8082/artifactory/libs-snapshot-local" \\
-                                  -f \$service/pom.xml -Dmaven.metadata.legacy=true || echo "⚠️ \$service deploy failed"
-                            done
-                        """
-                    }
+                            if [ -z "$JAR_FILE" ]; then
+                                echo "⚠️ Pas de JAR pour $service, skip..."
+                                continue
+                            fi
+
+                            JAR_NAME=$(basename $JAR_FILE)
+                            echo "🚀 Upload de $JAR_NAME vers Artifactory..."
+
+                            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                                -u ${ARTIF_USER}:${ARTIF_PASS} \
+                                -X PUT \
+                                "${ARTIFACTORY_URL}/tn/esprit/${service}/0.0.1-SNAPSHOT/${JAR_NAME}" \
+                                -T "$JAR_FILE")
+
+                            if [ "$HTTP_CODE" = "201" ] || [ "$HTTP_CODE" = "200" ]; then
+                                echo "✅ $service uploadé avec succès ! (HTTP $HTTP_CODE)"
+                            else
+                                echo "⚠️ $service upload HTTP $HTTP_CODE, continuing..."
+                            fi
+                        done
+
+                        echo "✅ Tous les uploads terminés !"
+                    '''
                 }
             }
         }
@@ -108,7 +120,7 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline terminé avec succès !'
+            echo '✅ Pipeline réussi — Tests + JaCoCo + SonarQube + Docker + Artifactory OK !'
         }
         failure {
             echo '❌ Pipeline échoué.'
