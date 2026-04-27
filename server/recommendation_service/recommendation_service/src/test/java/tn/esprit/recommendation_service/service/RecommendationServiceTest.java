@@ -48,7 +48,7 @@ class RecommendationServiceTest {
         recommendation = Recommendation.builder()
                 .id(1L)
                 .content("Faire une promenade quotidienne")
-                .type(RecommendationType.PHYSICAL_ACTIVITY)
+                .type(RecommendationType.EXERCISE)
                 .status(RecommendationStatus.ACTIVE)
                 .doctorId(5L)
                 .patientId(10L)
@@ -62,7 +62,7 @@ class RecommendationServiceTest {
     void createRecommendation_shouldReturnResponse_whenValidRequest() {
         RecommendationCreateRequest request = RecommendationCreateRequest.builder()
                 .content("Faire une promenade quotidienne")
-                .type(RecommendationType.PHYSICAL_ACTIVITY)
+                .type(RecommendationType.EXERCISE)
                 .doctorId(5L)
                 .patientId(10L)
                 .priority(3)
@@ -82,7 +82,7 @@ class RecommendationServiceTest {
     void createRecommendation_shouldThrow_whenExpirationDateInPast() {
         RecommendationCreateRequest request = RecommendationCreateRequest.builder()
                 .content("Contenu")
-                .type(RecommendationType.PHYSICAL_ACTIVITY)
+                .type(RecommendationType.EXERCISE)
                 .doctorId(5L)
                 .patientId(10L)
                 .expirationDate(LocalDate.now().minusDays(1))
