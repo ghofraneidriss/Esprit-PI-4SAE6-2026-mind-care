@@ -45,7 +45,7 @@ class EntreeSouvenirServiceTest {
                 .texte("Souvenir de famille")
                 .mediaType(MediaType.IMAGE)
                 .mediaUrl("http://example.com/image.jpg")
-                .themeCulturel(ThemeCulturel.FAMILLE)
+                .themeCulturel(ThemeCulturel.MUSIQUE)
                 .traitee(false)
                 .voiceRecognized(false)
                 .importance(5)
@@ -60,7 +60,7 @@ class EntreeSouvenirServiceTest {
         request.setTexte("Souvenir de famille");
         request.setMediaType(MediaType.IMAGE);
         request.setMediaUrl("http://example.com/image.jpg");
-        request.setThemeCulturel(ThemeCulturel.FAMILLE);
+        request.setThemeCulturel(ThemeCulturel.MUSIQUE);
 
         when(entreeSouvenirRepository.save(any(EntreeSouvenir.class))).thenReturn(entree);
 
@@ -89,8 +89,8 @@ class EntreeSouvenirServiceTest {
         EntreeSouvenirCreateRequest request = new EntreeSouvenirCreateRequest();
         request.setPatientId(10L);
         request.setTexte("Souvenir");
-        request.setMediaType(MediaType.TEXT);
-        request.setThemeCulturel(ThemeCulturel.FAMILLE);
+        request.setMediaType(MediaType.IMAGE);
+        request.setThemeCulturel(ThemeCulturel.MUSIQUE);
 
         assertThatThrownBy(() -> entreeSouvenirService.createEntree(request))
                 .isInstanceOf(BusinessException.class)
