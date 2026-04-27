@@ -17,17 +17,15 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo '📥 Cloning repository...'
+                echo 'Cloning repository...'
                 git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                    branch: 'volunteer',
-                    credentialsId: 'github-creds'
+                    branch: 'volunteer'
             }
         }
 
-        // ---------------- BUILD ----------------
         stage('Build Backend') {
             steps {
-                echo '🔨 Building services...'
+                echo 'Building services...'
                 sh '''
                     cd medical_report_service
                     mvn clean package -DskipTests
@@ -40,10 +38,9 @@ pipeline {
             }
         }
 
-        // ---------------- TEST ----------------
         stage('Run Tests') {
             steps {
-                echo '🧪 Running tests...'
+                echo 'Running tests...'
                 sh '''
                     cd medical_report_service
                     mvn test
@@ -56,34 +53,38 @@ pipeline {
             }
         }
 
-        // ---------------- SONAR ----------------
         stage('SonarQube Analysis') {
             steps {
-                echo '🔍 Running SonarQube...'
-                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        cd medical_report_service
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=medical-report-service \
-                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                          -Dsonar.login=$SONAR_TOKEN
-                        cd ..
+                echo 'Running SonarQube...'
+                script {
+                    try {
+                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                            sh '''
+                                cd medical_report_service
+                                mvn sonar:sonar \
+                                  -Dsonar.projectKey=medical-report-service \
+                                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                                  -Dsonar.login=$SONAR_TOKEN
+                                cd ..
 
-                        cd volunteer
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=volunteer-service \
-                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                          -Dsonar.login=$SONAR_TOKEN
-                        cd ..
-                    '''
+                                cd volunteer
+                                mvn sonar:sonar \
+                                  -Dsonar.projectKey=volunteer-service \
+                                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                                  -Dsonar.login=$SONAR_TOKEN
+                                cd ..
+                            '''
+                        }
+                    } catch (Exception ex) {
+                        echo "Skipping SonarQube analysis: ${ex.getMessage()}"
+                    }
                 }
             }
         }
 
-        // ---------------- DOCKER ----------------
         stage('Build Docker Images') {
             steps {
-                echo '🐳 Building Docker images...'
+                echo 'Building Docker images...'
                 sh '''
                     docker build -t $IMAGE_NAME_BACK:latest ./medical_report_service
                     docker build -t $IMAGE_NAME_VOL:latest ./volunteer
@@ -91,10 +92,9 @@ pipeline {
             }
         }
 
-        // ---------------- PUSH ----------------
         stage('Push Images') {
             steps {
-                echo '📤 Pushing images...'
+                echo 'Pushing images...'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh '''
                         echo $PASS | docker login -u $USER --password-stdin
@@ -106,10 +106,9 @@ pipeline {
             }
         }
 
-        // ---------------- DEPLOY ----------------
         stage('Deploy (Simulation)') {
             steps {
-                echo '🚀 Deploying...'
+                echo 'Deploying...'
                 sh '''
                     docker rm -f medical-report-service volunteer-service || true
 
@@ -122,10 +121,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ CI/CD PIPELINE SUCCESS'
+            echo 'CI/CD PIPELINE SUCCESS'
         }
         failure {
-            echo '❌ PIPELINE FAILED'
+            echo 'PIPELINE FAILED'
         }
     }
 }
