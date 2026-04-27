@@ -24,10 +24,12 @@ pipeline {
         stage('Test & Jacoco Report') {
             steps {
                 dir('server/forums_service') {
-                    sh 'mvn jacoco:prepare-agent test jacoco:report -Dtest=!ForumsServiceApplicationTests'
+                    // Correction : Utilisation du nom complet du plugin JaCoCo pour éviter l'erreur de prefix
+                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!ForumsServiceApplicationTests'
                 }
                 dir('server/incident_service') {
-                    sh 'mvn jacoco:prepare-agent test jacoco:report -Dtest=!IncidentServiceApplicationTests'
+                    // Correction : Utilisation du nom complet du plugin JaCoCo
+                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!IncidentServiceApplicationTests'
                 }
             }
             post {
@@ -87,7 +89,7 @@ pipeline {
                 )]) {
                     dir('server') {
                         sh """
-                            # Création du fichier settings.xml avec l'IP WSL correcte
+                            # Création du fichier settings.xml avec l'IP correcte
                             echo '<settings><servers><server><id>artifactory</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>' > settings.xml
 
                             mvn deploy -DskipTests \
