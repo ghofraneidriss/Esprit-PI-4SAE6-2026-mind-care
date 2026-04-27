@@ -24,11 +24,9 @@ pipeline {
         stage('Test & Jacoco Report') {
             steps {
                 dir('server/forums_service') {
-                    // Correction : Utilisation du nom complet du plugin JaCoCo pour éviter l'erreur de prefix
                     sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!ForumsServiceApplicationTests'
                 }
                 dir('server/incident_service') {
-                    // Correction : Utilisation du nom complet du plugin JaCoCo
                     sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!IncidentServiceApplicationTests'
                 }
             }
