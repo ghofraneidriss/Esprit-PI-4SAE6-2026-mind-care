@@ -15,12 +15,14 @@ pipeline {
 
     stages {
 
-       stage('Checkout') {
-           steps {
-               git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                   branch: 'volunteer'
-           }
-       }
+        stage('Checkout') {
+            steps {
+                echo '📥 Cloning repository...'
+                git branch: 'volunteer',
+                    url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
+                        credentialsId: 'github-creds'
+            }
+        }
 
         // ---------------- BUILD ----------------
         stage('Build Backend') {
@@ -58,8 +60,7 @@ pipeline {
         stage('SonarQube Analysis') {
     steps {
         echo '🔍 Running SonarQube...'
-        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-            sh '''
+withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')])            sh '''
                 cd medical_report_service
                 mvn sonar:sonar \
                   -Dsonar.projectKey=medical-report-service \
