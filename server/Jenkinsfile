@@ -89,11 +89,13 @@ pipeline {
                     dir('server') {
                        sh """
                             echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"><servers><server><id>artifactory</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>' > settings_jenkins.xml
+                            for service in \$SERVICES; do
+                            echo "🚀 Déploiement du module : \$service"
                             mvn deploy -DskipTests \\
                             --settings ./settings_jenkins.xml \\
                             -DaltDeploymentRepository="artifactory::http://172.19.224.221:8082/artifactory/libs-snapshot-local" \\
-                            -pl eureka_server,users_service,forums_service,incident_service,activities_service,localization_service,movement_service,api_gateway \\
-                            -am
+                            -f \$service/pom.xml
+                            done
                           """
                     }
                 }
