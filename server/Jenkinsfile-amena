@@ -1,0 +1,164 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven'
+    }
+
+    environment {
+        SONAR_HOST_URL  = 'http://host.docker.internal:9091'
+        IMAGE_TAG       = '1.0'
+        HARBOR_URL      = 'localhost:8085'
+        HARBOR_PROJECT  = 'mindcare'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Start SonarQube') {
+            steps {
+                sh '''
+                    # Prérequis mémoire
+                    sudo sysctl -w vm.max_map_count=262144 || true
+
+                    # Vérifie si SonarQube tourne déjà
+                    if [ $(docker ps -q -f name=sonarqube) ]; then
+                        echo "SonarQube already running"
+                    elif [ $(docker ps -aq -f name=sonarqube) ]; then
+                        echo "Starting existing SonarQube container"
+                        docker start sonarqube
+                    else
+                        echo "Pulling and starting SonarQube from Docker Hub"
+                        docker run -d \
+                            --name sonarqube \
+                            -p 9091:9000 \
+                            -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true \
+                            sonarqube:community
+                    fi
+
+                    # Attendre que SonarQube soit opérationnel
+                    echo "Waiting for SonarQube to be ready..."
+                    for i in $(seq 1 24); do
+                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                            http://localhost:9091/api/system/status || echo "000")
+                        if [ "$STATUS" = "200" ]; then
+                            echo "SonarQube is ready!"
+                            break
+                        fi
+                        echo "Attempt $i/24 - Status: $STATUS - Waiting 10s..."
+                        sleep 10
+                    done
+                '''
+            }
+        }
+
+        stage('Build & Install Parent') {
+            steps {
+                dir('server') {
+                    sh 'mvn clean install -DskipTests'
+                }
+            }
+        }
+
+        stage('Test activities_service') {
+            steps {
+                dir('server/activities_service') {
+                    sh 'mvn clean test'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true,
+                        testResults: 'server/activities_service/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Test movement_service') {
+            steps {
+                dir('server/movement_service') {
+                    sh 'mvn clean test'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true,
+                        testResults: 'server/movement_service/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh """
+                        mvn -f server/activities_service/pom.xml sonar:sonar \
+                            -Dsonar.projectKey=activities_service \
+                            -Dsonar.projectName=activities_service \
+                            -Dsonar.host.url=${SONAR_HOST_URL} \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+
+                        mvn -f server/movement_service/pom.xml sonar:sonar \
+                            -Dsonar.projectKey=movement_service \
+                            -Dsonar.projectName=movement_service \
+                            -Dsonar.host.url=${SONAR_HOST_URL} \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    """
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+
+        stage('Docker Build & Push to Harbor') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'harbor-creds',
+                    usernameVariable: 'HARBOR_USER',
+                    passwordVariable: 'HARBOR_PASS'
+                )]) {
+                    sh """
+                        docker login ${HARBOR_URL} \
+                            -u ${HARBOR_USER} \
+                            -p ${HARBOR_PASS}
+
+                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG} \
+                            server/activities_service/
+                        docker push ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG}
+
+                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG} \
+                            server/movement_service/
+                        docker push ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG}
+                    """
+                }
+            }
+        }
+
+        stage('Stop SonarQube') {
+            steps {
+                sh 'docker stop sonarqube || true'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline CI terminée avec succès !'
+        }
+        failure {
+            echo '❌ Echec — vérifier les logs.'
+            sh 'docker stop sonarqube || true'
+        }
+    }
+}
