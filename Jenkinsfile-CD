@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+    }
+
+    stages {
+
+        stage('Deploy recommendation_service') {
+            steps {
+                sh """
+                    docker pull ${DOCKERHUB_CREDENTIALS_USR}/recommendation-service:latest
+                    docker stop recommendation-service || true
+                    docker rm recommendation-service || true
+                    docker run -d \
+                        --name recommendation-service \
+                        --network mindcare-network \
+                        -p 8087:8087 \
+                        -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/recommendation_db \
+                        -e SPRING_DATASOURCE_USERNAME=root \
+                        -e SPRING_DATASOURCE_PASSWORD= \
+                        ${DOCKERHUB_CREDENTIALS_USR}/recommendation-service:latest
+                """
+            }
+        }
+
+        stage('Deploy souvenir_service') {
+            steps {
+                sh """
+                    docker pull ${DOCKERHUB_CREDENTIALS_USR}/souvenir-service:latest
+                    docker stop souvenir-service || true
+                    docker rm souvenir-service || true
+                    docker run -d \
+                        --name souvenir-service \
+                        --network mindcare-network \
+                        -p 8088:8088 \
+                        -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/souvenir_db \
+                        -e SPRING_DATASOURCE_USERNAME=root \
+                        -e SPRING_DATASOURCE_PASSWORD= \
+                        ${DOCKERHUB_CREDENTIALS_USR}/souvenir-service:latest
+                """
+            }
+        }
+
+        stage('Verify Deployments') {
+            steps {
+                sh "docker ps | grep recommendation-service"
+                sh "docker ps | grep souvenir-service"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Déploiement global réussi ✅"
+        }
+        failure {
+            echo "Déploiement échoué ❌"
+        }
+    }
+}

@@ -1,0 +1,90 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'
+        jdk 'JDK21'
+    }
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        SONAR_TOKEN            = credentials('sonar-token-recommendation')
+        IMAGE_NAME             = "${DOCKERHUB_CREDENTIALS_USR}/recommendation-service"
+        IMAGE_TAG              = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('server/recommendation_service/recommendation_service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Tests Unitaires') {
+            steps {
+                dir('server/recommendation_service/recommendation_service') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit 'server/recommendation_service/recommendation_service/target/surefire-reports/TEST-*.xml'
+                }
+            }
+        }
+
+        stage('Analyse SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    dir('server/recommendation_service/recommendation_service') {
+                        sh """
+                            mvn sonar:sonar \
+                                -Dsonar.projectKey=recommendation_service \
+                                -Dsonar.projectName=recommendation_service \
+                                -Dsonar.login=${SONAR_TOKEN} \
+                                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build Image Docker') {
+            steps {
+                dir('server/recommendation_service/recommendation_service') {
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+
+        stage('Push Docker Hub') {
+            steps {
+                sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
+                sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker push ${IMAGE_NAME}:latest"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline recommendation_service réussi ✅"
+        }
+        failure {
+            echo "Pipeline recommendation_service échoué ❌"
+        }
+        always {
+            sh "docker logout"
+        }
+    }
+}
