@@ -85,23 +85,39 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
-                sh '''
-                    docker build -t $IMAGE_NAME_BACK:latest ./medical_report_service
-                    docker build -t $IMAGE_NAME_VOL:latest ./volunteer
-                '''
+                script {
+                    if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
+                        sh '''
+                            docker build -t $IMAGE_NAME_BACK:latest ./medical_report_service
+                            docker build -t $IMAGE_NAME_VOL:latest ./volunteer
+                        '''
+                    } else {
+                        echo 'Skipping Docker image build: docker is not installed on this Jenkins agent.'
+                    }
+                }
             }
         }
 
         stage('Push Images') {
             steps {
                 echo 'Pushing images...'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh '''
-                        echo $PASS | docker login -u $USER --password-stdin
-                        docker push $IMAGE_NAME_BACK:latest
-                        docker push $IMAGE_NAME_VOL:latest
-                        docker logout
-                    '''
+                script {
+                    if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
+                        try {
+                            withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                                sh '''
+                                    echo $PASS | docker login -u $USER --password-stdin
+                                    docker push $IMAGE_NAME_BACK:latest
+                                    docker push $IMAGE_NAME_VOL:latest
+                                    docker logout
+                                '''
+                            }
+                        } catch (Exception ex) {
+                            echo "Skipping Docker push: ${ex.getMessage()}"
+                        }
+                    } else {
+                        echo 'Skipping Docker push: docker is not installed on this Jenkins agent.'
+                    }
                 }
             }
         }
@@ -109,12 +125,18 @@ pipeline {
         stage('Deploy (Simulation)') {
             steps {
                 echo 'Deploying...'
-                sh '''
-                    docker rm -f medical-report-service volunteer-service || true
+                script {
+                    if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
+                        sh '''
+                            docker rm -f medical-report-service volunteer-service || true
 
-                    docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
-                    docker run -d -p 8082:8080 --name volunteer-service $IMAGE_NAME_VOL:latest
-                '''
+                            docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
+                            docker run -d -p 8082:8080 --name volunteer-service $IMAGE_NAME_VOL:latest
+                        '''
+                    } else {
+                        echo 'Skipping deploy simulation: docker is not installed on this Jenkins agent.'
+                    }
+                }
             }
         }
     }
