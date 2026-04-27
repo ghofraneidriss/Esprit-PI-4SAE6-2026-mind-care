@@ -18,9 +18,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo '📥 Cloning repository...'
-                   url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                   branch: 'volunteer',
-                   credentialsId: 'github-creds'
+                git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
+                    branch: 'volunteer',
+                    credentialsId: 'github-creds'
             }
         }
 
@@ -58,26 +58,27 @@ pipeline {
 
         // ---------------- SONAR ----------------
         stage('SonarQube Analysis') {
-    steps {
-        echo '🔍 Running SonarQube...'
-withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')])            sh '''
-                cd medical_report_service
-                mvn sonar:sonar \
-                  -Dsonar.projectKey=medical-report-service \
-                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                  -Dsonar.login=$SONAR_TOKEN
-                cd ..
+            steps {
+                echo '🔍 Running SonarQube...'
+                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        cd medical_report_service
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=medical-report-service \
+                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.login=$SONAR_TOKEN
+                        cd ..
 
-                cd volunteer
-                mvn sonar:sonar \
-                  -Dsonar.projectKey=volunteer-service \
-                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                  -Dsonar.login=$SONAR_TOKEN
-                cd ..
-            '''
+                        cd volunteer
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=volunteer-service \
+                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.login=$SONAR_TOKEN
+                        cd ..
+                    '''
+                }
+            }
         }
-    }
-}
 
         // ---------------- DOCKER ----------------
         stage('Build Docker Images') {
