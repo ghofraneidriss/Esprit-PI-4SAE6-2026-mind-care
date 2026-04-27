@@ -88,10 +88,12 @@ pipeline {
                 )]) {
                     dir('server') {
                        sh """
-                               echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"><servers><server><id>artifactory-server</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>' > settings_jenkins.xml
-                               mvn deploy -DskipTests \
-                               --settings ./settings_jenkins.xml \
-                               -DaltDeploymentRepository="artifactory-server::default::http://172.19.224.221:8082/artifactory/libs-snapshot-local"
+                            echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"><servers><server><id>artifactory-server</id><username>\${ARTIF_USER}</username><password>\${ARTIF_PASS}</password></server></servers></settings>' > settings_jenkins.xml
+                            mvn deploy -DskipTests \
+                            --settings ./settings_jenkins.xml \
+                            -DaltDeploymentRepository="artifactory-server::http://172.19.224.221:8082/artifactory/libs-snapshot-local" \
+                            -U
+
                            """
                     }
                 }
