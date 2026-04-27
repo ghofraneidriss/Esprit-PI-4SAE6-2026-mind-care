@@ -32,12 +32,12 @@ pipeline {
         stage('Tests Unitaires') {
             steps {
                 dir('server/souvenir_service/souvenir_service') {
-                    sh 'mvn test || true'
+                    sh 'mvn test'
                 }
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: 'server/souvenir_service/souvenir_service/target/surefire-reports/TEST-*.xml'
+                    junit testResults: 'server/souvenir_service/souvenir_service/target/surefire-reports/TEST-*.xml'
                 }
             }
         }
