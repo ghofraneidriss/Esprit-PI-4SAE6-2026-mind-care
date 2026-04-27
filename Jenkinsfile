@@ -15,13 +15,12 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                echo '📥 Cloning repository...'
-                git branch: 'volunteer',
-                    url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
-            }
-        }
+       stage('Checkout') {
+           steps {
+               git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
+                   branch: 'volunteer'
+           }
+       }
 
         // ---------------- BUILD ----------------
         stage('Build Backend') {
