@@ -19,6 +19,7 @@ pipeline {
             steps {
                 echo '📥 Cloning repository...'
                    url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
+                   branch: 'volunteer',
                    credentialsId: 'github-creds'
             }
         }
