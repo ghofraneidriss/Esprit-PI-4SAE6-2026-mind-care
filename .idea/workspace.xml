@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1c57333b-a0df-42bb-8e12-45605b41a178" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jenkinsfile" beforeDir="false" afterPath="$PROJECT_DIR$/Jenkinsfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/api_gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/server/api_gateway/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/server/localization_service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/server/users_service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/forums_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/forums_service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/incident_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/incident_service/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +57,8 @@
   &quot;keyToString&quot;: {
     &quot;Maven.alzheimer-app [clean].executor&quot;: &quot;Run&quot;,
     &quot;Maven.alzheimer-app [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.forums_service [install].executor&quot;: &quot;Run&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
     &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
     &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
@@ -178,7 +177,7 @@
       <updated>1776903484748</updated>
       <workItem from="1776903485963" duration="1622000" />
       <workItem from="1776911760472" duration="10213000" />
-      <workItem from="1777041466604" duration="8085000" />
+      <workItem from="1777041466604" duration="14009000" />
     </task>
     <servers />
   </component>
