@@ -112,7 +112,7 @@ class RecommendationServiceTest {
 
     @Test
     void getRecommendationsByPatient_shouldReturnList() {
-        when(recommendationRepository.findByPatientIdOrderByPriorityDescCreatedAtDesc(10L))
+        when(recommendationRepository.findByPatientId(10L))
                 .thenReturn(List.of(recommendation));
 
         List<RecommendationResponse> responses = recommendationService.getRecommendationsByPatient(10L);

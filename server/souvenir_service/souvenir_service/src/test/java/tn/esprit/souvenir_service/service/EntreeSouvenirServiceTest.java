@@ -90,6 +90,7 @@ class EntreeSouvenirServiceTest {
         request.setPatientId(10L);
         request.setTexte("Souvenir");
         request.setMediaType(MediaType.IMAGE);
+        request.setMediaUrl("http://example.com/image.jpg");
         request.setThemeCulturel(ThemeCulturel.MUSIQUE);
 
         assertThatThrownBy(() -> entreeSouvenirService.createEntree(request))
