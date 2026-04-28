@@ -1,4 +1,4 @@
-package tn.esprit.lost_item_service.DTO;
+package tn.esprit.lost_item_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

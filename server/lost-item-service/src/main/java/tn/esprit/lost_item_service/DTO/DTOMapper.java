@@ -1,4 +1,4 @@
-package tn.esprit.lost_item_service.DTO;
+package tn.esprit.lost_item_service.dto;
 
 import tn.esprit.lost_item_service.Entity.LostItem;
 import tn.esprit.lost_item_service.Entity.LostItemAlert;
