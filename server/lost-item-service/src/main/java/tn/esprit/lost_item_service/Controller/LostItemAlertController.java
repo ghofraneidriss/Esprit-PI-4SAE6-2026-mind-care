@@ -113,7 +113,7 @@ public class LostItemAlertController {
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkAlertAccess(id, userId, userRole);
-        LostItemAlert alert = DTOMapper.toLostItemAlert(request);
+        LostItemAlert alert = DTOMapper.toLostItemAlertForUpdate(request);
         LostItemAlert updated = lostItemAlertService.updateAlert(id, alert);
         return ResponseEntity.ok(DTOMapper.toLostItemAlertDTO(updated));
     }

@@ -155,7 +155,7 @@ public class DTOMapper {
     /**
      * Convert UpdateLostItemRequest to LostItem entity (for update operations)
      */
-    public static LostItem toLostItem(UpdateLostItemRequest request) {
+    public static LostItem toLostItemForUpdate(UpdateLostItemRequest request) {
         if (request == null) {
             return null;
         }
@@ -175,7 +175,7 @@ public class DTOMapper {
     /**
      * Convert UpdateLostItemAlertRequest to LostItemAlert entity (for update operations)
      */
-    public static LostItemAlert toLostItemAlert(UpdateLostItemAlertRequest request) {
+    public static LostItemAlert toLostItemAlertForUpdate(UpdateLostItemAlertRequest request) {
         if (request == null) {
             return null;
         }
@@ -207,7 +207,7 @@ public class DTOMapper {
     /**
      * Convert UpdateSearchReportRequest to SearchReport entity (for update operations)
      */
-    public static SearchReport toSearchReport(UpdateSearchReportRequest request) {
+    public static SearchReport toSearchReportForUpdate(UpdateSearchReportRequest request) {
         if (request == null) {
             return null;
         }

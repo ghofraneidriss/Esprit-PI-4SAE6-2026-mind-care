@@ -93,7 +93,7 @@ public class LostItemController {
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkItemAccess(id, userId, userRole);
-        LostItem lostItem = DTOMapper.toLostItem(request);
+        LostItem lostItem = DTOMapper.toLostItemForUpdate(request);
         LostItem updated = lostItemService.updateLostItem(id, lostItem);
         return ResponseEntity.ok(DTOMapper.toLostItemDTO(updated));
     }

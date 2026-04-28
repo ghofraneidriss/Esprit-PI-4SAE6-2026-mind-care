@@ -98,7 +98,7 @@ public class SearchReportController {
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkReportAccess(id, userId, userRole);
-        SearchReport report = DTOMapper.toSearchReport(request);
+        SearchReport report = DTOMapper.toSearchReportForUpdate(request);
         SearchReport updated = searchReportService.updateSearchReport(id, report);
         return ResponseEntity.ok(DTOMapper.toSearchReportDTO(updated));
     }

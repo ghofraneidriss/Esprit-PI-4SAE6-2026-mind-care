@@ -226,7 +226,7 @@ class DTOMapperTest {
 
     @Test
     void testToLostItem_withNullRequest() {
-        LostItem entity = DTOMapper.toLostItem(null);
+        LostItem entity = DTOMapper.toLostItem((CreateLostItemRequest) null);
         assertNull(entity);
     }
 
@@ -272,7 +272,7 @@ class DTOMapperTest {
 
     @Test
     void testToLostItemAlert_withNullRequest() {
-        LostItemAlert entity = DTOMapper.toLostItemAlert(null);
+        LostItemAlert entity = DTOMapper.toLostItemAlert((CreateLostItemAlertRequest) null);
         assertNull(entity);
     }
 
