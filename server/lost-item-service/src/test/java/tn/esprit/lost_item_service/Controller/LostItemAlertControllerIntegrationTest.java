@@ -139,9 +139,7 @@ class LostItemAlertControllerIntegrationTest {
 
         mockMvc.perform(put("/api/item-alerts/" + saved.getId())
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateRequest))
-                .header("X-User-Id", "1")
-                .header("X-User-Role", "CAREGIVER"))
+                .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Title"))
                 .andExpect(jsonPath("$.level").value("MEDIUM"));
@@ -158,10 +156,8 @@ class LostItemAlertControllerIntegrationTest {
                 .build();
         LostItemAlert saved = alertRepository.save(alert);
 
-        mockMvc.perform(delete("/api/item-alerts/" + saved.getId())
-                .header("X-User-Id", "1")
-                .header("X-User-Role", "ADMIN"))
-                .andExpect(status().isOk());
+        mockMvc.perform(delete("/api/item-alerts/" + saved.getId()))
+                .andExpect(status().isNoContent());
     }
 
     @Test

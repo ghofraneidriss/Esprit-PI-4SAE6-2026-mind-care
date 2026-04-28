@@ -70,9 +70,7 @@ class SearchReportControllerIntegrationTest {
 
         mockMvc.perform(post("/api/search-reports")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(report))
-                .header("X-User-Id", "2")
-                .header("X-User-Role", "CAREGIVER"))
+                .content(objectMapper.writeValueAsString(report)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.report.id").exists())
                 .andExpect(jsonPath("$.report.locationSearched").value("Living Room"))
@@ -111,9 +109,7 @@ class SearchReportControllerIntegrationTest {
                 .build();
         SearchReport saved = searchReportRepository.save(report);
 
-        mockMvc.perform(get("/api/search-reports/" + saved.getId())
-                .header("X-User-Id", "2")
-                .header("X-User-Role", "CAREGIVER"))
+        mockMvc.perform(get("/api/search-reports/" + saved.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.locationSearched").value("Bedroom"));
@@ -142,9 +138,7 @@ class SearchReportControllerIntegrationTest {
 
         mockMvc.perform(put("/api/search-reports/" + saved.getId())
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateData))
-                .header("X-User-Id", "2")
-                .header("X-User-Role", "CAREGIVER"))
+                .content(objectMapper.writeValueAsString(updateData)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.locationSearched").value("Updated Location"))
                 .andExpect(jsonPath("$.searchResult").value("FOUND"));
