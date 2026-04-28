@@ -1,7 +1,5 @@
 package tn.esprit.lost_item_service.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
 import tn.esprit.lost_item_service.Entity.ItemPriority;
@@ -15,10 +13,8 @@ import java.time.LocalDate;
 @Builder
 public class UpdateLostItemRequest {
 
-    @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters")
     private String title;
 
-    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
     private ItemCategory category;
