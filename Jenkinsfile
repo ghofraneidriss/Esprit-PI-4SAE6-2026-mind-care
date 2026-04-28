@@ -11,11 +11,8 @@ pipeline {
         IMAGE_NAME_BACK = 'ghofrane/medical-report-service'
         IMAGE_NAME_VOL = 'ghofrane/volunteer-service'
         SONARQUBE_HOST_URL = 'http://sonarqube:9000'
-          // SonarQube
-    SONAR_HOST_URL = 'http://localhost:9000'
-    SONAR_TOKEN_CREDENTIALS_ID = 'sonar-token-mindcare'
-    SONAR_PROJECT_KEY = 'mindcare'
-    SONAR_PROJECT_NAME = 'mindcare'*/
+        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_TOKEN_CREDENTIALS_ID = 'sonar-token-mindcare'
     }
 
     stages {
@@ -60,10 +57,10 @@ pipeline {
 
         stage('SonarQube Analysis') {
             when {
-                expression { return env.SONARQUBE_HOST_URL?.trim() }
+                expression { return env.SONAR_HOST_URL?.trim() && env.SONAR_TOKEN_CREDENTIALS_ID?.trim() }
             }
             steps {
-                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: env.SONAR_TOKEN_CREDENTIALS_ID, variable: 'SONAR_TOKEN')]) {
                     sh '''
                         set -e
 
@@ -72,7 +69,7 @@ pipeline {
                         mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                           -Dsonar.projectKey=mindcare \
                           -Dsonar.projectName=mindcare \
-                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.host.url=$SONAR_HOST_URL \
                           -Dsonar.token=$SONAR_TOKEN \
                           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                         cd ..
@@ -82,7 +79,7 @@ pipeline {
                         mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                           -Dsonar.projectKey=volunteer-service \
                           -Dsonar.projectName=volunteer-service \
-                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.host.url=$SONAR_HOST_URL \
                           -Dsonar.token=$SONAR_TOKEN \
                           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                         cd ..
