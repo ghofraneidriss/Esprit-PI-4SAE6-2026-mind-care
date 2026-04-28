@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.lost_item_service.DTO.CreateLostItemRequest;
 import tn.esprit.lost_item_service.DTO.DTOMapper;
 import tn.esprit.lost_item_service.DTO.LostItemDTO;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
@@ -49,7 +50,8 @@ public class LostItemController {
     }
 
     @PostMapping
-    public ResponseEntity<LostItemDTO> createLostItem(@Valid @RequestBody LostItem lostItem) {
+    public ResponseEntity<LostItemDTO> createLostItem(@Valid @RequestBody CreateLostItemRequest request) {
+        LostItem lostItem = DTOMapper.toLostItem(request);
         LostItem created = lostItemService.createLostItem(lostItem);
         return new ResponseEntity<>(DTOMapper.toLostItemDTO(created), HttpStatus.CREATED);
     }

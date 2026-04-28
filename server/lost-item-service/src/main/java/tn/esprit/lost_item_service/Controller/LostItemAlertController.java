@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.lost_item_service.DTO.CreateLostItemAlertRequest;
 import tn.esprit.lost_item_service.DTO.DTOMapper;
 import tn.esprit.lost_item_service.DTO.LostItemAlertDTO;
 import tn.esprit.lost_item_service.Entity.AlertLevel;
@@ -25,7 +26,8 @@ public class LostItemAlertController {
     private final AuthorizationService authorizationService;
 
     @PostMapping
-    public ResponseEntity<LostItemAlertDTO> createAlert(@Valid @RequestBody LostItemAlert alert) {
+    public ResponseEntity<LostItemAlertDTO> createAlert(@Valid @RequestBody CreateLostItemAlertRequest request) {
+        LostItemAlert alert = DTOMapper.toLostItemAlert(request);
         LostItemAlert created = lostItemAlertService.createAlert(alert);
         return new ResponseEntity<>(DTOMapper.toLostItemAlertDTO(created), HttpStatus.CREATED);
     }

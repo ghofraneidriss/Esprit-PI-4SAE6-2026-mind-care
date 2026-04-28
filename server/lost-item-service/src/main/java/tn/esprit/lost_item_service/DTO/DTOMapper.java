@@ -113,4 +113,43 @@ public class DTOMapper {
                 .toList();
     }
 
+    // ── Request DTO to Entity Mapping ─────────────────────────────────────────
+
+    /**
+     * Convert CreateLostItemRequest to LostItem entity
+     */
+    public static LostItem toLostItem(CreateLostItemRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return LostItem.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .category(request.getCategory())
+                .patientId(request.getPatientId())
+                .caregiverId(request.getCaregiverId())
+                .lastSeenLocation(request.getLastSeenLocation())
+                .lastSeenDate(request.getLastSeenDate())
+                .priority(request.getPriority())
+                .imageUrl(request.getImageUrl())
+                .build();
+    }
+
+    /**
+     * Convert CreateLostItemAlertRequest to LostItemAlert entity
+     */
+    public static LostItemAlert toLostItemAlert(CreateLostItemAlertRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return LostItemAlert.builder()
+                .lostItemId(request.getLostItemId())
+                .patientId(request.getPatientId())
+                .caregiverId(request.getCaregiverId())
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .level(request.getLevel())
+                .build();
+    }
+
 }
