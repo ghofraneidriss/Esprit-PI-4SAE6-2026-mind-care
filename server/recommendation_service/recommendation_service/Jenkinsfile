@@ -9,7 +9,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         SONAR_TOKEN            = credentials('sonar-token-recommendation')
-        IMAGE_NAME             = "${DOCKERHUB_CREDENTIALS_USR}/recommendation-service"
+        IMAGE_NAME             = "laaziz1/recommendation-service"
         IMAGE_TAG              = "${env.BUILD_NUMBER}"
     }
 
