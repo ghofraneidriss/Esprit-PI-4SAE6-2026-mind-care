@@ -40,12 +40,13 @@ public class SearchReportController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createSearchReport(
-            @Valid @RequestBody SearchReport report,
+            @Valid @RequestBody CreateSearchReportRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
-        authorizationService.checkItemIdAccess(report.getLostItemId(), userId, userRole);
+        authorizationService.checkItemIdAccess(request.getLostItemId(), userId, userRole);
 
+        SearchReport report = DTOMapper.toSearchReport(request);
         SearchReport saved = searchReportService.createSearchReport(report);
 
         // If the search result is FOUND, cascade: update item status, close open reports, resolve alerts
@@ -90,11 +91,12 @@ public class SearchReportController {
     @PutMapping("/{id}")
     public ResponseEntity<SearchReportDTO> updateSearchReport(
             @PathVariable Long id,
-            @Valid @RequestBody SearchReport report,
+            @Valid @RequestBody UpdateSearchReportRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkReportAccess(id, userId, userRole);
+        SearchReport report = DTOMapper.toSearchReport(request);
         SearchReport updated = searchReportService.updateSearchReport(id, report);
         return ResponseEntity.ok(DTOMapper.toSearchReportDTO(updated));
     }

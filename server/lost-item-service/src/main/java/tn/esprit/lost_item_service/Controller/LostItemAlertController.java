@@ -107,11 +107,12 @@ public class LostItemAlertController {
     @PutMapping("/{id}")
     public ResponseEntity<LostItemAlertDTO> updateAlert(
             @PathVariable Long id,
-            @Valid @RequestBody LostItemAlert alert,
+            @Valid @RequestBody UpdateLostItemAlertRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkAlertAccess(id, userId, userRole);
+        LostItemAlert alert = DTOMapper.toLostItemAlert(request);
         LostItemAlert updated = lostItemAlertService.updateAlert(id, alert);
         return ResponseEntity.ok(DTOMapper.toLostItemAlertDTO(updated));
     }

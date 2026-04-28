@@ -152,4 +152,72 @@ public class DTOMapper {
                 .build();
     }
 
+    /**
+     * Convert UpdateLostItemRequest to LostItem entity (for update operations)
+     */
+    public static LostItem toLostItem(UpdateLostItemRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return LostItem.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .category(request.getCategory())
+                .caregiverId(request.getCaregiverId())
+                .lastSeenLocation(request.getLastSeenLocation())
+                .lastSeenDate(request.getLastSeenDate())
+                .status(request.getStatus())
+                .priority(request.getPriority())
+                .imageUrl(request.getImageUrl())
+                .build();
+    }
+
+    /**
+     * Convert UpdateLostItemAlertRequest to LostItemAlert entity (for update operations)
+     */
+    public static LostItemAlert toLostItemAlert(UpdateLostItemAlertRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return LostItemAlert.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .level(request.getLevel())
+                .status(request.getStatus())
+                .build();
+    }
+
+    /**
+     * Convert CreateSearchReportRequest to SearchReport entity
+     */
+    public static SearchReport toSearchReport(CreateSearchReportRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return SearchReport.builder()
+                .lostItemId(request.getLostItemId())
+                .reportedBy(request.getReportedBy())
+                .searchDate(request.getSearchDate())
+                .locationSearched(request.getLocationSearched())
+                .searchResult(request.getSearchResult())
+                .notes(request.getNotes())
+                .build();
+    }
+
+    /**
+     * Convert UpdateSearchReportRequest to SearchReport entity (for update operations)
+     */
+    public static SearchReport toSearchReport(UpdateSearchReportRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return SearchReport.builder()
+                .searchDate(request.getSearchDate())
+                .locationSearched(request.getLocationSearched())
+                .searchResult(request.getSearchResult())
+                .notes(request.getNotes())
+                .status(request.getStatus())
+                .build();
+    }
+
 }

@@ -87,11 +87,12 @@ public class LostItemController {
     @PutMapping("/{id}")
     public ResponseEntity<LostItemDTO> updateLostItem(
             @PathVariable Long id,
-            @Valid @RequestBody LostItem lostItem,
+            @Valid @RequestBody UpdateLostItemRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkItemAccess(id, userId, userRole);
+        LostItem lostItem = DTOMapper.toLostItem(request);
         LostItem updated = lostItemService.updateLostItem(id, lostItem);
         return ResponseEntity.ok(DTOMapper.toLostItemDTO(updated));
     }
