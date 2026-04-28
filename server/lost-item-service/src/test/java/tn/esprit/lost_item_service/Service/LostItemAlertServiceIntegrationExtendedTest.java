@@ -257,11 +257,7 @@ class LostItemAlertServiceIntegrationExtendedTest {
 
         lostItemAlertService.deleteAlert(saved.getId());
 
-        assertThrows(RuntimeException.class, () -> getDeletedAlert(saved.getId()));
-    }
-
-    private LostItemAlert getDeletedAlert(Long alertId) {
-        return lostItemAlertService.getAlertById(alertId);
+        assertThrows(RuntimeException.class, () -> lostItemAlertService.getAlertById(saved.getId()));
     }
 
     @Test
