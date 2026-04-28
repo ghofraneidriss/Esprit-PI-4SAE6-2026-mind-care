@@ -10,7 +10,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tn.esprit.lost_item_service.dto.CreateLostItemRequest;
 import tn.esprit.lost_item_service.dto.UpdateLostItemRequest;
-import tn.esprit.lost_item_service.Entity.*;
+import tn.esprit.lost_item_service.Entity.ItemCategory;
+import tn.esprit.lost_item_service.Entity.ItemPriority;
+import tn.esprit.lost_item_service.Entity.ItemStatus;
+import tn.esprit.lost_item_service.Entity.LostItem;
 import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -116,18 +119,18 @@ class LostItemControllerIntegrationTest {
                 .build();
         LostItem saved = lostItemRepository.save(item);
 
-        // Test update by sending entire LostItem entity
-        LostItem updateData = LostItem.builder()
+        UpdateLostItemRequest updateRequest = UpdateLostItemRequest.builder()
                 .title("Updated Title")
                 .category(ItemCategory.ACCESSORY)
-                .patientId(1L)
-                .status(ItemStatus.LOST)
                 .priority(ItemPriority.MEDIUM)
                 .build();
 
+        // Simulate sending the entity by converting to/from JSON
+        String updateJson = objectMapper.writeValueAsString(updateRequest);
+
         mockMvc.perform(put("/api/lost-items/" + saved.getId())
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateData)))
+                .content(updateJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Title"))
                 .andExpect(jsonPath("$.priority").value("MEDIUM"));

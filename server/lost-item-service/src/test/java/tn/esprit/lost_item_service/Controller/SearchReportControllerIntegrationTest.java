@@ -128,9 +128,7 @@ class SearchReportControllerIntegrationTest {
                 .build();
         SearchReport saved = searchReportRepository.save(report);
 
-        SearchReport updateData = SearchReport.builder()
-                .lostItemId(testItem.getId())
-                .reportedBy(2L)
+        UpdateSearchReportRequest updateRequest = UpdateSearchReportRequest.builder()
                 .searchDate(LocalDate.now())
                 .locationSearched("Updated Location")
                 .searchResult(SearchResult.FOUND)
@@ -139,7 +137,7 @@ class SearchReportControllerIntegrationTest {
 
         mockMvc.perform(put("/api/search-reports/" + saved.getId())
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateData)))
+                .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.locationSearched").value("Updated Location"))
                 .andExpect(jsonPath("$.searchResult").value("FOUND"));
