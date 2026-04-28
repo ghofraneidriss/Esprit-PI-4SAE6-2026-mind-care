@@ -79,8 +79,8 @@ pipeline {
                                 echo "[SONAR] volunteer"
                                 cd volunteer
                                 mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                  -Dsonar.projectKey=volunteer-service \
-                                  -Dsonar.projectName=volunteer-service \
+                                  -Dsonar.projectKey=mindcare \
+                                  -Dsonar.projectName=mindcare \
                                   -Dsonar.host.url=$SONAR_HOST_URL \
                                   -Dsonar.token=$SONAR_TOKEN \
                                   -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
