@@ -9,7 +9,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         SONAR_TOKEN            = credentials('sonar-token-souvenir')
-        IMAGE_NAME             = "laaziz1/souvenir-service"
+        IMAGE_NAME             = "${DOCKERHUB_CREDENTIALS_USR}/souvenir-service"
         IMAGE_TAG              = "${env.BUILD_NUMBER}"
     }
 
