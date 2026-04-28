@@ -299,18 +299,12 @@ class DTOMapperTest {
     // ── Constructor Test ──────────────────────────────────────────────────────
 
     @Test
-    void testPrivateConstructor_throwsException() {
-        assertThrows(IllegalStateException.class, () -> {
-            try {
-                var constructor = DTOMapper.class.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                constructor.newInstance();
-            } catch (Exception e) {
-                if (e instanceof IllegalStateException) {
-                    throw e;
-                }
-                throw new RuntimeException(e);
-            }
-        });
+    void testPrivateConstructor_isPrivate() throws Exception {
+        var constructor = DTOMapper.class.getDeclaredConstructor();
+        assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()));
+        constructor.setAccessible(true);
+        var invocationException = assertThrows(java.lang.reflect.InvocationTargetException.class, constructor::newInstance);
+        assertInstanceOf(IllegalStateException.class, invocationException.getCause());
+        assertEquals("Utility class", invocationException.getCause().getMessage());
     }
 }
