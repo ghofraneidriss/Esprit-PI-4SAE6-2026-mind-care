@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.lost_item_service.dto.CreateLostItemRequest;
 import tn.esprit.lost_item_service.dto.DTOMapper;
 import tn.esprit.lost_item_service.dto.LostItemDTO;
+import tn.esprit.lost_item_service.dto.UpdateLostItemRequest;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
 import tn.esprit.lost_item_service.Entity.ItemStatus;
 import tn.esprit.lost_item_service.Entity.LostItem;

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.lost_item_service.dto.CreateLostItemAlertRequest;
 import tn.esprit.lost_item_service.dto.DTOMapper;
 import tn.esprit.lost_item_service.dto.LostItemAlertDTO;
+import tn.esprit.lost_item_service.dto.UpdateLostItemAlertRequest;
 import tn.esprit.lost_item_service.Entity.AlertLevel;
 import tn.esprit.lost_item_service.Entity.AlertStatus;
 import tn.esprit.lost_item_service.Entity.LostItemAlert;

@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.lost_item_service.dto.DTOMapper;
 import tn.esprit.lost_item_service.dto.SearchReportDTO;
+import tn.esprit.lost_item_service.dto.CreateSearchReportRequest;
+import tn.esprit.lost_item_service.dto.UpdateSearchReportRequest;
 import tn.esprit.lost_item_service.Entity.LostItem;
 import tn.esprit.lost_item_service.Entity.ReportStatus;
 import tn.esprit.lost_item_service.Entity.SearchReport;
