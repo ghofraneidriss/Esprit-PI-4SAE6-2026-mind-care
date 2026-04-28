@@ -11,7 +11,7 @@ pipeline {
         IMAGE_NAME_BACK = 'ghofrane/medical-report-service'
         IMAGE_NAME_VOL = 'ghofrane/volunteer-service'
         SONARQUBE_HOST_URL = 'http://sonarqube:9000'
-        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_HOST_URL = 'http://172.21.32.1:9000'
         SONAR_TOKEN_CREDENTIALS_ID = 'sonar-token-mindcare'
           // SonarQube
     SONAR_PROJECT_KEY = 'mindcare'
