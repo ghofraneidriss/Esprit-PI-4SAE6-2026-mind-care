@@ -11,6 +11,11 @@ pipeline {
         IMAGE_NAME_BACK = 'ghofrane/medical-report-service'
         IMAGE_NAME_VOL = 'ghofrane/volunteer-service'
         SONARQUBE_HOST_URL = 'http://sonarqube:9000'
+          // SonarQube
+    SONAR_HOST_URL = 'http://localhost:9000'
+    SONAR_TOKEN_CREDENTIALS_ID = 'sonar-token-mindcare'
+    SONAR_PROJECT_KEY = 'mindcare'
+    SONAR_PROJECT_NAME = 'mindcare'*/
     }
 
     stages {
@@ -54,30 +59,34 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            when {
+                expression { return env.SONARQUBE_HOST_URL?.trim() }
+            }
             steps {
-                echo 'Running SonarQube...'
-                script {
-                    try {
-                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                            sh '''
-                                cd medical_report_service
-                                mvn clean verify sonar:sonar \
-                                  -Dsonar.projectKey=mindcare \
-                                  -Dsonar.host.url=http://localhost:9000 \
-                                  -Dsonar.login=sqp_1e65df783c03befbd9a597df8fad309da696bd8d
-                                cd ..
+                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        set -e
 
-                                cd volunteer
-                                mvn sonar:sonar \
-                                  -Dsonar.projectKey=volunteer-service \
-                                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                                  -Dsonar.login=$SONAR_TOKEN
-                                cd ..
-                            '''
-                        }
-                    } catch (Exception ex) {
-                        echo "Skipping SonarQube analysis: ${ex.getMessage()}"
-                    }
+                        echo "[SONAR] medical_report_service"
+                        cd medical_report_service
+                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                          -Dsonar.projectKey=mindcare \
+                          -Dsonar.projectName=mindcare \
+                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.token=$SONAR_TOKEN \
+                          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        cd ..
+
+                        echo "[SONAR] volunteer"
+                        cd volunteer
+                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                          -Dsonar.projectKey=volunteer-service \
+                          -Dsonar.projectName=volunteer-service \
+                          -Dsonar.host.url=$SONARQUBE_HOST_URL \
+                          -Dsonar.token=$SONAR_TOKEN \
+                          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        cd ..
+                    '''
                 }
             }
         }
