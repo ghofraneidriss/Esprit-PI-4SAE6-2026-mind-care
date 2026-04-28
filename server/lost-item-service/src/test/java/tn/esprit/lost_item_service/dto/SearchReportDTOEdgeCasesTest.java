@@ -19,13 +19,13 @@ class SearchReportDTOEdgeCasesTest {
     @Test
     void testEqualsWithNull() {
         SearchReportDTO dto = SearchReportDTO.builder().id(1L).lostItemId(10L).build();
-        assertFalse(dto.equals(null));
+        assertNotEquals(dto, null);
     }
 
     @Test
     void testEqualsWithDifferentType() {
         SearchReportDTO dto = SearchReportDTO.builder().id(1L).lostItemId(10L).build();
-        assertFalse(dto.equals("not a dto"));
+        assertNotEquals(dto, "not a dto");
     }
 
     @Test

@@ -20,13 +20,13 @@ class LostItemDTOEdgeCasesTest {
     @Test
     void testEqualsWithNull() {
         LostItemDTO dto = LostItemDTO.builder().id(1L).title("Test").build();
-        assertFalse(dto.equals(null));
+        assertNotEquals(dto, null);
     }
 
     @Test
     void testEqualsWithDifferentType() {
         LostItemDTO dto = LostItemDTO.builder().id(1L).title("Test").build();
-        assertFalse(dto.equals("not a dto"));
+        assertNotEquals(dto, "not a dto");
     }
 
     @Test
