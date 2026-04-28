@@ -13,7 +13,7 @@ class SearchReportDTOEdgeCasesTest {
     @Test
     void testEqualsWithSameObject() {
         SearchReportDTO dto = SearchReportDTO.builder().id(1L).lostItemId(10L).build();
-        assertTrue(dto.equals(dto));
+        assertEquals(dto, dto);
     }
 
     @Test

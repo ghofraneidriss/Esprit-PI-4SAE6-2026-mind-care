@@ -13,7 +13,7 @@ class CreateLostItemRequestEdgeCasesTest {
     @Test
     void testEqualsWithSameObject() {
         CreateLostItemRequest req = CreateLostItemRequest.builder().title("Test").category(ItemCategory.MEDICATION).patientId(1L).build();
-        assertTrue(req.equals(req));
+        assertEquals(req, req);
     }
 
     @Test

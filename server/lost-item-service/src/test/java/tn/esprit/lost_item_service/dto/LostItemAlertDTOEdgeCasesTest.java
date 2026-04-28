@@ -11,7 +11,7 @@ class LostItemAlertDTOEdgeCasesTest {
     @Test
     void testEqualsWithSameObject() {
         LostItemAlertDTO dto = LostItemAlertDTO.builder().id(1L).title("Alert").build();
-        assertTrue(dto.equals(dto));
+        assertEquals(dto, dto);
     }
 
     @Test

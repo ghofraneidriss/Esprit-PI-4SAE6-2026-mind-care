@@ -6,7 +6,6 @@ import tn.esprit.lost_item_service.Entity.ItemPriority;
 import tn.esprit.lost_item_service.Entity.ItemStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +14,7 @@ class LostItemDTOEdgeCasesTest {
     @Test
     void testEqualsWithSameObject() {
         LostItemDTO dto = LostItemDTO.builder().id(1L).title("Test").build();
-        assertTrue(dto.equals(dto));
+        assertEquals(dto, dto);
     }
 
     @Test
