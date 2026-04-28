@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tn.esprit.lost_item_service.Entity.*;
+import tn.esprit.lost_item_service.dto.UpdateSearchReportRequest;
 import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import tn.esprit.lost_item_service.Repository.SearchReportRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -127,9 +128,7 @@ class SearchReportControllerIntegrationTest {
                 .build();
         SearchReport saved = searchReportRepository.save(report);
 
-        SearchReport updateData = SearchReport.builder()
-                .lostItemId(testItem.getId())
-                .reportedBy(2L)
+        UpdateSearchReportRequest updateData = UpdateSearchReportRequest.builder()
                 .searchDate(LocalDate.now())
                 .locationSearched("Updated Location")
                 .searchResult(SearchResult.FOUND)

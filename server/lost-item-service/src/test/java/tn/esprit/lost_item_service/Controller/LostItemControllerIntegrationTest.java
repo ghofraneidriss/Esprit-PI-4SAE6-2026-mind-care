@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tn.esprit.lost_item_service.dto.CreateLostItemRequest;
+import tn.esprit.lost_item_service.dto.UpdateLostItemRequest;
 import tn.esprit.lost_item_service.Entity.*;
 import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -115,10 +116,9 @@ class LostItemControllerIntegrationTest {
                 .build();
         LostItem saved = lostItemRepository.save(item);
 
-        CreateLostItemRequest updateRequest = CreateLostItemRequest.builder()
+        UpdateLostItemRequest updateRequest = UpdateLostItemRequest.builder()
                 .title("Updated Title")
                 .category(ItemCategory.ACCESSORY)
-                .patientId(1L)
                 .priority(ItemPriority.MEDIUM)
                 .build();
 
