@@ -254,10 +254,11 @@ class LostItemAlertServiceIntegrationExtendedTest {
                 .status(AlertStatus.NEW)
                 .build();
         LostItemAlert saved = alertRepository.save(alert);
+        Long alertId = saved.getId();
 
-        lostItemAlertService.deleteAlert(saved.getId());
+        lostItemAlertService.deleteAlert(alertId);
 
-        assertThrows(RuntimeException.class, () -> lostItemAlertService.getAlertById(saved.getId()));
+        assertThrows(RuntimeException.class, () -> lostItemAlertService.getAlertById(alertId));
     }
 
     @Test
