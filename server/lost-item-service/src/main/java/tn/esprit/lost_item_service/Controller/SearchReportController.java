@@ -93,12 +93,11 @@ public class SearchReportController {
     @PutMapping("/{id}")
     public ResponseEntity<SearchReportDTO> updateSearchReport(
             @PathVariable Long id,
-            @RequestBody UpdateSearchReportRequest request,
+            @RequestBody SearchReport report,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkReportAccess(id, userId, userRole);
-        SearchReport report = DTOMapper.toSearchReportForUpdate(request);
         SearchReport updated = searchReportService.updateSearchReport(id, report);
         return ResponseEntity.ok(DTOMapper.toSearchReportDTO(updated));
     }

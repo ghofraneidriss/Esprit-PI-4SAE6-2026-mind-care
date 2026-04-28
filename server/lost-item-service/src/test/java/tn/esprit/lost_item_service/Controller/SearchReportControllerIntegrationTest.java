@@ -128,7 +128,9 @@ class SearchReportControllerIntegrationTest {
                 .build();
         SearchReport saved = searchReportRepository.save(report);
 
-        UpdateSearchReportRequest updateData = UpdateSearchReportRequest.builder()
+        SearchReport updateData = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(2L)
                 .searchDate(LocalDate.now())
                 .locationSearched("Updated Location")
                 .searchResult(SearchResult.FOUND)

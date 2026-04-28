@@ -116,15 +116,18 @@ class LostItemControllerIntegrationTest {
                 .build();
         LostItem saved = lostItemRepository.save(item);
 
-        UpdateLostItemRequest updateRequest = UpdateLostItemRequest.builder()
+        // Test update by sending entire LostItem entity
+        LostItem updateData = LostItem.builder()
                 .title("Updated Title")
                 .category(ItemCategory.ACCESSORY)
+                .patientId(1L)
+                .status(ItemStatus.LOST)
                 .priority(ItemPriority.MEDIUM)
                 .build();
 
         mockMvc.perform(put("/api/lost-items/" + saved.getId())
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateRequest)))
+                .content(objectMapper.writeValueAsString(updateData)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Title"))
                 .andExpect(jsonPath("$.priority").value("MEDIUM"));
