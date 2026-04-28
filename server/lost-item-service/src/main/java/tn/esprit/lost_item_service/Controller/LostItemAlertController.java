@@ -108,7 +108,7 @@ public class LostItemAlertController {
     @PutMapping("/{id}")
     public ResponseEntity<LostItemAlertDTO> updateAlert(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateLostItemAlertRequest request,
+            @RequestBody UpdateLostItemAlertRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {

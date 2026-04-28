@@ -42,7 +42,7 @@ public class SearchReportController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createSearchReport(
-            @Valid @RequestBody CreateSearchReportRequest request,
+            @RequestBody CreateSearchReportRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
@@ -93,7 +93,7 @@ public class SearchReportController {
     @PutMapping("/{id}")
     public ResponseEntity<SearchReportDTO> updateSearchReport(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateSearchReportRequest request,
+            @RequestBody UpdateSearchReportRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {

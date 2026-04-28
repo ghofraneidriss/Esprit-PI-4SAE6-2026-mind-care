@@ -88,7 +88,7 @@ public class LostItemController {
     @PutMapping("/{id}")
     public ResponseEntity<LostItemDTO> updateLostItem(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateLostItemRequest request,
+            @RequestBody UpdateLostItemRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
