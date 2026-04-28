@@ -17,13 +17,13 @@ class LostItemAlertDTOEdgeCasesTest {
     @Test
     void testEqualsWithNull() {
         LostItemAlertDTO dto = LostItemAlertDTO.builder().id(1L).title("Alert").build();
-        assertNotEquals(dto, null);
+        assertNotEquals(null, dto);
     }
 
     @Test
     void testEqualsWithDifferentType() {
         LostItemAlertDTO dto = LostItemAlertDTO.builder().id(1L).title("Alert").build();
-        assertNotEquals(dto, "not a dto");
+        assertNotEquals("not a dto", dto);
     }
 
     @Test

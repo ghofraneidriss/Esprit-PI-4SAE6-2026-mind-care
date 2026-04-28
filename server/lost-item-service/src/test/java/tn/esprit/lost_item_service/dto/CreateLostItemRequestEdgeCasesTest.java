@@ -19,13 +19,13 @@ class CreateLostItemRequestEdgeCasesTest {
     @Test
     void testEqualsWithNull() {
         CreateLostItemRequest req = CreateLostItemRequest.builder().title("Test").category(ItemCategory.MEDICATION).patientId(1L).build();
-        assertNotEquals(req, null);
+        assertNotEquals(null, req);
     }
 
     @Test
     void testEqualsWithDifferentType() {
         CreateLostItemRequest req = CreateLostItemRequest.builder().title("Test").category(ItemCategory.MEDICATION).patientId(1L).build();
-        assertNotEquals(req, "not a request");
+        assertNotEquals("not a request", req);
     }
 
     @Test

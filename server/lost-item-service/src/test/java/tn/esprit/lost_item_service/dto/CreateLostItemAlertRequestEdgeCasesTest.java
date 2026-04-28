@@ -26,7 +26,7 @@ class CreateLostItemAlertRequestEdgeCasesTest {
                 .title("Alert")
                 .level(AlertLevel.HIGH)
                 .build();
-        assertNotEquals(req, null);
+        assertNotEquals(null, req);
     }
 
     @Test
@@ -37,7 +37,7 @@ class CreateLostItemAlertRequestEdgeCasesTest {
                 .title("Alert")
                 .level(AlertLevel.HIGH)
                 .build();
-        assertNotEquals(req, "not a request");
+        assertNotEquals("not a request", req);
     }
 
     @Test
