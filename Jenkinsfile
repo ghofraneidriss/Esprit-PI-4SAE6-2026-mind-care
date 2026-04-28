@@ -13,6 +13,11 @@ pipeline {
         SONARQUBE_HOST_URL = 'http://sonarqube:9000'
         SONAR_HOST_URL = 'http://localhost:9000'
         SONAR_TOKEN_CREDENTIALS_ID = 'sonar-token-mindcare'
+          // SonarQube
+    SONAR_PROJECT_KEY = 'mindcare'
+    SONAR_PROJECT_NAME = 'mindcare'
+     SERVICE_NAME = 'volunteer'
+    SERVICE_DIR = 'volunteer'
     }
 
     stages {
@@ -55,47 +60,26 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            when {
-                expression { return env.SONAR_HOST_URL?.trim() && env.SONAR_TOKEN_CREDENTIALS_ID?.trim() }
-            }
-            steps {
-                withCredentials([string(credentialsId: env.SONAR_TOKEN_CREDENTIALS_ID, variable: 'SONAR_TOKEN')]) {
-                    script {
-                        def sonarStatus = sh(
-                            script: '''
-                                set -e
-
-                              /*   echo "[SONAR] medical_report_service"
-                                cd medical_report_service
-                                mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                  -Dsonar.projectKey=mindcare \
-                                  -Dsonar.projectName=mindcare \
-                                  -Dsonar.host.url=$SONAR_HOST_URL \
-                                  -Dsonar.token=$SONAR_TOKEN \
-                                  -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                                cd .. */
-
-                                echo "[SONAR] volunteer"
-                                cd volunteer
-                                mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                  -Dsonar.projectKey=mindcare \
-                                  -Dsonar.projectName=mindcare \
-                                  -Dsonar.host.url=$SONAR_HOST_URL \
-                                  -Dsonar.token=$SONAR_TOKEN \
-                                  -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                                cd ..
-                            ''',
-                            returnStatus: true
-                        )
-
-                        if (sonarStatus != 0) {
-                            echo "Skipping SonarQube analysis because Maven/Sonar dependencies could not be resolved or the Sonar server is unreachable. Exit code: ${sonarStatus}"
-                        }
-                    }
-                }
-            }
+       stage('SonarQube Analysis') {
+      when {
+        expression { return env.SONAR_HOST_URL?.trim() && env.SONAR_TOKEN_CREDENTIALS_ID?.trim() }
+      }
+      steps {
+        withCredentials([string(credentialsId: env.SONAR_TOKEN_CREDENTIALS_ID, variable: 'SONAR_TOKEN')]) {
+          sh '''
+            set -e
+            echo "[SONAR] $SERVICE_NAME"
+            cd "$SERVICE_DIR"
+            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+              -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+              -Dsonar.projectName=$SONAR_PROJECT_NAME \
+              -Dsonar.host.url=$SONAR_HOST_URL \
+              -Dsonar.token=$SONAR_TOKEN \
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+          '''
         }
+      }
+    }
 
         stage('Build Docker Images') {
             steps {
