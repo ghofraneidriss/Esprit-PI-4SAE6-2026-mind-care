@@ -5,13 +5,16 @@ import tn.esprit.lost_item_service.Entity.LostItemAlert;
 import tn.esprit.lost_item_service.Entity.SearchReport;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for converting between Entity and DTO objects.
  * Provides static methods to safely convert entities to their DTO representations.
  */
 public class DTOMapper {
+
+    private DTOMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     // ── LostItem Mapping ──────────────────────────────────────────────────────
 
@@ -44,7 +47,7 @@ public class DTOMapper {
     public static List<LostItemDTO> toLostItemDTOList(List<LostItem> entities) {
         return entities.stream()
                 .map(DTOMapper::toLostItemDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // ── LostItemAlert Mapping ─────────────────────────────────────────────────
@@ -76,7 +79,7 @@ public class DTOMapper {
     public static List<LostItemAlertDTO> toLostItemAlertDTOList(List<LostItemAlert> entities) {
         return entities.stream()
                 .map(DTOMapper::toLostItemAlertDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // ── SearchReport Mapping ──────────────────────────────────────────────────
@@ -107,7 +110,7 @@ public class DTOMapper {
     public static List<SearchReportDTO> toSearchReportDTOList(List<SearchReport> entities) {
         return entities.stream()
                 .map(DTOMapper::toSearchReportDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

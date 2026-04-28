@@ -107,7 +107,7 @@ public class SearchReportService {
                 .filter(r -> locationKeyword == null || locationKeyword.isBlank()
                         || (r.getLocationSearched() != null
                             && r.getLocationSearched().toLowerCase().contains(locationKeyword.toLowerCase())))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -144,10 +144,10 @@ public class SearchReportService {
                                     "location", r.getLocationSearched() != null ? r.getLocationSearched() : "",
                                     "status", r.getStatus() != null ? r.getStatus().name() : "OPEN"
                             ))
-                            .collect(Collectors.toList()));
+                            .toList());
                     return day;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         // Location heatmap: most searched locations
         Map<String, Long> locationFrequency = reports.stream()
@@ -243,12 +243,12 @@ public class SearchReportService {
      */
     public List<SearchReport> getReportsByPatient(Long patientId) {
         List<Long> itemIds = lostItemRepository.findByPatientId(patientId)
-                .stream().map(i -> i.getId()).collect(java.util.stream.Collectors.toList());
+                .stream().map(i -> i.getId()).toList();
         if (itemIds.isEmpty()) return List.of();
         return searchReportRepository.findAll().stream()
                 .filter(r -> itemIds.contains(r.getLostItemId()))
                 .sorted(Comparator.comparing(SearchReport::getSearchDate,
                         Comparator.nullsLast(Comparator.reverseOrder())))
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 }

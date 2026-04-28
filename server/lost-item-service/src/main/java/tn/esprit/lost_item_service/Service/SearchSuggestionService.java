@@ -11,7 +11,6 @@ import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import tn.esprit.lost_item_service.Repository.SearchReportRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Real-time Smart Search Suggestion Engine.
@@ -46,7 +45,7 @@ public class SearchSuggestionService {
                 ItemCategory cat = ItemCategory.valueOf(category.toUpperCase());
                 items = items.stream()
                         .filter(i -> cat.equals(i.getCategory()))
-                        .collect(Collectors.toList());
+                        .toList();
             } catch (IllegalArgumentException ignored) {
                 // unknown category — use all items
             }
@@ -57,7 +56,7 @@ public class SearchSuggestionService {
         }
 
         // 2. Fetch all search reports for those items in one query
-        List<Long> itemIds = items.stream().map(LostItem::getId).collect(Collectors.toList());
+        List<Long> itemIds = items.stream().map(LostItem::getId).toList();
         List<SearchReport> reports = searchReportRepository.findByLostItemIdIn(itemIds);
 
         // 3. Build per-location statistics
