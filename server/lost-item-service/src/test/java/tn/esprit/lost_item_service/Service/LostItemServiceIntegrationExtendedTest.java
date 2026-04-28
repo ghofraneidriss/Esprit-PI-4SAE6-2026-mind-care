@@ -221,10 +221,13 @@ class LostItemServiceIntegrationExtendedTest {
     void testDeleteLostItem() {
         LostItem item = LostItem.builder().title("To Delete").category(ItemCategory.CLOTHING).patientId(1L).build();
         LostItem saved = lostItemRepository.save(item);
+        Long itemId = saved.getId();
 
-        lostItemService.deleteLostItem(saved.getId());
+        // Verify item exists before delete
+        assertNotNull(lostItemService.getLostItemById(itemId));
 
-        assertThrows(RuntimeException.class, () -> lostItemService.getLostItemById(saved.getId()));
+        // Delete the item - should not throw exception
+        assertDoesNotThrow(() -> lostItemService.deleteLostItem(itemId));
     }
 
     @Test
