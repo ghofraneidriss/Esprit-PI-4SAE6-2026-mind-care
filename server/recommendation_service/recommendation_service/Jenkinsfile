@@ -32,7 +32,7 @@ pipeline {
         stage('Tests Unitaires') {
             steps {
                 dir('server/recommendation_service/recommendation_service') {
-                    sh 'mvn test || true'
+                    sh 'mvn test'
                 }
             }
             post {
@@ -46,13 +46,13 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     dir('server/recommendation_service/recommendation_service') {
-                        sh """
-                            mvn sonar:sonar \
+                        sh '''
+                            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
                                 -Dsonar.projectKey=recommendation_service \
                                 -Dsonar.projectName=recommendation_service \
-                                -Dsonar.login=${SONAR_TOKEN} \
+                                -Dsonar.token=$SONAR_TOKEN \
                                 -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                        """
+                        '''
                     }
                 }
             }
