@@ -61,10 +61,10 @@ pipeline {
                         withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
                             sh '''
                                 cd medical_report_service
-                                mvn sonar:sonar \
-                                  -Dsonar.projectKey=medical-report-service \
-                                  -Dsonar.host.url=$SONARQUBE_HOST_URL \
-                                  -Dsonar.login=$SONAR_TOKEN
+                                mvn clean verify sonar:sonar \
+                                  -Dsonar.projectKey=mindcare \
+                                  -Dsonar.host.url=http://localhost:9000 \
+                                  -Dsonar.login=sqp_1e65df783c03befbd9a597df8fad309da696bd8d
                                 cd ..
 
                                 cd volunteer
