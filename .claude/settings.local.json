@@ -38,7 +38,8 @@
       "Bash(grep -A 5 \"Lines of Code\" target/site/jacoco/index.html)",
       "Bash(python3)",
       "Bash(xargs ls *)",
-      "Bash(git commit -m 'test: Restore PUT endpoint update tests \\(298 total tests\\) *)"
+      "Bash(git commit -m 'test: Restore PUT endpoint update tests \\(298 total tests\\) *)",
+      "Bash(git commit -m 'test: Add comprehensive controller endpoint tests \\(308 total tests\\) *)"
     ]
   }
 }

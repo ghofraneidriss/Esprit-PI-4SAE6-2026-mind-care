@@ -283,4 +283,72 @@ class SearchReportControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.locationSearched").value("Living Room"));
     }
+
+    @Test
+    void testAdvancedSearchWithMultipleParams() throws Exception {
+        SearchReport report1 = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(2L)
+                .searchDate(LocalDate.now())
+                .locationSearched("Kitchen")
+                .searchResult(SearchResult.FOUND)
+                .status(ReportStatus.CLOSED)
+                .build();
+        SearchReport report2 = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(3L)
+                .searchDate(LocalDate.now().minusDays(1))
+                .locationSearched("Bedroom")
+                .searchResult(SearchResult.NOT_FOUND)
+                .status(ReportStatus.OPEN)
+                .build();
+        searchReportRepository.save(report1);
+        searchReportRepository.save(report2);
+
+        mockMvc.perform(get("/api/search-reports/search")
+                .param("lostItemId", testItem.getId().toString())
+                .param("reportedBy", "2")
+                .param("searchResult", "FOUND")
+                .param("status", "CLOSED"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.List.class)));
+    }
+
+    @Test
+    void testAdvancedSearchWithDateRange() throws Exception {
+        SearchReport report = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(2L)
+                .searchDate(LocalDate.now())
+                .locationSearched("Kitchen")
+                .searchResult(SearchResult.FOUND)
+                .status(ReportStatus.CLOSED)
+                .build();
+        searchReportRepository.save(report);
+
+        mockMvc.perform(get("/api/search-reports/search")
+                .param("lostItemId", testItem.getId().toString())
+                .param("from", LocalDate.now().minusDays(7).toString())
+                .param("to", LocalDate.now().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.List.class)));
+    }
+
+    @Test
+    void testAdvancedSearchWithLocationKeyword() throws Exception {
+        SearchReport report = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(2L)
+                .searchDate(LocalDate.now())
+                .locationSearched("Living Room Floor")
+                .searchResult(SearchResult.NOT_FOUND)
+                .status(ReportStatus.OPEN)
+                .build();
+        searchReportRepository.save(report);
+
+        mockMvc.perform(get("/api/search-reports/search")
+                .param("locationKeyword", "Floor"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.List.class)));
+    }
 }

@@ -196,4 +196,125 @@ class LostItemControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Item"));
     }
+
+    @Test
+    void testGetCriticalLostItems() throws Exception {
+        LostItem item1 = LostItem.builder()
+                .title("Critical Item 1")
+                .category(ItemCategory.MEDICATION)
+                .patientId(1L)
+                .status(ItemStatus.LOST)
+                .priority(ItemPriority.CRITICAL)
+                .build();
+        LostItem item2 = LostItem.builder()
+                .title("Critical Item 2")
+                .category(ItemCategory.DOCUMENT)
+                .patientId(1L)
+                .status(ItemStatus.LOST)
+                .priority(ItemPriority.CRITICAL)
+                .build();
+        lostItemRepository.save(item1);
+        lostItemRepository.save(item2);
+
+        mockMvc.perform(get("/api/lost-items/patient/1/critical"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items", isA(java.util.List.class)))
+                .andExpect(jsonPath("$.urgentCount").value(2));
+    }
+
+    @Test
+    void testGetAllCriticalItems() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Critical Item")
+                .category(ItemCategory.MEDICATION)
+                .patientId(5L)
+                .status(ItemStatus.LOST)
+                .priority(ItemPriority.CRITICAL)
+                .build();
+        lostItemRepository.save(item);
+
+        mockMvc.perform(get("/api/lost-items/critical/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items", isA(java.util.List.class)));
+    }
+
+    @Test
+    void testGetItemsByCaregiver() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Caregiver Item")
+                .category(ItemCategory.CLOTHING)
+                .patientId(1L)
+                .caregiverId(2L)
+                .status(ItemStatus.LOST)
+                .build();
+        lostItemRepository.save(item);
+
+        mockMvc.perform(get("/api/lost-items/caregiver/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.List.class)));
+    }
+
+    @Test
+    void testGetCriticalItemsByCaregiver() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Critical Caregiver Item")
+                .category(ItemCategory.MEDICATION)
+                .patientId(1L)
+                .caregiverId(3L)
+                .status(ItemStatus.LOST)
+                .priority(ItemPriority.CRITICAL)
+                .build();
+        lostItemRepository.save(item);
+
+        mockMvc.perform(get("/api/lost-items/caregiver/3/critical"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items", isA(java.util.List.class)));
+    }
+
+    @Test
+    void testGetGlobalStatistics() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Stat Item")
+                .category(ItemCategory.CLOTHING)
+                .patientId(1L)
+                .status(ItemStatus.LOST)
+                .priority(ItemPriority.HIGH)
+                .build();
+        lostItemRepository.save(item);
+
+        mockMvc.perform(get("/api/lost-items/statistics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.Map.class)));
+    }
+
+    @Test
+    void testGetPatientItemRisk() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Risk Item")
+                .category(ItemCategory.MEDICATION)
+                .patientId(5L)
+                .status(ItemStatus.LOST)
+                .priority(ItemPriority.CRITICAL)
+                .build();
+        lostItemRepository.save(item);
+
+        mockMvc.perform(get("/api/lost-items/patient/5/risk"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.Map.class)));
+    }
+
+    @Test
+    void testGetPatientFrequencyTrend() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Trend Item")
+                .category(ItemCategory.CLOTHING)
+                .patientId(5L)
+                .status(ItemStatus.LOST)
+                .build();
+        lostItemRepository.save(item);
+
+        mockMvc.perform(get("/api/lost-items/patient/5/trend"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", isA(java.util.Map.class)));
+    }
 }
