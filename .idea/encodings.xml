@@ -3,6 +3,11 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Ordennance_et_consultation/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/api_gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backoffice/api_gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backoffice/eureka-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backoffice/ordonnance_et_medicaments/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backoffice/traitement_et_consultation/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backoffice/users_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/forums_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/medical_report_service/src/main/java" charset="UTF-8" />
