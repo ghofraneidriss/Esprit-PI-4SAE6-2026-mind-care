@@ -6,7 +6,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot comme parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -22,13 +21,12 @@
     <name>Alzheimer App - Parent</name>
     <description>Multi-module project for Alzheimer detection application</description>
 
-    <!-- Liste des microservices -->
     <modules>
-        <module>users_service</module>
-        <module>api_gateway</module>
-        <module>traitement_et_consultation</module>
-        <module>eureka-server</module>
-        <module>ordonnance_et_medicaments</module>
+        <module>backoffice/users_service</module>
+        <module>backoffice/ordonnance_et_medicaments</module>
+        <module>backoffice/eureka-server</module>
+        <module>backoffice/api_gateway</module>
+        <module>backoffice/traitement_et_consultation</module>
     </modules>
 
     <properties>
@@ -37,9 +35,17 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <jacoco.version>0.8.11</jacoco.version>
     </properties>
 
-    <!-- ✅ Gestion des versions Spring Cloud -->
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -51,5 +57,30 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
