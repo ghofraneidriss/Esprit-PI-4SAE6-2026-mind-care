@@ -6,14 +6,21 @@ pipeline {
     }
 
     environment {
+        // Configuration SonarQube
         SONAR_HOST_URL  = 'http://host.docker.internal:9091'
         IMAGE_TAG       = '1.0'
+
+        // Configuration Harbor
         HARBOR_URL      = 'localhost:8085'
         HARBOR_PROJECT  = 'mindcare'
+
+        // Configuration MySQL pour Jenkins (Lien vers ton Windows)
+        // Comme tu as supprimé le pass, on laisse vide ici aussi
+        DB_USER         = 'root'
+        DB_PASS         = ''
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -23,36 +30,18 @@ pipeline {
         stage('Start SonarQube') {
             steps {
                 sh '''
-                    # Prérequis mémoire
                     sudo sysctl -w vm.max_map_count=262144 || true
-
-                    # Vérifie si SonarQube tourne déjà
                     if [ $(docker ps -q -f name=sonarqube) ]; then
-                        echo "SonarQube already running"
+                        echo "SonarQube is already running."
                     elif [ $(docker ps -aq -f name=sonarqube) ]; then
-                        echo "Starting existing SonarQube container"
+                        echo "Starting existing SonarQube container..."
                         docker start sonarqube
                     else
-                        echo "Pulling and starting SonarQube from Docker Hub"
-                        docker run -d \
-                            --name sonarqube \
-                            -p 9091:9000 \
+                        echo "Launching new SonarQube container..."
+                        docker run -d --name sonarqube -p 9091:9000 \
                             -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true \
                             sonarqube:community
                     fi
-
-                    # Attendre que SonarQube soit opérationnel
-                    echo "Waiting for SonarQube to be ready..."
-                    for i in $(seq 1 24); do
-                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-                            http://localhost:9091/api/system/status || echo "000")
-                        if [ "$STATUS" = "200" ]; then
-                            echo "SonarQube is ready!"
-                            break
-                        fi
-                        echo "Attempt $i/24 - Status: $STATUS - Waiting 10s..."
-                        sleep 10
-                    done
                 '''
             }
         }
@@ -60,52 +49,66 @@ pipeline {
         stage('Build & Install Parent') {
             steps {
                 dir('server') {
+                    // On installe le parent en sautant les tests pour aller vite
                     sh 'mvn clean install -DskipTests'
                 }
             }
         }
 
-        stage('Test activities_service') {
+        stage('Test & Report: Activities Service') {
             steps {
                 dir('server/activities_service') {
-                    sh 'mvn clean test'
+                    // On injecte l'URL MySQL de ton Windows (host.docker.internal)
+                    sh """
+                        mvn clean test jacoco:report \
+                        -DACTIVITIES_DB_URL=jdbc:mysql://host.docker.internal:3306/activities_db?createDatabaseIfNotExist=true \
+                        -DDB_USERNAME=${DB_USER} \
+                        -DDB_PASSWORD=${DB_PASS}
+                    """
                 }
             }
             post {
                 always {
                     junit allowEmptyResults: true,
-                        testResults: 'server/activities_service/target/surefire-reports/*.xml'
+                            testResults: 'server/activities_service/target/surefire-reports/*.xml'
                 }
             }
         }
 
-        stage('Test movement_service') {
+        stage('Test & Report: Movement Service') {
             steps {
                 dir('server/movement_service') {
-                    sh 'mvn clean test'
+                    sh """
+                        mvn clean test jacoco:report \
+                        -DMOVEMENT_DB_URL=jdbc:mysql://host.docker.internal:3306/movement_db?createDatabaseIfNotExist=true \
+                        -DDB_USERNAME=${DB_USER} \
+                        -DDB_PASSWORD=${DB_PASS}
+                    """
                 }
             }
             post {
                 always {
                     junit allowEmptyResults: true,
-                        testResults: 'server/movement_service/target/surefire-reports/*.xml'
+                            testResults: 'server/movement_service/target/surefire-reports/*.xml'
                 }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
+                // On laisse 30 secondes à Sonar pour finir de démarrer si besoin
+                sleep 30
                 withSonarQubeEnv('SonarQube') {
                     sh """
                         mvn -f server/activities_service/pom.xml sonar:sonar \
-                            -Dsonar.projectKey=activities_service \
-                            -Dsonar.projectName=activities_service \
+                            -Dsonar.projectKey=activities-service \
+                            -Dsonar.projectName='Activities Service' \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
                         mvn -f server/movement_service/pom.xml sonar:sonar \
-                            -Dsonar.projectKey=movement_service \
-                            -Dsonar.projectName=movement_service \
+                            -Dsonar.projectKey=movement-service \
+                            -Dsonar.projectName='Movement Service' \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     """
@@ -121,43 +124,35 @@ pipeline {
             }
         }
 
-        stage('Docker Build & Push to Harbor') {
+        stage('Docker Build & Push') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'harbor-creds',
-                    usernameVariable: 'HARBOR_USER',
-                    passwordVariable: 'HARBOR_PASS'
+                        credentialsId: 'harbor-creds',
+                        usernameVariable: 'HARBOR_USER',
+                        passwordVariable: 'HARBOR_PASS'
                 )]) {
                     sh """
-                        docker login ${HARBOR_URL} \
-                            -u ${HARBOR_USER} \
-                            -p ${HARBOR_PASS}
+                        docker login ${HARBOR_URL} -u ${HARBOR_USER} -p ${HARBOR_PASS}
 
-                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG} \
-                            server/activities_service/
+                        # Build et Push Activities
+                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG} server/activities_service/
                         docker push ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG}
 
-                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG} \
-                            server/movement_service/
+                        # Build et Push Movement
+                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG} server/movement_service/
                         docker push ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG}
                     """
                 }
-            }
-        }
-
-        stage('Stop SonarQube') {
-            steps {
-                sh 'docker stop sonarqube || true'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline CI terminée avec succès !'
+            echo '✅ SUCCÈS : Tests MySQL validés, Sonar terminé et images poussées sur Harbor !'
         }
         failure {
-            echo '❌ Echec — vérifier les logs.'
+            echo '❌ ÉCHEC : Vérifie la connexion MySQL (host.docker.internal) ou les logs Maven.'
             sh 'docker stop sonarqube || true'
         }
     }
