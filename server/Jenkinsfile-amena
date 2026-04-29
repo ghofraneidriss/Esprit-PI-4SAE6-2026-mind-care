@@ -77,24 +77,24 @@ pipeline {
 
         stage('Docker Build & Push Harbor') {
             steps {
-                // Utilisation des credentials 'harbor-creds' configurés dans Jenkins
                 withCredentials([usernamePassword(
                         credentialsId: 'harbor-creds',
                         usernameVariable: 'HARBOR_USER',
                         passwordVariable: 'HARBOR_PASS'
                 )]) {
                     sh """
-                        # Login sur ton Harbor local (Port 8085)
-                        docker login localhost:8085 -u ${HARBOR_USER} -p ${HARBOR_PASS}
-                        
-                        # Build et Push pour Activities
-                        docker build -t localhost:8085/mindcare/activities-service:1.0 server/activities_service/
-                        docker push localhost:8085/mindcare/activities-service:1.0
-                        
-                        # Build et Push pour Movement
-                        docker build -t localhost:8085/mindcare/movement-service:1.0 server/movement_service/
-                        docker push localhost:8085/mindcare/movement-service:1.0
-                    """
+                docker login localhost:8085 -u ${HARBOR_USER} -p ${HARBOR_PASS}
+                
+                # Build Activities : On entre dans le dossier pour être sûr que Docker voit le fichier
+                cd server/activities_service && docker build -t localhost:8085/mindcare/activities-service:1.0 .
+                docker push localhost:8085/mindcare/activities-service:1.0
+                cd ../..
+
+                # Build Movement
+                cd server/movement_service && docker build -t localhost:8085/mindcare/movement-service:1.0 .
+                docker push localhost:8085/mindcare/movement-service:1.0
+                cd ../..
+            """
                 }
             }
         }
