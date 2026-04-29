@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../frontoffice/auth/auth.service';
 
 @Component({
   selector: 'app-home2',
@@ -6,4 +7,12 @@ import { Component } from '@angular/core';
   templateUrl: './home2.html',
   styleUrls: ['./home2.css'],
 })
-export class Home2 {}
+export class Home2 {
+  constructor(public authService: AuthService) { }
+
+  isDocOrAdmin(): boolean {
+    const role = this.authService.getLoggedRole();
+    return role === 'DOCTOR' || role === 'ADMIN';
+  }
+}
+

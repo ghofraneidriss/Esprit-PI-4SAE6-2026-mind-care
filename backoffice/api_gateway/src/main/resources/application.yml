@@ -1,0 +1,41 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: api-gateway
+  security:
+    user:
+      name: admin
+      password: admin
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: traitement-consultation-service-route
+          uri: lb://TRAITEMENT-CONSULTATION-SERVICE
+          predicates:
+            - Path=/api/consultations/**,/api/appointments/**,/api/patient-profiles/**
+        
+        # Ajout pour votre groupe : Route pour le USER-SERVICE
+        - id: user-service-route
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**,/api/auth/** # Modifiez les préfixes selon vos besoins futurs
+            
+        # Ajout pour votre groupe : Route pour le ORDONNANCE-MEDICAMENT-SERVICE
+        - id: ordonnance-medicament-service-route
+          uri: lb://ORDONNANCE-MEDICAMENT-SERVICE
+          predicates:
+            - Path=/api/ordonnances/**,/api/medicaments/** # Modifiez les préfixes selon vos besoins futurs
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

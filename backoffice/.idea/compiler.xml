@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="users_service" />
+        <module name="ordonnance_et_medicaments" />
+        <module name="api_gateway" />
+        <module name="eureka-server" />
+      </profile>
+      <profile name="Annotation profile for Alzheimer App - Parent" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="traitement_et_consultation" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="forums_service" target="17" />
+      <module name="medical_report_service" target="17" />
+      <module name="Ordennance_et_consultation" target="17" />
+      <module name="volunteer_service" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Ordennance_et_consultation" options="-parameters" />
+      <module name="api_gateway" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="ordonnance_et_medicaments" options="-parameters" />
+      <module name="traitement_et_consultation" options="-parameters" />
+      <module name="users_service" options="-parameters" />
+    </option>
+  </component>
+</project>

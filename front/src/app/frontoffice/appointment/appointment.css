@@ -1,1 +1,443 @@
-﻿
+﻿:host {
+    --primary-teal: #2D9A9B;
+    --primary-teal-hover: #248182;
+    --primary-teal-subtle: #e0f2f1;
+    --primary-teal-border: rgba(45, 154, 155, 0.2);
+}
+
+.appointment-info {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+.medical-green-text,
+.text-teal {
+    color: var(--primary-teal) !important;
+}
+
+.bg-teal {
+    background-color: var(--primary-teal) !important;
+    color: white !important;
+}
+
+.bg-teal-subtle {
+    background-color: var(--primary-teal-subtle) !important;
+    color: var(--primary-teal) !important;
+}
+
+.border-teal-subtle {
+    border-color: var(--primary-teal-border) !important;
+}
+
+.appointment-form-wrapper {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+.form-select,
+.form-control {
+    padding: 0.8rem 1rem;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: var(--primary-teal);
+    box-shadow: 0 0 0 0.25rem rgba(45, 154, 155, 0.25);
+}
+
+.btn-teal {
+    background-color: var(--primary-teal);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-teal:hover {
+    background-color: var(--primary-teal-hover);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-teal:disabled {
+    background-color: #a0bec0;
+}
+
+.btn-outline-teal {
+    color: var(--primary-teal);
+    border: 1px solid var(--primary-teal);
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-teal:hover {
+    background-color: var(--primary-teal);
+    color: white;
+}
+
+.btn-outline-teal:disabled {
+    color: #a0bec0;
+    border-color: #e2e8f0;
+}
+
+.info-item .bg-light {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ══════════════ PATIENT APPOINTMENT CALENDAR ══════════════ */
+.ang-calendar-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.ang-cal-header {
+    padding: 0.85rem 1.2rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
+}
+
+.ang-cal-nav {
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.ang-nav-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: background 0.15s;
+}
+
+.ang-nav-btn:hover {
+    background: #e2e8f0;
+}
+
+.ang-cal-body {
+    padding: 0.75rem;
+    min-height: 200px;
+}
+
+.ang-month-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+}
+
+.ang-month-day-name {
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+    padding: 4px 0;
+}
+
+.ang-month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+}
+
+.ang-day-cell {
+    min-height: 64px;
+    background: #fff;
+    border-radius: 6px;
+    padding: 4px 5px;
+    border: 1px solid #f1f5f9;
+    transition: background 0.15s;
+}
+
+.ang-day-cell:hover {
+    background: #f8fafc;
+}
+
+.ang-day-cell.other-month {
+    opacity: 0.4;
+}
+
+.ang-day-cell.today {
+    border-color: var(--primary-teal);
+    background: var(--primary-teal-subtle);
+}
+
+.ang-day-cell.has-apts {
+    border-color: rgba(45, 154, 155, 0.3);
+}
+
+.ang-day-num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 2px;
+}
+
+.ang-day-cell.today .ang-day-num {
+    background: var(--primary-teal);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ang-apt-chip {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-bottom: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ang-more-chip {
+    font-size: 0.58rem;
+    color: #64748b;
+    padding-left: 2px;
+}
+
+.ang-week-grid {
+    display: flex;
+    gap: 4px;
+}
+
+.ang-week-col {
+    flex: 1;
+    min-width: 0;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+}
+
+.ang-week-col.today {
+    border-color: var(--primary-teal);
+}
+
+.ang-week-day-header {
+    text-align: center;
+    padding: 6px 4px;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.ang-week-day-name {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.ang-week-day-num {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.ang-week-day-num.today-circle {
+    background: var(--primary-teal);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px auto 0;
+}
+
+.ang-week-events {
+    padding: 4px;
+}
+
+.ang-no-event {
+    text-align: center;
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    padding: 8px 0;
+}
+
+.ang-cal-event {
+    border-radius: 6px;
+    padding: 4px 7px;
+    margin-bottom: 3px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.ang-cal-event-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+}
+
+.ang-event-time {
+    font-size: 0.65rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.ang-event-name {
+    font-size: 0.67rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Status colours */
+.apt-pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.apt-confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.apt-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.apt-rescheduled {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.ang-agenda-group {
+    margin-bottom: 1rem;
+}
+
+.ang-agenda-date-hdr {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--primary-teal);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 6px 4px 4px;
+    border-bottom: 1px solid rgba(45, 154, 155, 0.15);
+    margin-bottom: 6px;
+}
+
+.ang-cal-legend {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
+    flex-wrap: wrap;
+}
+
+.leg-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.leg-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* View-switcher buttons */
+.gcal-view-switcher {
+    display: flex;
+    gap: 2px;
+    background: rgba(148, 163, 184, 0.15);
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.gcal-view-btn {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+}
+
+.gcal-view-btn:hover {
+    background: rgba(255, 255, 255, 0.7);
+    color: #1e293b;
+}
+
+.gcal-view-btn.active {
+    background: #ffffff;
+    color: var(--primary-teal);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Holiday cell highlights ── */
+.ang-day-cell.is-holiday {
+    background: #fefce8;
+    border-color: #fcd34d !important;
+}
+
+.ang-day-cell.is-holiday .ang-day-num {
+    color: #92400e;
+}
+
+.ang-holiday-label {
+    font-size: 0.52rem;
+    font-weight: 700;
+    color: #92400e;
+    background: #fef3c7;
+    border-radius: 3px;
+    padding: 1px 3px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.ang-week-col.is-holiday .ang-week-day-header {
+    background: #fefce8;
+}
+
+.ang-holiday-dot {
+    font-size: 0.55rem;
+    color: #92400e;
+    font-weight: 700;
+    text-align: center;
+    padding: 2px 2px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ang-holiday-legend {
+    padding: 4px 12px 6px;
+    font-size: 0.68rem;
+    color: #64748b;
+}

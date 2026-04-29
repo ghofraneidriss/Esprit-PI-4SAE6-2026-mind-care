@@ -1,369 +1,462 @@
-﻿
+<app-header></app-header>
 
-  <header id="header" class="header d-flex align-items-center fixed-top">
-    <div class="container position-relative d-flex align-items-center justify-content-between">
+<main class="main" style="padding-top: 100px;">
 
-      <a routerLink="/" class="logo d-flex align-items-center me-auto me-xl-0">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/frontoffice/img/logo.webp" alt=""> -->
-        <h1 class="sitename">Medi<span>Nest</span></h1>
-      </a>
-
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a routerLink="/">Home</a></li>
-          <li><a routerLink="/about">About</a></li>
-          <li><a routerLink="/departments">Departments</a></li>
-          <li><a routerLink="/services">Services</a></li>
-          <li><a routerLink="/doctors">Doctors</a></li>
-          <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a routerLink="/department-details">Department Details</a></li>
-              <li><a routerLink="/service-details">Service Details</a></li>
-              <li><a routerLink="/appointment" class="active">Appointment</a></li>
-              <li><a routerLink="/testimonials">Testimonials</a></li>
-              <li><a routerLink="/faq">Frequently Asked Questions</a></li>
-              <li><a routerLink="/gallery">Gallery</a></li>
-              <li><a routerLink="/terms">Terms</a></li>
-              <li><a routerLink="/privacy">Privacy</a></li>
-              <li><a routerLink="/404">404</a></li>
-            </ul>
-          </li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li>
-          <li><a routerLink="/contact">Contact</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
-
-      <a class="btn-getstarted" routerLink="/appointment">Appointment</a>
-
-    </div>
-  </header>
-
-  <main class="main">
-
-    <!-- Page Title -->
-    <div class="page-title">
-      <div class="heading">
-        <div class="container">
-          <div class="row d-flex justify-content-center text-center">
-            <div class="col-lg-8">
-              <h1 class="heading-title">Appointment</h1>
-              <p class="mb-0">
-                Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo
-                odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum
-                debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat
-                ipsum dolorem.
-              </p>
-            </div>
+  <!-- Page Title -->
+  <div class="page-title mb-5">
+    <div class="heading">
+      <div class="container">
+        <div class="row d-flex justify-content-center text-center">
+          <div class="col-lg-8">
+            <h1 class="heading-title text-teal">Book an Appointment</h1>
+            <p class="mb-0 text-muted">
+              Schedule your consultation with our expert medical team. Fast, reliable and secure booking system.
+            </p>
           </div>
         </div>
       </div>
-      <nav class="breadcrumbs">
-        <div class="container">
-          <ol>
-            <li><a routerLink="/">Home</a></li>
-            <li class="current">Appointment</li>
-          </ol>
-        </div>
-      </nav>
-    </div><!-- End Page Title -->
+    </div>
+  </div><!-- End Page Title -->
 
-    <!-- Appointmnet Section -->
-    <section id="appointmnet" class="appointmnet section">
+  <!-- Appointment Section -->
+  <section id="appointment" class="appointmnet section pt-0">
+    <div class="container">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <!-- ─── Booking Form Row ───────────────────────────────────── -->
+      <div class="row gy-4 align-items-center mb-5">
 
-        <div class="row gy-4">
-
-          <!-- Appointment Info -->
-          <div class="col-lg-6">
-            <div class="appointment-info">
-              <h3>Quick &amp; Easy Online Booking</h3>
-              <p class="mb-4">Book your appointment in just a few simple steps. Our healthcare professionals are ready to provide you with the best medical care tailored to your needs.</p>
-
-              <div class="info-items">
-                <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="200">
-                  <div class="icon-wrapper me-3">
-                    <i class="bi bi-calendar-check"></i>
-                  </div>
-                  <div>
-                    <h5>Flexible Scheduling</h5>
-                    <p class="mb-0">Choose from available time slots that fit your busy schedule</p>
-                  </div>
-                </div><!-- End Info Item -->
-
-                <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="250">
-                  <div class="icon-wrapper me-3">
-                    <i class="bi bi-stopwatch"></i>
-                  </div>
-                  <div>
-                    <h5>Quick Response</h5>
-                    <p class="mb-0">Get confirmation within 15 minutes of submitting your request</p>
-                  </div>
-                </div><!-- End Info Item -->
-
-                <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="300">
-                  <div class="icon-wrapper me-3">
-                    <i class="bi bi-shield-check"></i>
-                  </div>
-                  <div>
-                    <h5>Expert Medical Care</h5>
-                    <p class="mb-0">Board-certified doctors and specialists at your service</p>
-                  </div>
-                </div><!-- End Info Item -->
-              </div>
-
-              <div class="emergency-contact mt-4" data-aos="fade-up" data-aos-delay="350">
-                <div class="emergency-card p-3">
-                  <h6 class="mb-2"><i class="bi bi-telephone-fill me-2"></i>Emergency Hotline</h6>
-                  <p class="mb-0">Call <strong>+1 (555) 911-4567</strong> for urgent medical assistance</p>
+        <!-- Left info panel -->
+        <div class="col-lg-5">
+          <div class="appointment-info p-4 rounded-4 shadow-sm bg-white" style="border-left: 5px solid #2D9A9B;">
+            <h3 class="mb-4 text-dark fw-bold">Why book with us?</h3>
+            <div class="info-items">
+              <div class="info-item d-flex align-items-start mb-4">
+                <div class="bg-light rounded-circle p-3 me-3">
+                  <i class="bi bi-calendar-check text-success fs-4"></i>
+                </div>
+                <div>
+                  <h5 class="fw-bold mb-1">Flexible Scheduling</h5>
+                  <p class="mb-0 text-muted small">Choose the date and time that works best for you.</p>
                 </div>
               </div>
-
+              <div class="info-item d-flex align-items-start mb-4">
+                <div class="bg-light rounded-circle p-3 me-3">
+                  <i class="bi bi-shield-check text-info fs-4"></i>
+                </div>
+                <div>
+                  <h5 class="fw-bold mb-1">Expert Medical Care</h5>
+                  <p class="mb-0 text-muted small">Consult with our certified specialists.</p>
+                </div>
+              </div>
+              <div class="info-item d-flex align-items-start mb-4">
+                <div class="bg-light rounded-circle p-3 me-3">
+                  <i class="bi bi-lightning-charge text-warning fs-4"></i>
+                </div>
+                <div>
+                  <h5 class="fw-bold mb-1">Instant Confirmation</h5>
+                  <p class="mb-0 text-muted small">Your appointment is confirmed immediately.</p>
+                </div>
+              </div>
             </div>
-          </div><!-- End Appointment Info -->
+            <div class="emergency-contact mt-5 p-3 rounded bg-light border">
+              <h6 class="mb-2 medical-green-text fw-bold">
+                <i class="bi bi-telephone-fill me-2"></i>Emergency Hotline
+              </h6>
+              <p class="mb-0 small text-dark">Call <strong>+1 (555) 911-4567</strong> for urgent assistance</p>
+            </div>
+          </div>
+        </div><!-- End Info Panel -->
 
-          <!-- Appointment Form -->
-          <div class="col-lg-6">
-            <div class="appointment-form-wrapper" data-aos="fade-up" data-aos-delay="200">
-              <form action="forms/appointment.php" method="post" class="appointment-form php-email-form">
-                <div class="row gy-3">
+        <!-- Booking Form -->
+        <div class="col-lg-7">
+          <div class="appointment-form-wrapper bg-white p-5 rounded-4 shadow-lg border">
+            <h4 class="mb-4 fw-bold">{{ isEditMode ? 'Edit Appointment' : 'Booking Form' }}</h4>
 
-                  <div class="col-md-6">
-                    <input type="text" name="name" class="form-control" placeholder="Your Full Name" required="">
-                  </div>
+            <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+              <i class="bi bi-check-circle-fill me-2"></i> {{ successMessage }}
+              <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+            </div>
 
-                  <div class="col-md-6">
-                    <input type="email" name="email" class="form-control" placeholder="Your Email" required="">
-                  </div>
+            <form (ngSubmit)="saveAppointment()" #appointmentForm="ngForm">
+              <div class="row g-3">
 
-                  <div class="col-md-6">
-                    <input type="tel" name="phone" class="form-control" placeholder="Your Phone Number" required="">
-                  </div>
+                <!-- Step 1: Doctor -->
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted small fw-bold">
+                    <span class="badge bg-teal rounded-pill me-1">1</span> Select Doctor
+                  </label>
+                  <select name="doctorId" class="form-select border-0 bg-light" [(ngModel)]="appointment.doctorId"
+                    (change)="onDoctorChange()" required>
+                    <option [ngValue]="0" disabled>-- Choose a Doctor --</option>
+                    <option *ngFor="let doc of doctors" [value]="doc.userId">
+                      Dr. {{ doc.firstName }} {{ doc.lastName }}
+                    </option>
+                  </select>
+                </div>
 
-                  <div class="col-md-6">
-                    <select name="department" class="form-select" required="">
-                      <option value="">Select Department</option>
-                      <option value="cardiology">Cardiology</option>
-                      <option value="neurology">Neurology</option>
-                      <option value="orthopedics">Orthopedics</option>
-                      <option value="pediatrics">Pediatrics</option>
-                      <option value="dermatology">Dermatology</option>
-                      <option value="general">General Medicine</option>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <input type="date" name="date" class="form-control" required="">
-                  </div>
-
-                  <div class="col-md-6">
-                    <select name="doctor" class="form-select" required="">
-                      <option value="">Select Doctor</option>
-                      <option value="dr-johnson">Dr. Sarah Johnson</option>
-                      <option value="dr-martinez">Dr. Michael Martinez</option>
-                      <option value="dr-chen">Dr. Lisa Chen</option>
-                      <option value="dr-patel">Dr. Raj Patel</option>
-                      <option value="dr-williams">Dr. Emily Williams</option>
-                      <option value="dr-thompson">Dr. David Thompson</option>
-                    </select>
-                  </div>
-
-                  <div class="col-12">
-                    <textarea class="form-control" name="message" rows="5" placeholder="Please describe your symptoms or reason for visit (optional)"></textarea>
-                  </div>
-
-                  <div class="col-12">
-                    <div class="loading">Loading</div>
-                    <div class="error-message"></div>
-                    <div class="sent-message">Your appointment request has been sent successfully. We will contact you shortly!</div>
-
-                    <button type="submit" class="btn btn-appointment w-100">
-                      <i class="bi bi-calendar-plus me-2"></i>Book Appointment
+                <!-- Step 2: Date (locked until doctor chosen) -->
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted small fw-bold">
+                    <span class="badge bg-teal rounded-pill me-1">2</span> Select Date
+                  </label>
+                  <div class="input-group">
+                    <input type="date" name="selectedDate" class="form-control border-0 bg-light"
+                      [(ngModel)]="selectedDateStr" [disabled]="!appointment.doctorId" [min]="minDateOnly"
+                      (change)="onDateChange()" required>
+                    <button type="button" class="btn btn-outline-teal" (click)="suggestSlot()"
+                      [disabled]="isSuggesting || !appointment.doctorId" title="AI-suggest best slot">
+                      <i class="bi bi-stars" *ngIf="!isSuggesting"></i>
+                      <span class="spinner-border spinner-border-sm" role="status" *ngIf="isSuggesting"></span>
+                      Suggest
                     </button>
                   </div>
-
+                  <small class="text-muted d-block mt-1" style="font-size:0.75rem;">
+                    <span *ngIf="!appointment.doctorId" class="text-warning fw-semibold">
+                      <i class="bi bi-arrow-up-circle me-1"></i>Please select a doctor first.
+                    </span>
+                    <span *ngIf="appointment.doctorId">
+                      Slots are automatically suggested based on the doctor's availability.
+                    </span>
+                  </small>
                 </div>
-              </form>
+
+                <!-- Step 3: Time slots -->
+                <div class="col-md-12 mb-3" *ngIf="selectedDateStr && appointment.doctorId">
+                  <label class="form-label text-muted small fw-bold">
+                    <span class="badge bg-teal rounded-pill me-1">3</span>
+                    Available Slots for {{ selectedDateStr }}
+                  </label>
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button type="button" class="btn d-flex flex-column align-items-center justify-content-center"
+                      style="width:110px;height:65px;" *ngFor="let slot of availableSlots" [ngClass]="{
+                        'btn-outline-teal': appointment.appointmentDate !== (selectedDateStr + 'T' + slot.time) && !slot.disabled,
+                        'btn-teal text-white': appointment.appointmentDate === (selectedDateStr + 'T' + slot.time),
+                        'btn-secondary opacity-50': slot.disabled
+                      }" [disabled]="slot.disabled" (click)="selectSlot(slot.time)">
+                      <span><i class="bi bi-clock me-1"></i>{{ slot.time }}</span>
+                      <span *ngIf="slot.disabled" class="text-uppercase fw-bold"
+                        style="font-size:0.6rem;letter-spacing:0.5px;">{{ slot.reason }}</span>
+                    </button>
+                  </div>
+                  <div *ngIf="availableSlots.length === 0" class="text-muted small mt-2">
+                    No slots available for this date.
+                  </div>
+                  <input type="hidden" name="appointmentDate" [(ngModel)]="appointment.appointmentDate" required>
+                </div>
+
+                <!-- Type & Category -->
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted small fw-bold">Type</label>
+                  <select name="type" class="form-select border-0 bg-light" [(ngModel)]="appointment.type" required>
+                    <option *ngFor="let t of appointmentTypes" [value]="t">{{ t | titlecase }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted small fw-bold">Category</label>
+                  <select name="category" class="form-select border-0 bg-light" [(ngModel)]="appointment.category"
+                    required>
+                    <option *ngFor="let c of appointmentCategories" [value]="c">{{ c.replace('_',' ') | titlecase }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Urgent toggle -->
+                <div class="col-12 mb-3">
+                  <div
+                    class="form-check form-switch p-3 border rounded bg-light d-flex justify-content-between align-items-center">
+                    <label class="form-check-label mb-0" for="isUrgent">Is this an urgent appointment?</label>
+                    <input class="form-check-input ms-0" type="checkbox" id="isUrgent" name="isUrgent"
+                      [(ngModel)]="appointment.isUrgent">
+                  </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="col-12 mt-4 text-center">
+                  <div *ngIf="isLoading" class="mb-3">
+                    <div class="spinner-border text-teal" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="submit" [disabled]="!appointmentForm.valid || isLoading || !appointment.doctorId"
+                      class="btn btn-lg flex-grow-1 text-white fw-bold shadow-sm"
+                      style="background-color:var(--primary-teal);padding:12px;">
+                      <i class="bi bi-calendar-plus me-2"></i>
+                      {{ isLoading ? 'Processing...' : (isEditMode ? 'Update Appointment' : 'Book Appointment Now') }}
+                    </button>
+                    <button *ngIf="isEditMode" type="button" (click)="cancelEdit()"
+                      class="btn btn-lg btn-outline-secondary">Cancel</button>
+                  </div>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div><!-- End Booking Form -->
+
+      </div><!-- End Booking Form Row -->
+
+      <!-- ─── Patient Appointment Calendar ──────────────────────── -->
+      <div class="row mt-5" *ngIf="userAppointments.length > 0">
+        <div class="col-12">
+          <div class="ang-calendar-card">
+
+            <!-- Header -->
+            <div class="ang-cal-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-calendar3 text-teal fs-5"></i>
+                <span class="fw-bold" style="font-size:0.9rem;">My Appointment Calendar</span>
+                <span class="badge bg-teal-subtle text-teal border border-teal-subtle" style="font-size:0.66rem;">
+                  {{ userAppointments.length }} appointment{{ userAppointments.length !== 1 ? 's' : '' }}
+                </span>
+              </div>
+              <!-- View switcher & Sync Goole -->
+              <div class="d-flex align-items-center gap-2">
+                <div class="gcal-view-switcher">
+                  <button class="gcal-view-btn" [class.active]="patCalMode==='DAY'" (click)="setPatCalMode('DAY')">
+                    <i class="bi bi-calendar-day me-1"></i>Day
+                  </button>
+                  <button class="gcal-view-btn" [class.active]="patCalMode==='WEEK'" (click)="setPatCalMode('WEEK')">
+                    <i class="bi bi-calendar-week me-1"></i>Week
+                  </button>
+                  <button class="gcal-view-btn" [class.active]="patCalMode==='MONTH'" (click)="setPatCalMode('MONTH')">
+                    <i class="bi bi-calendar-month me-1"></i>Month
+                  </button>
+                  <button class="gcal-view-btn" [class.active]="patCalMode==='AGENDA'"
+                    (click)="setPatCalMode('AGENDA')">
+                    <i class="bi bi-list-ul me-1"></i>Agenda
+                  </button>
+                </div>
+                <!-- Google Calendar buttons -->
+                <span class="text-muted small ms-2" *ngIf="!gapiInited">Loading API...</span>
+                <button type="button" (click)="handleAuthClick()" *ngIf="!isAuthorized && gapiInited"
+                  class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 shadow-sm">
+                  <i class="bi bi-google"></i>Sync Google
+                </button>
+                <button type="button" (click)="handleSignoutClick()" *ngIf="isAuthorized"
+                  class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 shadow-sm"
+                  title="Disconnect from Google">
+                  <i class="bi bi-box-arrow-right"></i>Disconnect
+                </button>
+              </div>
             </div>
-          </div><!-- End Appointment Form -->
 
-        </div>
+            <!-- Navigation bar (hidden in Agenda) -->
+            <div class="ang-cal-nav d-flex align-items-center justify-content-between px-3 py-2"
+              *ngIf="patCalMode !== 'AGENDA'">
+              <button class="ang-nav-btn" (click)="navigatePatCal(-1)"><i class="bi bi-chevron-left"></i></button>
+              <span class="fw-semibold text-dark" style="font-size:0.9rem;">{{ patCalTitle }}</span>
+              <button class="ang-nav-btn" (click)="navigatePatCal(1)"><i class="bi bi-chevron-right"></i></button>
+            </div>
 
-        <!-- Process Steps -->
-        <div class="process-steps mt-5" data-aos="fade-up" data-aos-delay="300">
-          <div class="row text-center gy-4">
-            <div class="col-lg-3 col-md-6">
-              <div class="step-item">
-                <div class="step-number">1</div>
-                <div class="step-icon">
-                  <i class="bi bi-person-fill"></i>
+            <!-- ── MONTH VIEW ── -->
+            <div class="ang-cal-body" *ngIf="patCalMode === 'MONTH'">
+              <!-- Day-of-week headers -->
+              <div class="ang-month-header">
+                <div *ngFor="let d of ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']" class="ang-month-day-name">{{ d }}
                 </div>
-                <h5>Fill Details</h5>
-                <p>Provide your personal information and select your preferred department</p>
               </div>
-            </div><!-- End Step -->
-
-            <div class="col-lg-3 col-md-6">
-              <div class="step-item">
-                <div class="step-number">2</div>
-                <div class="step-icon">
-                  <i class="bi bi-calendar-event"></i>
+              <!-- 6×7 grid -->
+              <div class="ang-month-grid">
+                <div class="ang-day-cell" *ngFor="let cell of patCalMonthDays" [class.other-month]="cell.otherMonth"
+                  [class.today]="cell.isToday" [class.has-apts]="cell.apts.length > 0"
+                  [class.is-holiday]="cell.holiday">
+                  <div class="ang-day-num">{{ cell.date.getDate() }}</div>
+                  <!-- Holiday label -->
+                  <div class="ang-holiday-label" *ngIf="cell.holiday" [title]="cell.holiday.name">
+                    <i class="bi bi-star-fill me-1" style="font-size:0.5rem;"></i>{{ cell.holiday.name }}
+                  </div>
+                  <!-- Appointment chips -->
+                  <div class="ang-day-chips" *ngIf="cell.apts.length > 0">
+                    <span class="ang-apt-chip" *ngFor="let apt of cell.apts.slice(0, 2)"
+                      [ngClass]="getPatAptClass(apt.status)"
+                      [title]="(apt.appointmentDate | date:'HH:mm') + ' — ' + (apt.title || 'Dr. ' + getDoctorName(apt.doctorId))">
+                      {{ apt.appointmentDate | date:'HH:mm' }}
+                    </span>
+                    <span class="ang-more-chip" *ngIf="cell.apts.length > 2">+{{ cell.apts.length - 2 }} more</span>
+                  </div>
                 </div>
-                <h5>Choose Date</h5>
-                <p>Select your preferred date and time slot from available options</p>
               </div>
-            </div><!-- End Step -->
+              <!-- Holiday legend (month view only) -->
+              <div class="ang-holiday-legend" *ngIf="patCalMode === 'MONTH'">
+                <span class="leg-item"><span class="leg-dot"
+                    style="background:#fef9c3;border:1px solid #fcd34d;"></span> Public Holiday</span>
+              </div>
+            </div>
 
-            <div class="col-lg-3 col-md-6">
-              <div class="step-item">
-                <div class="step-number">3</div>
-                <div class="step-icon">
-                  <i class="bi bi-check-circle"></i>
+            <!-- ── WEEK VIEW ── -->
+            <div class="ang-cal-body" *ngIf="patCalMode === 'WEEK'">
+              <div class="ang-week-grid">
+                <div class="ang-week-col" *ngFor="let day of patCalWeekDays" [class.today]="day.isToday"
+                  [class.is-holiday]="day.holiday">
+                  <div class="ang-week-day-header">
+                    <div class="ang-week-day-name">{{ day.date | date:'EEE' }}</div>
+                    <div class="ang-week-day-num" [class.today-circle]="day.isToday">{{ day.date.getDate() }}</div>
+                    <div class="ang-holiday-dot" *ngIf="day.holiday" [title]="day.holiday.name">
+                      ⭐ {{ day.holiday.name }}
+                    </div>
+                  </div>
+                  <div class="ang-week-events">
+                    <div class="ang-cal-event" *ngFor="let apt of day.apts" [ngClass]="getPatAptClass(apt.status)">
+                      <div class="ang-event-time">{{ apt.appointmentDate | date:'HH:mm' }}</div>
+                      <div class="ang-event-name">{{ apt.title || getDoctorName(apt.doctorId) }}</div>
+                    </div>
+                    <div class="ang-no-event" *ngIf="day.apts.length === 0">–</div>
+                  </div>
                 </div>
-                <h5>Confirmation</h5>
-                <p>Receive instant confirmation and appointment details via email or SMS</p>
               </div>
-            </div><!-- End Step -->
+            </div>
 
-            <div class="col-lg-3 col-md-6">
-              <div class="step-item">
-                <div class="step-number">4</div>
-                <div class="step-icon">
-                  <i class="bi bi-heart-pulse"></i>
+            <!-- ── DAY VIEW ── -->
+            <div class="ang-cal-body" *ngIf="patCalMode === 'DAY'">
+              <div *ngIf="patCalDayApts.length === 0" class="text-center py-4 text-muted">
+                <i class="bi bi-calendar-x d-block mb-2 fs-2 opacity-25"></i>No appointments on this day.
+              </div>
+              <div class="ang-cal-event ang-cal-event-row" *ngFor="let apt of patCalDayApts"
+                [ngClass]="getPatAptClass(apt.status)">
+                <div class="ang-event-time me-3" style="min-width:52px;font-size:0.9rem;">
+                  {{ apt.appointmentDate | date:'HH:mm' }}
                 </div>
-                <h5>Get Treatment</h5>
-                <p>Visit our clinic at your scheduled time and receive quality healthcare</p>
+                <div>
+                  <div class="fw-semibold">{{ apt.title || getDoctorName(apt.doctorId) }}</div>
+                  <div class="small text-muted">{{ apt.type }} · {{ apt.status | titlecase }}</div>
+                </div>
+                <span class="ms-auto badge" [ngClass]="{
+                  'bg-warning text-dark': apt.status === 'PENDING',
+                  'bg-success':           apt.status === 'CONFIRMED',
+                  'bg-danger':            apt.status === 'CANCELLED'
+                }">{{ apt.isUrgent ? '⚡ Urgent' : 'Normal' }}</span>
               </div>
-            </div><!-- End Step -->
+            </div>
 
+            <!-- ── AGENDA VIEW ── -->
+            <div class="ang-cal-body" *ngIf="patCalMode === 'AGENDA'">
+              <div *ngIf="patCalAgendaGroups.length === 0" class="text-center py-4 text-muted">
+                <i class="bi bi-calendar-check d-block mb-2 fs-2 opacity-25"></i>No upcoming appointments.
+              </div>
+              <div class="ang-agenda-group" *ngFor="let group of patCalAgendaGroups">
+                <div class="ang-agenda-date-hdr">
+                  {{ group.label }}
+                  <span *ngIf="group.holiday" class="ms-2 badge"
+                    style="background:#fef3c7;color:#92400e;font-weight:600;">
+                    ⭐ {{ group.holiday }}
+                  </span>
+                </div>
+                <div class="ang-cal-event ang-cal-event-row" *ngFor="let apt of group.apts"
+                  [ngClass]="getPatAptClass(apt.status)">
+                  <div class="ang-event-time me-3" style="min-width:52px;">{{ apt.appointmentDate | date:'HH:mm' }}
+                  </div>
+                  <div>
+                    <div class="fw-semibold">{{ apt.title || getDoctorName(apt.doctorId) }}</div>
+                    <div class="small text-muted">
+                      {{ apt.type === 'ONLINE' ? '📹 Video' : '🏢 In person' }}
+                      {{ apt.isUrgent ? ' · ⚡ Urgent' : '' }}
+                    </div>
+                  </div>
+                  <span class="ms-auto badge" [ngClass]="{
+                    'bg-warning text-dark': apt.status === 'PENDING',
+                    'bg-success':           apt.status === 'CONFIRMED',
+                    'bg-danger':            apt.status === 'CANCELLED',
+                    'bg-info text-dark':    apt.status === 'RESCHEDULED'
+                  }">{{ apt.status | titlecase }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="ang-cal-legend">
+              <span class="leg-item"><span class="leg-dot apt-pending"></span> Pending</span>
+              <span class="leg-item"><span class="leg-dot apt-confirmed"></span> Confirmed</span>
+              <span class="leg-item"><span class="leg-dot apt-cancelled"></span> Cancelled</span>
+              <span class="leg-item"><span class="leg-dot apt-rescheduled"></span> Rescheduled</span>
+            </div>
           </div>
-        </div><!-- End Process Steps -->
+        </div>
+      </div><!-- End Calendar Row -->
 
-      </div>
+      <!-- ─── My Appointments Table ──────────────────────────────── -->
+      <div class="row mt-4" *ngIf="userAppointments.length > 0">
+        <div class="col-12">
+          <div class="bg-white p-4 rounded-4 shadow-sm border">
 
-    </section><!-- /Appointmnet Section -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+              <h4 class="mb-0 fw-bold"><i class="bi bi-list-check me-2 text-teal"></i>My Appointments</h4>
 
-  </main>
+              <!-- Filtre par statut -->
+              <div class="btn-group shadow-sm" role="group" aria-label="Status filter">
+                <button type="button" class="btn btn-outline-teal" [class.active]="statusFilter === 'all'"
+                  (click)="setStatusFilter('all')">All</button>
+                <button type="button" class="btn btn-outline-teal" [class.active]="statusFilter === 'pending'"
+                  (click)="setStatusFilter('pending')">Pending</button>
+                <button type="button" class="btn btn-outline-teal" [class.active]="statusFilter === 'confirmed'"
+                  (click)="setStatusFilter('confirmed')">Confirmed</button>
+                <button type="button" class="btn btn-outline-teal" [class.active]="statusFilter === 'cancelled'"
+                  (click)="setStatusFilter('cancelled')">Cancelled</button>
+              </div>
+            </div>
 
-  <footer id="footer" class="footer position-relative">
-
-    <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-4 col-md-6 footer-about">
-          <a routerLink="/" class="logo d-flex align-items-center">
-            <span class="sitename">MediNest</span>
-          </a>
-          <div class="footer-contact pt-3">
-            <p>A108 Adam Street</p>
-            <p>New York, NY 535022</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-            <p><strong>Email:</strong> <span>info@example.com</span></p>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                  <tr>
+                    <th>Doctor</th>
+                    <th>Date &amp; Time</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Urgent</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let appt of filteredUserAppointments">
+                    <td class="fw-bold">{{ getDoctorName(appt.doctorId) }}</td>
+                    <td>{{ appt.appointmentDate | date:'medium' }}</td>
+                    <td><span class="badge bg-info text-dark">{{ appt.type }}</span></td>
+                    <td>{{ appt.category.replace('_',' ') | titlecase }}</td>
+                    <td>
+                      <span *ngIf="appt.isUrgent" class="badge bg-danger">Urgent</span>
+                      <span *ngIf="!appt.isUrgent" class="badge bg-secondary">Normal</span>
+                    </td>
+                    <td>
+                      <span class="badge" [ngClass]="{
+                        'bg-warning text-dark': appt.status === 'PENDING',
+                        'bg-success':           appt.status === 'CONFIRMED',
+                        'bg-danger':            appt.status === 'CANCELLED',
+                        'bg-info text-dark':    appt.status === 'RESCHEDULED'
+                      }">{{ appt.status | titlecase }}</span>
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex justify-content-center gap-2">
+                        <button *ngIf="appt.status !== 'CANCELLED'" (click)="editAppointment(appt)"
+                          class="btn btn-sm btn-outline-teal" title="Edit">
+                          <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button *ngIf="appt.status === 'PENDING' || appt.status === 'CONFIRMED'"
+                          (click)="cancelAppointment(appt.id)" class="btn btn-sm btn-outline-warning fw-semibold"
+                          title="Cancel appointment">
+                          <i class="bi bi-x-circle me-1"></i> Cancel
+                        </button>
+                        <button *ngIf="appt.status === 'CANCELLED'" (click)="deleteAppointment(appt.id)"
+                          class="btn btn-sm btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
-          </div>
         </div>
+      </div><!-- End Appointments Table -->
 
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Our Services</h4>
-          <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Product Management</a></li>
-            <li><a href="#">Marketing</a></li>
-            <li><a href="#">Graphic Design</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Hic solutasetp</h4>
-          <ul>
-            <li><a href="#">Molestiae accusamus iure</a></li>
-            <li><a href="#">Excepturi dignissimos</a></li>
-            <li><a href="#">Suscipit distinctio</a></li>
-            <li><a href="#">Dilecta</a></li>
-            <li><a href="#">Sit quas consectetur</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Nobis illum</h4>
-          <ul>
-            <li><a href="#">Ipsam</a></li>
-            <li><a href="#">Laudantium dolorum</a></li>
-            <li><a href="#">Dinera</a></li>
-            <li><a href="#">Trodelas</a></li>
-            <li><a href="#">Flexo</a></li>
-          </ul>
-        </div>
-
-      </div>
     </div>
+  </section><!-- /Appointment Section -->
 
-    <div class="container copyright text-center mt-4">
-      <p>Â© <span>Copyright</span> <strong>MediNest</strong>&nbsp;<span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> | <a href="https://bootstrapmade.com/tools/">DevTools</a>
-      </div>
-    </div>
+</main>
 
-  </footer>
-
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Preloader -->
-  <div id="preloader"></div>
-
-  <!-- Vendor JS Files -->
-  
-  
-  
-  
-  
-  
-  
-  
-
-  <!-- Main JS File -->
-  
-
-
-
-
+<app-footer></app-footer>
