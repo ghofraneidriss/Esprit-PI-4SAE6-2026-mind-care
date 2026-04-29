@@ -66,23 +66,16 @@ pipeline {
         }
 
        stage('SonarQube Analysis') {
-      when {
-        expression { return env.SONAR_HOST_URL?.trim() && env.SONAR_TOKEN_CREDENTIALS_ID?.trim() }
-      }
       steps {
-        withCredentials([string(credentialsId: env.SONAR_TOKEN_CREDENTIALS_ID, variable: 'SONAR_TOKEN')]) {
-          sh '''
-            set -e
-            echo "[SONAR] $SERVICE_NAME"
-            cd "$SERVICE_DIR"
-            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-              -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-              -Dsonar.projectName=$SONAR_PROJECT_NAME \
-              -Dsonar.host.url=$SONAR_HOST_URL \
-              -Dsonar.token=$SONAR_TOKEN \
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-          '''
-        }
+        echo "[SONAR] $SERVICE_NAME"
+        sh '''
+          set -e
+          cd "$SERVICE_DIR"
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=mind_care \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=sqp_284d1b28932e43d15fb2f331cbc0d3e08cf3b787
+        '''
       }
     }
 
