@@ -14,8 +14,7 @@ pipeline {
         HARBOR_URL      = 'localhost:8085'
         HARBOR_PROJECT  = 'mindcare'
 
-        // Configuration MySQL pour Jenkins (Lien vers ton Windows)
-        // Comme tu as supprimé le pass, on laisse vide ici aussi
+        // Configuration MySQL pour Jenkins (Lien vers ton Windows Host)
         DB_USER         = 'root'
         DB_PASS         = ''
     }
@@ -49,7 +48,7 @@ pipeline {
         stage('Build & Install Parent') {
             steps {
                 dir('server') {
-                    // On installe le parent en sautant les tests pour aller vite
+                    // On installe le parent en sautant les tests pour garantir les dépendances inter-modules
                     sh 'mvn clean install -DskipTests'
                 }
             }
@@ -58,12 +57,12 @@ pipeline {
         stage('Test & Report: Activities Service') {
             steps {
                 dir('server/activities_service') {
-                    // On injecte l'URL MySQL de ton Windows (host.docker.internal)
+                    // On utilise env.DB_USER et env.DB_PASS pour éviter l'erreur MissingPropertyException
                     sh """
                         mvn clean test jacoco:report \
                         -DACTIVITIES_DB_URL=jdbc:mysql://host.docker.internal:3306/activities_db?createDatabaseIfNotExist=true \
-                        -DDB_USERNAME=${DB_USER} \
-                        -DDB_PASSWORD=${DB_PASS}
+                        -DDB_USERNAME=${env.DB_USER} \
+                        -DDB_PASSWORD=${env.DB_PASS}
                     """
                 }
             }
@@ -81,8 +80,8 @@ pipeline {
                     sh """
                         mvn clean test jacoco:report \
                         -DMOVEMENT_DB_URL=jdbc:mysql://host.docker.internal:3306/movement_db?createDatabaseIfNotExist=true \
-                        -DDB_USERNAME=${DB_USER} \
-                        -DDB_PASSWORD=${DB_PASS}
+                        -DDB_USERNAME=${env.DB_USER} \
+                        -DDB_PASSWORD=${env.DB_PASS}
                     """
                 }
             }
@@ -96,20 +95,19 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // On laisse 30 secondes à Sonar pour finir de démarrer si besoin
-                sleep 30
+                sleep 20
                 withSonarQubeEnv('SonarQube') {
                     sh """
                         mvn -f server/activities_service/pom.xml sonar:sonar \
                             -Dsonar.projectKey=activities-service \
                             -Dsonar.projectName='Activities Service' \
-                            -Dsonar.host.url=${SONAR_HOST_URL} \
+                            -Dsonar.host.url=${env.SONAR_HOST_URL} \
                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
                         mvn -f server/movement_service/pom.xml sonar:sonar \
                             -Dsonar.projectKey=movement-service \
                             -Dsonar.projectName='Movement Service' \
-                            -Dsonar.host.url=${SONAR_HOST_URL} \
+                            -Dsonar.host.url=${env.SONAR_HOST_URL} \
                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     """
                 }
@@ -132,15 +130,15 @@ pipeline {
                         passwordVariable: 'HARBOR_PASS'
                 )]) {
                     sh """
-                        docker login ${HARBOR_URL} -u ${HARBOR_USER} -p ${HARBOR_PASS}
+                        docker login ${env.HARBOR_URL} -u ${HARBOR_USER} -p ${HARBOR_PASS}
 
                         # Build et Push Activities
-                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG} server/activities_service/
-                        docker push ${HARBOR_URL}/${HARBOR_PROJECT}/activities-service:${IMAGE_TAG}
+                        docker build -t ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/activities-service:${env.IMAGE_TAG} server/activities_service/
+                        docker push ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/activities-service:${env.IMAGE_TAG}
 
                         # Build et Push Movement
-                        docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG} server/movement_service/
-                        docker push ${HARBOR_URL}/${HARBOR_PROJECT}/movement-service:${IMAGE_TAG}
+                        docker build -t ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/movement-service:${env.IMAGE_TAG} server/movement_service/
+                        docker push ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/movement-service:${env.IMAGE_TAG}
                     """
                 }
             }
@@ -152,7 +150,7 @@ pipeline {
             echo '✅ SUCCÈS : Tests MySQL validés, Sonar terminé et images poussées sur Harbor !'
         }
         failure {
-            echo '❌ ÉCHEC : Vérifie la connexion MySQL (host.docker.internal) ou les logs Maven.'
+            echo '❌ ÉCHEC : Vérifie les logs Maven ou la connexion host.docker.internal.'
             sh 'docker stop sonarqube || true'
         }
     }
