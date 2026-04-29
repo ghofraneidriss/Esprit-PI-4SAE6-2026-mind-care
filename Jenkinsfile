@@ -72,8 +72,8 @@ pipeline {
           set -e
           cd "$SERVICE_DIR"
           mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=volunteer \
-            -Dsonar.projectName=volunteer \
+            -Dsonar.projectKey=mind_care \\
+            -Dsonar.projectName=mind_care \\
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.login=sqp_284d1b28932e43d15fb2f331cbc0d3e08cf3b787 \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
