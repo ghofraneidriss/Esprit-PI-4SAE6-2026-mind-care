@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.lost_item_service.dto.CreateLostItemRequest;
 import tn.esprit.lost_item_service.dto.DTOMapper;
 import tn.esprit.lost_item_service.dto.LostItemDTO;
-import tn.esprit.lost_item_service.dto.UpdateLostItemRequest;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
 import tn.esprit.lost_item_service.Entity.ItemStatus;
 import tn.esprit.lost_item_service.Entity.LostItem;
@@ -88,12 +87,11 @@ public class LostItemController {
     @PutMapping("/{id}")
     public ResponseEntity<LostItemDTO> updateLostItem(
             @PathVariable Long id,
-            @RequestBody UpdateLostItemRequest request,
+            @RequestBody LostItem lostItem,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkItemAccess(id, userId, userRole);
-        LostItem lostItem = DTOMapper.toLostItemForUpdate(request);
         LostItem updated = lostItemService.updateLostItem(id, lostItem);
         return ResponseEntity.ok(DTOMapper.toLostItemDTO(updated));
     }

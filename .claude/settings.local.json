@@ -33,7 +33,12 @@
       "Bash(git mv *)",
       "Bash(git reset *)",
       "Bash(cp server/lost-item-service/src/main/java/tn/esprit/lost_item_service/DTO/* server/lost-item-service/src/main/java/tn/esprit/lost_item_service/dto/)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=admin -Dsonar.password=password123)",
+      "Bash(grep -A 5 \"Lines of Code\" target/site/jacoco/index.html)",
+      "Bash(python3)",
+      "Bash(xargs ls *)",
+      "Bash(git commit -m 'test: Restore PUT endpoint update tests \\(298 total tests\\) *)"
     ]
   }
 }

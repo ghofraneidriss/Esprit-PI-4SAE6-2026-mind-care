@@ -252,4 +252,35 @@ class SearchReportControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", isA(java.util.List.class)));
     }
+
+    @Test
+    void testUpdateSearchReport_withValidRequest() throws Exception {
+        SearchReport report = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(2L)
+                .searchDate(LocalDate.now())
+                .locationSearched("Kitchen")
+                .searchResult(SearchResult.NOT_FOUND)
+                .status(ReportStatus.OPEN)
+                .build();
+        SearchReport saved = searchReportRepository.save(report);
+
+        SearchReport updatePayload = SearchReport.builder()
+                .lostItemId(testItem.getId())
+                .reportedBy(2L)
+                .searchDate(LocalDate.now())
+                .locationSearched("Living Room")
+                .searchResult(SearchResult.FOUND)
+                .status(ReportStatus.CLOSED)
+                .notes("Found in living room")
+                .build();
+
+        mockMvc.perform(put("/api/search-reports/" + saved.getId())
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(updatePayload))
+                .header("X-User-Id", "2")
+                .header("X-User-Role", "ADMIN"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.locationSearched").value("Living Room"));
+    }
 }

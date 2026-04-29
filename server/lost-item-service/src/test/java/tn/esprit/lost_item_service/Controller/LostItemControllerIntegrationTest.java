@@ -169,4 +169,31 @@ class LostItemControllerIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Minimal Item"));
     }
+
+    @Test
+    void testUpdateLostItem_withValidRequest() throws Exception {
+        LostItem item = LostItem.builder()
+                .title("Original Item")
+                .category(ItemCategory.CLOTHING)
+                .patientId(1L)
+                .status(ItemStatus.LOST)
+                .build();
+        LostItem saved = lostItemRepository.save(item);
+
+        LostItem updatePayload = LostItem.builder()
+                .title("Updated Item")
+                .description("Updated description")
+                .category(ItemCategory.MEDICATION)
+                .patientId(1L)
+                .status(ItemStatus.LOST)
+                .build();
+
+        mockMvc.perform(put("/api/lost-items/" + saved.getId())
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(updatePayload))
+                .header("X-User-Id", "1")
+                .header("X-User-Role", "PATIENT"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Item"));
+    }
 }
