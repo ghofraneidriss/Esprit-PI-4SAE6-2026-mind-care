@@ -1,0 +1,101 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'M2_HOME'
+        jdk 'jdk17'
+    }
+
+    environment {
+IMAGE_NAME = 'ghofrane/medical-report-service'
+        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_TOKEN = credentials('sonar-token-medical-report-service')
+        SERVICE_NAME = 'medical-report-service'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Cloning repository...'
+                git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
+                    branch: 'volunteer'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building medical report service...'
+                sh '''
+                    cd medical-report-service
+                    mvn clean package 
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh '''
+                    cd medical-report-service
+                    mvn test
+                '''
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube...'
+                sh '''
+                    cd medical-report-service
+                    mvn clean verify sonar:sonar \
+                      -Dsonar.projectKey=medical_report_service \
+                      -Dsonar.host.url=$SONAR_HOST_URL \
+                      -Dsonar.login=$SONAR_TOKEN
+                '''
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                sh '''
+                    cd medical-report-service
+                    docker build -t $IMAGE_NAME:latest .
+                '''
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                echo 'Pushing Docker image...'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh '''
+                        echo $PASS | docker login -u $USER --password-stdin
+                        docker push $IMAGE_NAME:latest
+                        docker logout
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy (Simulation)') {
+            steps {
+                echo 'Running container...'
+                sh '''
+                    docker rm -f volunteer-service || true
+                    docker run -d -p 8082:8080 --name volunteer-service $IMAGE_NAME:latest
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'VOLUNTEER SERVICE PIPELINE SUCCESS'
+        }
+        failure {
+            echo 'VOLUNTEER SERVICE PIPELINE FAILED'
+        }
+    }
+}
