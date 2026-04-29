@@ -20,13 +20,18 @@ pipeline {
     SERVICE_DIR = 'volunteer'
     }
 
+    options {
+        skipDefaultCheckout()
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
                 echo 'Cloning repository...'
                 git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                    branch: 'volunteer'
+                    branch: 'volunteer',
+                    credentialsId: 'dockerhub-creds'
             }
         }
 
