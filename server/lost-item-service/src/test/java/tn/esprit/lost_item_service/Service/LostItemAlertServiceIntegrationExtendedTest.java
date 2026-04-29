@@ -43,7 +43,7 @@ class LostItemAlertServiceIntegrationExtendedTest {
     }
 
     @Test
-    void testCreateAlert_withFullDetails() {
+    void testCreateAlertWithFullDetails() {
         LostItemAlert alert = LostItemAlert.builder()
                 .lostItemId(testItem.getId())
                 .patientId(1L)

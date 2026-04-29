@@ -30,7 +30,7 @@ class LostItemServiceIntegrationExtendedTest {
     }
 
     @Test
-    void testCreateLostItem_withAllFields() {
+    void testCreateLostItemWithAllFields() {
         LostItem item = LostItem.builder()
                 .title("Complete Item")
                 .description("Full description")

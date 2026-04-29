@@ -59,7 +59,7 @@ class SearchReportControllerIntegrationTest {
     }
 
     @Test
-    void testCreateSearchReport_withValidReport() throws Exception {
+    void testCreateSearchReportWithValidReport() throws Exception {
         CreateSearchReportRequest request = CreateSearchReportRequest.builder()
                 .lostItemId(testItem.getId())
                 .reportedBy(2L)
@@ -99,7 +99,7 @@ class SearchReportControllerIntegrationTest {
     }
 
     @Test
-    void testGetSearchReportById_withValidId() throws Exception {
+    void testGetSearchReportByIdWithValidId() throws Exception {
         SearchReport report = SearchReport.builder()
                 .lostItemId(testItem.getId())
                 .reportedBy(2L)
@@ -118,7 +118,7 @@ class SearchReportControllerIntegrationTest {
 
 
     @Test
-    void testDeleteSearchReport_withValidId() throws Exception {
+    void testDeleteSearchReportWithValidId() throws Exception {
         SearchReport report = SearchReport.builder()
                 .lostItemId(testItem.getId())
                 .reportedBy(2L)
@@ -255,7 +255,7 @@ class SearchReportControllerIntegrationTest {
     }
 
     @Test
-    void testUpdateSearchReport_withValidRequest() throws Exception {
+    void testUpdateSearchReportWithValidRequest() throws Exception {
         SearchReport report = SearchReport.builder()
                 .lostItemId(testItem.getId())
                 .reportedBy(2L)

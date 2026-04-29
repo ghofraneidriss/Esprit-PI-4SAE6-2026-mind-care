@@ -15,7 +15,7 @@ class DTOMapperTest {
     // ── LostItem Mapping Tests ────────────────────────────────────────────────
 
     @Test
-    void testToLostItemDTO_withValidEntity() {
+    void testToLostItemDTOWithValidEntity() {
         LostItem entity = LostItem.builder()
                 .id(1L)
                 .title("Test Item")
@@ -47,13 +47,13 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItemDTO_withNullEntity() {
+    void testToLostItemDTOWithNullEntity() {
         LostItemDTO dto = DTOMapper.toLostItemDTO(null);
         assertNull(dto);
     }
 
     @Test
-    void testToLostItemDTOList_withMultipleEntities() {
+    void testToLostItemDTOListWithMultipleEntities() {
         LostItem entity1 = LostItem.builder().id(1L).title("Item 1").category(ItemCategory.CLOTHING).patientId(1L).build();
         LostItem entity2 = LostItem.builder().id(2L).title("Item 2").category(ItemCategory.DOCUMENT).patientId(2L).build();
         List<LostItem> entities = Arrays.asList(entity1, entity2);
@@ -69,7 +69,7 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItemDTOList_withEmptyList() {
+    void testToLostItemDTOListWithEmptyList() {
         List<LostItemDTO> dtos = DTOMapper.toLostItemDTOList(List.of());
         assertNotNull(dtos);
         assertTrue(dtos.isEmpty());
@@ -78,7 +78,7 @@ class DTOMapperTest {
     // ── LostItemAlert Mapping Tests ───────────────────────────────────────────
 
     @Test
-    void testToLostItemAlertDTO_withValidEntity() {
+    void testToLostItemAlertDTOWithValidEntity() {
         LostItemAlert entity = LostItemAlert.builder()
                 .id(1L)
                 .lostItemId(10L)
@@ -106,13 +106,13 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItemAlertDTO_withNullEntity() {
+    void testToLostItemAlertDTOWithNullEntity() {
         LostItemAlertDTO dto = DTOMapper.toLostItemAlertDTO(null);
         assertNull(dto);
     }
 
     @Test
-    void testToLostItemAlertDTOList_withMultipleEntities() {
+    void testToLostItemAlertDTOListWithMultipleEntities() {
         LostItemAlert entity1 = LostItemAlert.builder().id(1L).title("Alert 1").level(AlertLevel.HIGH).build();
         LostItemAlert entity2 = LostItemAlert.builder().id(2L).title("Alert 2").level(AlertLevel.LOW).build();
         List<LostItemAlert> entities = Arrays.asList(entity1, entity2);
@@ -130,7 +130,7 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItemAlertDTOList_withEmptyList() {
+    void testToLostItemAlertDTOListWithEmptyList() {
         List<LostItemAlertDTO> dtos = DTOMapper.toLostItemAlertDTOList(List.of());
         assertNotNull(dtos);
         assertTrue(dtos.isEmpty());
@@ -139,7 +139,7 @@ class DTOMapperTest {
     // ── SearchReport Mapping Tests ────────────────────────────────────────────
 
     @Test
-    void testToSearchReportDTO_withValidEntity() {
+    void testToSearchReportDTOWithValidEntity() {
         SearchReport entity = SearchReport.builder()
                 .id(1L)
                 .lostItemId(10L)
@@ -165,13 +165,13 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToSearchReportDTO_withNullEntity() {
+    void testToSearchReportDTOWithNullEntity() {
         SearchReportDTO dto = DTOMapper.toSearchReportDTO(null);
         assertNull(dto);
     }
 
     @Test
-    void testToSearchReportDTOList_withMultipleEntities() {
+    void testToSearchReportDTOListWithMultipleEntities() {
         SearchReport entity1 = SearchReport.builder().id(1L).lostItemId(10L).searchResult(SearchResult.NOT_FOUND).build();
         SearchReport entity2 = SearchReport.builder().id(2L).lostItemId(20L).searchResult(SearchResult.PARTIALLY_FOUND).build();
         List<SearchReport> entities = Arrays.asList(entity1, entity2);
@@ -189,7 +189,7 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToSearchReportDTOList_withEmptyList() {
+    void testToSearchReportDTOListWithEmptyList() {
         List<SearchReportDTO> dtos = DTOMapper.toSearchReportDTOList(List.of());
         assertNotNull(dtos);
         assertTrue(dtos.isEmpty());
@@ -198,7 +198,7 @@ class DTOMapperTest {
     // ── Request DTO to Entity Mapping Tests ───────────────────────────────────
 
     @Test
-    void testToLostItem_withValidRequest() {
+    void testToLostItemWithValidRequest() {
         CreateLostItemRequest request = CreateLostItemRequest.builder()
                 .title("New Lost Item")
                 .description("Description")
@@ -225,13 +225,13 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItem_withNullRequest() {
+    void testToLostItemWithNullRequest() {
         LostItem entity = DTOMapper.toLostItem((CreateLostItemRequest) null);
         assertNull(entity);
     }
 
     @Test
-    void testToLostItem_withMinimalRequest() {
+    void testToLostItemWithMinimalRequest() {
         CreateLostItemRequest request = CreateLostItemRequest.builder()
                 .title("Minimal Item")
                 .category(ItemCategory.ACCESSORY)
@@ -249,7 +249,7 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItemAlert_withValidRequest() {
+    void testToLostItemAlertWithValidRequest() {
         CreateLostItemAlertRequest request = CreateLostItemAlertRequest.builder()
                 .lostItemId(10L)
                 .patientId(5L)
@@ -271,13 +271,13 @@ class DTOMapperTest {
     }
 
     @Test
-    void testToLostItemAlert_withNullRequest() {
+    void testToLostItemAlertWithNullRequest() {
         LostItemAlert entity = DTOMapper.toLostItemAlert((CreateLostItemAlertRequest) null);
         assertNull(entity);
     }
 
     @Test
-    void testToLostItemAlert_withMinimalRequest() {
+    void testToLostItemAlertWithMinimalRequest() {
         CreateLostItemAlertRequest request = CreateLostItemAlertRequest.builder()
                 .lostItemId(10L)
                 .patientId(5L)

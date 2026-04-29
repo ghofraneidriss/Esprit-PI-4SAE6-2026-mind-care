@@ -53,7 +53,7 @@ class LostItemAlertControllerIntegrationTest {
     }
 
     @Test
-    void testCreateAlert_withValidRequest() throws Exception {
+    void testCreateAlertWithValidRequest() throws Exception {
         CreateLostItemAlertRequest request = CreateLostItemAlertRequest.builder()
                 .lostItemId(testItem.getId())
                 .patientId(1L)
@@ -75,7 +75,7 @@ class LostItemAlertControllerIntegrationTest {
     }
 
     @Test
-    void testGetAlertById_withValidId() throws Exception {
+    void testGetAlertByIdWithValidId() throws Exception {
         LostItemAlert alert = LostItemAlert.builder()
                 .lostItemId(testItem.getId())
                 .patientId(1L)
@@ -120,7 +120,7 @@ class LostItemAlertControllerIntegrationTest {
     }
 
     @Test
-    void testUpdateAlert_withValidRequest() throws Exception {
+    void testUpdateAlertWithValidRequest() throws Exception {
         LostItemAlert alert = LostItemAlert.builder()
                 .lostItemId(testItem.getId())
                 .patientId(1L)
@@ -146,7 +146,7 @@ class LostItemAlertControllerIntegrationTest {
     }
 
     @Test
-    void testDeleteAlert_withValidId() throws Exception {
+    void testDeleteAlertWithValidId() throws Exception {
         LostItemAlert alert = LostItemAlert.builder()
                 .lostItemId(testItem.getId())
                 .patientId(1L)
@@ -205,7 +205,7 @@ class LostItemAlertControllerIntegrationTest {
     }
 
     @Test
-    void testCreateAlert_withMinimalRequest() throws Exception {
+    void testCreateAlertWithMinimalRequest() throws Exception {
         CreateLostItemAlertRequest request = CreateLostItemAlertRequest.builder()
                 .lostItemId(testItem.getId())
                 .patientId(1L)

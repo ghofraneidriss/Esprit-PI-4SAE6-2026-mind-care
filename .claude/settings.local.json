@@ -42,7 +42,8 @@
       "Bash(git commit -m 'test: Add comprehensive controller endpoint tests \\(308 total tests\\) *)",
       "Bash(git commit -m 'test: Add exception class tests \\(319 total tests\\) *)",
       "Bash(git commit -m 'test: Final stable test suite \\(319 tests\\) *)",
-      "Bash(grep -E \"^\\\\\\\\[|319\")"
+      "Bash(grep -E \"^\\\\\\\\[|319\")",
+      "Bash(powershell -Command ' *)"
     ]
   }
 }

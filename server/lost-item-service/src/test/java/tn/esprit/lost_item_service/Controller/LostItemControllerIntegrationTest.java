@@ -45,7 +45,7 @@ class LostItemControllerIntegrationTest {
     }
 
     @Test
-    void testCreateLostItem_withValidRequest() throws Exception {
+    void testCreateLostItemWithValidRequest() throws Exception {
         CreateLostItemRequest request = CreateLostItemRequest.builder()
                 .title("Lost Medication")
                 .description("Important medication")
@@ -69,7 +69,7 @@ class LostItemControllerIntegrationTest {
     }
 
     @Test
-    void testGetLostItemById_withValidId() throws Exception {
+    void testGetLostItemByIdWithValidId() throws Exception {
         LostItem item = LostItem.builder()
                 .title("Test Item")
                 .category(ItemCategory.CLOTHING)
@@ -110,7 +110,7 @@ class LostItemControllerIntegrationTest {
 
 
     @Test
-    void testDeleteLostItem_withValidId() throws Exception {
+    void testDeleteLostItemWithValidId() throws Exception {
         LostItem item = LostItem.builder()
                 .title("To Delete")
                 .category(ItemCategory.CLOTHING)
@@ -155,7 +155,7 @@ class LostItemControllerIntegrationTest {
     }
 
     @Test
-    void testCreateLostItem_withMinimalRequest() throws Exception {
+    void testCreateLostItemWithMinimalRequest() throws Exception {
         CreateLostItemRequest request = CreateLostItemRequest.builder()
                 .title("Minimal Item")
                 .category(ItemCategory.ACCESSORY)
@@ -172,7 +172,7 @@ class LostItemControllerIntegrationTest {
     }
 
     @Test
-    void testUpdateLostItem_withValidRequest() throws Exception {
+    void testUpdateLostItemWithValidRequest() throws Exception {
         LostItem item = LostItem.builder()
                 .title("Original Item")
                 .category(ItemCategory.CLOTHING)
