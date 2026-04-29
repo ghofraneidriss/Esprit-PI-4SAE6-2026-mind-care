@@ -29,11 +29,12 @@ pipeline {
 
         stage('Test & Jacoco Report') {
             steps {
+                // Correction du pattern de test pour éviter l'erreur "No tests matching pattern"
                 dir('server/activities_service') {
-                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!ActivitiesServiceApplicationTests || true'
+                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dsurefire.failIfNoSpecifiedTests=false || true'
                 }
                 dir('server/movement_service') {
-                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!MovementServiceApplicationTests || true'
+                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dsurefire.failIfNoSpecifiedTests=false || true'
                 }
             }
             post {
@@ -46,12 +47,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    dir('server/activities_service') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=activities-service -Dsonar.projectName='Activities Service' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/activities_service/target/site/jacoco/jacoco.xml"
-                    }
-                    dir('server/movement_service') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=movement-service -Dsonar.projectName='Movement Service' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/movement_service/target/site/jacoco/jacoco.xml"
+                script {
+                    withSonarQubeEnv('SonarQube') {
+                        dir('server/activities_service') {
+                            sh "mvn sonar:sonar -Dsonar.projectKey=activities-service -Dsonar.projectName='Activities Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                        }
+                        dir('server/movement_service') {
+                            sh "mvn sonar:sonar -Dsonar.projectKey=movement-service -Dsonar.projectName='Movement Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                        }
                     }
                 }
             }
@@ -67,7 +70,6 @@ pipeline {
 
         stage('Docker Build & Push Harbor') {
             steps {
-                // ICI : J'ai rajouté 'withCredentials([usernamePassword(' qui manquait
                 withCredentials([usernamePassword(
                         credentialsId: 'harbor-creds',
                         usernameVariable: 'HARBOR_USER',
@@ -89,10 +91,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Pipeline terminé avec succès ! Outil M3 utilisé.'
+            echo '✅ Pipeline terminé avec succès ! Activities et Movement sont sur Sonar et Harbor.'
         }
         failure {
-            echo '❌ Échec du pipeline. Vérifie la configuration de M3 ou les logs.'
+            echo '❌ Échec du pipeline. Vérifie la console Jenkins.'
         }
     }
 }
