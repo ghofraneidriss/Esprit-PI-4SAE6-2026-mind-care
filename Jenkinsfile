@@ -26,7 +26,9 @@ pipeline {
             steps {
                 echo 'Cloning repository...'
                 git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                    branch: 'volunteer'
+                    branch: 'volunteer',
+                    depth: 1,
+                    timeout: 30
             }
         }
 
