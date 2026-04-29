@@ -25,6 +25,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LostItemController {
 
+    private static final String ITEMS_KEY = "items";
+    private static final String URGENT_COUNT_KEY = "urgentCount";
+
     private final LostItemService lostItemService;
     private final AuthorizationService authorizationService;
 
@@ -125,8 +128,8 @@ public class LostItemController {
     public ResponseEntity<Map<String, Object>> getAllCriticalItems() {
         List<LostItem> items = lostItemService.getAllCriticalItems();
         Map<String, Object> response = new HashMap<>();
-        response.put("items", DTOMapper.toLostItemDTOList(items));
-        response.put("urgentCount", items.size());
+        response.put(ITEMS_KEY, DTOMapper.toLostItemDTOList(items));
+        response.put(URGENT_COUNT_KEY, items.size());
         return ResponseEntity.ok(response);
     }
 
@@ -134,8 +137,8 @@ public class LostItemController {
     public ResponseEntity<Map<String, Object>> getCriticalLostItems(@PathVariable Long patientId) {
         List<LostItem> items = lostItemService.getCriticalLostItems(patientId);
         Map<String, Object> response = new HashMap<>();
-        response.put("items", DTOMapper.toLostItemDTOList(items));
-        response.put("urgentCount", items.size());
+        response.put(ITEMS_KEY, DTOMapper.toLostItemDTOList(items));
+        response.put(URGENT_COUNT_KEY, items.size());
         return ResponseEntity.ok(response);
     }
 
@@ -150,8 +153,8 @@ public class LostItemController {
     public ResponseEntity<Map<String, Object>> getCriticalItemsByCaregiverId(@PathVariable Long caregiverId) {
         List<LostItem> items = lostItemService.getCriticalItemsByCaregiverId(caregiverId);
         Map<String, Object> response = new HashMap<>();
-        response.put("items", DTOMapper.toLostItemDTOList(items));
-        response.put("urgentCount", items.size());
+        response.put(ITEMS_KEY, DTOMapper.toLostItemDTOList(items));
+        response.put(URGENT_COUNT_KEY, items.size());
         return ResponseEntity.ok(response);
     }
 
