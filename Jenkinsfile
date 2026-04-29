@@ -25,10 +25,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Cloning repository...'
-                git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                    branch: 'volunteer',
-                    depth: 1,
-                    timeout: 30
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/volunteer']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'CloneOption', depth: 1, timeout: 30]],
+                    userRemoteConfigs: [[url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git']]
+                ])
             }
         }
 
