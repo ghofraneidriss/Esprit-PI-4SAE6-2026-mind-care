@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tn.esprit.lost_item_service.Entity.AlertLevel;
-import tn.esprit.lost_item_service.Entity.AlertStatus;
+import tn.esprit.lost_item_service.entity.AlertLevel;
+import tn.esprit.lost_item_service.entity.AlertStatus;
 
 import java.time.LocalDateTime;
 

@@ -1,8 +1,8 @@
 package tn.esprit.lost_item_service.dto;
 
-import tn.esprit.lost_item_service.Entity.LostItem;
-import tn.esprit.lost_item_service.Entity.LostItemAlert;
-import tn.esprit.lost_item_service.Entity.SearchReport;
+import tn.esprit.lost_item_service.entity.LostItem;
+import tn.esprit.lost_item_service.entity.LostItemAlert;
+import tn.esprit.lost_item_service.entity.SearchReport;
 
 import java.util.List;
 

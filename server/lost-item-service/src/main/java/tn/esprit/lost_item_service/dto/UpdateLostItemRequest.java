@@ -2,9 +2,9 @@ package tn.esprit.lost_item_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-import tn.esprit.lost_item_service.Entity.ItemCategory;
-import tn.esprit.lost_item_service.Entity.ItemPriority;
-import tn.esprit.lost_item_service.Entity.ItemStatus;
+import tn.esprit.lost_item_service.entity.ItemCategory;
+import tn.esprit.lost_item_service.entity.ItemPriority;
+import tn.esprit.lost_item_service.entity.ItemStatus;
 
 import java.time.LocalDate;
 

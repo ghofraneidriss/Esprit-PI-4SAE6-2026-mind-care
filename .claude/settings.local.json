@@ -43,7 +43,9 @@
       "Bash(git commit -m 'test: Add exception class tests \\(319 total tests\\) *)",
       "Bash(git commit -m 'test: Final stable test suite \\(319 tests\\) *)",
       "Bash(grep -E \"^\\\\\\\\[|319\")",
-      "Bash(powershell -Command ' *)"
+      "Bash(powershell -Command ' *)",
+      "Bash(cat)",
+      "Bash(bash /tmp/update_packages.sh)"
     ]
   }
 }

@@ -1,8 +1,8 @@
 package tn.esprit.lost_item_service.dto;
 
 import org.junit.jupiter.api.Test;
-import tn.esprit.lost_item_service.Entity.AlertLevel;
-import tn.esprit.lost_item_service.Entity.AlertStatus;
+import tn.esprit.lost_item_service.entity.AlertLevel;
+import tn.esprit.lost_item_service.entity.AlertStatus;
 
 import java.time.LocalDateTime;
 

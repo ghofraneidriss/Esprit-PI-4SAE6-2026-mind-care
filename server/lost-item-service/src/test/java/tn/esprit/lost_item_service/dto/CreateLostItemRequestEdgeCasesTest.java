@@ -1,8 +1,8 @@
 package tn.esprit.lost_item_service.dto;
 
 import org.junit.jupiter.api.Test;
-import tn.esprit.lost_item_service.Entity.ItemCategory;
-import tn.esprit.lost_item_service.Entity.ItemPriority;
+import tn.esprit.lost_item_service.entity.ItemCategory;
+import tn.esprit.lost_item_service.entity.ItemPriority;
 
 import java.time.LocalDate;
 

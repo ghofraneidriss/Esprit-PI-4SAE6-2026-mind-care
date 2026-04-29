@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tn.esprit.lost_item_service.Entity.ItemCategory;
-import tn.esprit.lost_item_service.Entity.ItemPriority;
-import tn.esprit.lost_item_service.Entity.ItemStatus;
+import tn.esprit.lost_item_service.entity.ItemCategory;
+import tn.esprit.lost_item_service.entity.ItemPriority;
+import tn.esprit.lost_item_service.entity.ItemStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

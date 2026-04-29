@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tn.esprit.lost_item_service.Entity.ItemCategory;
-import tn.esprit.lost_item_service.Entity.ItemPriority;
+import tn.esprit.lost_item_service.entity.ItemCategory;
+import tn.esprit.lost_item_service.entity.ItemPriority;
 
 import java.time.LocalDate;
 
