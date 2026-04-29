@@ -1,0 +1,29 @@
+groups:
+  - name: infrastructure-alerts
+    rules:
+      - alert: ServiceHealthProbeFailed
+        expr: probe_success{job="http_probes"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Probe failed for {{ $labels.instance }}"
+          description: "The monitored HTTP endpoint {{ $labels.instance }} has been unreachable for more than 1 minute."
+
+      - alert: ContainerHighMemoryUsage
+        expr: (container_memory_usage_bytes{name!=""} / container_spec_memory_limit_bytes{name!=""} * 100 > 85) and container_spec_memory_limit_bytes{name!=""} > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High container memory usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} is using more than 85% of its memory limit."
+
+      - alert: BackendMetricsMissing
+        expr: up{job=~"recommendation_service|souvenir_service"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus cannot scrape {{ $labels.job }}"
+          description: "The /actuator/prometheus endpoint for {{ $labels.job }} has not been reachable for more than 2 minutes."

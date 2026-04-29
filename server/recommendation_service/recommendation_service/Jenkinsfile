@@ -67,6 +67,33 @@ pipeline {
             }
         }
 
+        stage('Trivy Security Scan') {
+            steps {
+                dir('server/recommendation_service/recommendation_service') {
+                    sh '''
+                        mkdir -p reports
+                        docker run --rm \
+                            -v /var/run/docker.sock:/var/run/docker.sock \
+                            -v "$PWD/reports:/reports" \
+                            -v "$HOME/.cache/trivy:/root/.cache/" \
+                            aquasec/trivy:0.56.2 image \
+                            --scanners vuln,secret,misconfig \
+                            --severity HIGH,CRITICAL \
+                            --ignore-unfixed \
+                            --exit-code 0 \
+                            --format table \
+                            --output /reports/trivy-image-report.txt \
+                            ${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'server/recommendation_service/recommendation_service/reports/trivy-image-report.txt'
+                }
+            }
+        }
+
         stage('Push Docker Hub') {
             steps {
                 sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
