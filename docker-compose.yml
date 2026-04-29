@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # Votre service de gestion des consultations
+  traitement-service:
+    container_name: mindcare-traitement
+    build:
+      context: ./backoffice/traitement_et_consultation
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+  # Votre service de gestion des ordonnances
+  ordonnance-service:
+    container_name: mindcare-ordonnance
+    build:
+      context: ./backoffice/ordonnance_et_medicaments
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
