@@ -2,15 +2,14 @@ pipeline {
     agent any
 
     tools {
-        // Utilisation de ton outil Maven configuré sous le nom 'M3'
         maven 'M3'
     }
 
     stages {
         stage('Cleanup') {
             steps {
-                // Nettoyage des fichiers temporaires pour éviter les conflits
-                sh 'find . -name "report-task.txt" -delete'
+                // Nettoyage pour repartir sur une base propre
+                deleteDir()
             }
         }
 
@@ -24,35 +23,34 @@ pipeline {
         stage('Build & Install Parent') {
             steps {
                 dir('server') {
-                    // Compilation globale sans lancer les tests
+                    // Compilation initiale
                     sh 'mvn clean install -DskipTests'
                 }
             }
         }
 
-        stage('Test & Jacoco Report') {
+        stage('Test & Jacoco') {
             steps {
-                // On lance Jacoco et on ignore les erreurs de tests avec || true
-                // pour être sûr d'arriver jusqu'à l'étape Docker/Harbor
+                // On exécute les tests normalement.
+                // Note : Si les tests échouent ici, le pipeline s'arrêtera (ROUGE).
+                // C'est le comportement normal pour garantir la qualité.
                 dir('server/activities_service') {
-                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dsurefire.failIfNoSpecifiedTests=false || true'
+                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report'
                 }
                 dir('server/movement_service') {
-                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dsurefire.failIfNoSpecifiedTests=false || true'
+                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report'
                 }
             }
             post {
                 always {
-                    // Affiche les résultats des tests dans Jenkins s'ils existent
-                    junit allowEmptyResults: true,
-                            testResults: 'server/**/target/surefire-reports/*.xml'
+                    // Publie les rapports de tests dans l'interface Jenkins
+                    junit allowEmptyResults: true, testResults: 'server/**/target/surefire-reports/*.xml'
                 }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                // On enlève catchError pour que ce soit un vrai succès
                 withSonarQubeEnv('SonarQube') {
                     dir('server/activities_service') {
                         sh "mvn sonar:sonar -Dsonar.projectKey=activities-service -Dsonar.projectName='Activities Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
@@ -66,9 +64,9 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                // On attend le retour de Sonar, mais on n'arrête pas le pipeline si ça rate
                 timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: false
+                    // On attend la validation de Sonar
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -81,18 +79,16 @@ pipeline {
                         passwordVariable: 'HARBOR_PASS'
                 )]) {
                     sh """
-                docker login localhost:8085 -u ${HARBOR_USER} -p ${HARBOR_PASS}
-                
-                # Build Activities : On entre dans le dossier pour être sûr que Docker voit le fichier
-                cd server/activities_service && docker build -t localhost:8085/mindcare/activities-service:1.0 .
-                docker push localhost:8085/mindcare/activities-service:1.0
-                cd ../..
+                        docker login localhost:8085 -u ${HARBOR_USER} -p ${HARBOR_PASS}
+                        
+                        cd server/activities_service && docker build -t localhost:8085/mindcare/activities-service:1.0 .
+                        docker push localhost:8085/mindcare/activities-service:1.0
+                        cd ../..
 
-                # Build Movement
-                cd server/movement_service && docker build -t localhost:8085/mindcare/movement-service:1.0 .
-                docker push localhost:8085/mindcare/movement-service:1.0
-                cd ../..
-            """
+                        cd server/movement_service && docker build -t localhost:8085/mindcare/movement-service:1.0 .
+                        docker push localhost:8085/mindcare/movement-service:1.0
+                        cd ../..
+                    """
                 }
             }
         }
@@ -100,10 +96,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ SUCCÈS : Bravo Farah ! Le pipeline est allé jusqu.'
+            echo '✅ TOUT EST VERT : Tests réussis et images poussées !'
         }
         failure {
-            echo '❌ ÉCHEC : Vérifie les logs Maven ou la connexion Docker.'
+            echo '❌ ÉCHEC : Le build a échoué. Vérifie les tests ou Sonar.'
         }
     }
 }
