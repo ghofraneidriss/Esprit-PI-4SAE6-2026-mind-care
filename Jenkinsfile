@@ -14,7 +14,7 @@ pipeline {
         SONAR_HOST_URL = 'http://172.21.32.1:9000'
         SONAR_TOKEN_CREDENTIALS_ID = 'sonar-token-mindcare'
           // SonarQube
-    SONAR_PROJECT_KEY = 'mindcare'
+    SONAR_PROJECT_KEY = 'mind_care'
     SONAR_PROJECT_NAME = 'mindcare'
      SERVICE_NAME = 'volunteer'
     SERVICE_DIR = 'volunteer'
