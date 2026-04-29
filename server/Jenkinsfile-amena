@@ -52,15 +52,13 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Le bloc catchError permet de continuer le pipeline même si le réseau Sonar échoue
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    withSonarQubeEnv('SonarQube') {
-                        dir('server/activities_service') {
-                            sh "mvn sonar:sonar -Dsonar.projectKey=activities-service -Dsonar.projectName='Activities Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
-                        }
-                        dir('server/movement_service') {
-                            sh "mvn sonar:sonar -Dsonar.projectKey=movement-service -Dsonar.projectName='Movement Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
-                        }
+                // On enlève catchError pour que ce soit un vrai succès
+                withSonarQubeEnv('SonarQube') {
+                    dir('server/activities_service') {
+                        sh "mvn sonar:sonar -Dsonar.projectKey=activities-service -Dsonar.projectName='Activities Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                    }
+                    dir('server/movement_service') {
+                        sh "mvn sonar:sonar -Dsonar.projectKey=movement-service -Dsonar.projectName='Movement Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
                     }
                 }
             }
