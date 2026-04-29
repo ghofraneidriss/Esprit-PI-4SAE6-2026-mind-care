@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.lost_item_service.dto.DTOMapper;
 import tn.esprit.lost_item_service.dto.SearchReportDTO;
 import tn.esprit.lost_item_service.dto.CreateSearchReportRequest;
+import tn.esprit.lost_item_service.dto.UpdateSearchReportRequest;
 import tn.esprit.lost_item_service.Entity.LostItem;
 import tn.esprit.lost_item_service.Entity.ReportStatus;
 import tn.esprit.lost_item_service.Entity.SearchReport;
@@ -92,11 +93,12 @@ public class SearchReportController {
     @PutMapping("/{id}")
     public ResponseEntity<SearchReportDTO> updateSearchReport(
             @PathVariable Long id,
-            @RequestBody SearchReport report,
+            @RequestBody UpdateSearchReportRequest request,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkReportAccess(id, userId, userRole);
+        SearchReport report = DTOMapper.toSearchReportForUpdate(request);
         SearchReport updated = searchReportService.updateSearchReport(id, report);
         return ResponseEntity.ok(DTOMapper.toSearchReportDTO(updated));
     }

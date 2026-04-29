@@ -11,6 +11,8 @@ import org.springframework.web.context.WebApplicationContext;
 import tn.esprit.lost_item_service.Entity.*;
 import tn.esprit.lost_item_service.Repository.LostItemRepository;
 import tn.esprit.lost_item_service.Repository.SearchReportRepository;
+import tn.esprit.lost_item_service.dto.CreateSearchReportRequest;
+import tn.esprit.lost_item_service.dto.UpdateSearchReportRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
@@ -58,19 +60,18 @@ class SearchReportControllerIntegrationTest {
 
     @Test
     void testCreateSearchReport_withValidReport() throws Exception {
-        SearchReport report = SearchReport.builder()
+        CreateSearchReportRequest request = CreateSearchReportRequest.builder()
                 .lostItemId(testItem.getId())
                 .reportedBy(2L)
                 .searchDate(LocalDate.now())
                 .locationSearched("Living Room")
                 .searchResult(SearchResult.NOT_FOUND)
-                .status(ReportStatus.OPEN)
                 .notes("Not found in living room")
                 .build();
 
         mockMvc.perform(post("/api/search-reports")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(report)))
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.report.id").exists())
                 .andExpect(jsonPath("$.report.locationSearched").value("Living Room"))
@@ -265,7 +266,7 @@ class SearchReportControllerIntegrationTest {
                 .build();
         SearchReport saved = searchReportRepository.save(report);
 
-        SearchReport updatePayload = SearchReport.builder()
+        UpdateSearchReportRequest updatePayload = UpdateSearchReportRequest.builder()
                 .lostItemId(testItem.getId())
                 .reportedBy(2L)
                 .searchDate(LocalDate.now())

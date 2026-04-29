@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tn.esprit.lost_item_service.dto.CreateLostItemRequest;
+import tn.esprit.lost_item_service.dto.UpdateLostItemRequest;
 import tn.esprit.lost_item_service.Entity.ItemCategory;
 import tn.esprit.lost_item_service.Entity.ItemPriority;
 import tn.esprit.lost_item_service.Entity.ItemStatus;
@@ -180,7 +181,7 @@ class LostItemControllerIntegrationTest {
                 .build();
         LostItem saved = lostItemRepository.save(item);
 
-        LostItem updatePayload = LostItem.builder()
+        UpdateLostItemRequest updatePayload = UpdateLostItemRequest.builder()
                 .title("Updated Item")
                 .description("Updated description")
                 .category(ItemCategory.MEDICATION)

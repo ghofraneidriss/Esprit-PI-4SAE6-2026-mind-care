@@ -163,6 +163,7 @@ public class DTOMapper {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .category(request.getCategory())
+                .patientId(request.getPatientId())
                 .caregiverId(request.getCaregiverId())
                 .lastSeenLocation(request.getLastSeenLocation())
                 .lastSeenDate(request.getLastSeenDate())
@@ -212,6 +213,8 @@ public class DTOMapper {
             return null;
         }
         return SearchReport.builder()
+                .lostItemId(request.getLostItemId())
+                .reportedBy(request.getReportedBy())
                 .searchDate(request.getSearchDate())
                 .locationSearched(request.getLocationSearched())
                 .searchResult(request.getSearchResult())
