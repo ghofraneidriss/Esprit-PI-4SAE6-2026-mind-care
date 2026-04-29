@@ -112,20 +112,20 @@ public class LostItemController {
     }
 
     @PatchMapping("/{id}/mark-found")
-    public ResponseEntity<LostItem> markAsFound(
+    public ResponseEntity<LostItemDTO> markAsFound(
             @PathVariable Long id,
             @RequestHeader(value = "X-User-Id",   required = false) Long userId,
             @RequestHeader(value = "X-User-Role", required = false) String userRole
     ) {
         authorizationService.checkItemAccess(id, userId, userRole);
-        return ResponseEntity.ok(lostItemService.markAsFound(id));
+        return ResponseEntity.ok(DTOMapper.toLostItemDTO(lostItemService.markAsFound(id)));
     }
 
     @GetMapping("/critical/all")
     public ResponseEntity<Map<String, Object>> getAllCriticalItems() {
         List<LostItem> items = lostItemService.getAllCriticalItems();
         Map<String, Object> response = new HashMap<>();
-        response.put("items", items);
+        response.put("items", DTOMapper.toLostItemDTOList(items));
         response.put("urgentCount", items.size());
         return ResponseEntity.ok(response);
     }
@@ -134,7 +134,7 @@ public class LostItemController {
     public ResponseEntity<Map<String, Object>> getCriticalLostItems(@PathVariable Long patientId) {
         List<LostItem> items = lostItemService.getCriticalLostItems(patientId);
         Map<String, Object> response = new HashMap<>();
-        response.put("items", items);
+        response.put("items", DTOMapper.toLostItemDTOList(items));
         response.put("urgentCount", items.size());
         return ResponseEntity.ok(response);
     }
@@ -142,15 +142,15 @@ public class LostItemController {
     // ── Caregiver-scoped Endpoints ────────────────────────────────────────────
 
     @GetMapping("/caregiver/{caregiverId}")
-    public ResponseEntity<List<LostItem>> getItemsByCaregiverId(@PathVariable Long caregiverId) {
-        return ResponseEntity.ok(lostItemService.getItemsByCaregiverId(caregiverId));
+    public ResponseEntity<List<LostItemDTO>> getItemsByCaregiverId(@PathVariable Long caregiverId) {
+        return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getItemsByCaregiverId(caregiverId)));
     }
 
     @GetMapping("/caregiver/{caregiverId}/critical")
     public ResponseEntity<Map<String, Object>> getCriticalItemsByCaregiverId(@PathVariable Long caregiverId) {
         List<LostItem> items = lostItemService.getCriticalItemsByCaregiverId(caregiverId);
         Map<String, Object> response = new HashMap<>();
-        response.put("items", items);
+        response.put("items", DTOMapper.toLostItemDTOList(items));
         response.put("urgentCount", items.size());
         return ResponseEntity.ok(response);
     }
