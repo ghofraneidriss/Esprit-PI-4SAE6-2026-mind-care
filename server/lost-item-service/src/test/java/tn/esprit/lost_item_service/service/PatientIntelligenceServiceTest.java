@@ -40,7 +40,7 @@ class PatientIntelligenceServiceTest {
     @BeforeEach
     void setUp() {
         when(chatClientBuilder.build()).thenReturn(chatClient);
-        service = new PatientIntelligenceService(chatClientBuilder, lostItemRepository, searchReportRepository);
+        service = new PatientIntelligenceService(chatClientBuilder, lostItemRepository);
     }
 
     private LostItem makeLostItem(Long id, ItemCategory cat, ItemStatus status, ItemPriority priority, int daysAgo) {
