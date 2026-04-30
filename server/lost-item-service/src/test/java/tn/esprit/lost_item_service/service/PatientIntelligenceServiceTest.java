@@ -174,10 +174,10 @@ class PatientIntelligenceServiceTest {
 
         Map<String, Object> result = service.analyzePatient(5L);
 
-        assertThat(result).containsKey("aiError");
+        assertThat(result)
+                .containsKey("aiError")
+                .containsKeys("totalItemsLost", "overallRiskLevel", "monthlyTrend");
         assertThat(result.get("aiAnalysis")).isNull();
-        // Stats still present
-        assertThat(result).containsKeys("totalItemsLost", "overallRiskLevel", "monthlyTrend");
     }
 
     // ── Trend direction ───────────────────────────────────────────────────────

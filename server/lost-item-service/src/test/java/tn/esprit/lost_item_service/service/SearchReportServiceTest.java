@@ -255,9 +255,10 @@ class SearchReportServiceTest {
         Map<String, Object> result = service.getSearchTimeline(10L);
 
         // (1 found + 1 partial) / 3 total = 66.7%
-        assertThat(result).containsEntry("totalSearches", 3L);
-        assertThat(result).containsEntry("foundCount", 1L);
-        assertThat(result).containsEntry("partiallyFoundCount", 1L);
+        assertThat(result)
+                .containsEntry("totalSearches", 3L)
+                .containsEntry("foundCount", 1L)
+                .containsEntry("partiallyFoundCount", 1L);
         assertThat((Double) result.get("successRate")).isGreaterThan(60.0);
     }
 
@@ -278,8 +279,9 @@ class SearchReportServiceTest {
 
         Map<String, Object> result = service.getSearchTimeline(10L);
 
-        assertThat(result).containsEntry("successRate", 0.0);
-        assertThat(result).containsEntry("notFoundCount", 2L);
+        assertThat(result)
+                .containsEntry("successRate", 0.0)
+                .containsEntry("notFoundCount", 2L);
     }
 
     @Test
