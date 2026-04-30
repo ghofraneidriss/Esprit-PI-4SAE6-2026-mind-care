@@ -86,7 +86,7 @@ public class PatientIntelligenceService {
         List<Map<String, Object>> monthlyTrend = new ArrayList<>();
         for (int i = 5; i >= 0; i--) {
             LocalDateTime from = now.minusMonths((long)i + 1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-            LocalDateTime to   = now.minusMonths((long)i).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime to   = now.minusMonths(i).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
             long count = lostItemRepository.findByPatientIdAndCreatedAtBetween(patientId, from, to).size();
             String month = from.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
                          + " " + from.getYear();

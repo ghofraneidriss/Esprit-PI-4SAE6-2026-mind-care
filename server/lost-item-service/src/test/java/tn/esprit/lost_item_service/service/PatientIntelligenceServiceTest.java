@@ -74,8 +74,9 @@ class PatientIntelligenceServiceTest {
 
         Map<String, Object> result = service.analyzePatient(5L);
 
-        assertThat(result).containsEntry("totalItemsLost", 3L);
-        assertThat(result).containsEntry("totalFound", 1L);
+        assertThat(result)
+                .containsEntry("totalItemsLost", 3L)
+                .containsEntry("totalFound", 1L);
     }
 
     @Test
@@ -155,8 +156,9 @@ class PatientIntelligenceServiceTest {
 
         Map<String, Object> result = service.analyzePatient(5L);
 
-        assertThat(result).containsEntry("overallRiskLevel", "LOW");
-        assertThat(result).containsEntry("trendDirection", "STABLE");
+        assertThat(result)
+                .containsEntry("overallRiskLevel", "LOW")
+                .containsEntry("trendDirection", "STABLE");
     }
 
     // ── AI error handling ─────────────────────────────────────────────────────
@@ -202,8 +204,9 @@ class PatientIntelligenceServiceTest {
 
         Map<String, Object> result = service.analyzePatient(5L);
 
-        assertThat(result).containsEntry("trendDirection", "INCREASING");
-        assertThat(result).containsEntry("recentMonthCount", 5L);
-        assertThat(result).containsEntry("previousMonthCount", 1L);
+        assertThat(result)
+                .containsEntry("trendDirection", "INCREASING")
+                .containsEntry("recentMonthCount", 5L)
+                .containsEntry("previousMonthCount", 1L);
     }
 }

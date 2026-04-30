@@ -318,8 +318,9 @@ class SearchReportServiceTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Long> freq = (Map<String, Long>) result.get("locationFrequency");
-        assertThat(freq).containsEntry("Bedroom", 2L);
-        assertThat(freq).containsEntry("Kitchen", 1L);
+        assertThat(freq)
+                .containsEntry("Bedroom", 2L)
+                .containsEntry("Kitchen", 1L);
     }
 
     // ── getReportsByPatient ───────────────────────────────────────────────────
