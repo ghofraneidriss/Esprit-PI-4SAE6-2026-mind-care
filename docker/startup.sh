@@ -60,16 +60,7 @@ function start_services() {
         sleep 2
     done
 
-    # Wait for Eureka
-    echo -e "${YELLOW}Waiting for Eureka...${NC}"
-    for i in {1..30}; do
-        if curl -s http://localhost:8761 | grep -q "Eureka" 2>/dev/null; then
-            echo -e "${GREEN}✓ Eureka is healthy${NC}"
-            break
-        fi
-        echo "  Attempt $i/30..."
-        sleep 2
-    done
+    # Eureka check skipped (removed from docker-compose)
 
     # Wait for Lost Item Service
     echo -e "${YELLOW}Waiting for Lost Item Service...${NC}"

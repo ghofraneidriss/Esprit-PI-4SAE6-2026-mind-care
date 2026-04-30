@@ -23,20 +23,6 @@ services:
     networks:
       - mindcare-network
 
-  # Eureka Service Registry
-  eureka-server:
-    image: ghofraneidriss/eureka-server:latest
-    container_name: alzcare-eureka
-    ports:
-      - "8761:8761"
-    environment:
-      - SPRING_APPLICATION_NAME=eureka-server
-    restart: unless-stopped
-    networks:
-      - mindcare-network
-    depends_on:
-      - mysql
-
   # Lost Item Service
   lost-item-service:
     build:
@@ -52,8 +38,6 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - JAVA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
     restart: unless-stopped
     networks:
@@ -61,8 +45,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      eureka-server:
-        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
