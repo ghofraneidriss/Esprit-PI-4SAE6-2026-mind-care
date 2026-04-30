@@ -138,6 +138,40 @@ pipeline {
                 }
             }
         }
+        stage('Start Monitoring Stack') {
+    steps {
+        echo 'Starting Prometheus and Grafana...'
+        sh '''
+            cd volunteer
+            docker-compose -f docker-compose-monitoring.yml up -d
+            sleep 10
+        '''
+    }
+}
+
+stage('Health Check') {
+    steps {
+        echo 'Checking service health...'
+        sh '''
+            cd volunteer
+            
+            # Check if volunteer service is running
+            curl -s http://localhost:8080/actuator/health | grep UP || exit 1
+            
+            # Check if Prometheus is scraping metrics
+            curl -s http://localhost:9090/api/v1/targets | grep healthy || exit 1
+        '''
+    }
+}
+
+stage('Verify Metrics') {
+    steps {
+        echo 'Verifying Prometheus metrics...'
+        sh '''
+            curl -s http://localhost:9090/api/v1/query?query=up | grep -q "value" && echo "Metrics collected successfully"
+        '''
+    }
+}
     }
 
     post {
