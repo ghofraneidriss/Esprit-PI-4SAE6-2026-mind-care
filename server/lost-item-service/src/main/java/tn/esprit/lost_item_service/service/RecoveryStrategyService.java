@@ -105,7 +105,7 @@ public class RecoveryStrategyService {
 
         // ── 3. Location success rate analysis ────────────────────────────────
         LocationAnalysis locationAnalysis = analyzeLocations(
-                categoryReports, itemReports, alreadySearched, itemLocationResults);
+                categoryReports, alreadySearched, itemLocationResults);
         List<Map<String, Object>> recommended = locationAnalysis.recommendedLocations();
         List<Map<String, Object>> alreadySearchedDisplay = locationAnalysis.alreadySearchedLocations();
         String topLocation = locationAnalysis.topLocation();
@@ -211,7 +211,7 @@ public class RecoveryStrategyService {
     }
 
     private LocationAnalysis analyzeLocations(
-            List<SearchReport> categoryReports, List<SearchReport> itemReports,
+            List<SearchReport> categoryReports,
             Set<String> alreadySearched, Map<String, String> itemLocationResults) {
 
         Map<String, List<SearchReport>> byLocation = categoryReports.stream()
