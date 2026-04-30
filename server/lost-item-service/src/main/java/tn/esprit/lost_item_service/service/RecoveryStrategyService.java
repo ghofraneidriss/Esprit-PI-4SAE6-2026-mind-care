@@ -67,7 +67,7 @@ public class RecoveryStrategyService {
             result.put("itemId", itemId);
             result.put("itemTitle", item.getTitle());
             result.put("category", item.getCategory() != null ? item.getCategory().name() : null);
-            result.put("status", "FOUND");
+            result.put("status", FOUND);
             result.put("message", "Item has been found. No active recovery strategy needed.");
             result.put("daysElapsed", daysElapsed);
             result.put("searchAttemptsCount", doneReports.size());

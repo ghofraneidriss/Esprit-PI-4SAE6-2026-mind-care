@@ -85,8 +85,8 @@ public class PatientIntelligenceService {
         // ── 2. Monthly trend (last 6 months) ──────────────────────────────────
         List<Map<String, Object>> monthlyTrend = new ArrayList<>();
         for (int i = 5; i >= 0; i--) {
-            LocalDateTime from = now.minusMonths(i + 1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-            LocalDateTime to   = now.minusMonths(i).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime from = now.minusMonths((long)i + 1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime to   = now.minusMonths((long)i).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
             long count = lostItemRepository.findByPatientIdAndCreatedAtBetween(patientId, from, to).size();
             String month = from.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
                          + " " + from.getYear();
@@ -172,7 +172,7 @@ public class PatientIntelligenceService {
         }
 
         // ── 8. Overall risk level (computed, not AI) ──────────────────────────
-        String overallRisk = computeRiskLevel(recentCount, previousCount, trendDir,
+        String overallRisk = computeRiskLevel(recentCount, trendDir,
                 unresolvedCritical, totalLost, totalFound);
 
         // ── 9. Assemble response ──────────────────────────────────────────────
@@ -279,7 +279,7 @@ public class PatientIntelligenceService {
         return RISK_LEVEL_LOW;
     }
 
-    private String computeRiskLevel(long recentCount, long previousCount, String trendDir,
+    private String computeRiskLevel(long recentCount, String trendDir,
                                      long unresolvedCritical, long totalLost, long totalFound) {
         int score = 0;
         if (INCREASING_TREND.equals(trendDir)) score += INCREASING_SCORE;

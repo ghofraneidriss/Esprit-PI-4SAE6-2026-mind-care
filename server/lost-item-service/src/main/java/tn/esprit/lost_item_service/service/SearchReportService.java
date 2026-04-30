@@ -61,7 +61,7 @@ public class SearchReportService {
 
     public void deleteSearchReport(Long id) {
         if (!searchReportRepository.existsById(id)) {
-            throw new RuntimeException("Search report not found with id: " + id);
+            throw new IllegalArgumentException("Search report not found with id: " + id);
         }
         searchReportRepository.deleteById(id);
     }

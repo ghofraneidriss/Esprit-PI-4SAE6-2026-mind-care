@@ -48,14 +48,10 @@ public class AuthorizationService {
 
         if (isFullAccess(role)) return item;
 
-        if (CAREGIVER_ROLE.equals(role)) {
-            if (userId == null || !userId.equals(item.getCaregiverId())) {
-                throw new AccessDeniedException("You are not assigned to this item.");
-            }
-        } else if (PATIENT_ROLE.equals(role)) {
-            if (userId == null || !userId.equals(item.getPatientId())) {
-                throw new AccessDeniedException("You do not own this item.");
-            }
+        if (CAREGIVER_ROLE.equals(role) && (userId == null || !userId.equals(item.getCaregiverId()))) {
+            throw new AccessDeniedException("You are not assigned to this item.");
+        } else if (PATIENT_ROLE.equals(role) && (userId == null || !userId.equals(item.getPatientId()))) {
+            throw new AccessDeniedException("You do not own this item.");
         }
         return item;
     }
@@ -110,14 +106,10 @@ public class AuthorizationService {
 
         if (isFullAccess(role)) return alert;
 
-        if (CAREGIVER_ROLE.equals(role)) {
-            if (userId == null || !userId.equals(alert.getCaregiverId())) {
-                throw new AccessDeniedException("You are not assigned to this alert.");
-            }
-        } else if (PATIENT_ROLE.equals(role)) {
-            if (userId == null || !userId.equals(alert.getPatientId())) {
-                throw new AccessDeniedException("You do not own this alert.");
-            }
+        if (CAREGIVER_ROLE.equals(role) && (userId == null || !userId.equals(alert.getCaregiverId()))) {
+            throw new AccessDeniedException("You are not assigned to this alert.");
+        } else if (PATIENT_ROLE.equals(role) && (userId == null || !userId.equals(alert.getPatientId()))) {
+            throw new AccessDeniedException("You do not own this alert.");
         }
         return alert;
     }

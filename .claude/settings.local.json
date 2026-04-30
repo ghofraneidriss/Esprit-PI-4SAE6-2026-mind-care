@@ -50,7 +50,8 @@
       "Bash(git rebase *)",
       "Bash(git commit -m 'Extract UNKNOWN constant in SearchReportService *)",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(grep -n \"^\\\\s*//.*=\" src/main/java/tn/esprit/lost_item_service/service/SearchSuggestionService.java)"
     ]
   }
 }

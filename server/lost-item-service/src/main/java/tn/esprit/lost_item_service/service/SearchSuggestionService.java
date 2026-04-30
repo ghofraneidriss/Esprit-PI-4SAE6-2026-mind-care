@@ -68,8 +68,6 @@ public class SearchSuggestionService {
         List<SearchReport> reports = searchReportRepository.findByLostItemIdIn(itemIds);
 
         // 3. Build per-location statistics
-        //    key = trimmed location string
-        //    value = { total, found, partial }
         Map<String, int[]> locationStats = new LinkedHashMap<>();
         for (SearchReport r : reports) {
             String loc = r.getLocationSearched();
