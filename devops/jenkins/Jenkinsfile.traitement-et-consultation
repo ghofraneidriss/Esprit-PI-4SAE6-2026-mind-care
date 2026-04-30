@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 45, unit: 'MINUTES')
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        booleanParam(
+            name: 'RUN_DOCKER_BUILD',
+            defaultValue: false,
+            description: 'Cocher seulement quand Jenkins a acces a Docker.'
+        )
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Unit tests and coverage') {
+            steps {
+                dir('backoffice/traitement_et_consultation') {
+                    sh 'chmod +x mvnw || true'
+                    sh './mvnw -B clean verify jacoco:report'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'backoffice/traitement_et_consultation/target/surefire-reports/*.xml'
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'backoffice/traitement_et_consultation/target/site/jacoco/**'
+                }
+            }
+        }
+
+        stage('SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    dir('backoffice/traitement_et_consultation') {
+                        sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-traitement-consultation -Dsonar.projectName="MindCare Traitement Consultation" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
+                    }
+                }
+            }
+        }
+
+        stage('Docker image') {
+            when {
+                expression { params.RUN_DOCKER_BUILD }
+            }
+            steps {
+                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t mindcare-traitement:${BUILD_NUMBER} backoffice'
+                sh 'docker tag mindcare-traitement:${BUILD_NUMBER} mindcare-traitement:latest'
+            }
+        }
+    }
+}

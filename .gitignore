@@ -1,6 +1,11 @@
-target/
 .idea/
+target/
 *.class
 *.iml
 bin/
 out/
+node_modules/
+dist/
+coverage/
+.angular/
+.maven-cache/

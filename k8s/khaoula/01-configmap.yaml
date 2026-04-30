@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mindcare-khaoula-config
+  namespace: mindcare
+data:
+  SPRING_DATASOURCE_URL: jdbc:mysql://mindcare-mysql:3306/alzheimer_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+  SPRING_DATASOURCE_USERNAME: root
+  EUREKA_CLIENT_ENABLED: "false"
+  TRAITEMENT_SERVICE_URL: http://traitement-service:8081
+  SPRING_JPA_HIBERNATE_DDL_AUTO: update

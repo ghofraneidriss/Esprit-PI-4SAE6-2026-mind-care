@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ordonnance-service
+  namespace: mindcare
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ordonnance-service
+  template:
+    metadata:
+      labels:
+        app: ordonnance-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "8083"
+    spec:
+      containers:
+        - name: ordonnance-service
+          image: mindcare-ordonnance:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          envFrom:
+            - configMapRef:
+                name: mindcare-khaoula-config
+            - secretRef:
+                name: mindcare-khaoula-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 60
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ordonnance-service
+  namespace: mindcare
+spec:
+  selector:
+    app: ordonnance-service
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083

@@ -1,96 +1,129 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-        jdk 'JDK17'
+    environment {
+        BRANCH_NAME_TARGET = 'khaoula-integration-globale'
+        DOCKER_IMAGE_ORDONNANCE = 'mindcare-ordonnance:latest'
+        DOCKER_IMAGE_TRAITEMENT = 'mindcare-traitement:latest'
+    }
+
+    parameters {
+        booleanParam(
+            name: 'RUN_DOCKER_CD',
+            defaultValue: false,
+            description: 'Cocher seulement quand Jenkins a acces a Docker pour construire et deployer les conteneurs.'
+        )
     }
 
     options {
-        // Temps maximum d'exécution pour éviter les builds qui bloquent indéfiniment
         timeout(time: 1, unit: 'HOURS')
-        // Garde les logs propres
         timestamps()
+        disableConcurrentBuilds()
     }
 
     stages {
-        stage('Initialisation & Cleanup') {
-            steps {
-                // Nettoie l'espace de travail pour éviter les conflits de fichiers corrompus
-                deleteDir()
-            }
-        }
-
         stage('Checkout') {
             steps {
-                script {
-                    // On force des paramètres Git robustes pour les grosses archives
-                    sh 'git config --global http.postBuffer 524288000'
-                    sh 'git config --global http.version HTTP/1.1'
-                }
-                // Récupération du code avec un timeout étendu pour les connexions lentes
-                checkout([$class: 'GitSCM',
-                    branches: scm.branches,
-                    extensions: scm.extensions + [
-                        [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true, timeout: 30],
-                        [$class: 'CheckoutOption', timeout: 30]
-                    ],
-                    userRemoteConfigs: scm.userRemoteConfigs
-                ])
+                checkout scm
             }
         }
 
-        stage('Build & Compilation') {
+        stage('Runtime Jenkins') {
             steps {
-                // Utilisation de -B (Batch mode) pour des logs Jenkins plus propres
-                sh 'mvn -B clean install -DskipTests -f backoffice/pom.xml'
+                sh 'java -version'
             }
         }
 
-        stage('Tests & Couverture JaCoCo') {
-            steps {
-                // On s'assure que JaCoCo génère bien le XML pour SonarQube
-                sh 'mvn -B test jacoco:report -f backoffice/pom.xml'
-            }
-        }
-
-        stage('Analyse SonarQube') {
-            steps {
-                // 'SonarQube' doit correspondre au nom dans Administrer Jenkins > System
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn -B -f backoffice/pom.xml sonar:sonar \
-                        -Dsonar.projectKey=mind-care-backend \
-                        -Dsonar.projectName=MindCare-Backoffice \
-                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
-                }
-            }
-        }
-
-        stage('Construction Docker') {
-            steps {
-                script {
-                    // On lance les builds Docker
-                    // Note: Assurez-vous que l'utilisateur 'jenkins' a les droits sudo docker ou appartient au groupe docker
-                    dir('backoffice/traitement_et_consultation') {
-                        sh 'docker build -t mindcare-traitement:latest .'
+        stage('CI microservices backend') {
+            parallel {
+                stage('CI ordonnance et medicaments') {
+                    steps {
+                        dir('backoffice/ordonnance_et_medicaments') {
+                            sh 'chmod +x mvnw || true'
+                            sh './mvnw -B clean verify jacoco:report'
+                        }
                     }
-                    dir('backoffice/ordonnance_et_medicaments') {
-                        sh 'docker build -t mindcare-ordonnance:latest .'
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'backoffice/ordonnance_et_medicaments/target/surefire-reports/*.xml'
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'backoffice/ordonnance_et_medicaments/target/site/jacoco/**'
+                        }
                     }
                 }
+
+                stage('CI traitement et consultation') {
+                    steps {
+                        dir('backoffice/traitement_et_consultation') {
+                            sh 'chmod +x mvnw || true'
+                            sh './mvnw -B clean verify jacoco:report'
+                        }
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'backoffice/traitement_et_consultation/target/surefire-reports/*.xml'
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'backoffice/traitement_et_consultation/target/site/jacoco/**'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('SonarQube backend') {
+            parallel {
+                stage('Sonar ordonnance et medicaments') {
+                    steps {
+                        withSonarQubeEnv('SonarQube') {
+                            dir('backoffice/ordonnance_et_medicaments') {
+                                sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-ordonnance -Dsonar.projectName="MindCare Ordonnance Medicaments" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
+                            }
+                        }
+                    }
+                }
+
+                stage('Sonar traitement et consultation') {
+                    steps {
+                        withSonarQubeEnv('SonarQube') {
+                            dir('backoffice/traitement_et_consultation') {
+                                sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-traitement-consultation -Dsonar.projectName="MindCare Traitement Consultation" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker images') {
+            when {
+                expression { params.RUN_DOCKER_CD }
+            }
+            steps {
+                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t $DOCKER_IMAGE_ORDONNANCE backoffice'
+                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t $DOCKER_IMAGE_TRAITEMENT backoffice'
+            }
+        }
+
+        stage('CD backend global') {
+            when {
+                expression { params.RUN_DOCKER_CD }
+            }
+            steps {
+                sh '''
+                    if docker compose version >/dev/null 2>&1; then
+                      docker compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                    else
+                      docker-compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                    fi
+                '''
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline réussi ! Le code est testé, analysé et packagé.'
+            echo 'Pipeline Khaoula OK: tests, couverture, SonarQube, images Docker et deploiement global.'
         }
         failure {
-            echo '❌ Le pipeline a échoué. Vérifiez les logs ci-dessus.'
-        }
-        always {
-            echo '🏁 Fin du traitement du pipeline.'
+            echo 'Pipeline Khaoula en echec. Consulter les logs Jenkins.'
         }
     }
 }

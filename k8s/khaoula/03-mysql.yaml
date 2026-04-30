@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mindcare-mysql
+  namespace: mindcare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mindcare-mysql
+  template:
+    metadata:
+      labels:
+        app: mindcare-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.4
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              value: alzheimer_db
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mindcare-khaoula-secret
+                  key: MYSQL_ALLOW_EMPTY_PASSWORD
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          readinessProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-h", "127.0.0.1"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+      volumes:
+        - name: mysql-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mindcare-mysql
+  namespace: mindcare
+spec:
+  selector:
+    app: mindcare-mysql
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306

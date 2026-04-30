@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 45, unit: 'MINUTES')
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install') {
+            steps {
+                dir('front') {
+                    sh 'npm ci'
+                }
+            }
+        }
+
+        stage('Unit tests') {
+            steps {
+                dir('front') {
+                    sh 'npm test -- --watch=false --code-coverage'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('front') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    dir('front') {
+                        sh 'sonar-scanner -Dsonar.projectKey=mindcare-frontend -Dsonar.projectName="MindCare Frontend" -Dsonar.sources=src -Dsonar.tests=src -Dsonar.test.inclusions=**/*.spec.ts -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info'
+                    }
+                }
+            }
+        }
+    }
+}

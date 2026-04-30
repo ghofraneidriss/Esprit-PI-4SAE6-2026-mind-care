@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 45, unit: 'MINUTES')
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        booleanParam(
+            name: 'RUN_DOCKER_BUILD',
+            defaultValue: false,
+            description: 'Cocher seulement quand Jenkins a acces a Docker.'
+        )
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Unit tests and coverage') {
+            steps {
+                dir('backoffice/ordonnance_et_medicaments') {
+                    sh 'chmod +x mvnw || true'
+                    sh './mvnw -B clean verify jacoco:report'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'backoffice/ordonnance_et_medicaments/target/surefire-reports/*.xml'
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'backoffice/ordonnance_et_medicaments/target/site/jacoco/**'
+                }
+            }
+        }
+
+        stage('SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    dir('backoffice/ordonnance_et_medicaments') {
+                        sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-ordonnance -Dsonar.projectName="MindCare Ordonnance Medicaments" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
+                    }
+                }
+            }
+        }
+
+        stage('Docker image') {
+            when {
+                expression { params.RUN_DOCKER_BUILD }
+            }
+            steps {
+                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t mindcare-ordonnance:${BUILD_NUMBER} backoffice'
+                sh 'docker tag mindcare-ordonnance:${BUILD_NUMBER} mindcare-ordonnance:latest'
+            }
+        }
+    }
+}

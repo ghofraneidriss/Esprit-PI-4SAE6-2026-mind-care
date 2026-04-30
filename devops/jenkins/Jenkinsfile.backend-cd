@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        timestamps()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build images') {
+            steps {
+                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t mindcare-ordonnance:latest backoffice'
+                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t mindcare-traitement:latest backoffice'
+            }
+        }
+
+        stage('Deploy backend global') {
+            steps {
+                sh '''
+                    if docker compose version >/dev/null 2>&1; then
+                      docker compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                    else
+                      docker-compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                    fi
+                '''
+            }
+        }
+    }
+}
