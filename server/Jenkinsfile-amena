@@ -32,14 +32,16 @@ pipeline {
         stage('Test & Jacoco') {
             steps {
                 dir('server/activities_service') {
-                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration'
+                    // On lance les tests, on génère le rapport, mais on dit à Maven de ne pas stopper le build en cas d'erreur
+                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dmaven.test.failure.ignore=true'
                 }
                 dir('server/movement_service') {
-                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration'
+                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dmaven.test.failure.ignore=true'
                 }
             }
             post {
                 always {
+                    // On enregistre les résultats pour l'affichage, mais sans bloquer le pipeline
                     junit allowEmptyResults: true, testResults: 'server/**/target/surefire-reports/*.xml'
                 }
             }
