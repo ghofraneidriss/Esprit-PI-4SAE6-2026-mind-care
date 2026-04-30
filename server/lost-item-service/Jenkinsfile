@@ -2,9 +2,6 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = tool 'Maven 3.9.6'
-        JAVA_HOME = tool 'JDK 17'
-        PATH = "${MAVEN_HOME}/bin:${JAVA_HOME}/bin:${PATH}"
         SERVICE_NAME = 'lost-item-service'
         DOCKER_REGISTRY = 'ghofraneidriss'
         IMAGE_TAG = "${BUILD_NUMBER}"
@@ -148,9 +145,7 @@ pipeline {
 
     post {
         always {
-            echo '📝 Collecting logs and artifacts...'
-            sh 'docker-compose -f docker-compose.yml logs lost-item-service > lost-item-service.log 2>&1 || true'
-            archiveArtifacts artifacts: '**/*.log', allowEmptyArchive: true
+            echo '📝 Pipeline completed'
         }
         success {
             echo '✅ Pipeline completed successfully!'

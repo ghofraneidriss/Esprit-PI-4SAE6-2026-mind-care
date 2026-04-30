@@ -52,7 +52,8 @@
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Read(//tmp/**)",
       "Bash(grep -n \"^\\\\s*//.*=\" src/main/java/tn/esprit/lost_item_service/service/SearchSuggestionService.java)",
-      "Bash(docker-compose --version)"
+      "Bash(docker-compose --version)",
+      "Bash(git commit -m 'Fix Jenkinsfile: remove tool declarations and simplify post block *)"
     ]
   }
 }
