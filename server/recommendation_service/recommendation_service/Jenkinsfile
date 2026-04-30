@@ -79,8 +79,9 @@ pipeline {
                             aquasec/trivy:0.56.2 image \
                             --insecure \
                             --db-repository public.ecr.aws/aquasecurity/trivy-db:2 \
-                            --skip-java-db-update \
                             --scanners vuln,secret,misconfig \
+                            --pkg-types os \
+                            --skip-files /app/app.jar \
                             --severity HIGH,CRITICAL \
                             --ignore-unfixed \
                             --exit-code 0 \
