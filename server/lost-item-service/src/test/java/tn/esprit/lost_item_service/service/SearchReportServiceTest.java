@@ -255,9 +255,9 @@ class SearchReportServiceTest {
         Map<String, Object> result = service.getSearchTimeline(10L);
 
         // (1 found + 1 partial) / 3 total = 66.7%
-        assertThat(result.get("totalSearches")).isEqualTo(3L);
-        assertThat(result.get("foundCount")).isEqualTo(1L);
-        assertThat(result.get("partiallyFoundCount")).isEqualTo(1L);
+        assertThat(result).containsEntry("totalSearches", 3L);
+        assertThat(result).containsEntry("foundCount", 1L);
+        assertThat(result).containsEntry("partiallyFoundCount", 1L);
         assertThat((Double) result.get("successRate")).isGreaterThan(60.0);
     }
 
@@ -278,8 +278,8 @@ class SearchReportServiceTest {
 
         Map<String, Object> result = service.getSearchTimeline(10L);
 
-        assertThat(result.get("successRate")).isEqualTo(0.0);
-        assertThat(result.get("notFoundCount")).isEqualTo(2L);
+        assertThat(result).containsEntry("successRate", 0.0);
+        assertThat(result).containsEntry("notFoundCount", 2L);
     }
 
     @Test
@@ -318,8 +318,8 @@ class SearchReportServiceTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Long> freq = (Map<String, Long>) result.get("locationFrequency");
-        assertThat(freq.get("Bedroom")).isEqualTo(2L);
-        assertThat(freq.get("Kitchen")).isEqualTo(1L);
+        assertThat(freq).containsEntry("Bedroom", 2L);
+        assertThat(freq).containsEntry("Kitchen", 1L);
     }
 
     // ── getReportsByPatient ───────────────────────────────────────────────────

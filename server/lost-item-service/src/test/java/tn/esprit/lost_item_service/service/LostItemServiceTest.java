@@ -196,7 +196,7 @@ class LostItemServiceTest {
 
         Map<String, Object> result = service.calculatePatientItemRisk(5L);
 
-        assertThat(result.get("riskLevel")).isEqualTo("CRITICAL");
+        assertThat(result).containsEntry("riskLevel", "CRITICAL");
         assertThat((Boolean) result.get("hasMedicationLost")).isTrue();
         assertThat((Integer) result.get("riskScore")).isGreaterThanOrEqualTo(76);
     }
@@ -219,7 +219,7 @@ class LostItemServiceTest {
 
         Map<String, Object> result = service.calculatePatientItemRisk(6L);
 
-        assertThat(result.get("riskLevel")).isEqualTo("LOW");
+        assertThat(result).containsEntry("riskLevel", "LOW");
         assertThat((Integer) result.get("riskScore")).isLessThanOrEqualTo(25);
     }
 
@@ -257,7 +257,7 @@ class LostItemServiceTest {
 
         Map<String, Object> result = service.detectFrequentLosing(5L);
 
-        assertThat(result.get("trend")).isEqualTo("INCREASING");
+        assertThat(result).containsEntry("trend", "INCREASING");
         assertThat((Boolean) result.get("isFrequentLoser")).isTrue();
     }
 
@@ -275,7 +275,7 @@ class LostItemServiceTest {
 
         Map<String, Object> result = service.detectFrequentLosing(5L);
 
-        assertThat(result.get("trend")).isEqualTo("STABLE");
+        assertThat(result).containsEntry("trend", "STABLE");
         assertThat((Boolean) result.get("isFrequentLoser")).isFalse();
     }
 
@@ -293,7 +293,7 @@ class LostItemServiceTest {
 
         Map<String, Object> result = service.detectFrequentLosing(5L);
 
-        assertThat(result.get("trend")).isEqualTo("DECREASING");
+        assertThat(result).containsEntry("trend", "DECREASING");
         assertThat((Boolean) result.get("isFrequentLoser")).isFalse();
     }
 }

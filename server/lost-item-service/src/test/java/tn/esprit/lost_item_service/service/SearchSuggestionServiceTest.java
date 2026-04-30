@@ -113,7 +113,7 @@ class SearchSuggestionServiceTest {
         assertThat(result).isNotEmpty();
         // Living room has 100% success → should be rank 1
         Map<String, Object> top = result.get(0);
-        assertThat(top.get("location")).isEqualTo("Living room");
+        assertThat(top).containsEntry("location", "Living room");
         assertThat((Double) top.get("confidenceScore")).isEqualTo(100.0);
     }
 
@@ -169,7 +169,7 @@ class SearchSuggestionServiceTest {
         List<Map<String, Object>> result = service.getSuggestions(5L, "CLOTHING");
 
         assertThat(result).isNotEmpty();
-        assertThat(result.get(0).get("foundCount")).isEqualTo(1);
+        assertThat((Map<String, Object>) result.get(0)).containsEntry("foundCount", 1);
     }
 
     @Test
@@ -189,7 +189,7 @@ class SearchSuggestionServiceTest {
         List<Map<String, Object>> result = service.getSuggestions(5L, null);
 
         assertThat(result).hasSize(1); // both map to "Bedroom"
-        assertThat(result.get(0).get("foundCount")).isEqualTo(2);
+        assertThat((Map<String, Object>) result.get(0)).containsEntry("foundCount", 2);
     }
 
     // ── rank assignment ───────────────────────────────────────────────────────
