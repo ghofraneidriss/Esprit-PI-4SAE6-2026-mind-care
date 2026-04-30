@@ -30,15 +30,14 @@ public class PatientIntelligenceService {
 
     private final ChatClient chatClient;
     private final LostItemRepository lostItemRepository;
-    private final SearchReportRepository searchReportRepository;
+
+    private static final String COUNT = "count";
 
     public PatientIntelligenceService(
             ChatClient.Builder chatClientBuilder,
-            LostItemRepository lostItemRepository,
-            SearchReportRepository searchReportRepository) {
+            LostItemRepository lostItemRepository) {
         this.chatClient = chatClientBuilder.build();
         this.lostItemRepository = lostItemRepository;
-        this.searchReportRepository = searchReportRepository;
     }
 
     public Map<String, Object> analyzePatient(Long patientId) {
@@ -66,19 +65,15 @@ public class PatientIntelligenceService {
                          + " " + from.getYear();
             Map<String, Object> entry = new LinkedHashMap<>();
             entry.put("month", month);
-            entry.put("count", count);
+            entry.put(COUNT, count);
             monthlyTrend.add(entry);
         }
 
         // Trend direction: compare last 30 days vs previous 30 days
         long recentCount   = lostItemRepository.findByPatientIdAndCreatedAtBetween(patientId, now.minusDays(30), now).size();
         long previousCount = lostItemRepository.findByPatientIdAndCreatedAtBetween(patientId, now.minusDays(60), now.minusDays(30)).size();
-        String trendDir = recentCount > previousCount + 1 ? "INCREASING"
-                        : recentCount < previousCount - 1 ? "DECREASING"
-                        : "STABLE";
-        double trendMultiplier = previousCount > 0
-                ? Math.round((recentCount * 10.0 / previousCount)) / 10.0
-                : (recentCount > 0 ? 99.0 : 1.0);
+        String trendDir = determineTrendDirection(recentCount, previousCount);
+        double trendMultiplier = calculateTrendMultiplier(recentCount, previousCount);
 
         // ── 3. Category risk distribution ─────────────────────────────────────
         Map<String, Long> categoryDist = last90.stream()
@@ -89,11 +84,8 @@ public class PatientIntelligenceService {
                 .map(e -> {
                     Map<String, Object> m = new LinkedHashMap<>();
                     m.put("category", e.getKey());
-                    m.put("count", e.getValue());
-                    // Mark MEDICATION always HIGH risk
-                    String risk = e.getKey().equals("MEDICATION") ? "HIGH"
-                                : e.getValue() >= 3 ? "HIGH"
-                                : e.getValue() == 2 ? "MEDIUM" : "LOW";
+                    m.put(COUNT, e.getValue());
+                    String risk = determineCategoryRiskLevel(e.getKey(), e.getValue());
                     m.put("riskLevel", risk);
                     return m;
                 }).toList();
@@ -201,7 +193,7 @@ public class PatientIntelligenceService {
 
         sb.append("MONTHLY LOSS TREND (last 6 months):\n");
         for (Map<String, Object> m : monthlyTrend) {
-            sb.append("  ").append(m.get("month")).append(": ").append(m.get("count")).append(" items\n");
+            sb.append("  ").append(m.get("month")).append(": ").append(m.get(COUNT)).append(" items\n");
         }
         sb.append("- Trend: ").append(trendDir);
         if (!"STABLE".equals(trendDir) && multiplier != 1.0 && multiplier != 99.0) {
@@ -213,7 +205,7 @@ public class PatientIntelligenceService {
         if (!categoryRisk.isEmpty()) {
             sb.append("CATEGORY RISK:\n");
             for (Map<String, Object> c : categoryRisk) {
-                sb.append("  ").append(c.get("category")).append(": ").append(c.get("count"))
+                sb.append("  ").append(c.get("category")).append(": ").append(c.get(COUNT))
                   .append(" items (risk: ").append(c.get("riskLevel")).append(")\n");
             }
             sb.append("\n");
@@ -236,6 +228,28 @@ public class PatientIntelligenceService {
         sb.append("COGNITIVE INDICATOR: (brief statement on whether data suggests cognitive decline progression)\n");
 
         return sb.toString();
+    }
+
+    /** Determine trend direction based on recent vs previous counts. */
+    private String determineTrendDirection(long recentCount, long previousCount) {
+        if (recentCount > previousCount + 1) return "INCREASING";
+        if (recentCount < previousCount - 1) return "DECREASING";
+        return "STABLE";
+    }
+
+    /** Calculate trend multiplier showing change ratio. */
+    private double calculateTrendMultiplier(long recentCount, long previousCount) {
+        if (previousCount > 0) {
+            return Math.round((recentCount * 10.0 / previousCount)) / 10.0;
+        }
+        return recentCount > 0 ? 99.0 : 1.0;
+    }
+
+    private String determineCategoryRiskLevel(String category, long count) {
+        if ("MEDICATION".equals(category)) return "HIGH";
+        if (count >= 3) return "HIGH";
+        if (count == 2) return "MEDIUM";
+        return "LOW";
     }
 
     private String computeRiskLevel(long recentCount, long previousCount, String trendDir,
