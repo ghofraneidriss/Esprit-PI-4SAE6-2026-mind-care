@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LostItemAlertService {
 
+    private static final String ALERT_NOT_FOUND = "LostItemAlert not found with id: ";
+    private static final String ALREADY_CRITICAL = "Alert is already at CRITICAL level — cannot escalate further.";
+
     private final LostItemAlertRepository lostItemAlertRepository;
 
     // ── CRUD ──────────────────────────────────────────────────────────────────
@@ -32,7 +35,7 @@ public class LostItemAlertService {
 
     public LostItemAlert getAlertById(Long id) {
         return lostItemAlertRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("LostItemAlert not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(ALERT_NOT_FOUND + id));
     }
 
     public List<LostItemAlert> getAlertsByLostItemId(Long lostItemId) {
@@ -70,7 +73,7 @@ public class LostItemAlertService {
 
     public void deleteAlert(Long id) {
         lostItemAlertRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("LostItemAlert not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(ALERT_NOT_FOUND + id));
         lostItemAlertRepository.deleteById(id);
     }
 
@@ -105,7 +108,7 @@ public class LostItemAlertService {
             case LOW    -> next = AlertLevel.MEDIUM;
             case MEDIUM -> next = AlertLevel.HIGH;
             case HIGH   -> next = AlertLevel.CRITICAL;
-            default     -> throw new RuntimeException("Alert is already at CRITICAL level — cannot escalate further.");
+            default     -> throw new RuntimeException(ALREADY_CRITICAL);
         }
         alert.setLevel(next);
         alert.setStatus(AlertStatus.NEW);

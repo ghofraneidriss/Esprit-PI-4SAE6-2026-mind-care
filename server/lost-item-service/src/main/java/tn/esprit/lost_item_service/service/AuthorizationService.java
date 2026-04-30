@@ -129,8 +129,8 @@ public class AuthorizationService {
      */
     public void checkPatientAlertAccess(Long patientId, Long userId, String rawRole) {
         String role = normalise(rawRole);
-        if (isFullAccess(role) || "CAREGIVER".equals(role)) return;
-        if ("PATIENT".equals(role) && (userId == null || !userId.equals(patientId))) {
+        if (isFullAccess(role) || CAREGIVER_ROLE.equals(role)) return;
+        if (PATIENT_ROLE.equals(role) && (userId == null || !userId.equals(patientId))) {
             throw new AccessDeniedException("You can only view your own alerts.");
         }
     }

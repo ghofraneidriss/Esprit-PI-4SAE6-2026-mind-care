@@ -27,6 +27,10 @@ public class LostItemController {
 
     private static final String ITEMS_KEY = "items";
     private static final String URGENT_COUNT_KEY = "urgentCount";
+    private static final String PATIENT_ROLE = "PATIENT";
+    private static final String CAREGIVER_ROLE = "CAREGIVER";
+    private static final String CLOSED_MESSAGE = "Lost item id=";
+    private static final String CLOSED_MESSAGE_SUFFIX = " has been closed (soft deleted).";
 
     private final LostItemService lostItemService;
     private final AuthorizationService authorizationService;
@@ -44,10 +48,10 @@ public class LostItemController {
     ) {
         String role = userRole != null ? userRole.toUpperCase() : "ADMIN";
 
-        if ("PATIENT".equals(role) && userId != null) {
+        if (PATIENT_ROLE.equals(role) && userId != null) {
             return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getItemsByPatientIdFlat(userId)));
         }
-        if ("CAREGIVER".equals(role) && userId != null) {
+        if (CAREGIVER_ROLE.equals(role) && userId != null) {
             return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getItemsByCaregiverId(userId)));
         }
         return ResponseEntity.ok(DTOMapper.toLostItemDTOList(lostItemService.getAllLostItems()));
@@ -110,7 +114,7 @@ public class LostItemController {
         authorizationService.checkItemAccess(id, userId, userRole);
         lostItemService.deleteLostItem(id);
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Lost item id=" + id + " has been closed (soft deleted).");
+        response.put("message", CLOSED_MESSAGE + id + CLOSED_MESSAGE_SUFFIX);
         return ResponseEntity.ok(response);
     }
 

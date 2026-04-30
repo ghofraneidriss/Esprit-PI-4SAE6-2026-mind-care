@@ -144,7 +144,7 @@ public class RecoveryStrategyService {
 
         // Sort by success rate descending
         allLocationRanks.sort((a, b) ->
-                Double.compare((double) b.get("successRate"), (double) a.get("successRate")));
+                Double.compare((double) b.get(SUCCESS_RATE), (double) a.get(SUCCESS_RATE)));
 
         // Assign rank only to not-yet-searched locations
         List<Map<String, Object>> recommended = new ArrayList<>();
@@ -166,12 +166,12 @@ public class RecoveryStrategyService {
 
         // Add locations searched for this item that don't appear in category history
         Set<String> coveredLocs = alreadySearchedDisplay.stream()
-                .map(e -> normalize(e.get("location").toString()))
+                .map(e -> normalize(e.get(LOCATION).toString()))
                 .collect(Collectors.toSet());
         for (Map.Entry<String, String> e : itemLocationResults.entrySet()) {
             if (!coveredLocs.contains(e.getKey())) {
                 Map<String, Object> entry = new LinkedHashMap<>();
-                entry.put("location", capitalize(e.getKey()));
+                entry.put(LOCATION, capitalize(e.getKey()));
                 entry.put("result", e.getValue());
                 entry.put("categorySuccessRate", null);
                 alreadySearchedDisplay.add(entry);
@@ -180,7 +180,7 @@ public class RecoveryStrategyService {
 
         // Top location for insights
         String topLocation = allLocationRanks.isEmpty() ? "—"
-                : allLocationRanks.get(0).get("location").toString();
+                : allLocationRanks.get(0).get(LOCATION).toString();
 
         // ── 4. Category-level insights ────────────────────────────────────────
         List<LostItem> categoryItems = lostItemRepository.findAll().stream()
@@ -344,7 +344,7 @@ public class RecoveryStrategyService {
         if (!recommended.isEmpty()) {
             Map<String, Object> top = recommended.get(0);
             tips.add(String.format("Next recommended location: \"%s\" — %.1f%% historical success rate for %s items.",
-                    top.get("location"), top.get("successRate"), item.getCategory().name().toLowerCase()));
+                    top.get(LOCATION), top.get(SUCCESS_RATE), item.getCategory().name().toLowerCase()));
         }
 
         if (item.getCategory() == ItemCategory.MEDICATION) {

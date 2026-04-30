@@ -25,6 +25,14 @@ import java.util.*;
 @Slf4j
 public class SearchSuggestionService {
 
+    private static final String MEDICATION_CATEGORY = "MEDICATION";
+    private static final String DOCUMENT_CATEGORY = "DOCUMENT";
+    private static final String LOCATION_KEY = "location";
+    private static final int MAX_SUGGESTIONS = 3;
+    private static final double HIGH_SCORE_THRESHOLD = 0.7;
+    private static final double MEDIUM_SCORE_THRESHOLD = 0.4;
+    private static final int MIN_SEARCHES_FOR_FREQUENCY = 3;
+
     private final LostItemRepository lostItemRepository;
     private final SearchReportRepository searchReportRepository;
 
@@ -84,7 +92,7 @@ public class SearchSuggestionService {
 
         // 5. Build result DTOs (top 3)
         List<Map<String, Object>> suggestions = new ArrayList<>();
-        for (int i = 0; i < Math.min(3, ranked.size()); i++) {
+        for (int i = 0; i < Math.min(MAX_SUGGESTIONS, ranked.size()); i++) {
             Map.Entry<String, int[]> entry = ranked.get(i);
             String loc = entry.getKey();
             int[] stats = entry.getValue();
@@ -94,7 +102,7 @@ public class SearchSuggestionService {
             double score = computeScore(stats);
 
             Map<String, Object> dto = new LinkedHashMap<>();
-            dto.put("location", loc);
+            dto.put(LOCATION_KEY, loc);
             dto.put("totalSearches", total);
             dto.put("foundCount", found);
             dto.put("partialCount", partial);
@@ -128,20 +136,20 @@ public class SearchSuggestionService {
         int found = stats[1];
         double score = computeScore(stats);
 
-        boolean isMedication = "MEDICATION".equalsIgnoreCase(category);
-        boolean isDocument   = "DOCUMENT".equalsIgnoreCase(category);
+        boolean isMedication = MEDICATION_CATEGORY.equalsIgnoreCase(category);
+        boolean isDocument   = DOCUMENT_CATEGORY.equalsIgnoreCase(category);
 
-        if (score >= 0.7) {
+        if (score >= HIGH_SCORE_THRESHOLD) {
             if (isMedication) {
                 return "High success rate — check " + location + " immediately. Medication retrieval is time-critical.";
             }
             return "Best bet — " + location + " has a " + Math.round(score * 100) + "% success rate based on " + total + " searches.";
-        } else if (score >= 0.4) {
+        } else if (score >= MEDIUM_SCORE_THRESHOLD) {
             if (isDocument) {
                 return "Moderate success at " + location + ". Check drawers and flat surfaces carefully.";
             }
             return "Decent chance at " + location + " — found " + found + " out of " + total + " searches here before.";
-        } else if (total >= 3) {
+        } else if (total >= MIN_SEARCHES_FOR_FREQUENCY) {
             return "Less successful location (" + location + "), but frequently searched — worth a quick check.";
         } else {
             return rank == 0

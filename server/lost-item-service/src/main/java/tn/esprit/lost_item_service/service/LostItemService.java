@@ -29,6 +29,26 @@ public class LostItemService {
 
     private static final String PTS_SUFFIX = " pts)";
     private static final String LOST_ITEM_NOT_FOUND = "Lost item not found with id: ";
+    private static final String RISK_LEVEL_LOW = "LOW";
+    private static final String RISK_LEVEL_MODERATE = "MODERATE";
+    private static final String RISK_LEVEL_HIGH = "HIGH";
+    private static final String RISK_LEVEL_CRITICAL = "CRITICAL";
+    private static final int RISK_LOW_THRESHOLD = 25;
+    private static final int RISK_MODERATE_THRESHOLD = 50;
+    private static final int RISK_HIGH_THRESHOLD = 75;
+    private static final int ACTIVE_ITEM_POINTS = 8;
+    private static final int ACTIVE_ITEM_MAX = 40;
+    private static final int CRITICAL_PRIORITY_POINTS = 15;
+    private static final int CRITICAL_PRIORITY_MAX = 30;
+    private static final int MEDICATION_LOST_POINTS = 20;
+    private static final int CRITICAL_ALERT_POINTS = 10;
+    private static final int CRITICAL_ALERT_MAX = 20;
+    private static final int HIGH_ALERT_POINTS = 5;
+    private static final int HIGH_ALERT_MAX = 15;
+    private static final int FREQUENT_LOSER_POINTS = 15;
+    private static final int MIN_ITEMS_FOR_FREQUENT = 3;
+    private static final String FREQUENT_PATTERN_PREFIX = "Frequent item-losing pattern detected for patient ";
+    private static final int TREND_ITEM_THRESHOLD = 3;
 
     // ── CRUD ──────────────────────────────────────────────────────────────────
 
@@ -259,7 +279,7 @@ public class LostItemService {
 
         // Factor 1: Active lost items
         int activeCount = activeItems.size();
-        int activeScore = Math.min(activeCount * 8, 40);
+        int activeScore = Math.min(activeCount * ACTIVE_ITEM_POINTS, ACTIVE_ITEM_MAX);
         if (activeCount > 0) {
             score += activeScore;
             riskFactors.add(activeCount + " active lost/searching item(s) (+"+activeScore+PTS_SUFFIX);
@@ -267,7 +287,7 @@ public class LostItemService {
 
         // Factor 2: Critical priority items
         long criticalItems = activeItems.stream().filter(i -> i.getPriority() == ItemPriority.CRITICAL).count();
-        int criticalItemScore = (int) Math.min(criticalItems * 15, 30);
+        int criticalItemScore = (int) Math.min(criticalItems * CRITICAL_PRIORITY_POINTS, CRITICAL_PRIORITY_MAX);
         if (criticalItems > 0) {
             score += criticalItemScore;
             riskFactors.add(criticalItems + " CRITICAL priority item(s) (+"+criticalItemScore+PTS_SUFFIX);
@@ -276,13 +296,13 @@ public class LostItemService {
         // Factor 3: Medication lost
         boolean hasMedicationLost = activeItems.stream().anyMatch(i -> i.getCategory() == ItemCategory.MEDICATION);
         if (hasMedicationLost) {
-            score += 20;
-            riskFactors.add("Medication item currently lost (+20"+PTS_SUFFIX);
+            score += MEDICATION_LOST_POINTS;
+            riskFactors.add("Medication item currently lost (+"+MEDICATION_LOST_POINTS+PTS_SUFFIX);
         }
 
         // Factor 4: Unresolved CRITICAL alerts
         long criticalAlerts = unresolvedAlerts.stream().filter(a -> a.getLevel() == AlertLevel.CRITICAL).count();
-        int critAlertScore = (int) Math.min(criticalAlerts * 10, 20);
+        int critAlertScore = (int) Math.min(criticalAlerts * CRITICAL_ALERT_POINTS, CRITICAL_ALERT_MAX);
         if (criticalAlerts > 0) {
             score += critAlertScore;
             riskFactors.add(criticalAlerts + " unresolved CRITICAL alert(s) (+"+critAlertScore+PTS_SUFFIX);
@@ -290,7 +310,7 @@ public class LostItemService {
 
         // Factor 5: Unresolved HIGH alerts
         long highAlerts = unresolvedAlerts.stream().filter(a -> a.getLevel() == AlertLevel.HIGH).count();
-        int highAlertScore = (int) Math.min(highAlerts * 5, 15);
+        int highAlertScore = (int) Math.min(highAlerts * HIGH_ALERT_POINTS, HIGH_ALERT_MAX);
         if (highAlerts > 0) {
             score += highAlertScore;
             riskFactors.add(highAlerts + " unresolved HIGH alert(s) (+"+highAlertScore+PTS_SUFFIX);
@@ -299,16 +319,16 @@ public class LostItemService {
         // Factor 6: Frequent losing trend
         Map<String, Object> trend = detectFrequentLosing(patientId);
         if (Boolean.TRUE.equals(trend.get("isFrequentLoser"))) {
-            score += 15;
-            riskFactors.add("Frequent item-losing pattern detected (+15 pts)");
+            score += FREQUENT_LOSER_POINTS;
+            riskFactors.add("Frequent item-losing pattern detected (+"+FREQUENT_LOSER_POINTS+" pts)");
         }
 
         score = Math.min(score, 100);
         String riskLevel;
-        if (score <= 25) riskLevel = "LOW";
-        else if (score <= 50) riskLevel = "MODERATE";
-        else if (score <= 75) riskLevel = "HIGH";
-        else riskLevel = "CRITICAL";
+        if (score <= RISK_LOW_THRESHOLD) riskLevel = RISK_LEVEL_LOW;
+        else if (score <= RISK_MODERATE_THRESHOLD) riskLevel = RISK_LEVEL_MODERATE;
+        else if (score <= RISK_HIGH_THRESHOLD) riskLevel = RISK_LEVEL_HIGH;
+        else riskLevel = RISK_LEVEL_CRITICAL;
 
         double recoveryRate = allItems.isEmpty() ? 0.0
                 : Math.round((foundItems.size() * 100.0 / allItems.size()) * 10.0) / 10.0;
@@ -348,7 +368,7 @@ public class LostItemService {
         int oldestCount    = lostItemRepository.findByPatientIdAndCreatedAtBetween(patientId, threeMonthsAgo, twoMonthsAgo).size();
 
         boolean increasing = recentCount > previousCount && previousCount > oldestCount;
-        boolean frequentLoser = increasing && recentCount >= 3;
+        boolean frequentLoser = increasing && recentCount >= TREND_ITEM_THRESHOLD;
 
         String trend;
         if (recentCount > previousCount) trend = "INCREASING";
@@ -356,7 +376,7 @@ public class LostItemService {
         else trend = "STABLE";
 
         if (frequentLoser) {
-            String alertTitle = "Frequent item-losing pattern detected for patient " + patientId;
+            String alertTitle = FREQUENT_PATTERN_PREFIX + patientId;
             boolean alreadyExists = itemAlertRepository
                     .findByPatientIdAndStatus(patientId, AlertStatus.NEW).stream()
                     .anyMatch(a -> a.getTitle().equals(alertTitle));
