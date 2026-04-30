@@ -27,7 +27,7 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
             steps {
                 echo 'Building medical report service...'
                 sh '''
-                    cd medical-report-service 
+                    cd medical_report_service 
                     mvn clean package 
                 '''
             }
@@ -37,7 +37,7 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
             steps {
                 echo 'Running tests...'
                 sh '''
-                    cd medical-report-service 
+                    cd medical_report_service 
                     mvn test
                 '''
             }
@@ -47,7 +47,7 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
             steps {
                 echo 'Running SonarQube...'
                 sh '''
-                    cd medical-report-service 
+                    cd medical_report_service 
                     mvn clean verify sonar:sonar \
                       -Dsonar.projectKey=medical_report_service \
                       -Dsonar.host.url=$SONAR_HOST_URL \
@@ -60,7 +60,7 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                    cd medical-report-service 
+                    cd medical_report_service 
                     docker build -t $IMAGE_NAME:latest .
                 '''
             }
@@ -83,8 +83,8 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
             steps {
                 echo 'Running container...'
                 sh '''
-                    docker rm -f medical-report-service  || true
-                    docker run -d -p 8082:8080 --name medical-report-service  $IMAGE_NAME:latest
+                    docker rm -f medical_report_service  || true
+                    docker run -d -p 8082:8080 --name medical_report_service  $IMAGE_NAME:latest
                 '''
             }
         }
@@ -92,10 +92,10 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
 
     post {
         success {
-            echo 'medical-report SERVICE PIPELINE SUCCESS'
+            echo 'medical_report SERVICE PIPELINE SUCCESS'
         }
         failure {
-            echo 'medical-report SERVICE PIPELINE FAILED'
+            echo 'medical_report SERVICE PIPELINE FAILED'
         }
     }
 }
