@@ -129,7 +129,9 @@ pipeline {
                             docker rm -f medical-report-service volunteer-service || true
 
                             docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
-                            docker run -d -p 8082:8085 --name volunteer-service $IMAGE_NAME_VOL:latest
+                            docker run -d -p 8082:8085 --name volunteer-service \
+                              -e SPRING_PROFILES_ACTIVE=test \
+                              $IMAGE_NAME_VOL:latest
                         '''
                     } else {
                         echo 'Skipping deploy simulation: docker is not installed on this Jenkins agent.'
