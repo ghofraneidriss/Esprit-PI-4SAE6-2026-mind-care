@@ -45,15 +45,13 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube...'
-                withCredentials([string(credentialsId: 'sonar-token-medical-report-service', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        cd medical_report_service 
-                        mvn clean verify sonar:sonar \
-                          -Dsonar.projectKey=medical_report_service \
-                          -Dsonar.host.url=$SONAR_HOST_URL \
-                          -Dsonar.login=$SONAR_TOKEN
-                    '''
-                }
+                sh '''
+                    cd medical_report_service
+                    mvn clean verify sonar:sonar \
+                      -Dsonar.projectKey=medical_report_service \
+                      -Dsonar.host.url=$SONAR_HOST_URL \
+                      -Dsonar.login=sqp_5bac8e74bea9b5f44558b975bab50dcafac03945
+                '''
             }
         }
 
