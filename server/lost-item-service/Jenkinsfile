@@ -2,59 +2,145 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = '/usr/share/maven'
-        JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
+        MAVEN_HOME = tool 'Maven 3.9.6'
+        JAVA_HOME = tool 'JDK 17'
+        PATH = "${MAVEN_HOME}/bin:${JAVA_HOME}/bin:${PATH}"
+        SERVICE_NAME = 'lost-item-service'
+        DOCKER_REGISTRY = 'ghofraneidriss'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    options {
+        timestamps()
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo '========== Checking out code =========='
+                echo '🔄 Checking out code...'
                 checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                echo '========== Building lost-item-service =========='
+                echo '🔨 Building Maven project...'
                 dir('server/lost-item-service') {
-                    sh 'mvn clean compile'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
 
         stage('Test') {
             steps {
-                echo '========== Running Unit Tests =========='
+                echo '🧪 Running tests...'
                 dir('server/lost-item-service') {
-                    sh 'mvn test -Dspring.profiles.active=test'
+                    sh 'mvn test'
                 }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                echo '========== SonarQube Code Quality Analysis =========='
+                echo '📊 Running SonarQube analysis...'
                 dir('server/lost-item-service') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            mvn sonar:sonar \
+                              -Dsonar.projectKey=lost-item-service \
+                              -Dsonar.sources=src/main \
+                              -Dsonar.tests=src/test
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                echo '✅ Waiting for SonarQube Quality Gate...'
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo '🐳 Building Docker image...'
+                dir('server/lost-item-service') {
+                    script {
+                        sh '''
+                            docker build \
+                              -t ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} \
+                              -t ${DOCKER_REGISTRY}/${SERVICE_NAME}:latest \
+                              --label "build.number=${BUILD_NUMBER}" \
+                              --label "git.commit=${GIT_COMMIT}" \
+                              --label "jenkins.job=${JOB_NAME}" \
+                              .
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            when {
+                branch 'jaaferFinal'
+            }
+            steps {
+                echo '📤 Pushing Docker image to registry...'
+                script {
+                    withDockerRegistry(credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/') {
+                        sh '''
+                            docker push ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG}
+                            docker push ${DOCKER_REGISTRY}/${SERVICE_NAME}:latest
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'jaaferFinal'
+            }
+            steps {
+                echo '🚀 Deploying service...'
+                script {
                     sh '''
-                        mvn sonar:sonar \
-                            -Dsonar.projectKey=lost-item-service \
-                            -Dsonar.projectName="Lost Item Service" \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.token=squ_dff9542226b4cffdf2772f4212689ed2879cb019 \
-                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-                            -Dsonar.exclusions=**/*Test.java \
-                            -Dsonar.coverage.exclusions=**/*Test.java
+                        docker-compose -f docker-compose.yml down lost-item-service || true
+                        docker-compose -f docker-compose.yml up -d lost-item-service
+                        sleep 10
+                        docker-compose -f docker-compose.yml logs lost-item-service
                     '''
                 }
             }
         }
 
-        stage('Package') {
+        stage('Health Check') {
             steps {
-                echo '========== Packaging Application =========='
-                dir('server/lost-item-service') {
-                    sh 'mvn package -DskipTests'
+                echo '❤️ Performing health checks...'
+                script {
+                    sh '''
+                        MAX_RETRIES=30
+                        RETRY_COUNT=0
+
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            if curl -f http://localhost:8082/actuator/health 2>/dev/null; then
+                                echo "✅ Service is healthy!"
+                                exit 0
+                            fi
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Health check attempt $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 2
+                        done
+
+                        echo "❌ Service failed health check"
+                        exit 1
+                    '''
                 }
             }
         }
@@ -62,14 +148,15 @@ pipeline {
 
     post {
         always {
-            echo '========== Pipeline Execution Completed =========='
-            junit 'server/lost-item-service/target/surefire-reports/*.xml'
+            echo '📝 Collecting logs and artifacts...'
+            sh 'docker-compose -f docker-compose.yml logs lost-item-service > lost-item-service.log 2>&1 || true'
+            archiveArtifacts artifacts: '**/*.log', allowEmptyArchive: true
         }
         success {
-            echo '✓ lost-item-service pipeline SUCCESS'
+            echo '✅ Pipeline completed successfully!'
         }
         failure {
-            echo '✗ lost-item-service pipeline FAILED'
+            echo '❌ Pipeline failed!'
         }
     }
 }

@@ -1,20 +1,17 @@
 version: '3.8'
 
 services:
+  # MySQL Database
   mysql:
     image: mysql:8.0
     container_name: alzcare-mysql
     environment:
-      # Mot de passe root vide (correspond aux application.properties existants)
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      # Autoriser la connexion root depuis n'importe quelle adresse (dev local)
       MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
-      # Persistance des données entre redémarrages
       - mysql_data:/var/lib/mysql
-      # Script d'initialisation : crée les 3 bases de données au premier démarrage
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
@@ -23,6 +20,60 @@ services:
       retries: 10
       start_period: 30s
     restart: unless-stopped
+    networks:
+      - mindcare-network
+
+  # Eureka Service Registry
+  eureka-server:
+    image: ghofraneidriss/eureka-server:latest
+    container_name: alzcare-eureka
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_APPLICATION_NAME=eureka-server
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    depends_on:
+      - mysql
+
+  # Lost Item Service
+  lost-item-service:
+    build:
+      context: ./server/lost-item-service
+      dockerfile: Dockerfile
+    container_name: alzcare-lost-item-service
+    ports:
+      - "8082:8080"
+      - "9010:9010"
+    environment:
+      - SPRING_APPLICATION_NAME=lost-item-service
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lost_item_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - JAVA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  mindcare-network:
+    driver: bridge
+    name: mindcare-network
 
 volumes:
   mysql_data:

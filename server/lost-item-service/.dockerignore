@@ -1,0 +1,15 @@
+target/
+.git
+.gitignore
+.gitlab-ci.yml
+.DS_Store
+*.log
+.env
+.idea/
+.vscode/
+*.iml
+node_modules/
+.m2/
+*.md
+!README.md
+.claude/
