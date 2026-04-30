@@ -45,7 +45,9 @@
       "Bash(grep -E \"^\\\\\\\\[|319\")",
       "Bash(powershell -Command ' *)",
       "Bash(cat)",
-      "Bash(bash /tmp/update_packages.sh)"
+      "Bash(bash /tmp/update_packages.sh)",
+      "Bash(git fetch *)",
+      "Bash(git rebase *)"
     ]
   }
 }

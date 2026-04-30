@@ -38,6 +38,14 @@ public class RecoveryStrategyService {
     // Minimum number of historical searches for a location to be ranked
     private static final int MIN_SEARCHES_TO_QUALIFY = 1;
 
+    // String constants to avoid duplication
+    private static final String FOUND = "FOUND";
+    private static final String PARTIALLY_FOUND = "PARTIALLY_FOUND";
+    private static final String LOCATION = "location";
+    private static final String SUCCESS_RATE = "successRate";
+    private static final String ALREADY_SEARCHED = "alreadySearched";
+    private static final String TOTAL_SEARCHES = "totalSearches";
+
     @Transactional(readOnly = true, timeout = 15)
     public Map<String, Object> getRecoveryStrategy(Long itemId) {
         log.info("[RecoveryStrategy] Computing strategy for lostItem id={}", itemId);
@@ -90,8 +98,8 @@ public class RecoveryStrategyService {
                         r -> normalize(r.getLocationSearched()),
                         r -> r.getSearchResult().name(),
                         (a, b) -> {
-                            if ("FOUND".equals(a) || "FOUND".equals(b)) return "FOUND";
-                            if ("PARTIALLY_FOUND".equals(a) || "PARTIALLY_FOUND".equals(b)) return "PARTIALLY_FOUND";
+                            if (FOUND.equals(a) || FOUND.equals(b)) return FOUND;
+                            if (PARTIALLY_FOUND.equals(a) || PARTIALLY_FOUND.equals(b)) return PARTIALLY_FOUND;
                             return a;
                         }
                 ));
@@ -127,10 +135,10 @@ public class RecoveryStrategyService {
             double successRate = Math.round((foundScore / total) * 1000.0) / 10.0; // 1 decimal
 
             Map<String, Object> loc = new LinkedHashMap<>();
-            loc.put("location", capitalize(location));
-            loc.put("successRate", successRate);
-            loc.put("totalSearches", total);
-            loc.put("alreadySearched", alreadySearched.contains(location));
+            loc.put(LOCATION, capitalize(location));
+            loc.put(SUCCESS_RATE, successRate);
+            loc.put(TOTAL_SEARCHES, total);
+            loc.put(ALREADY_SEARCHED, alreadySearched.contains(location));
             allLocationRanks.add(loc);
         }
 
@@ -143,12 +151,12 @@ public class RecoveryStrategyService {
         List<Map<String, Object>> alreadySearchedDisplay = new ArrayList<>();
         int rank = 1;
         for (Map<String, Object> loc : allLocationRanks) {
-            if (Boolean.TRUE.equals(loc.get("alreadySearched"))) {
-                String normalizedLoc = normalize(loc.get("location").toString());
+            if (Boolean.TRUE.equals(loc.get(ALREADY_SEARCHED))) {
+                String normalizedLoc = normalize(loc.get(LOCATION).toString());
                 Map<String, Object> entry = new LinkedHashMap<>();
-                entry.put("location", loc.get("location"));
+                entry.put(LOCATION, loc.get(LOCATION));
                 entry.put("result", itemLocationResults.getOrDefault(normalizedLoc, "UNKNOWN"));
-                entry.put("categorySuccessRate", loc.get("successRate"));
+                entry.put("categorySuccessRate", loc.get(SUCCESS_RATE));
                 alreadySearchedDisplay.add(entry);
             } else {
                 loc.put("rank", rank++);
@@ -212,11 +220,7 @@ public class RecoveryStrategyService {
                 item, daysElapsed, itemReports,
                 categoryRecoveryRate, isFrequentLoser);
 
-        String probabilityLevel;
-        if (probability >= 75) probabilityLevel = "HIGH";
-        else if (probability >= 45) probabilityLevel = "MODERATE";
-        else if (probability >= 20) probabilityLevel = "LOW";
-        else probabilityLevel = "CRITICAL";
+        String probabilityLevel = determineProbabilityLevel(probability);
 
         // ── 7. Actionable strategy tips ───────────────────────────────────────
         List<String> tips = buildStrategyTips(item, daysElapsed, itemReports,
@@ -262,6 +266,14 @@ public class RecoveryStrategyService {
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
+
+    /** Determine probability level from recovery probability score. */
+    private String determineProbabilityLevel(double probability) {
+        if (probability >= 75) return "HIGH";
+        if (probability >= 45) return "MODERATE";
+        if (probability >= 20) return "LOW";
+        return "CRITICAL";
+    }
 
     /**
      * Computes recovery probability 0–100 using weighted factors.
@@ -323,7 +335,6 @@ public class RecoveryStrategyService {
 
         long notFoundCount      = itemReports.stream().filter(r -> r.getSearchResult() == SearchResult.NOT_FOUND).count();
         long partialFoundCount  = itemReports.stream().filter(r -> r.getSearchResult() == SearchResult.PARTIALLY_FOUND).count();
-        int  totalAttempts      = itemReports.size();
 
         // Partial finds → strong directional hint
         if (partialFoundCount > 0) {

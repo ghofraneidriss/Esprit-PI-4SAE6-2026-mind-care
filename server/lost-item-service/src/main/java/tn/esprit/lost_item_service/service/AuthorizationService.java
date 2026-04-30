@@ -14,6 +14,11 @@ import tn.esprit.lost_item_service.repository.SearchReportRepository;
 @RequiredArgsConstructor
 public class AuthorizationService {
 
+    private static final String ADMIN_ROLE = "ADMIN";
+    private static final String DOCTOR_ROLE = "DOCTOR";
+    private static final String CAREGIVER_ROLE = "CAREGIVER";
+    private static final String PATIENT_ROLE = "PATIENT";
+
     private final LostItemRepository lostItemRepository;
     private final SearchReportRepository searchReportRepository;
     private final LostItemAlertRepository lostItemAlertRepository;
@@ -21,11 +26,11 @@ public class AuthorizationService {
     // ── Role helpers ──────────────────────────────────────────────────────────
 
     private boolean isFullAccess(String role) {
-        return "ADMIN".equals(role) || "DOCTOR".equals(role);
+        return ADMIN_ROLE.equals(role) || DOCTOR_ROLE.equals(role);
     }
 
     private String normalise(String role) {
-        return role != null ? role.toUpperCase() : "ADMIN";
+        return role != null ? role.toUpperCase() : ADMIN_ROLE;
     }
 
     // ── Lost Item access ──────────────────────────────────────────────────────
@@ -43,11 +48,11 @@ public class AuthorizationService {
 
         if (isFullAccess(role)) return item;
 
-        if ("CAREGIVER".equals(role)) {
+        if (CAREGIVER_ROLE.equals(role)) {
             if (userId == null || !userId.equals(item.getCaregiverId())) {
                 throw new AccessDeniedException("You are not assigned to this item.");
             }
-        } else if ("PATIENT".equals(role)) {
+        } else if (PATIENT_ROLE.equals(role)) {
             if (userId == null || !userId.equals(item.getPatientId())) {
                 throw new AccessDeniedException("You do not own this item.");
             }
@@ -105,11 +110,11 @@ public class AuthorizationService {
 
         if (isFullAccess(role)) return alert;
 
-        if ("CAREGIVER".equals(role)) {
+        if (CAREGIVER_ROLE.equals(role)) {
             if (userId == null || !userId.equals(alert.getCaregiverId())) {
                 throw new AccessDeniedException("You are not assigned to this alert.");
             }
-        } else if ("PATIENT".equals(role)) {
+        } else if (PATIENT_ROLE.equals(role)) {
             if (userId == null || !userId.equals(alert.getPatientId())) {
                 throw new AccessDeniedException("You do not own this alert.");
             }

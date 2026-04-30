@@ -27,6 +27,9 @@ public class LostItemService {
     private final SearchReportRepository searchReportRepository;
     private final LostItemAlertRepository itemAlertRepository;
 
+    private static final String PTS_SUFFIX = " pts)";
+    private static final String LOST_ITEM_NOT_FOUND = "Lost item not found with id: ";
+
     // ── CRUD ──────────────────────────────────────────────────────────────────
 
     public List<LostItem> getAllLostItems() {
@@ -43,7 +46,7 @@ public class LostItemService {
 
     public LostItem getLostItemById(Long id) {
         return lostItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lost item not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(LOST_ITEM_NOT_FOUND + id));
     }
 
     public Page<LostItem> getPatientLostItems(Long patientId, ItemStatus status, ItemCategory category, int page, int size) {
@@ -259,7 +262,7 @@ public class LostItemService {
         int activeScore = Math.min(activeCount * 8, 40);
         if (activeCount > 0) {
             score += activeScore;
-            riskFactors.add(activeCount + " active lost/searching item(s) (+"+activeScore+" pts)");
+            riskFactors.add(activeCount + " active lost/searching item(s) (+"+activeScore+PTS_SUFFIX);
         }
 
         // Factor 2: Critical priority items
@@ -267,14 +270,14 @@ public class LostItemService {
         int criticalItemScore = (int) Math.min(criticalItems * 15, 30);
         if (criticalItems > 0) {
             score += criticalItemScore;
-            riskFactors.add(criticalItems + " CRITICAL priority item(s) (+"+criticalItemScore+" pts)");
+            riskFactors.add(criticalItems + " CRITICAL priority item(s) (+"+criticalItemScore+PTS_SUFFIX);
         }
 
         // Factor 3: Medication lost
         boolean hasMedicationLost = activeItems.stream().anyMatch(i -> i.getCategory() == ItemCategory.MEDICATION);
         if (hasMedicationLost) {
             score += 20;
-            riskFactors.add("Medication item currently lost (+20 pts)");
+            riskFactors.add("Medication item currently lost (+20"+PTS_SUFFIX);
         }
 
         // Factor 4: Unresolved CRITICAL alerts
@@ -282,7 +285,7 @@ public class LostItemService {
         int critAlertScore = (int) Math.min(criticalAlerts * 10, 20);
         if (criticalAlerts > 0) {
             score += critAlertScore;
-            riskFactors.add(criticalAlerts + " unresolved CRITICAL alert(s) (+"+critAlertScore+" pts)");
+            riskFactors.add(criticalAlerts + " unresolved CRITICAL alert(s) (+"+critAlertScore+PTS_SUFFIX);
         }
 
         // Factor 5: Unresolved HIGH alerts
@@ -290,7 +293,7 @@ public class LostItemService {
         int highAlertScore = (int) Math.min(highAlerts * 5, 15);
         if (highAlerts > 0) {
             score += highAlertScore;
-            riskFactors.add(highAlerts + " unresolved HIGH alert(s) (+"+highAlertScore+" pts)");
+            riskFactors.add(highAlerts + " unresolved HIGH alert(s) (+"+highAlertScore+PTS_SUFFIX);
         }
 
         // Factor 6: Frequent losing trend
