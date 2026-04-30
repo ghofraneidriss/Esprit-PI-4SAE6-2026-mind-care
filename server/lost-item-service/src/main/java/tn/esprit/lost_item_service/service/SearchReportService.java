@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SearchReportService {
 
+    private static final String UNKNOWN_STATUS = "UNKNOWN";
+
     private final SearchReportRepository searchReportRepository;
     private final LostItemRepository lostItemRepository;
 
@@ -140,7 +142,7 @@ public class SearchReportService {
                     day.put("results", entry.getValue().stream()
                             .map(r -> Map.of(
                                     "id", r.getId(),
-                                    "result", r.getSearchResult() != null ? r.getSearchResult().name() : "UNKNOWN",
+                                    "result", r.getSearchResult() != null ? r.getSearchResult().name() : UNKNOWN_STATUS,
                                     "location", r.getLocationSearched() != null ? r.getLocationSearched() : "",
                                     "status", r.getStatus() != null ? r.getStatus().name() : "OPEN"
                             ))
@@ -181,12 +183,12 @@ public class SearchReportService {
 
         Map<String, Long> byResult = new LinkedHashMap<>();
         for (Object[] row : searchReportRepository.countGroupedByResult()) {
-            byResult.put(row[0] != null ? row[0].toString() : "UNKNOWN", (Long) row[1]);
+            byResult.put(row[0] != null ? row[0].toString() : UNKNOWN_STATUS, (Long) row[1]);
         }
 
         Map<String, Long> byStatus = new LinkedHashMap<>();
         for (Object[] row : searchReportRepository.countGroupedByStatus()) {
-            byStatus.put(row[0] != null ? row[0].toString() : "UNKNOWN", (Long) row[1]);
+            byStatus.put(row[0] != null ? row[0].toString() : UNKNOWN_STATUS, (Long) row[1]);
         }
 
         // Top searched items (most search reports)
