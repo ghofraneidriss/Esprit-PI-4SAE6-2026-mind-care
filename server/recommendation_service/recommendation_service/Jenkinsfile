@@ -74,7 +74,6 @@ pipeline {
                         mkdir -p reports
                         docker run --rm \
                             -v /var/run/docker.sock:/var/run/docker.sock \
-                            -v "$PWD/reports:/reports" \
                             -v "$HOME/.cache/trivy:/root/.cache/" \
                             aquasec/trivy:0.56.2 image \
                             --insecure \
@@ -86,8 +85,7 @@ pipeline {
                             --ignore-unfixed \
                             --exit-code 0 \
                             --format table \
-                            --output /reports/trivy-image-report.txt \
-                            ${IMAGE_NAME}:${IMAGE_TAG}
+                            ${IMAGE_NAME}:${IMAGE_TAG} | tee reports/trivy-image-report.txt
                     '''
                 }
             }
