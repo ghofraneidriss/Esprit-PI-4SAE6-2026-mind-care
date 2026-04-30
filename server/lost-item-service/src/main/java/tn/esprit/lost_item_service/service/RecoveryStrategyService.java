@@ -299,44 +299,46 @@ public class RecoveryStrategyService {
             LostItem item, long daysElapsed, List<SearchReport> itemReports,
             double categoryRecoveryRate, boolean isFrequentLoser) {
 
-        // Base: category historical recovery rate drives the anchor
         double score = categoryRecoveryRate > 0 ? categoryRecoveryRate : 50.0;
-
-        // Boost for high-priority items (get more caregiver attention)
-        if (item.getPriority() == ItemPriority.CRITICAL) score += 5;
-        else if (item.getPriority() == ItemPriority.HIGH) score += 3;
-
-        // Boost if caregiver assigned (more hands searching)
-        if (item.getCaregiverId() != null) score += 5;
-
-        // Penalty: days elapsed (stale items are harder to find)
-        double daysPenalty = Math.min(daysElapsed * 2.5, 35);
-        score -= daysPenalty;
-
-        // Per-report adjustments based on actual result (not a flat penalty):
-        //   NOT_FOUND      → -4 (narrowing down, but no progress)
-        //   PARTIALLY_FOUND → +6 (we're getting closer — strong positive signal)
-        //   FOUND           → treated separately (item would be FOUND status)
-        double reportAdjustment = 0;
-        for (SearchReport r : itemReports) {
-            if (r.getSearchResult() == null) continue;
-            switch (r.getSearchResult()) {
-                case NOT_FOUND       -> reportAdjustment -= 4;
-                case PARTIALLY_FOUND -> reportAdjustment += 6;
-                case FOUND           -> reportAdjustment += 15;
-            }
-        }
-        // Cap total report adjustment range to avoid extreme swings
-        reportAdjustment = Math.max(-28, Math.min(30, reportAdjustment));
-        score += reportAdjustment;
-
-        // Penalty: frequent losers often misplace items in unusual spots
+        score += computePriorityBoost(item);
+        score += computeCaregiverBoost(item);
+        score -= computeDaysPenalty(daysElapsed);
+        score += computeReportAdjustment(itemReports);
         if (isFrequentLoser) score -= 8;
-
-        // Medication items are always urgently searched — slightly boosted
-        if (item.getCategory() == ItemCategory.MEDICATION) score += 5;
+        score += computeItemCategoryBoost(item);
 
         return Math.max(5.0, Math.min(95.0, Math.round(score * 10.0) / 10.0));
+    }
+
+    private double computePriorityBoost(LostItem item) {
+        if (item.getPriority() == ItemPriority.CRITICAL) return 5;
+        if (item.getPriority() == ItemPriority.HIGH) return 3;
+        return 0;
+    }
+
+    private double computeCaregiverBoost(LostItem item) {
+        return item.getCaregiverId() != null ? 5 : 0;
+    }
+
+    private double computeDaysPenalty(long daysElapsed) {
+        return Math.min(daysElapsed * 2.5, 35);
+    }
+
+    private double computeReportAdjustment(List<SearchReport> itemReports) {
+        double adjustment = 0;
+        for (SearchReport r : itemReports) {
+            if (r.getSearchResult() == null) continue;
+            adjustment += switch (r.getSearchResult()) {
+                case NOT_FOUND       -> -4;
+                case PARTIALLY_FOUND -> 6;
+                case FOUND           -> 15;
+            };
+        }
+        return Math.max(-28, Math.min(30, adjustment));
+    }
+
+    private double computeItemCategoryBoost(LostItem item) {
+        return item.getCategory() == ItemCategory.MEDICATION ? 5 : 0;
     }
 
     /**
