@@ -18,8 +18,7 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
             steps {
                 echo 'Cloning repository...'
                 git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                    branch: 'volunteer',
-                    credentialsId: 'dockerhub-creds'
+                    branch: 'volunteer'
             }
         }
 
@@ -69,13 +68,15 @@ IMAGE_NAME = 'ghofrane/medical-report-service'
         stage('Push Docker Image') {
             steps {
                 echo 'Pushing Docker image...'
-                withCredentials([usernamePassword(    
-                                    credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh '''
-                        echo $PASS | docker login -u $USER --password-stdin
-                        docker push $IMAGE_NAME:latest
-                        docker logout
-                    '''
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        sh '''
+                            set -e
+                            echo "$PASS" | docker login docker.io -u "$USER" --password-stdin
+                            docker push $IMAGE_NAME:latest
+                            docker logout
+                        '''
+                    }
                 }
             }
         }
