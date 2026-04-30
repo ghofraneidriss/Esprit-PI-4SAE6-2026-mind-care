@@ -102,6 +102,15 @@ docker build -f backoffice/traitement_et_consultation/Dockerfile -t mindcare-tra
 docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t mindcare-ordonnance:latest backoffice
 ```
 
+Avec Docker Hub:
+
+```bash
+docker build -f backoffice/traitement_et_consultation/Dockerfile -t 121999121999/mindcare-traitement:latest backoffice
+docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t 121999121999/mindcare-ordonnance:latest backoffice
+docker push 121999121999/mindcare-traitement:latest
+docker push 121999121999/mindcare-ordonnance:latest
+```
+
 ## Partie excellence
 
 Element propose:

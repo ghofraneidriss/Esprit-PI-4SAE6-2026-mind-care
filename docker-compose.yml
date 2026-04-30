@@ -20,7 +20,7 @@ services:
     build:
       context: ./backoffice
       dockerfile: traitement_et_consultation/Dockerfile
-    image: mindcare-traitement:latest
+    image: 121999121999/mindcare-traitement:latest
     ports:
       - '8081:8081'
     environment:
@@ -39,7 +39,7 @@ services:
     build:
       context: ./backoffice
       dockerfile: ordonnance_et_medicaments/Dockerfile
-    image: mindcare-ordonnance:latest
+    image: 121999121999/mindcare-ordonnance:latest
     ports:
       - '8083:8083'
     environment:

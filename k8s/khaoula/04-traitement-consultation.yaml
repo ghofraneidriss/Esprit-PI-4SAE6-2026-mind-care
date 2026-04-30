@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: traitement-service
-          image: mindcare-traitement:latest
+          image: 121999121999/mindcare-traitement:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081

@@ -15,6 +15,10 @@ pipeline {
         )
     }
 
+    environment {
+        DOCKER_IMAGE = '121999121999/mindcare-ordonnance'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -52,8 +56,22 @@ pipeline {
                 expression { params.RUN_DOCKER_BUILD }
             }
             steps {
-                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t mindcare-ordonnance:${BUILD_NUMBER} backoffice'
-                sh 'docker tag mindcare-ordonnance:${BUILD_NUMBER} mindcare-ordonnance:latest'
+                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t $DOCKER_IMAGE:${BUILD_NUMBER} -t $DOCKER_IMAGE:latest backoffice'
+            }
+        }
+
+        stage('Push Docker Hub') {
+            when {
+                expression { params.RUN_DOCKER_BUILD }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+                    sh '''
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                        docker push "$DOCKER_IMAGE:${BUILD_NUMBER}"
+                        docker push "$DOCKER_IMAGE:latest"
+                    '''
+                }
             }
         }
     }

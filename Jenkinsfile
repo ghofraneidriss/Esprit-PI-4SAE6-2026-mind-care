@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         BRANCH_NAME_TARGET = 'khaoula-integration-globale'
-        DOCKER_IMAGE_ORDONNANCE = 'mindcare-ordonnance:latest'
-        DOCKER_IMAGE_TRAITEMENT = 'mindcare-traitement:latest'
+        DOCKERHUB_NAMESPACE = '121999121999'
+        DOCKER_IMAGE_ORDONNANCE = '121999121999/mindcare-ordonnance:latest'
+        DOCKER_IMAGE_TRAITEMENT = '121999121999/mindcare-traitement:latest'
     }
 
     parameters {
@@ -99,6 +100,21 @@ pipeline {
             steps {
                 sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t $DOCKER_IMAGE_ORDONNANCE backoffice'
                 sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t $DOCKER_IMAGE_TRAITEMENT backoffice'
+            }
+        }
+
+        stage('Push Docker Hub images') {
+            when {
+                expression { params.RUN_DOCKER_CD }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+                    sh '''
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                        docker push "$DOCKER_IMAGE_ORDONNANCE"
+                        docker push "$DOCKER_IMAGE_TRAITEMENT"
+                    '''
+                }
             }
         }
 

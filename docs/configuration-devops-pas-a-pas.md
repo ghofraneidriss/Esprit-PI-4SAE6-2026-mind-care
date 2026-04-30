@@ -183,7 +183,38 @@ Jenkinsfile
 
 10. Save
 
-## 11. Premier lancement du pipeline
+## 11. Configurer Docker Hub dans Jenkins
+
+Ton username Docker Hub:
+
+```text
+121999121999
+```
+
+Dans Docker Hub, creer un Access Token:
+
+```text
+Account Settings > Personal access tokens > Generate new token
+```
+
+Dans Jenkins:
+
+`Manage Jenkins > Credentials > System > Global credentials > Add Credentials`
+
+Choisir:
+- Kind: `Username with password`
+- Username: `121999121999`
+- Password: ton token Docker Hub
+- ID: `dockerhub-credentials`
+
+Les images poussees seront:
+
+```text
+121999121999/mindcare-ordonnance:latest
+121999121999/mindcare-traitement:latest
+```
+
+## 12. Premier lancement du pipeline
 
 Cliquer:
 
@@ -205,7 +236,7 @@ Ce premier lancement fait:
 
 Ne coche pas Docker au debut. On valide d'abord CI + tests + Sonar.
 
-## 12. Voir les tests dans Jenkins
+## 13. Voir les tests dans Jenkins
 
 Apres le build:
 - Ouvrir le build
@@ -217,7 +248,7 @@ Resultats attendus:
 - Ordonnance/medicaments: 10 tests
 - Traitement/consultation: 3 tests
 
-## 13. Voir SonarQube
+## 14. Voir SonarQube
 
 Ouvrir:
 
@@ -236,7 +267,7 @@ Captures a prendre:
 - Code smells
 - Security hotspots
 
-## 14. Lancer MySQL + backend + Prometheus + Grafana
+## 15. Lancer MySQL + backend + Prometheus + Grafana
 
 Quand Jenkins + Sonar marche:
 
@@ -261,7 +292,7 @@ Grafana:
 - user: `admin`
 - password: `admin`
 
-## 15. Verifier MySQL
+## 16. Verifier MySQL
 
 Entrer dans MySQL:
 
@@ -278,7 +309,7 @@ SHOW TABLES;
 EXIT;
 ```
 
-## 16. Verifier Prometheus
+## 17. Verifier Prometheus
 
 Ouvrir:
 
@@ -298,7 +329,7 @@ docker logs mindcare-ordonnance
 docker logs mindcare-prometheus
 ```
 
-## 17. Verifier Grafana
+## 18. Verifier Grafana
 
 Ouvrir:
 
@@ -326,7 +357,7 @@ jvm_memory_used_bytes
 process_cpu_usage
 ```
 
-## 18. Activer le CD Docker dans Jenkins
+## 19. Activer le CD Docker dans Jenkins
 
 Quand CI + Sonar + Docker local marchent:
 
@@ -342,7 +373,14 @@ Cela construit les images Docker et lance le deploiement global:
 docker compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
 ```
 
-## 19. Pipelines individuels
+Le pipeline pousse aussi les images vers Docker Hub:
+
+```text
+121999121999/mindcare-ordonnance:latest
+121999121999/mindcare-traitement:latest
+```
+
+## 20. Pipelines individuels
 
 Tu peux aussi creer deux jobs Jenkins separes:
 
@@ -370,6 +408,6 @@ Quand Docker est pret:
 RUN_DOCKER_BUILD = true
 ```
 
-## 20. Phrase pour la presentation
+## 21. Phrase pour la presentation
 
 Ma partie individuelle couvre les microservices ordonnance/medicaments et traitement/consultation. J'ai mis en place deux pipelines CI avec tests unitaires, couverture JaCoCo et analyse SonarQube. J'ai ajoute un pipeline CD pour construire les images Docker et deployer les services avec Docker Compose. Pour l'excellence, j'ai ajoute le monitoring avec Spring Boot Actuator, Prometheus et Grafana, ainsi qu'une configuration Kubernetes kubeadm.

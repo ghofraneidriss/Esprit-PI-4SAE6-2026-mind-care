@@ -15,8 +15,20 @@ pipeline {
 
         stage('Build images') {
             steps {
-                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t mindcare-ordonnance:latest backoffice'
-                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t mindcare-traitement:latest backoffice'
+                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t 121999121999/mindcare-ordonnance:latest backoffice'
+                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t 121999121999/mindcare-traitement:latest backoffice'
+            }
+        }
+
+        stage('Push Docker Hub images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+                    sh '''
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                        docker push 121999121999/mindcare-ordonnance:latest
+                        docker push 121999121999/mindcare-traitement:latest
+                    '''
+                }
             }
         }
 
