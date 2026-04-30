@@ -46,6 +46,13 @@ public class RecoveryStrategyService {
     private static final String ALREADY_SEARCHED = "alreadySearched";
     private static final String TOTAL_SEARCHES = "totalSearches";
 
+    // Data holder for location analysis results
+    private record LocationAnalysis(
+            List<Map<String, Object>> recommendedLocations,
+            List<Map<String, Object>> alreadySearchedLocations,
+            String topLocation
+    ) {}
+
     @Transactional(readOnly = true, timeout = 15)
     public Map<String, Object> getRecoveryStrategy(Long itemId) {
         log.info("[RecoveryStrategy] Computing strategy for lostItem id={}", itemId);
@@ -97,77 +104,11 @@ public class RecoveryStrategyService {
                 .toList();
 
         // ── 3. Location success rate analysis ────────────────────────────────
-        // Group category reports by normalized location
-        Map<String, List<SearchReport>> byLocation = categoryReports.stream()
-                .filter(r -> r.getLocationSearched() != null && !r.getLocationSearched().isBlank())
-                .collect(Collectors.groupingBy(r -> normalize(r.getLocationSearched())));
-
-        // Compute success score per location
-        List<Map<String, Object>> allLocationRanks = new ArrayList<>();
-        for (Map.Entry<String, List<SearchReport>> entry : byLocation.entrySet()) {
-            String location = entry.getKey();
-            List<SearchReport> searches = entry.getValue();
-            int total = searches.size();
-            if (total < MIN_SEARCHES_TO_QUALIFY) continue;
-
-            double foundScore = searches.stream().mapToDouble(r -> {
-                if (r.getSearchResult() == null) return 0.0;
-                return switch (r.getSearchResult()) {
-                    case FOUND            -> 1.0;
-                    case PARTIALLY_FOUND  -> 0.5;
-                    default               -> 0.0;
-                };
-            }).sum();
-
-            double successRate = Math.round((foundScore / total) * 1000.0) / 10.0; // 1 decimal
-
-            Map<String, Object> loc = new LinkedHashMap<>();
-            loc.put(LOCATION, capitalize(location));
-            loc.put(SUCCESS_RATE, successRate);
-            loc.put(TOTAL_SEARCHES, total);
-            loc.put(ALREADY_SEARCHED, alreadySearched.contains(location));
-            allLocationRanks.add(loc);
-        }
-
-        // Sort by success rate descending
-        allLocationRanks.sort((a, b) ->
-                Double.compare((double) b.get(SUCCESS_RATE), (double) a.get(SUCCESS_RATE)));
-
-        // Assign rank only to not-yet-searched locations
-        List<Map<String, Object>> recommended = new ArrayList<>();
-        List<Map<String, Object>> alreadySearchedDisplay = new ArrayList<>();
-        int rank = 1;
-        for (Map<String, Object> loc : allLocationRanks) {
-            if (Boolean.TRUE.equals(loc.get(ALREADY_SEARCHED))) {
-                String normalizedLoc = normalize(loc.get(LOCATION).toString());
-                Map<String, Object> entry = new LinkedHashMap<>();
-                entry.put(LOCATION, loc.get(LOCATION));
-                entry.put("result", itemLocationResults.getOrDefault(normalizedLoc, "UNKNOWN"));
-                entry.put("categorySuccessRate", loc.get(SUCCESS_RATE));
-                alreadySearchedDisplay.add(entry);
-            } else {
-                loc.put("rank", rank++);
-                recommended.add(loc);
-            }
-        }
-
-        // Add locations searched for this item that don't appear in category history
-        Set<String> coveredLocs = alreadySearchedDisplay.stream()
-                .map(e -> normalize(e.get(LOCATION).toString()))
-                .collect(Collectors.toSet());
-        for (Map.Entry<String, String> e : itemLocationResults.entrySet()) {
-            if (!coveredLocs.contains(e.getKey())) {
-                Map<String, Object> entry = new LinkedHashMap<>();
-                entry.put(LOCATION, capitalize(e.getKey()));
-                entry.put("result", e.getValue());
-                entry.put("categorySuccessRate", null);
-                alreadySearchedDisplay.add(entry);
-            }
-        }
-
-        // Top location for insights
-        String topLocation = allLocationRanks.isEmpty() ? "—"
-                : allLocationRanks.get(0).get(LOCATION).toString();
+        LocationAnalysis locationAnalysis = analyzeLocations(
+                categoryReports, itemReports, alreadySearched, itemLocationResults);
+        List<Map<String, Object>> recommended = locationAnalysis.recommendedLocations();
+        List<Map<String, Object>> alreadySearchedDisplay = locationAnalysis.alreadySearchedLocations();
+        String topLocation = locationAnalysis.topLocation();
 
         // ── 4. Category-level insights ────────────────────────────────────────
         List<LostItem> categoryItems = lostItemRepository.findAll().stream()
@@ -267,6 +208,79 @@ public class RecoveryStrategyService {
         result.put("daysElapsed", daysElapsed);
         result.put("searchAttemptsCount", doneReports.size());
         return result;
+    }
+
+    private LocationAnalysis analyzeLocations(
+            List<SearchReport> categoryReports, List<SearchReport> itemReports,
+            Set<String> alreadySearched, Map<String, String> itemLocationResults) {
+
+        Map<String, List<SearchReport>> byLocation = categoryReports.stream()
+                .filter(r -> r.getLocationSearched() != null && !r.getLocationSearched().isBlank())
+                .collect(Collectors.groupingBy(r -> normalize(r.getLocationSearched())));
+
+        List<Map<String, Object>> allLocationRanks = new ArrayList<>();
+        for (Map.Entry<String, List<SearchReport>> entry : byLocation.entrySet()) {
+            String location = entry.getKey();
+            List<SearchReport> searches = entry.getValue();
+            int total = searches.size();
+            if (total < MIN_SEARCHES_TO_QUALIFY) continue;
+
+            double foundScore = searches.stream().mapToDouble(r -> {
+                if (r.getSearchResult() == null) return 0.0;
+                return switch (r.getSearchResult()) {
+                    case FOUND            -> 1.0;
+                    case PARTIALLY_FOUND  -> 0.5;
+                    default               -> 0.0;
+                };
+            }).sum();
+
+            double successRate = Math.round((foundScore / total) * 1000.0) / 10.0;
+
+            Map<String, Object> loc = new LinkedHashMap<>();
+            loc.put(LOCATION, capitalize(location));
+            loc.put(SUCCESS_RATE, successRate);
+            loc.put(TOTAL_SEARCHES, total);
+            loc.put(ALREADY_SEARCHED, alreadySearched.contains(location));
+            allLocationRanks.add(loc);
+        }
+
+        allLocationRanks.sort((a, b) ->
+                Double.compare((double) b.get(SUCCESS_RATE), (double) a.get(SUCCESS_RATE)));
+
+        List<Map<String, Object>> recommended = new ArrayList<>();
+        List<Map<String, Object>> alreadySearchedDisplay = new ArrayList<>();
+        int rank = 1;
+        for (Map<String, Object> loc : allLocationRanks) {
+            if (Boolean.TRUE.equals(loc.get(ALREADY_SEARCHED))) {
+                String normalizedLoc = normalize(loc.get(LOCATION).toString());
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put(LOCATION, loc.get(LOCATION));
+                entry.put("result", itemLocationResults.getOrDefault(normalizedLoc, "UNKNOWN"));
+                entry.put("categorySuccessRate", loc.get(SUCCESS_RATE));
+                alreadySearchedDisplay.add(entry);
+            } else {
+                loc.put("rank", rank++);
+                recommended.add(loc);
+            }
+        }
+
+        Set<String> coveredLocs = alreadySearchedDisplay.stream()
+                .map(e -> normalize(e.get(LOCATION).toString()))
+                .collect(Collectors.toSet());
+        for (Map.Entry<String, String> e : itemLocationResults.entrySet()) {
+            if (!coveredLocs.contains(e.getKey())) {
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put(LOCATION, capitalize(e.getKey()));
+                entry.put("result", e.getValue());
+                entry.put("categorySuccessRate", null);
+                alreadySearchedDisplay.add(entry);
+            }
+        }
+
+        String topLocation = allLocationRanks.isEmpty() ? "—"
+                : allLocationRanks.get(0).get(LOCATION).toString();
+
+        return new LocationAnalysis(recommended, alreadySearchedDisplay, topLocation);
     }
 
     /** Determine probability level from recovery probability score. */
