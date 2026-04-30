@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class SearchReportService {
 
     private static final String UNKNOWN_STATUS = "UNKNOWN";
+    private static final String OPEN_STATUS = "OPEN";
 
     private final SearchReportRepository searchReportRepository;
     private final LostItemRepository lostItemRepository;
@@ -144,7 +145,7 @@ public class SearchReportService {
                                     "id", r.getId(),
                                     "result", r.getSearchResult() != null ? r.getSearchResult().name() : UNKNOWN_STATUS,
                                     "location", r.getLocationSearched() != null ? r.getLocationSearched() : "",
-                                    "status", r.getStatus() != null ? r.getStatus().name() : "OPEN"
+                                    "status", r.getStatus() != null ? r.getStatus().name() : OPEN_STATUS
                             ))
                             .toList());
                     return day;
