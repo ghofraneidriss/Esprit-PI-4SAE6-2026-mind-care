@@ -129,7 +129,7 @@ pipeline {
                             docker rm -f medical-report-service volunteer-service || true
 
                             docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
-                            docker run -d -p 8082:8080 --name volunteer-service $IMAGE_NAME_VOL:latest
+                            docker run -d -p 8082:8085 --name volunteer-service $IMAGE_NAME_VOL:latest
                         '''
                     } else {
                         echo 'Skipping deploy simulation: docker is not installed on this Jenkins agent.'
@@ -154,11 +154,21 @@ stage('Health Check') {
         sh '''
             cd volunteer
             
-            # Check if volunteer service is running on port 8082
-            curl -s http://localhost:8082/actuator/health | grep UP || exit 1
-            
-            # Check if Prometheus is scraping metrics
-            curl -s http://localhost:9090/api/v1/targets | grep healthy || exit 1
+            # Wait for volunteer service to become healthy
+            for i in $(seq 1 12); do
+              curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' && break
+              echo "Waiting for volunteer service on 8082... ($i/12)"
+              sleep 5
+            done
+            curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' || exit 1
+
+            # Wait for Prometheus target to be healthy
+            for i in $(seq 1 12); do
+              curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' && break
+              echo "Waiting for Prometheus to scrape target... ($i/12)"
+              sleep 5
+            done
+            curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' || exit 1
         '''
     }
 }

@@ -5,5 +5,5 @@ global:
 scrape_configs:
   - job_name: 'volunteer-service'
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['host.docker.internal:8082']
     metrics_path: '/actuator/prometheus'
