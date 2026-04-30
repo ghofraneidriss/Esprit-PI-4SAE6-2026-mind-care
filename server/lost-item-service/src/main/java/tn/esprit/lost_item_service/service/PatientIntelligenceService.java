@@ -41,7 +41,6 @@ public class PatientIntelligenceService {
     private static final String STABLE_TREND = "STABLE";
     private static final String INCREASING_TREND = "INCREASING";
     private static final String DECREASING_TREND = "DECREASING";
-    private static final int CATEGORY_HIGH_THRESHOLD = 3;
     private static final int CATEGORY_MEDIUM_THRESHOLD = 2;
     private static final int CATEGORY_RISK_THRESHOLD = 3;
     private static final int INCREASING_SCORE = 2;

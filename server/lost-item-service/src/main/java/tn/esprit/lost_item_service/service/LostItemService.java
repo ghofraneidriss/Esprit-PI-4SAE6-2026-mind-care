@@ -320,7 +320,7 @@ public class LostItemService {
         Map<String, Object> trend = detectFrequentLosing(patientId);
         if (Boolean.TRUE.equals(trend.get("isFrequentLoser"))) {
             score += FREQUENT_LOSER_POINTS;
-            riskFactors.add("Frequent item-losing pattern detected (+"+FREQUENT_LOSER_POINTS+" pts)");
+            riskFactors.add("Frequent item-losing pattern detected (+"+FREQUENT_LOSER_POINTS+PTS_SUFFIX);
         }
 
         score = Math.min(score, 100);

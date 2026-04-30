@@ -108,7 +108,7 @@ public class LostItemAlertService {
             case LOW    -> next = AlertLevel.MEDIUM;
             case MEDIUM -> next = AlertLevel.HIGH;
             case HIGH   -> next = AlertLevel.CRITICAL;
-            default     -> throw new RuntimeException(ALREADY_CRITICAL);
+            default     -> throw new IllegalStateException(ALREADY_CRITICAL);
         }
         alert.setLevel(next);
         alert.setStatus(AlertStatus.NEW);
