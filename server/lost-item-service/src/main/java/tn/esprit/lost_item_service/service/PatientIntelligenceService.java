@@ -146,13 +146,14 @@ public class PatientIntelligenceService {
                 java.time.temporal.ChronoUnit.DAYS.between(i.getCreatedAt(), now)).orElse(0L);
 
         // ── 6. Build LLM prompt ───────────────────────────────────────────────
-        String prompt = buildPrompt(
+        PromptData promptData = new PromptData(
                 patientId, totalLost, totalFound, recoveryRate,
                 recentCount, previousCount, trendDir, trendMultiplier,
                 monthlyTrend, categoryRisk, dangerZones,
                 unresolvedCritical, longestDays,
                 longestUnresolved.map(i -> i.getCategory() != null ? i.getCategory().name() : "UNKNOWN").orElse("N/A")
         );
+        String prompt = buildPrompt(promptData);
 
         // ── 7. Call Groq via Spring AI ────────────────────────────────────────
         String aiAnalysis;
@@ -197,50 +198,61 @@ public class PatientIntelligenceService {
         return result;
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
-
-    private String buildPrompt(Long patientId, long totalLost, long totalFound,
-            double recoveryRate, long recentCount, long previousCount,
-            String trendDir, double multiplier,
+    // ── Data class for prompt building ────────────────────────────────────────
+    private record PromptData(
+            Long patientId,
+            long totalLost,
+            long totalFound,
+            double recoveryRate,
+            long recentCount,
+            long previousCount,
+            String trendDir,
+            double trendMultiplier,
             List<Map<String, Object>> monthlyTrend,
             List<Map<String, Object>> categoryRisk,
             List<Map<String, Object>> dangerZones,
-            long unresolvedCritical, long longestDays, String longestCategory) {
+            long unresolvedCritical,
+            long longestDays,
+            String longestCategory
+    ) {}
 
+    // ── Private helpers ───────────────────────────────────────────────────────
+
+    private String buildPrompt(PromptData data) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Analyze the following behavioral data for an Alzheimer patient (ID: ").append(patientId).append("):\n\n");
+        sb.append("Analyze the following behavioral data for an Alzheimer patient (ID: ").append(data.patientId).append("):\n\n");
 
         sb.append("LOST ITEM OVERVIEW (last 90 days):\n");
-        sb.append("- Total items lost: ").append(totalLost).append("\n");
-        sb.append("- Items recovered: ").append(totalFound)
-          .append(" (").append(recoveryRate).append("% recovery rate)\n");
-        sb.append("- Unresolved critical items: ").append(unresolvedCritical).append("\n");
-        sb.append("- Longest unresolved item: ").append(longestDays)
-          .append(" days (category: ").append(longestCategory).append(")\n\n");
+        sb.append("- Total items lost: ").append(data.totalLost).append("\n");
+        sb.append("- Items recovered: ").append(data.totalFound)
+          .append(" (").append(data.recoveryRate).append("% recovery rate)\n");
+        sb.append("- Unresolved critical items: ").append(data.unresolvedCritical).append("\n");
+        sb.append("- Longest unresolved item: ").append(data.longestDays)
+          .append(" days (category: ").append(data.longestCategory).append(")\n\n");
 
         sb.append("MONTHLY LOSS TREND (last 6 months):\n");
-        for (Map<String, Object> m : monthlyTrend) {
+        for (Map<String, Object> m : data.monthlyTrend) {
             sb.append("  ").append(m.get("month")).append(": ").append(m.get(COUNT)).append(" items\n");
         }
-        sb.append("- Trend: ").append(trendDir);
-        if (!STABLE_TREND.equals(trendDir) && multiplier != 1.0 && multiplier != TREND_MULTIPLIER_DEFAULT) {
-            sb.append(" (").append(multiplier).append("x vs previous period)");
+        sb.append("- Trend: ").append(data.trendDir);
+        if (!STABLE_TREND.equals(data.trendDir) && data.trendMultiplier != 1.0 && data.trendMultiplier != TREND_MULTIPLIER_DEFAULT) {
+            sb.append(" (").append(data.trendMultiplier).append("x vs previous period)");
         }
-        sb.append("\n- Last 30 days: ").append(recentCount)
-          .append(" vs previous 30 days: ").append(previousCount).append("\n\n");
+        sb.append("\n- Last 30 days: ").append(data.recentCount)
+          .append(" vs previous 30 days: ").append(data.previousCount).append("\n\n");
 
-        if (!categoryRisk.isEmpty()) {
+        if (!data.categoryRisk.isEmpty()) {
             sb.append("CATEGORY RISK:\n");
-            for (Map<String, Object> c : categoryRisk) {
+            for (Map<String, Object> c : data.categoryRisk) {
                 sb.append("  ").append(c.get("category")).append(": ").append(c.get(COUNT))
                   .append(" items (risk: ").append(c.get("riskLevel")).append(")\n");
             }
             sb.append("\n");
         }
 
-        if (!dangerZones.isEmpty()) {
+        if (!data.dangerZones.isEmpty()) {
             sb.append("FREQUENT LOSS LOCATIONS (danger zones):\n");
-            for (Map<String, Object> z : dangerZones) {
+            for (Map<String, Object> z : data.dangerZones) {
                 sb.append("  ").append(z.get("location")).append(": ")
                   .append(z.get("lossCount")).append(" losses\n");
             }

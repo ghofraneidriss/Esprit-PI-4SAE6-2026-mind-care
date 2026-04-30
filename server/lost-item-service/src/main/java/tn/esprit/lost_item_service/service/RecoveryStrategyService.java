@@ -50,7 +50,6 @@ public class RecoveryStrategyService {
     public Map<String, Object> getRecoveryStrategy(Long itemId) {
         log.info("[RecoveryStrategy] Computing strategy for lostItem id={}", itemId);
 
-        // ── 1. Load the target item ───────────────────────────────────────────
         LostItem item = lostItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Lost item not found: " + itemId));
 
@@ -58,20 +57,8 @@ public class RecoveryStrategyService {
                 ? ChronoUnit.DAYS.between(item.getCreatedAt(), LocalDateTime.now())
                 : 0;
 
-        // ── Early return: item already found ──────────────────────────────────
         if (item.getStatus() == ItemStatus.FOUND) {
-            List<SearchReport> doneReports = searchReportRepository.findAll().stream()
-                    .filter(r -> itemId.equals(r.getLostItemId()))
-                    .toList();
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("itemId", itemId);
-            result.put("itemTitle", item.getTitle());
-            result.put("category", item.getCategory() != null ? item.getCategory().name() : null);
-            result.put("status", FOUND);
-            result.put("message", "Item has been found. No active recovery strategy needed.");
-            result.put("daysElapsed", daysElapsed);
-            result.put("searchAttemptsCount", doneReports.size());
-            return result;
+            return buildFoundItemResult(itemId, item, daysElapsed);
         }
 
         // ── 2. Load all search reports and build a category map ───────────────
@@ -266,6 +253,21 @@ public class RecoveryStrategyService {
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
+
+    private Map<String, Object> buildFoundItemResult(Long itemId, LostItem item, long daysElapsed) {
+        List<SearchReport> doneReports = searchReportRepository.findAll().stream()
+                .filter(r -> itemId.equals(r.getLostItemId()))
+                .toList();
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("itemId", itemId);
+        result.put("itemTitle", item.getTitle());
+        result.put("category", item.getCategory() != null ? item.getCategory().name() : null);
+        result.put("status", FOUND);
+        result.put("message", "Item has been found. No active recovery strategy needed.");
+        result.put("daysElapsed", daysElapsed);
+        result.put("searchAttemptsCount", doneReports.size());
+        return result;
+    }
 
     /** Determine probability level from recovery probability score. */
     private String determineProbabilityLevel(double probability) {

@@ -292,8 +292,9 @@ class SearchReportServiceTest {
 
         Map<String, Object> result = service.getSearchTimeline(10L);
 
-        assertThat(result.get("totalSearches")).isEqualTo(0L);
-        assertThat(result.get("successRate")).isEqualTo(0.0);
+        assertThat(result)
+                .containsEntry("totalSearches", 0L)
+                .containsEntry("successRate", 0.0);
         assertThat((List<?>) result.get("timeline")).isEmpty();
     }
 

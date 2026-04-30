@@ -208,7 +208,7 @@ class SearchSuggestionServiceTest {
         List<Map<String, Object>> result = service.getSuggestions(5L, "ELECTRONIC");
 
         for (int i = 0; i < result.size(); i++) {
-            assertThat(result.get(i).get("rank")).isEqualTo(i + 1);
+            assertThat((Map<String, Object>) result.get(i)).containsEntry("rank", i + 1);
         }
     }
 
