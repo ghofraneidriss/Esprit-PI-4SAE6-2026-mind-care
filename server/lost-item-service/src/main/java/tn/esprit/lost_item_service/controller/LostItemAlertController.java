@@ -23,6 +23,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LostItemAlertController {
 
+    private static final String CAREGIVER_ROLE = "CAREGIVER";
+    private static final String PATIENT_ROLE = "PATIENT";
+
     private final LostItemAlertService lostItemAlertService;
     private final AuthorizationService authorizationService;
 
@@ -46,10 +49,10 @@ public class LostItemAlertController {
     ) {
         String role = userRole != null ? userRole.toUpperCase() : "ADMIN";
 
-        if ("CAREGIVER".equals(role) && userId != null) {
+        if (CAREGIVER_ROLE.equals(role) && userId != null) {
             return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByCaregiverId(userId)));
         }
-        if ("PATIENT".equals(role) && userId != null) {
+        if (PATIENT_ROLE.equals(role) && userId != null) {
             return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAlertsByPatientId(userId)));
         }
         return ResponseEntity.ok(DTOMapper.toLostItemAlertDTOList(lostItemAlertService.getAllAlerts()));

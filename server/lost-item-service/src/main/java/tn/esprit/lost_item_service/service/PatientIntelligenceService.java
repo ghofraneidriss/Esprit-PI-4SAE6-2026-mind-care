@@ -32,6 +32,34 @@ public class PatientIntelligenceService {
     private final LostItemRepository lostItemRepository;
 
     private static final String COUNT = "count";
+    private static final String CRITICAL_PRIORITY = "CRITICAL";
+    private static final String MEDICATION_CATEGORY = "MEDICATION";
+    private static final String RISK_LEVEL_HIGH = "HIGH";
+    private static final String RISK_LEVEL_MEDIUM = "MEDIUM";
+    private static final String RISK_LEVEL_LOW = "LOW";
+    private static final String RISK_LEVEL_CRITICAL = "CRITICAL";
+    private static final String STABLE_TREND = "STABLE";
+    private static final String INCREASING_TREND = "INCREASING";
+    private static final String DECREASING_TREND = "DECREASING";
+    private static final int CATEGORY_HIGH_THRESHOLD = 3;
+    private static final int CATEGORY_MEDIUM_THRESHOLD = 2;
+    private static final int CATEGORY_RISK_THRESHOLD = 3;
+    private static final int INCREASING_SCORE = 2;
+    private static final int CRITICAL_ALERT_HIGH_SCORE = 3;
+    private static final int CRITICAL_ALERT_ONE_SCORE = 2;
+    private static final int RECENT_HIGH_SCORE = 2;
+    private static final int RECENT_MEDIUM_SCORE = 1;
+    private static final int RECENT_ITEMS_THRESHOLD = 5;
+    private static final int RECENT_ITEMS_MEDIUM_THRESHOLD = 3;
+    private static final double RECOVERY_LOW_THRESHOLD = 20.0;
+    private static final double RECOVERY_MEDIUM_THRESHOLD = 40.0;
+    private static final int RECOVERY_LOW_SCORE = 2;
+    private static final int RECOVERY_MEDIUM_SCORE = 1;
+    private static final int CRITICAL_RISK_THRESHOLD = 6;
+    private static final int HIGH_RISK_THRESHOLD = 4;
+    private static final int MODERATE_RISK_THRESHOLD = 2;
+    private static final int TREND_DIFFERENCE_THRESHOLD = 1;
+    private static final double TREND_MULTIPLIER_DEFAULT = 99.0;
 
     public PatientIntelligenceService(
             ChatClient.Builder chatClientBuilder,
@@ -107,7 +135,7 @@ public class PatientIntelligenceService {
         // ── 5. Unresolved critical items ──────────────────────────────────────
         long unresolvedCritical = allItems.stream()
                 .filter(i -> i.getStatus() == ItemStatus.LOST || i.getStatus() == ItemStatus.SEARCHING)
-                .filter(i -> "CRITICAL".equals(i.getPriority() != null ? i.getPriority().name() : ""))
+                .filter(i -> CRITICAL_PRIORITY.equals(i.getPriority() != null ? i.getPriority().name() : ""))
                 .count();
 
         Optional<LostItem> longestUnresolved = allItems.stream()
@@ -196,7 +224,7 @@ public class PatientIntelligenceService {
             sb.append("  ").append(m.get("month")).append(": ").append(m.get(COUNT)).append(" items\n");
         }
         sb.append("- Trend: ").append(trendDir);
-        if (!"STABLE".equals(trendDir) && multiplier != 1.0 && multiplier != 99.0) {
+        if (!STABLE_TREND.equals(trendDir) && multiplier != 1.0 && multiplier != TREND_MULTIPLIER_DEFAULT) {
             sb.append(" (").append(multiplier).append("x vs previous period)");
         }
         sb.append("\n- Last 30 days: ").append(recentCount)
@@ -232,9 +260,9 @@ public class PatientIntelligenceService {
 
     /** Determine trend direction based on recent vs previous counts. */
     private String determineTrendDirection(long recentCount, long previousCount) {
-        if (recentCount > previousCount + 1) return "INCREASING";
-        if (recentCount < previousCount - 1) return "DECREASING";
-        return "STABLE";
+        if (recentCount > previousCount + TREND_DIFFERENCE_THRESHOLD) return INCREASING_TREND;
+        if (recentCount < previousCount - TREND_DIFFERENCE_THRESHOLD) return DECREASING_TREND;
+        return STABLE_TREND;
     }
 
     /** Calculate trend multiplier showing change ratio. */
@@ -242,31 +270,31 @@ public class PatientIntelligenceService {
         if (previousCount > 0) {
             return Math.round((recentCount * 10.0 / previousCount)) / 10.0;
         }
-        return recentCount > 0 ? 99.0 : 1.0;
+        return recentCount > 0 ? TREND_MULTIPLIER_DEFAULT : 1.0;
     }
 
     private String determineCategoryRiskLevel(String category, long count) {
-        if ("MEDICATION".equals(category)) return "HIGH";
-        if (count >= 3) return "HIGH";
-        if (count == 2) return "MEDIUM";
-        return "LOW";
+        if (MEDICATION_CATEGORY.equals(category)) return RISK_LEVEL_HIGH;
+        if (count >= CATEGORY_RISK_THRESHOLD) return RISK_LEVEL_HIGH;
+        if (count == CATEGORY_MEDIUM_THRESHOLD) return RISK_LEVEL_MEDIUM;
+        return RISK_LEVEL_LOW;
     }
 
     private String computeRiskLevel(long recentCount, long previousCount, String trendDir,
                                      long unresolvedCritical, long totalLost, long totalFound) {
         int score = 0;
-        if ("INCREASING".equals(trendDir)) score += 2;
-        if (unresolvedCritical >= 2) score += 3;
-        else if (unresolvedCritical == 1) score += 2;
-        if (recentCount >= 5) score += 2;
-        else if (recentCount >= 3) score += 1;
+        if (INCREASING_TREND.equals(trendDir)) score += INCREASING_SCORE;
+        if (unresolvedCritical >= 2) score += CRITICAL_ALERT_HIGH_SCORE;
+        else if (unresolvedCritical == 1) score += CRITICAL_ALERT_ONE_SCORE;
+        if (recentCount >= RECENT_ITEMS_THRESHOLD) score += RECENT_HIGH_SCORE;
+        else if (recentCount >= RECENT_ITEMS_MEDIUM_THRESHOLD) score += RECENT_MEDIUM_SCORE;
         double recoveryRate = totalLost > 0 ? (totalFound * 100.0 / totalLost) : 100.0;
-        if (recoveryRate < 20) score += 2;
-        else if (recoveryRate < 40) score += 1;
+        if (recoveryRate < RECOVERY_LOW_THRESHOLD) score += RECOVERY_LOW_SCORE;
+        else if (recoveryRate < RECOVERY_MEDIUM_THRESHOLD) score += RECOVERY_MEDIUM_SCORE;
 
-        if (score >= 6) return "CRITICAL";
-        if (score >= 4) return "HIGH";
-        if (score >= 2) return "MODERATE";
-        return "LOW";
+        if (score >= CRITICAL_RISK_THRESHOLD) return RISK_LEVEL_CRITICAL;
+        if (score >= HIGH_RISK_THRESHOLD) return RISK_LEVEL_HIGH;
+        if (score >= MODERATE_RISK_THRESHOLD) return "MODERATE";
+        return RISK_LEVEL_LOW;
     }
 }

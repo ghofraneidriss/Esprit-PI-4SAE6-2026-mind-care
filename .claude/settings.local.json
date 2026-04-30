@@ -48,7 +48,8 @@
       "Bash(bash /tmp/update_packages.sh)",
       "Bash(git fetch *)",
       "Bash(git rebase *)",
-      "Bash(git commit -m 'Extract UNKNOWN constant in SearchReportService *)"
+      "Bash(git commit -m 'Extract UNKNOWN constant in SearchReportService *)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
     ]
   }
 }
