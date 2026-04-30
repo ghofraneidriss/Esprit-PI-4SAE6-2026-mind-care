@@ -30,8 +30,7 @@ pipeline {
             steps {
                 echo 'Cloning repository...'
                 git url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git',
-                    branch: 'volunteer',
-                    credentialsId: 'dockerhub-creds'
+                    branch: 'volunteer'
             }
         }
 
@@ -155,8 +154,8 @@ stage('Health Check') {
         sh '''
             cd volunteer
             
-            # Check if volunteer service is running
-            curl -s http://localhost:8080/actuator/health | grep UP || exit 1
+            # Check if volunteer service is running on port 8082
+            curl -s http://localhost:8082/actuator/health | grep UP || exit 1
             
             # Check if Prometheus is scraping metrics
             curl -s http://localhost:9090/api/v1/targets | grep healthy || exit 1
