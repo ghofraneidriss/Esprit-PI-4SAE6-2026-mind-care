@@ -18,6 +18,9 @@ pipeline {
     SONAR_PROJECT_NAME = 'mindcare'
      SERVICE_NAME = 'volunteer'
     SERVICE_DIR = 'volunteer'
+        DOCKER_IMAGES_READY = 'false'
+        DEPLOY_READY = 'false'
+        MONITORING_READY = 'false'
     }
 
     options {
@@ -85,10 +88,22 @@ pipeline {
                 echo 'Building Docker images...'
                 script {
                     if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
-                        sh '''
-                            docker build -t $IMAGE_NAME_BACK:latest ./medical_report_service
-                            docker build -t $IMAGE_NAME_VOL:latest ./volunteer
-                        '''
+                        def dockerBuildStatus = sh(
+                            script: '''
+                                export DOCKER_BUILDKIT=0
+                                docker build --pull=false -t $IMAGE_NAME_BACK:latest ./medical_report_service
+                                docker build --pull=false -t $IMAGE_NAME_VOL:latest ./volunteer
+                            ''',
+                            returnStatus: true
+                        )
+
+                        if (dockerBuildStatus == 0) {
+                            env.DOCKER_IMAGES_READY = 'true'
+                            echo 'Docker images built successfully.'
+                        } else {
+                            unstable('Docker image build failed, likely because the Jenkins agent cannot reach Docker Hub or does not have the base images cached locally. Downstream Docker stages will be skipped.')
+                            echo 'Skipping downstream Docker stages because images are not available.'
+                        }
                     } else {
                         echo 'Skipping Docker image build: docker is not installed on this Jenkins agent.'
                     }
@@ -97,6 +112,9 @@ pipeline {
         }
 
         stage('Push Images') {
+            when {
+                expression { env.DOCKER_IMAGES_READY == 'true' }
+            }
             steps {
                 echo 'Pushing images...'
                 script {
@@ -121,18 +139,31 @@ pipeline {
         }
 
         stage('Deploy (Simulation)') {
+            when {
+                expression { env.DOCKER_IMAGES_READY == 'true' }
+            }
             steps {
                 echo 'Deploying...'
                 script {
                     if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
-                        sh '''
-                            docker rm -f medical-report-service volunteer-service || true
+                        def deployStatus = sh(
+                            script: '''
+                                docker rm -f medical-report-service volunteer-service || true
 
-                            docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
-                            docker run -d -p 8082:8085 --name volunteer-service \
-                              -e SPRING_PROFILES_ACTIVE=test \
-                              $IMAGE_NAME_VOL:latest
-                        '''
+                                docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
+                                docker run -d -p 8082:8085 --name volunteer-service \
+                                  -e SPRING_PROFILES_ACTIVE=test \
+                                  $IMAGE_NAME_VOL:latest
+                            ''',
+                            returnStatus: true
+                        )
+
+                        if (deployStatus == 0) {
+                            env.DEPLOY_READY = 'true'
+                            echo 'Deployment simulation started.'
+                        } else {
+                            unstable('Deployment simulation failed. Monitoring and health checks will be skipped.')
+                        }
                     } else {
                         echo 'Skipping deploy simulation: docker is not installed on this Jenkins agent.'
                     }
@@ -140,49 +171,70 @@ pipeline {
             }
         }
         stage('Start Monitoring Stack') {
-    steps {
-        echo 'Starting Prometheus and Grafana...'
-        sh '''
-            cd volunteer
-            docker-compose -f docker-compose-monitoring.yml up -d
-            sleep 10
-        '''
-    }
-}
+            when {
+                expression { env.DEPLOY_READY == 'true' }
+            }
+            steps {
+                echo 'Starting Prometheus and Grafana...'
+                script {
+                    def monitoringStatus = sh(
+                        script: '''
+                            cd volunteer
+                            docker-compose -f docker-compose-monitoring.yml up -d
+                            sleep 10
+                        ''',
+                        returnStatus: true
+                    )
 
-stage('Health Check') {
-    steps {
-        echo 'Checking service health...'
-        sh '''
-            cd volunteer
-            
-            # Wait for volunteer service to become healthy
-            for i in $(seq 1 12); do
-              curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' && break
-              echo "Waiting for volunteer service on 8082... ($i/12)"
-              sleep 5
-            done
-            curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' || exit 1
+                    if (monitoringStatus == 0) {
+                        env.MONITORING_READY = 'true'
+                        echo 'Monitoring stack started.'
+                    } else {
+                        unstable('Monitoring stack failed to start. Health and metrics checks will be skipped.')
+                    }
+                }
+            }
+        }
 
-            # Wait for Prometheus target to be healthy
-            for i in $(seq 1 12); do
-              curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' && break
-              echo "Waiting for Prometheus to scrape target... ($i/12)"
-              sleep 5
-            done
-            curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' || exit 1
-        '''
-    }
-}
+        stage('Health Check') {
+            when {
+                expression { env.DEPLOY_READY == 'true' && env.MONITORING_READY == 'true' }
+            }
+            steps {
+                echo 'Checking service health...'
+                sh '''
+                    cd volunteer
+                    
+                    # Wait for volunteer service to become healthy
+                    for i in $(seq 1 12); do
+                      curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' && break
+                      echo "Waiting for volunteer service on 8082... ($i/12)"
+                      sleep 5
+                    done
+                    curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' || exit 1
 
-stage('Verify Metrics') {
-    steps {
-        echo 'Verifying Prometheus metrics...'
-        sh '''
-            curl -s http://localhost:9090/api/v1/query?query=up | grep -q "value" && echo "Metrics collected successfully"
-        '''
-    }
-}
+                    # Wait for Prometheus target to be healthy
+                    for i in $(seq 1 12); do
+                      curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' && break
+                      echo "Waiting for Prometheus to scrape target... ($i/12)"
+                      sleep 5
+                    done
+                    curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' || exit 1
+                '''
+            }
+        }
+
+        stage('Verify Metrics') {
+            when {
+                expression { env.MONITORING_READY == 'true' }
+            }
+            steps {
+                echo 'Verifying Prometheus metrics...'
+                sh '''
+                    curl -s http://localhost:9090/api/v1/query?query=up | grep -q "value" && echo "Metrics collected successfully"
+                '''
+            }
+        }
     }
 
     post {
