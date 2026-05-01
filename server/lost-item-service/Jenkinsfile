@@ -128,7 +128,7 @@ pipeline {
                         RETRY_COUNT=0
 
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            if curl -f http://localhost:8082/actuator/health 2>/dev/null; then
+                            if curl -f http://localhost:8082/ 2>/dev/null; then
                                 echo "✅ Service is healthy!"
                                 exit 0
                             fi
