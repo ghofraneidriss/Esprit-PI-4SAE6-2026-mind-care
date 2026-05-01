@@ -155,9 +155,8 @@ class AlertControllerTest {
     @Test
     @DisplayName("PATCH /api/alerts/{id}/view - Mark alert as viewed")
     void testMarkAsViewed() throws Exception {
-        Alert viewedAlert = new Alert(alert);
-        viewedAlert.setViewedAt(LocalDateTime.now());
-        when(alertService.markAsViewed(1L)).thenReturn(viewedAlert);
+        alert.setViewedAt(LocalDateTime.now());
+        when(alertService.markAsViewed(1L)).thenReturn(alert);
 
         mockMvc.perform(patch("/api/alerts/1/view"))
                 .andExpect(status().isOk())
@@ -169,9 +168,8 @@ class AlertControllerTest {
     @Test
     @DisplayName("PATCH /api/alerts/{id}/resolve - Resolve alert")
     void testResolveAlert() throws Exception {
-        Alert resolvedAlert = new Alert(alert);
-        resolvedAlert.setStatus(AlertStatus.RESOLVED);
-        when(alertService.resolveAlert(1L)).thenReturn(resolvedAlert);
+        alert.setStatus(AlertStatus.RESOLVED);
+        when(alertService.resolveAlert(1L)).thenReturn(alert);
 
         mockMvc.perform(patch("/api/alerts/1/resolve"))
                 .andExpect(status().isOk())
@@ -206,9 +204,8 @@ class AlertControllerTest {
     @Test
     @DisplayName("PATCH /api/alerts/{id}/escalate - Escalate alert")
     void testEscalateAlert() throws Exception {
-        Alert escalatedAlert = new Alert(alert);
-        escalatedAlert.setLevel(AlertLevel.CRITICAL);
-        when(alertService.escalateAlert(1L)).thenReturn(escalatedAlert);
+        alert.setLevel(AlertLevel.CRITICAL);
+        when(alertService.escalateAlert(1L)).thenReturn(alert);
 
         mockMvc.perform(patch("/api/alerts/1/escalate"))
                 .andExpect(status().isOk())
