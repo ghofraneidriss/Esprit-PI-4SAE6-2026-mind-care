@@ -302,13 +302,13 @@ class FollowUpDTOTest {
         FollowUpRequestDTO dto = new FollowUpRequestDTO();
 
         dto.setCognitiveScore(0);
-        assertThat(dto.getCognitiveScore()).isEqualTo(0);
+        assertThat(dto.getCognitiveScore()).isZero();
 
         dto.setCognitiveScore(30);
         assertThat(dto.getCognitiveScore()).isEqualTo(30);
 
         dto.setHoursSlept(0);
-        assertThat(dto.getHoursSlept()).isEqualTo(0);
+        assertThat(dto.getHoursSlept()).isZero();
 
         dto.setHoursSlept(24);
         assertThat(dto.getHoursSlept()).isEqualTo(24);

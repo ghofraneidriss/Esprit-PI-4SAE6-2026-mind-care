@@ -242,4 +242,13 @@ class AlertDTOTest {
         assertThat(dto.getDescription()).hasSize(5000);
         assertThat(dto.getLevel()).isEqualTo(AlertLevel.CRITICAL);
     }
+
+    @Test
+    @DisplayName("AlertRequestDTO - Zero patient ID")
+    void testAlertRequestDTOWithZeroPatientId() {
+        AlertRequestDTO dto = new AlertRequestDTO();
+        dto.setPatientId(0L);
+
+        assertThat(dto.getPatientId()).isZero();
+    }
 }
