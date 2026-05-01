@@ -1,16 +1,4 @@
-# Multi-stage build for lost-item-service
-# Stage 1: Build stage
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
-
-WORKDIR /build
-
-# Copy lost-item-service source
-COPY . ./
-
-# Build the application (skip tests for faster build)
-RUN mvn clean package -DskipTests
-
-# Stage 2: Runtime stage
+# Runtime stage using pre-built JAR
 FROM eclipse-temurin:17.0.11_9-jre-alpine
 
 LABEL maintainer="MindCare Team"
@@ -21,8 +9,8 @@ RUN addgroup -g 1000 appuser && adduser -D -u 1000 -G appuser appuser
 
 WORKDIR /app
 
-# Copy the built jar from builder stage
-COPY --from=builder /build/target/lost-item-service-0.0.1-SNAPSHOT.jar app.jar
+# Copy pre-built jar from target directory
+COPY target/lost-item-service-0.0.1-SNAPSHOT.jar app.jar
 
 # Change ownership
 RUN chown -R appuser:appuser /app
