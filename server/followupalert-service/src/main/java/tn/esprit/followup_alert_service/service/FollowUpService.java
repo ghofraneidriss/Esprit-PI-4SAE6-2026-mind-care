@@ -98,41 +98,43 @@ public class FollowUpService {
 
     private void autoGenerateAlerts(FollowUp followUp) {
         Long patientId = followUp.getPatientId();
+        checkCognitiveScoreAlert(followUp, patientId);
+        checkAgitationConfusionAlert(followUp, patientId);
+        checkSleepQualityAlert(followUp, patientId);
+        checkADLDependencyAlert(followUp, patientId);
+        checkMoodAlert(followUp, patientId);
+        log.info("Auto-alert evaluation completed for patient {} on {}", patientId, followUp.getFollowUpDate());
+    }
 
-        // Rule 1: Low cognitive score -> HIGH or CRITICAL alert
+    private void checkCognitiveScoreAlert(FollowUp followUp, Long patientId) {
         if (followUp.getCognitiveScore() != null && followUp.getCognitiveScore() < 18) {
-            createAlertIfNotExists(patientId,
-                    "Low Cognitive Score Detected",
+            AlertLevel level = followUp.getCognitiveScore() < 10 ? AlertLevel.CRITICAL : AlertLevel.HIGH;
+            createAlertIfNotExists(patientId, "Low Cognitive Score Detected",
                     "Patient cognitive score is " + followUp.getCognitiveScore()
-                            + "/30 on " + followUp.getFollowUpDate() + ". Immediate evaluation recommended.",
-                    followUp.getCognitiveScore() < 10 ? AlertLevel.CRITICAL : AlertLevel.HIGH);
+                            + "/30 on " + followUp.getFollowUpDate() + ". Immediate evaluation recommended.", level);
         }
+    }
 
-        // Rule 2: Agitation + Confusion together -> CRITICAL
-        if (Boolean.TRUE.equals(followUp.getAgitationObserved())
-                && Boolean.TRUE.equals(followUp.getConfusionObserved())) {
-            createAlertIfNotExists(patientId,
-                    "Agitation & Confusion Combined",
+    private void checkAgitationConfusionAlert(FollowUp followUp, Long patientId) {
+        if (Boolean.TRUE.equals(followUp.getAgitationObserved()) && Boolean.TRUE.equals(followUp.getConfusionObserved())) {
+            createAlertIfNotExists(patientId, "Agitation & Confusion Combined",
                     "Both agitation and confusion observed on " + followUp.getFollowUpDate()
-                            + ". Risk of delirium or acute cognitive decline.",
-                    AlertLevel.CRITICAL);
+                            + ". Risk of delirium or acute cognitive decline.", AlertLevel.CRITICAL);
         } else if (Boolean.TRUE.equals(followUp.getAgitationObserved())) {
-            createAlertIfNotExists(patientId,
-                    "Agitation Observed",
-                    "Agitation noted during follow-up on " + followUp.getFollowUpDate() + ".",
-                    AlertLevel.MEDIUM);
+            createAlertIfNotExists(patientId, "Agitation Observed",
+                    "Agitation noted during follow-up on " + followUp.getFollowUpDate() + ".", AlertLevel.MEDIUM);
         }
+    }
 
-        // Rule 3: Poor sleep -> MEDIUM
+    private void checkSleepQualityAlert(FollowUp followUp, Long patientId) {
         if (followUp.getSleepQuality() == SleepQuality.POOR) {
-            createAlertIfNotExists(patientId,
-                    "Poor Sleep Quality",
+            createAlertIfNotExists(patientId, "Poor Sleep Quality",
                     "Patient reported poor sleep (" + followUp.getHoursSlept()
-                            + "h) on " + followUp.getFollowUpDate() + ".",
-                    AlertLevel.MEDIUM);
+                            + "h) on " + followUp.getFollowUpDate() + ".", AlertLevel.MEDIUM);
         }
+    }
 
-        // Rule 4: Full dependency in any ADL -> HIGH
+    private void checkADLDependencyAlert(FollowUp followUp, Long patientId) {
         if (followUp.getEating() == IndependenceLevel.DEPENDENT
                 || followUp.getDressing() == IndependenceLevel.DEPENDENT
                 || followUp.getMobility() == IndependenceLevel.DEPENDENT) {
@@ -140,24 +142,18 @@ public class FollowUpService {
             if (followUp.getEating() == IndependenceLevel.DEPENDENT) deps.add("eating");
             if (followUp.getDressing() == IndependenceLevel.DEPENDENT) deps.add("dressing");
             if (followUp.getMobility() == IndependenceLevel.DEPENDENT) deps.add("mobility");
-
-            createAlertIfNotExists(patientId,
-                    "Full Dependency Detected",
+            createAlertIfNotExists(patientId, "Full Dependency Detected",
                     "Patient is fully dependent in: " + String.join(", ", deps)
-                            + " as of " + followUp.getFollowUpDate() + ".",
-                    AlertLevel.HIGH);
+                            + " as of " + followUp.getFollowUpDate() + ".", AlertLevel.HIGH);
         }
+    }
 
-        // Rule 5: Depressed mood -> MEDIUM
+    private void checkMoodAlert(FollowUp followUp, Long patientId) {
         if (followUp.getMood() == MoodState.DEPRESSED) {
-            createAlertIfNotExists(patientId,
-                    "Depressed Mood Detected",
+            createAlertIfNotExists(patientId, "Depressed Mood Detected",
                     "Patient showing depressed mood on " + followUp.getFollowUpDate()
-                            + ". Consider psychological support.",
-                    AlertLevel.MEDIUM);
+                            + ". Consider psychological support.", AlertLevel.MEDIUM);
         }
-
-        log.info("Auto-alert evaluation completed for patient {} on {}", patientId, followUp.getFollowUpDate());
     }
 
     private void createAlertIfNotExists(Long patientId, String title, String description, AlertLevel level) {
@@ -218,57 +214,22 @@ public class FollowUpService {
     public Map<String, Object> calculatePatientRisk(Long patientId) {
         List<FollowUp> followUps = followUpRepository.findByPatientId(patientId);
         List<Alert> alerts = alertRepository.findByPatientId(patientId);
-
         int riskScore = 0;
         List<String> riskFactors = new ArrayList<>();
-
-        FollowUp latest = followUps.stream()
-                .filter(f -> f.getFollowUpDate() != null)
-                .max(Comparator.comparing(FollowUp::getFollowUpDate))
-                .orElse(null);
+        FollowUp latest = followUps.stream().filter(f -> f.getFollowUpDate() != null)
+                .max(Comparator.comparing(FollowUp::getFollowUpDate)).orElse(null);
 
         if (latest != null) {
-            // Cognitive
-            if (latest.getCognitiveScore() != null) {
-                if (latest.getCognitiveScore() < 10) { riskScore += 30; riskFactors.add("Severe cognitive impairment (score: " + latest.getCognitiveScore() + ")"); }
-                else if (latest.getCognitiveScore() < 18) { riskScore += 20; riskFactors.add("Moderate cognitive impairment (score: " + latest.getCognitiveScore() + ")"); }
-                else if (latest.getCognitiveScore() < 24) { riskScore += 10; riskFactors.add("Mild cognitive impairment (score: " + latest.getCognitiveScore() + ")"); }
-            }
-
-            // Mood
-            if (latest.getMood() == MoodState.AGITATED || latest.getMood() == MoodState.CONFUSED) {
-                riskScore += 15; riskFactors.add("Current mood: " + latest.getMood());
-            } else if (latest.getMood() == MoodState.DEPRESSED || latest.getMood() == MoodState.ANXIOUS) {
-                riskScore += 10; riskFactors.add("Current mood: " + latest.getMood());
-            }
-
-            // Flags
-            if (Boolean.TRUE.equals(latest.getAgitationObserved())) { riskScore += 10; riskFactors.add("Agitation observed"); }
-            if (Boolean.TRUE.equals(latest.getConfusionObserved())) { riskScore += 10; riskFactors.add("Confusion observed"); }
-
-            // Sleep
-            if (latest.getSleepQuality() == SleepQuality.POOR) { riskScore += 10; riskFactors.add("Poor sleep quality"); }
-
-            // ADL
-            int depCount = 0;
-            if (latest.getEating() == IndependenceLevel.DEPENDENT) depCount++;
-            if (latest.getDressing() == IndependenceLevel.DEPENDENT) depCount++;
-            if (latest.getMobility() == IndependenceLevel.DEPENDENT) depCount++;
-            if (depCount > 0) { riskScore += depCount * 8; riskFactors.add("Dependent in " + depCount + " ADL activities"); }
+            riskScore += calculateCognitiveRisk(latest, riskFactors);
+            riskScore += calculateMoodRisk(latest, riskFactors);
+            riskScore += calculateFlagsRisk(latest, riskFactors);
+            riskScore += calculateSleepRisk(latest, riskFactors);
+            riskScore += calculateADLRisk(latest, riskFactors);
         }
 
-        // Unresolved alerts
-        long unresolvedAlerts = alerts.stream().filter(a -> a.getStatus() != AlertStatus.RESOLVED).count();
-        long criticalAlerts = alerts.stream().filter(a -> a.getLevel() == AlertLevel.CRITICAL && a.getStatus() != AlertStatus.RESOLVED).count();
-        riskScore += (int) (criticalAlerts * 5 + unresolvedAlerts * 2);
-
+        riskScore += calculateAlertRisk(alerts);
         riskScore = Math.min(100, riskScore);
-
-        String riskLevel;
-        if (riskScore >= 70) riskLevel = "CRITICAL";
-        else if (riskScore >= 45) riskLevel = "HIGH";
-        else if (riskScore >= 20) riskLevel = "MODERATE";
-        else riskLevel = "LOW";
+        String riskLevel = determineRiskLevel(riskScore);
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("patientId", patientId);
@@ -283,6 +244,78 @@ public class FollowUpService {
             result.put("latestSleepQuality", latest.getSleepQuality());
         }
         return result;
+    }
+
+    private int calculateCognitiveRisk(FollowUp latest, List<String> riskFactors) {
+        if (latest.getCognitiveScore() == null) return 0;
+        if (latest.getCognitiveScore() < 10) {
+            riskFactors.add("Severe cognitive impairment (score: " + latest.getCognitiveScore() + ")");
+            return 30;
+        } else if (latest.getCognitiveScore() < 18) {
+            riskFactors.add("Moderate cognitive impairment (score: " + latest.getCognitiveScore() + ")");
+            return 20;
+        } else if (latest.getCognitiveScore() < 24) {
+            riskFactors.add("Mild cognitive impairment (score: " + latest.getCognitiveScore() + ")");
+            return 10;
+        }
+        return 0;
+    }
+
+    private int calculateMoodRisk(FollowUp latest, List<String> riskFactors) {
+        if (latest.getMood() == MoodState.AGITATED || latest.getMood() == MoodState.CONFUSED) {
+            riskFactors.add("Current mood: " + latest.getMood());
+            return 15;
+        } else if (latest.getMood() == MoodState.DEPRESSED || latest.getMood() == MoodState.ANXIOUS) {
+            riskFactors.add("Current mood: " + latest.getMood());
+            return 10;
+        }
+        return 0;
+    }
+
+    private int calculateFlagsRisk(FollowUp latest, List<String> riskFactors) {
+        int risk = 0;
+        if (Boolean.TRUE.equals(latest.getAgitationObserved())) {
+            riskFactors.add("Agitation observed");
+            risk += 10;
+        }
+        if (Boolean.TRUE.equals(latest.getConfusionObserved())) {
+            riskFactors.add("Confusion observed");
+            risk += 10;
+        }
+        return risk;
+    }
+
+    private int calculateSleepRisk(FollowUp latest, List<String> riskFactors) {
+        if (latest.getSleepQuality() == SleepQuality.POOR) {
+            riskFactors.add("Poor sleep quality");
+            return 10;
+        }
+        return 0;
+    }
+
+    private int calculateADLRisk(FollowUp latest, List<String> riskFactors) {
+        int depCount = 0;
+        if (latest.getEating() == IndependenceLevel.DEPENDENT) depCount++;
+        if (latest.getDressing() == IndependenceLevel.DEPENDENT) depCount++;
+        if (latest.getMobility() == IndependenceLevel.DEPENDENT) depCount++;
+        if (depCount > 0) {
+            riskFactors.add("Dependent in " + depCount + " ADL activities");
+            return depCount * 8;
+        }
+        return 0;
+    }
+
+    private int calculateAlertRisk(List<Alert> alerts) {
+        long criticalAlerts = alerts.stream().filter(a -> a.getLevel() == AlertLevel.CRITICAL && a.getStatus() != AlertStatus.RESOLVED).count();
+        long unresolvedAlerts = alerts.stream().filter(a -> a.getStatus() != AlertStatus.RESOLVED).count();
+        return (int) (criticalAlerts * 5 + unresolvedAlerts * 2);
+    }
+
+    private String determineRiskLevel(int riskScore) {
+        if (riskScore >= 70) return "CRITICAL";
+        if (riskScore >= 45) return "HIGH";
+        if (riskScore >= 20) return "MODERATE";
+        return "LOW";
     }
 
     // ==================== FONCTIONNALITE AVANCEE 4: Statistics ====================
