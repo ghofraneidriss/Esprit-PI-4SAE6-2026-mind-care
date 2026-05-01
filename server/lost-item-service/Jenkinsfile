@@ -102,11 +102,12 @@ pipeline {
                 echo '🚀 Deploying service...'
                 script {
                     sh '''
-                        docker-compose -f docker-compose.yml down -v || true
+                        docker stop alzcare-mysql alzcare-lost-item-service 2>/dev/null || true
+                        docker rm -f alzcare-mysql alzcare-lost-item-service 2>/dev/null || true
                         sleep 2
-                        docker-compose -f docker-compose.yml up -d
+                        docker-compose -f ../../docker-compose.yml up -d
                         sleep 10
-                        docker-compose -f docker-compose.yml logs lost-item-service
+                        docker-compose -f ../../docker-compose.yml logs lost-item-service
                     '''
                 }
             }
