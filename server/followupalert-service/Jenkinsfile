@@ -39,6 +39,7 @@ pipeline {
                 echo '🧪 Running tests...'
                 dir('server/followupalert-service') {
                     sh 'mvn test'
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
@@ -148,7 +149,6 @@ pipeline {
     post {
         always {
             echo '📝 Pipeline completed'
-            junit 'server/followupalert-service/target/surefire-reports/*.xml'
         }
         success {
             echo '✅ Pipeline completed successfully!'
