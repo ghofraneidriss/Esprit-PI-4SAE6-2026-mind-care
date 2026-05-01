@@ -217,7 +217,7 @@ class FollowUpDTOTest {
 
         FollowUpResponseDTO dto = FollowUpResponseDTO.fromEntity(followUp);
 
-        assertThat(dto.getCognitiveScore()).isEqualTo(0);
+        assertThat(dto.getCognitiveScore()).isZero();
         assertThat(dto.getHoursSlept()).isEqualTo(24);
     }
 
