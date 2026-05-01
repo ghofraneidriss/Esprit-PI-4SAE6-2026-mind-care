@@ -5,11 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.followup_alert_service.DTO.FollowUpRequestDTO;
+import tn.esprit.followup_alert_service.DTO.FollowUpResponseDTO;
 import tn.esprit.followup_alert_service.Entity.FollowUp;
 import tn.esprit.followup_alert_service.Service.FollowUpService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/followups")
@@ -21,34 +24,70 @@ public class FollowUpController {
     // ==================== EXISTING CRUD ====================
 
     @PostMapping
-    public ResponseEntity<FollowUp> createFollowUp(@Valid @RequestBody FollowUp followUp) {
+    public ResponseEntity<FollowUpResponseDTO> createFollowUp(@Valid @RequestBody FollowUpRequestDTO requestDTO) {
+        FollowUp followUp = new FollowUp();
+        followUp.setPatientId(requestDTO.getPatientId());
+        followUp.setCaregiverId(requestDTO.getCaregiverId());
+        followUp.setFollowUpDate(requestDTO.getFollowUpDate());
+        followUp.setCognitiveScore(requestDTO.getCognitiveScore());
+        followUp.setMood(requestDTO.getMood());
+        followUp.setAgitationObserved(requestDTO.getAgitationObserved());
+        followUp.setConfusionObserved(requestDTO.getConfusionObserved());
+        followUp.setEating(requestDTO.getEating());
+        followUp.setDressing(requestDTO.getDressing());
+        followUp.setMobility(requestDTO.getMobility());
+        followUp.setHoursSlept(requestDTO.getHoursSlept());
+        followUp.setSleepQuality(requestDTO.getSleepQuality());
+        followUp.setNotes(requestDTO.getNotes());
+        followUp.setVitalSigns(requestDTO.getVitalSigns());
         FollowUp created = followUpService.createFollowUp(followUp);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        return new ResponseEntity<>(FollowUpResponseDTO.fromEntity(created), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<FollowUp>> getAllFollowUps() {
-        return ResponseEntity.ok(followUpService.getAllFollowUps());
+    public ResponseEntity<List<FollowUpResponseDTO>> getAllFollowUps() {
+        return ResponseEntity.ok(followUpService.getAllFollowUps().stream()
+                .map(FollowUpResponseDTO::fromEntity)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FollowUp> getFollowUpById(@PathVariable Long id) {
-        return ResponseEntity.ok(followUpService.getFollowUpById(id));
+    public ResponseEntity<FollowUpResponseDTO> getFollowUpById(@PathVariable Long id) {
+        return ResponseEntity.ok(FollowUpResponseDTO.fromEntity(followUpService.getFollowUpById(id)));
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<FollowUp>> getFollowUpsByPatientId(@PathVariable Long patientId) {
-        return ResponseEntity.ok(followUpService.getFollowUpsByPatientId(patientId));
+    public ResponseEntity<List<FollowUpResponseDTO>> getFollowUpsByPatientId(@PathVariable Long patientId) {
+        return ResponseEntity.ok(followUpService.getFollowUpsByPatientId(patientId).stream()
+                .map(FollowUpResponseDTO::fromEntity)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/caregiver/{caregiverId}")
-    public ResponseEntity<List<FollowUp>> getFollowUpsByCaregiverId(@PathVariable Long caregiverId) {
-        return ResponseEntity.ok(followUpService.getFollowUpsByCaregiverId(caregiverId));
+    public ResponseEntity<List<FollowUpResponseDTO>> getFollowUpsByCaregiverId(@PathVariable Long caregiverId) {
+        return ResponseEntity.ok(followUpService.getFollowUpsByCaregiverId(caregiverId).stream()
+                .map(FollowUpResponseDTO::fromEntity)
+                .collect(Collectors.toList()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FollowUp> updateFollowUp(@PathVariable Long id, @Valid @RequestBody FollowUp followUp) {
-        return ResponseEntity.ok(followUpService.updateFollowUp(id, followUp));
+    public ResponseEntity<FollowUpResponseDTO> updateFollowUp(@PathVariable Long id, @Valid @RequestBody FollowUpRequestDTO requestDTO) {
+        FollowUp followUp = new FollowUp();
+        followUp.setPatientId(requestDTO.getPatientId());
+        followUp.setCaregiverId(requestDTO.getCaregiverId());
+        followUp.setFollowUpDate(requestDTO.getFollowUpDate());
+        followUp.setCognitiveScore(requestDTO.getCognitiveScore());
+        followUp.setMood(requestDTO.getMood());
+        followUp.setAgitationObserved(requestDTO.getAgitationObserved());
+        followUp.setConfusionObserved(requestDTO.getConfusionObserved());
+        followUp.setEating(requestDTO.getEating());
+        followUp.setDressing(requestDTO.getDressing());
+        followUp.setMobility(requestDTO.getMobility());
+        followUp.setHoursSlept(requestDTO.getHoursSlept());
+        followUp.setSleepQuality(requestDTO.getSleepQuality());
+        followUp.setNotes(requestDTO.getNotes());
+        followUp.setVitalSigns(requestDTO.getVitalSigns());
+        return ResponseEntity.ok(FollowUpResponseDTO.fromEntity(followUpService.updateFollowUp(id, followUp)));
     }
 
     @DeleteMapping("/{id}")
