@@ -86,9 +86,6 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            when {
-                branch 'jaaferFinal'
-            }
             steps {
                 echo '📤 Pushing Docker image to registry...'
                 script {
@@ -101,9 +98,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            when {
-                branch 'jaaferFinal'
-            }
             steps {
                 echo '🚀 Deploying service...'
                 script {
