@@ -8,6 +8,8 @@ pipeline {
         DOCKER_REGISTRY = 'ghofraneidriss'
         IMAGE_TAG = "${BUILD_NUMBER}"
         SONARQUBE_TOKEN = 'squ_e0870cc0c2431c7ce7a9f781d2de7d8452f706ec'
+        GIT_SSL_NO_VERIFY = 'true'
+        GIT_TRACE = '1'
     }
 
     options {
@@ -21,7 +23,16 @@ pipeline {
             steps {
                 echo '🔄 Checking out code...'
                 cleanWs()
-                checkout scm
+                retry(3) {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/jaaferFinal']],
+                        userRemoteConfigs: [[url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git']],
+                        extensions: [
+                            [$class: 'ShallowAnyBranch', depth: 1]
+                        ]
+                    ])
+                }
             }
         }
 
