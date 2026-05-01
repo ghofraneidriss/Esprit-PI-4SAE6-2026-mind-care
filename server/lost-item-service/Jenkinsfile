@@ -5,6 +5,7 @@ pipeline {
         SERVICE_NAME = 'lost-item-service'
         DOCKER_REGISTRY = 'ghofraneidriss'
         IMAGE_TAG = "${BUILD_NUMBER}"
+        SONARQUBE_TOKEN = 'squ_b667673cd98e98f7ff253862e8dc39fc48ec9016'
     }
 
     options {
@@ -53,13 +54,12 @@ pipeline {
                 echo '📊 Running SonarQube analysis...'
                 dir('server/lost-item-service') {
                     sh '''
-                        TOKEN="${SONARQUBE_TOKEN:-admin}"
                         mvn sonar:sonar \
                           -Dsonar.projectKey=lost-item-service \
                           -Dsonar.sources=src/main \
                           -Dsonar.tests=src/test \
                           -Dsonar.host.url=http://localhost:9000 \
-                          -Dsonar.login="${TOKEN}" \
+                          -Dsonar.login=${SONARQUBE_TOKEN} \
                           || echo "SonarQube analysis skipped (server unavailable or auth failed)"
                     '''
                 }
