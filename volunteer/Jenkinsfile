@@ -180,7 +180,7 @@ pipeline {
                     def monitoringStatus = sh(
                         script: '''
                             cd volunteer
-                            docker-compose -f docker-compose-monitoring.yml up -d
+                            docker compose -f docker-compose-monitoring.yml up -d
                             sleep 10
                         ''',
                         returnStatus: true
