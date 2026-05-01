@@ -10,6 +10,9 @@ pipeline {
         SONARQUBE_TOKEN = 'squ_e0870cc0c2431c7ce7a9f781d2de7d8452f706ec'
         GIT_SSL_NO_VERIFY = 'true'
         GIT_TRACE = '1'
+        GIT_HTTP_LOW_SPEED_LIMIT = '0'
+        GIT_HTTP_LOW_SPEED_TIME = '0'
+        GIT_TERMINAL_PROMPT = 'false'
     }
 
     options {
