@@ -33,6 +33,7 @@ services:
       - "8082:8080"
       - "9010:9010"
     environment:
+      - SERVER_PORT=8080
       - SPRING_APPLICATION_NAME=lost-item-service
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lost_item_db
       - SPRING_DATASOURCE_USERNAME=root
