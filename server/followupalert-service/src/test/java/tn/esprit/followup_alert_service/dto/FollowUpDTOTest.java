@@ -239,4 +239,137 @@ class FollowUpDTOTest {
         assertThat(responseDTO.getCognitiveScore()).isEqualTo(25);
         assertThat(responseDTO.getId()).isEqualTo(5L);
     }
+
+    @Test
+    @DisplayName("FollowUpRequestDTO - Sequential field updates")
+    void testFollowUpRequestDTOSequentialUpdates() {
+        FollowUpRequestDTO dto = new FollowUpRequestDTO();
+
+        dto.setPatientId(10L);
+        assertThat(dto.getPatientId()).isEqualTo(10L);
+
+        dto.setPatientId(20L);
+        assertThat(dto.getPatientId()).isEqualTo(20L);
+
+        dto.setCognitiveScore(15);
+        assertThat(dto.getCognitiveScore()).isEqualTo(15);
+
+        dto.setCognitiveScore(30);
+        assertThat(dto.getCognitiveScore()).isEqualTo(30);
+
+        dto.setHoursSlept(8);
+        assertThat(dto.getHoursSlept()).isEqualTo(8);
+
+        dto.setHoursSlept(5);
+        assertThat(dto.getHoursSlept()).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("FollowUpResponseDTO - Complete lifecycle with state transitions")
+    void testFollowUpResponseDTOCompleteLifecycle() {
+        FollowUp followUp1 = new FollowUp();
+        followUp1.setId(1L);
+        followUp1.setPatientId(100L);
+        followUp1.setCaregiverId(10L);
+        followUp1.setFollowUpDate(LocalDate.now());
+        followUp1.setCognitiveScore(20);
+        followUp1.setMood(MoodState.CALM);
+
+        FollowUpResponseDTO dto1 = FollowUpResponseDTO.fromEntity(followUp1);
+        assertThat(dto1.getId()).isEqualTo(1L);
+        assertThat(dto1.getMood()).isEqualTo(MoodState.CALM);
+        assertThat(dto1.getCognitiveScore()).isEqualTo(20);
+
+        FollowUp followUp2 = new FollowUp();
+        followUp2.setId(2L);
+        followUp2.setPatientId(200L);
+        followUp2.setCaregiverId(20L);
+        followUp2.setFollowUpDate(LocalDate.now().minusDays(1));
+        followUp2.setCognitiveScore(10);
+        followUp2.setMood(MoodState.DEPRESSED);
+        followUp2.setAgitationObserved(true);
+        followUp2.setConfusionObserved(true);
+
+        FollowUpResponseDTO dto2 = FollowUpResponseDTO.fromEntity(followUp2);
+        assertThat(dto2.getId()).isEqualTo(2L);
+        assertThat(dto2.getMood()).isEqualTo(MoodState.DEPRESSED);
+        assertThat(dto2.getCognitiveScore()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("FollowUpRequestDTO - Boundary values for cognitive and sleep")
+    void testFollowUpRequestDTOBoundaryValues() {
+        FollowUpRequestDTO dto = new FollowUpRequestDTO();
+
+        dto.setCognitiveScore(0);
+        assertThat(dto.getCognitiveScore()).isEqualTo(0);
+
+        dto.setCognitiveScore(30);
+        assertThat(dto.getCognitiveScore()).isEqualTo(30);
+
+        dto.setHoursSlept(0);
+        assertThat(dto.getHoursSlept()).isEqualTo(0);
+
+        dto.setHoursSlept(24);
+        assertThat(dto.getHoursSlept()).isEqualTo(24);
+    }
+
+    @Test
+    @DisplayName("FollowUpResponseDTO - fromEntity with all enums")
+    void testFollowUpResponseDTOFromEntityWithAllEnums() {
+        for (MoodState mood : MoodState.values()) {
+            FollowUp followUp = new FollowUp();
+            followUp.setId(1L);
+            followUp.setMood(mood);
+
+            FollowUpResponseDTO dto = FollowUpResponseDTO.fromEntity(followUp);
+            assertThat(dto.getMood()).isEqualTo(mood);
+        }
+
+        for (IndependenceLevel level : IndependenceLevel.values()) {
+            FollowUp followUp = new FollowUp();
+            followUp.setId(1L);
+            followUp.setEating(level);
+
+            FollowUpResponseDTO dto = FollowUpResponseDTO.fromEntity(followUp);
+            assertThat(dto.getEating()).isEqualTo(level);
+        }
+
+        for (SleepQuality quality : SleepQuality.values()) {
+            FollowUp followUp = new FollowUp();
+            followUp.setId(1L);
+            followUp.setSleepQuality(quality);
+
+            FollowUpResponseDTO dto = FollowUpResponseDTO.fromEntity(followUp);
+            assertThat(dto.getSleepQuality()).isEqualTo(quality);
+        }
+    }
+
+    @Test
+    @DisplayName("FollowUpRequestDTO - Boolean flags in various combinations")
+    void testFollowUpRequestDTOBooleanCombinations() {
+        FollowUpRequestDTO dto1 = new FollowUpRequestDTO();
+        dto1.setAgitationObserved(true);
+        dto1.setConfusionObserved(false);
+        assertThat(dto1.getAgitationObserved()).isTrue();
+        assertThat(dto1.getConfusionObserved()).isFalse();
+
+        FollowUpRequestDTO dto2 = new FollowUpRequestDTO();
+        dto2.setAgitationObserved(false);
+        dto2.setConfusionObserved(true);
+        assertThat(dto2.getAgitationObserved()).isFalse();
+        assertThat(dto2.getConfusionObserved()).isTrue();
+
+        FollowUpRequestDTO dto3 = new FollowUpRequestDTO();
+        dto3.setAgitationObserved(true);
+        dto3.setConfusionObserved(true);
+        assertThat(dto3.getAgitationObserved()).isTrue();
+        assertThat(dto3.getConfusionObserved()).isTrue();
+
+        FollowUpRequestDTO dto4 = new FollowUpRequestDTO();
+        dto4.setAgitationObserved(false);
+        dto4.setConfusionObserved(false);
+        assertThat(dto4.getAgitationObserved()).isFalse();
+        assertThat(dto4.getConfusionObserved()).isFalse();
+    }
 }

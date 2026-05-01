@@ -166,4 +166,80 @@ class AlertDTOTest {
         assertThat(requestDTO.getTitle()).isEqualTo("Request Title");
         assertThat(responseDTO.getTitle()).isEqualTo("Response Title");
     }
+
+    @Test
+    @DisplayName("AlertRequestDTO - Multiple sequential updates")
+    void testAlertRequestDTOSequentialUpdates() {
+        AlertRequestDTO dto = new AlertRequestDTO();
+
+        dto.setPatientId(1L);
+        assertThat(dto.getPatientId()).isEqualTo(1L);
+
+        dto.setPatientId(2L);
+        assertThat(dto.getPatientId()).isEqualTo(2L);
+
+        dto.setTitle("First Title");
+        assertThat(dto.getTitle()).isEqualTo("First Title");
+
+        dto.setTitle("Second Title");
+        assertThat(dto.getTitle()).isEqualTo("Second Title");
+
+        dto.setLevel(AlertLevel.LOW);
+        assertThat(dto.getLevel()).isEqualTo(AlertLevel.LOW);
+
+        dto.setLevel(AlertLevel.CRITICAL);
+        assertThat(dto.getLevel()).isEqualTo(AlertLevel.CRITICAL);
+    }
+
+    @Test
+    @DisplayName("AlertResponseDTO - Complete lifecycle")
+    void testAlertResponseDTOCompleteLifecycle() {
+        Alert alert1 = new Alert();
+        alert1.setId(10L);
+        alert1.setPatientId(5L);
+        alert1.setTitle("Original");
+        alert1.setDescription("Desc1");
+        alert1.setLevel(AlertLevel.LOW);
+        alert1.setStatus(AlertStatus.NEW);
+        LocalDateTime time1 = LocalDateTime.now().minusDays(1);
+        alert1.setCreatedAt(time1);
+        alert1.setViewedAt(null);
+
+        AlertResponseDTO dto1 = AlertResponseDTO.fromEntity(alert1);
+        assertThat(dto1.getId()).isEqualTo(10L);
+        assertThat(dto1.getStatus()).isEqualTo(AlertStatus.NEW);
+        assertThat(dto1.getViewedAt()).isNull();
+
+        Alert alert2 = new Alert();
+        alert2.setId(20L);
+        alert2.setPatientId(15L);
+        alert2.setTitle("Updated");
+        alert2.setDescription("Desc2");
+        alert2.setLevel(AlertLevel.CRITICAL);
+        alert2.setStatus(AlertStatus.RESOLVED);
+        LocalDateTime time2 = LocalDateTime.now();
+        alert2.setCreatedAt(time1);
+        alert2.setViewedAt(time2);
+
+        AlertResponseDTO dto2 = AlertResponseDTO.fromEntity(alert2);
+        assertThat(dto2.getId()).isEqualTo(20L);
+        assertThat(dto2.getStatus()).isEqualTo(AlertStatus.RESOLVED);
+        assertThat(dto2.getViewedAt()).isNotNull();
+        assertThat(dto2.getDescription()).isEqualTo("Desc2");
+    }
+
+    @Test
+    @DisplayName("AlertRequestDTO - Large values")
+    void testAlertRequestDTOWithLargeValues() {
+        AlertRequestDTO dto = new AlertRequestDTO();
+        dto.setPatientId(Long.MAX_VALUE);
+        dto.setTitle("A".repeat(1000));
+        dto.setDescription("B".repeat(5000));
+        dto.setLevel(AlertLevel.CRITICAL);
+
+        assertThat(dto.getPatientId()).isEqualTo(Long.MAX_VALUE);
+        assertThat(dto.getTitle()).hasSize(1000);
+        assertThat(dto.getDescription()).hasSize(5000);
+        assertThat(dto.getLevel()).isEqualTo(AlertLevel.CRITICAL);
+    }
 }
