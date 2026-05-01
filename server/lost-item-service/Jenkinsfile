@@ -102,6 +102,8 @@ pipeline {
                 echo '🚀 Deploying service...'
                 script {
                     sh '''
+                        docker-compose -f docker-compose.yml stop || true
+                        sleep 1
                         docker-compose -f docker-compose.yml rm -f || true
                         sleep 2
                         docker-compose -f docker-compose.yml up -d
