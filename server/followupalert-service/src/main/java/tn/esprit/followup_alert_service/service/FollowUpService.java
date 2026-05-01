@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.followup_alert_service.entity.*;
+import tn.esprit.followup_alert_service.exception.ResourceNotFoundException;
 import tn.esprit.followup_alert_service.repository.AlertRepository;
 import tn.esprit.followup_alert_service.repository.FollowUpRepository;
 
@@ -28,7 +29,7 @@ public class FollowUpService {
         followUpRepository.findByPatientIdAndFollowUpDate(
                 followUp.getPatientId(), followUp.getFollowUpDate()
         ).ifPresent(existing -> {
-            throw new RuntimeException("A follow-up already exists for this patient on this date.");
+            throw new ResourceNotFoundException("A follow-up already exists for this patient on this date.");
         });
 
         FollowUp saved = followUpRepository.save(followUp);
@@ -48,7 +49,7 @@ public class FollowUpService {
 
     public FollowUp getFollowUpById(Long id) {
         return followUpRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Follow-up not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Follow-up not found with id: " + id));
     }
 
     public List<FollowUp> getFollowUpsByPatientId(Long patientId) {
@@ -88,7 +89,7 @@ public class FollowUpService {
 
     public void deleteFollowUp(Long id) {
         if (!followUpRepository.existsById(id)) {
-            throw new RuntimeException("Follow-up not found with id: " + id);
+            throw new ResourceNotFoundException("Follow-up not found with id: " + id);
         }
         followUpRepository.deleteById(id);
     }

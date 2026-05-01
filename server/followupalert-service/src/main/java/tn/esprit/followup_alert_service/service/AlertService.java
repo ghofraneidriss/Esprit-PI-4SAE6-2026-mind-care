@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tn.esprit.followup_alert_service.entity.Alert;
 import tn.esprit.followup_alert_service.entity.AlertLevel;
 import tn.esprit.followup_alert_service.entity.AlertStatus;
+import tn.esprit.followup_alert_service.exception.ResourceNotFoundException;
 import tn.esprit.followup_alert_service.repository.AlertRepository;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class AlertService {
 
     public Alert getAlertById(Long id) {
         return alertRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Alert not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Alert not found with id: " + id));
     }
 
     public List<Alert> getAlertsByPatientId(Long patientId) {
@@ -76,7 +77,7 @@ public class AlertService {
 
     public void deleteAlert(Long id) {
         if (!alertRepository.existsById(id)) {
-            throw new RuntimeException("Alert not found with id: " + id);
+            throw new ResourceNotFoundException("Alert not found with id: " + id);
         }
         alertRepository.deleteById(id);
     }
