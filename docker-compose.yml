@@ -25,9 +25,7 @@ services:
 
   # Lost Item Service
   lost-item-service:
-    build:
-      context: ./server/lost-item-service
-      dockerfile: Dockerfile
+    image: ghofraneidriss/lost-item-service:latest
     container_name: alzcare-lost-item-service
     ports:
       - "8082:8080"
@@ -58,9 +56,7 @@ services:
 
   # Follow-up Alert Service
   followup-alert-service:
-    build:
-      context: ./server/followupalert-service
-      dockerfile: Dockerfile
+    image: ghofraneidriss/followup-alert-service:latest
     container_name: alzcare-followup-alert-service
     ports:
       - "8090:8080"
