@@ -230,6 +230,7 @@ public class FollowUpService {
         riskScore += calculateAlertRisk(alerts);
         riskScore = Math.min(100, riskScore);
         String riskLevel = determineRiskLevel(riskScore);
+        long unresolvedAlerts = alerts.stream().filter(a -> a.getStatus() != AlertStatus.RESOLVED).count();
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("patientId", patientId);
