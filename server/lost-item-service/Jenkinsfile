@@ -25,7 +25,7 @@ pipeline {
             steps {
                 echo '🔨 Building Maven project...'
                 dir('server/lost-item-service') {
-                    sh 'mvn clean package -DskipTests'
+                    sh 'mvn clean compile'
                 }
             }
         }
@@ -35,6 +35,15 @@ pipeline {
                 echo '🧪 Running tests...'
                 dir('server/lost-item-service') {
                     sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo '📦 Packaging application...'
+                dir('server/lost-item-service') {
+                    sh 'mvn package -DskipTests'
                 }
             }
         }
