@@ -24,21 +24,7 @@ public class FollowUpController {
 
     @PostMapping
     public ResponseEntity<FollowUpResponseDTO> createFollowUp(@Valid @RequestBody FollowUpRequestDTO requestDTO) {
-        FollowUp followUp = new FollowUp();
-        followUp.setPatientId(requestDTO.getPatientId());
-        followUp.setCaregiverId(requestDTO.getCaregiverId());
-        followUp.setFollowUpDate(requestDTO.getFollowUpDate());
-        followUp.setCognitiveScore(requestDTO.getCognitiveScore());
-        followUp.setMood(requestDTO.getMood());
-        followUp.setAgitationObserved(requestDTO.getAgitationObserved());
-        followUp.setConfusionObserved(requestDTO.getConfusionObserved());
-        followUp.setEating(requestDTO.getEating());
-        followUp.setDressing(requestDTO.getDressing());
-        followUp.setMobility(requestDTO.getMobility());
-        followUp.setHoursSlept(requestDTO.getHoursSlept());
-        followUp.setSleepQuality(requestDTO.getSleepQuality());
-        followUp.setNotes(requestDTO.getNotes());
-        followUp.setVitalSigns(requestDTO.getVitalSigns());
+        FollowUp followUp = mapRequestDTOToEntity(requestDTO);
         FollowUp created = followUpService.createFollowUp(followUp);
         return new ResponseEntity<>(FollowUpResponseDTO.fromEntity(created), HttpStatus.CREATED);
     }
@@ -71,21 +57,7 @@ public class FollowUpController {
 
     @PutMapping("/{id}")
     public ResponseEntity<FollowUpResponseDTO> updateFollowUp(@PathVariable Long id, @Valid @RequestBody FollowUpRequestDTO requestDTO) {
-        FollowUp followUp = new FollowUp();
-        followUp.setPatientId(requestDTO.getPatientId());
-        followUp.setCaregiverId(requestDTO.getCaregiverId());
-        followUp.setFollowUpDate(requestDTO.getFollowUpDate());
-        followUp.setCognitiveScore(requestDTO.getCognitiveScore());
-        followUp.setMood(requestDTO.getMood());
-        followUp.setAgitationObserved(requestDTO.getAgitationObserved());
-        followUp.setConfusionObserved(requestDTO.getConfusionObserved());
-        followUp.setEating(requestDTO.getEating());
-        followUp.setDressing(requestDTO.getDressing());
-        followUp.setMobility(requestDTO.getMobility());
-        followUp.setHoursSlept(requestDTO.getHoursSlept());
-        followUp.setSleepQuality(requestDTO.getSleepQuality());
-        followUp.setNotes(requestDTO.getNotes());
-        followUp.setVitalSigns(requestDTO.getVitalSigns());
+        FollowUp followUp = mapRequestDTOToEntity(requestDTO);
         return ResponseEntity.ok(FollowUpResponseDTO.fromEntity(followUpService.updateFollowUp(id, followUp)));
     }
 
@@ -120,5 +92,26 @@ public class FollowUpController {
     @GetMapping("/statistics/patient/{patientId}")
     public ResponseEntity<Map<String, Object>> getStatisticsByPatient(@PathVariable Long patientId) {
         return ResponseEntity.ok(followUpService.getStatisticsByPatient(patientId));
+    }
+
+    // ==================== HELPER METHODS ====================
+
+    private FollowUp mapRequestDTOToEntity(FollowUpRequestDTO requestDTO) {
+        FollowUp followUp = new FollowUp();
+        followUp.setPatientId(requestDTO.getPatientId());
+        followUp.setCaregiverId(requestDTO.getCaregiverId());
+        followUp.setFollowUpDate(requestDTO.getFollowUpDate());
+        followUp.setCognitiveScore(requestDTO.getCognitiveScore());
+        followUp.setMood(requestDTO.getMood());
+        followUp.setAgitationObserved(requestDTO.getAgitationObserved());
+        followUp.setConfusionObserved(requestDTO.getConfusionObserved());
+        followUp.setEating(requestDTO.getEating());
+        followUp.setDressing(requestDTO.getDressing());
+        followUp.setMobility(requestDTO.getMobility());
+        followUp.setHoursSlept(requestDTO.getHoursSlept());
+        followUp.setSleepQuality(requestDTO.getSleepQuality());
+        followUp.setNotes(requestDTO.getNotes());
+        followUp.setVitalSigns(requestDTO.getVitalSigns());
+        return followUp;
     }
 }
