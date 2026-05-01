@@ -102,7 +102,8 @@ pipeline {
                 echo '🚀 Deploying service...'
                 script {
                     sh '''
-                        docker-compose -f docker-compose.yml down || true
+                        docker-compose -f docker-compose.yml rm -f || true
+                        sleep 2
                         docker-compose -f docker-compose.yml up -d
                         sleep 10
                         docker-compose -f docker-compose.yml logs lost-item-service
