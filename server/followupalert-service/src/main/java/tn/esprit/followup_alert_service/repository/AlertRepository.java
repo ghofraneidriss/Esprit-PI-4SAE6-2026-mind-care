@@ -1,8 +1,8 @@
-package tn.esprit.followup_alert_service.Repository;
+package tn.esprit.followup_alert_service.repository;
 
-import tn.esprit.followup_alert_service.Entity.Alert;
-import tn.esprit.followup_alert_service.Entity.AlertLevel;
-import tn.esprit.followup_alert_service.Entity.AlertStatus;
+import tn.esprit.followup_alert_service.entity.Alert;
+import tn.esprit.followup_alert_service.entity.AlertLevel;
+import tn.esprit.followup_alert_service.entity.AlertStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

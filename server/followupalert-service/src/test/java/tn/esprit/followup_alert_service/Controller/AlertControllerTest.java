@@ -10,10 +10,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import tn.esprit.followup_alert_service.dto.AlertRequestDTO;
-import tn.esprit.followup_alert_service.Entity.Alert;
-import tn.esprit.followup_alert_service.Entity.AlertLevel;
-import tn.esprit.followup_alert_service.Entity.AlertStatus;
-import tn.esprit.followup_alert_service.Service.AlertService;
+import tn.esprit.followup_alert_service.entity.Alert;
+import tn.esprit.followup_alert_service.entity.AlertLevel;
+import tn.esprit.followup_alert_service.entity.AlertStatus;
+import tn.esprit.followup_alert_service.service.AlertService;
 
 import java.time.LocalDateTime;
 import java.util.List;

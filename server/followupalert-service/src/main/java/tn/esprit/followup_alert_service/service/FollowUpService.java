@@ -1,12 +1,12 @@
-package tn.esprit.followup_alert_service.Service;
+package tn.esprit.followup_alert_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tn.esprit.followup_alert_service.Entity.*;
-import tn.esprit.followup_alert_service.Repository.AlertRepository;
-import tn.esprit.followup_alert_service.Repository.FollowUpRepository;
+import tn.esprit.followup_alert_service.entity.*;
+import tn.esprit.followup_alert_service.repository.AlertRepository;
+import tn.esprit.followup_alert_service.repository.FollowUpRepository;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FollowUpService {
 
+    private static final String TOTAL_FOLLOWUPS = "totalFollowUps";
     private final FollowUpRepository followUpRepository;
     private final AlertRepository alertRepository;
 
@@ -273,7 +274,7 @@ public class FollowUpService {
         result.put("riskScore", riskScore);
         result.put("riskLevel", riskLevel);
         result.put("riskFactors", riskFactors);
-        result.put("totalFollowUps", followUps.size());
+        result.put(TOTAL_FOLLOWUPS, followUps.size());
         result.put("unresolvedAlerts", unresolvedAlerts);
         if (latest != null) {
             result.put("latestCognitiveScore", latest.getCognitiveScore());

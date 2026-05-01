@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import tn.esprit.followup_alert_service.Entity.*;
-import tn.esprit.followup_alert_service.Repository.AlertRepository;
-import tn.esprit.followup_alert_service.Repository.FollowUpRepository;
+import tn.esprit.followup_alert_service.entity.*;
+import tn.esprit.followup_alert_service.repository.AlertRepository;
+import tn.esprit.followup_alert_service.repository.FollowUpRepository;
 
 import java.time.LocalDate;
 import java.util.List;

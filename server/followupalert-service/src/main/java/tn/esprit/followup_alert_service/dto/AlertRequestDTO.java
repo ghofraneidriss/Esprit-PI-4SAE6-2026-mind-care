@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tn.esprit.followup_alert_service.Entity.AlertLevel;
+import tn.esprit.followup_alert_service.entity.AlertLevel;
 
 @Data
 @NoArgsConstructor

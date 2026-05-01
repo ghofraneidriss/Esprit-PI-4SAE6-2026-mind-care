@@ -2,10 +2,10 @@ package tn.esprit.followup_alert_service.dto;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import tn.esprit.followup_alert_service.Entity.FollowUp;
-import tn.esprit.followup_alert_service.Entity.IndependenceLevel;
-import tn.esprit.followup_alert_service.Entity.MoodState;
-import tn.esprit.followup_alert_service.Entity.SleepQuality;
+import tn.esprit.followup_alert_service.entity.FollowUp;
+import tn.esprit.followup_alert_service.entity.IndependenceLevel;
+import tn.esprit.followup_alert_service.entity.MoodState;
+import tn.esprit.followup_alert_service.entity.SleepQuality;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

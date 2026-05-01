@@ -3,10 +3,10 @@ package tn.esprit.followup_alert_service.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tn.esprit.followup_alert_service.Entity.FollowUp;
-import tn.esprit.followup_alert_service.Entity.IndependenceLevel;
-import tn.esprit.followup_alert_service.Entity.MoodState;
-import tn.esprit.followup_alert_service.Entity.SleepQuality;
+import tn.esprit.followup_alert_service.entity.FollowUp;
+import tn.esprit.followup_alert_service.entity.IndependenceLevel;
+import tn.esprit.followup_alert_service.entity.MoodState;
+import tn.esprit.followup_alert_service.entity.SleepQuality;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

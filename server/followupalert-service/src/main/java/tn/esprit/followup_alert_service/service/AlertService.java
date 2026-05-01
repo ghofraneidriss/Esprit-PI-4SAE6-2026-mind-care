@@ -1,12 +1,12 @@
-package tn.esprit.followup_alert_service.Service;
+package tn.esprit.followup_alert_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import tn.esprit.followup_alert_service.Entity.Alert;
-import tn.esprit.followup_alert_service.Entity.AlertLevel;
-import tn.esprit.followup_alert_service.Entity.AlertStatus;
-import tn.esprit.followup_alert_service.Repository.AlertRepository;
+import tn.esprit.followup_alert_service.entity.Alert;
+import tn.esprit.followup_alert_service.entity.AlertLevel;
+import tn.esprit.followup_alert_service.entity.AlertStatus;
+import tn.esprit.followup_alert_service.repository.AlertRepository;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;

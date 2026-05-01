@@ -1,4 +1,4 @@
-package tn.esprit.followup_alert_service.Controller;
+package tn.esprit.followup_alert_service.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.followup_alert_service.dto.AlertRequestDTO;
 import tn.esprit.followup_alert_service.dto.AlertResponseDTO;
-import tn.esprit.followup_alert_service.Entity.Alert;
-import tn.esprit.followup_alert_service.Entity.AlertLevel;
-import tn.esprit.followup_alert_service.Entity.AlertStatus;
-import tn.esprit.followup_alert_service.Service.AlertService;
+import tn.esprit.followup_alert_service.entity.Alert;
+import tn.esprit.followup_alert_service.entity.AlertLevel;
+import tn.esprit.followup_alert_service.entity.AlertStatus;
+import tn.esprit.followup_alert_service.service.AlertService;
 
 import java.util.List;
 import java.util.Map;

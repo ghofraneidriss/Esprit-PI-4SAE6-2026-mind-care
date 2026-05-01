@@ -1,6 +1,6 @@
-package tn.esprit.followup_alert_service.Repository;
+package tn.esprit.followup_alert_service.repository;
 
-import tn.esprit.followup_alert_service.Entity.FollowUp;
+import tn.esprit.followup_alert_service.entity.FollowUp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
