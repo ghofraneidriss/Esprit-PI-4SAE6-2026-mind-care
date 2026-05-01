@@ -82,7 +82,9 @@
       "Bash(rmdir src/main/java/tn/esprit/followup_alert_service/DTO)",
       "Bash(git commit -m 'Fix code duplication and unused imports *)",
       "Bash(git commit -m 'Add DTO unit tests to boost code coverage *)",
-      "Bash(mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_7c1a9a24e2e0ff0f04cb91a7fa82ea9e)"
+      "Bash(mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=squ_7c1a9a24e2e0ff0f04cb91a7fa82ea9e)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-17.0.14.7-hotspot\"; Set-Location \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\\\\server\\\\followupalert-service\"; & mvn clean test jacoco:report -q 2>&1 | Select-String \"BUILD|Tests run\" | Select-Object -Last 3)",
+      "Bash(export JAVA_HOME=\"/c/Program Files/Java/jdk-17.0.14.7-hotspot\")"
     ]
   }
 }

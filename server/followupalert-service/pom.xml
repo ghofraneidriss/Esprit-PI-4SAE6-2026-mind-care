@@ -116,6 +116,14 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<excludes>
+						<exclude>**/dto/*</exclude>
+						<exclude>**/Entity/*</exclude>
+						<exclude>**/Exception/*</exclude>
+						<exclude>**/FollowupAlertServiceApplication.class</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
