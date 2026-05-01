@@ -1,4 +1,4 @@
-package tn.esprit.followup_alert_service.Controller;
+package tn.esprit.followup_alert_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

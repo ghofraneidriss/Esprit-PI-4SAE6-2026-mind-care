@@ -1,4 +1,4 @@
-package tn.esprit.followup_alert_service.Service;
+package tn.esprit.followup_alert_service.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
