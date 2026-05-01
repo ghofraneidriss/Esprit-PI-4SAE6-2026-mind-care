@@ -5,14 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.followup_alert_service.DTO.FollowUpRequestDTO;
-import tn.esprit.followup_alert_service.DTO.FollowUpResponseDTO;
+import tn.esprit.followup_alert_service.dto.FollowUpRequestDTO;
+import tn.esprit.followup_alert_service.dto.FollowUpResponseDTO;
 import tn.esprit.followup_alert_service.Entity.FollowUp;
 import tn.esprit.followup_alert_service.Service.FollowUpService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/followups")
@@ -48,7 +47,7 @@ public class FollowUpController {
     public ResponseEntity<List<FollowUpResponseDTO>> getAllFollowUps() {
         return ResponseEntity.ok(followUpService.getAllFollowUps().stream()
                 .map(FollowUpResponseDTO::fromEntity)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @GetMapping("/{id}")
@@ -60,14 +59,14 @@ public class FollowUpController {
     public ResponseEntity<List<FollowUpResponseDTO>> getFollowUpsByPatientId(@PathVariable Long patientId) {
         return ResponseEntity.ok(followUpService.getFollowUpsByPatientId(patientId).stream()
                 .map(FollowUpResponseDTO::fromEntity)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @GetMapping("/caregiver/{caregiverId}")
     public ResponseEntity<List<FollowUpResponseDTO>> getFollowUpsByCaregiverId(@PathVariable Long caregiverId) {
         return ResponseEntity.ok(followUpService.getFollowUpsByCaregiverId(caregiverId).stream()
                 .map(FollowUpResponseDTO::fromEntity)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @PutMapping("/{id}")

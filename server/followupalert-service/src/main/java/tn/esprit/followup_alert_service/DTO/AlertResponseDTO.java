@@ -1,4 +1,4 @@
-package tn.esprit.followup_alert_service.DTO;
+package tn.esprit.followup_alert_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
