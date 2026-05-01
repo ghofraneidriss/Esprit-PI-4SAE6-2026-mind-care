@@ -12,3 +12,6 @@ scrape_configs:
     static_configs:
       - targets: ['host.docker.internal:8080']
     metrics_path: '/prometheus/'
+    basic_auth:
+      username: 'ghofrane'
+      password: '114013af0ddf9c127960010748606adac8'
