@@ -307,7 +307,7 @@ public class FollowUpService {
         long poorSleepCount = all.stream().filter(f -> f.getSleepQuality() == SleepQuality.POOR || f.getSleepQuality() == SleepQuality.FAIR).count();
 
         Map<String, Object> stats = new LinkedHashMap<>();
-        stats.put("totalFollowUps", all.size());
+        stats.put(TOTAL_FOLLOWUPS, all.size());
         stats.put("averageCognitiveScore", Math.round(avgCog * 10.0) / 10.0);
         stats.put("averageHoursSlept", Math.round(avgSleep * 10.0) / 10.0);
         stats.put("moodDistribution", moodDist);
@@ -330,7 +330,7 @@ public class FollowUpService {
 
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("patientId", patientId);
-        stats.put("totalFollowUps", all.size());
+        stats.put(TOTAL_FOLLOWUPS, all.size());
         stats.put("averageCognitiveScore", Math.round(avgCog * 10.0) / 10.0);
         stats.put("moodDistribution", moodDist);
         return stats;
