@@ -14,13 +14,14 @@ public class CloudinaryStorageService {
 
     public String uploadPdf(byte[] pdfBytes, String fileName, String folder, String tags) {
         try {
-            Map<String, Object> uploadResult = (Map<String, Object>) cloudinary.uploader().upload(pdfBytes, Map.of(
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(pdfBytes, Map.of(
                     "resource_type", "raw",
                     "public_id", fileName.replace(".pdf", ""),
                     "folder", folder,
                     "format", "pdf",
                     "tags", tags));
-            return (String) uploadResult.get("secure_url");
+            Object secureUrl = uploadResult.get("secure_url");
+            return secureUrl != null ? secureUrl.toString() : null;
         } catch (Exception e) {
             throw new RuntimeException("Cloudinary upload failed", e);
         }

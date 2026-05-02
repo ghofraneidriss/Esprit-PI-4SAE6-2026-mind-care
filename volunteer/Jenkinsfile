@@ -161,14 +161,30 @@ pipeline {
                     echo 'Checking service health...'
                     sh '''
                         cd volunteer
-                        
-                        # Wait for volunteer service to become healthy
-                        for i in $(seq 1 12); do
-                          curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' && break
-                          echo "Waiting for volunteer service on 8082... ($i/12)"
+
+                        # Wait for volunteer service to become healthy, and show logs if it exits.
+                        # The volunteer app takes around 90-100s to boot in CI, so allow up to 3 minutes.
+                        for i in $(seq 1 36); do
+                          status="$(docker inspect -f '{{.State.Status}}' volunteer-service 2>/dev/null || true)"
+                          if [ "$status" = "exited" ] || [ "$status" = "dead" ]; then
+                            echo "Volunteer service container stopped unexpectedly."
+                            docker logs volunteer-service || true
+                            exit 1
+                          fi
+
+                          if curl -s http://localhost:8082/actuator/health | grep -q 'UP'; then
+                            break
+                          fi
+
+                          echo "Waiting for volunteer service on 8082... ($i/36)"
                           sleep 5
                         done
-                        curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' || exit 1
+                        curl -s http://localhost:8082/actuator/health | grep -q 'UP' || {
+                          echo "Volunteer service health check failed."
+                          docker ps -a || true
+                          docker logs volunteer-service || true
+                          exit 1
+                        }
 
                         # Wait for Prometheus target to be healthy
                         for i in $(seq 1 12); do
