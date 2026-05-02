@@ -19,20 +19,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo '🔄 Checking out frontend code from main branch...'
-                cleanWs()
-                retry(5) {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: 'origin/main']],
-                        userRemoteConfigs: [[url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git']]
-                    ])
-                }
-            }
-        }
-
         stage('Build with Docker') {
             steps {
                 echo '🔨 Building Angular project with Docker...'
