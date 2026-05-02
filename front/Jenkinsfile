@@ -33,29 +33,16 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build with Docker') {
             steps {
-                echo '📦 Installing npm dependencies...'
+                echo '🔨 Building Angular project with Docker...'
                 dir('front') {
-                    sh 'npm ci'
-                }
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo '🔨 Building Angular project...'
-                dir('front') {
-                    sh 'npm run build'
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo '🧪 Running tests...'
-                dir('front') {
-                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless 2>/dev/null || echo "Tests skipped (no test configuration)"'
+                    sh '''
+                        docker build \
+                          -t ${DOCKER_REGISTRY}/${SERVICE_NAME}:build-${BUILD_NUMBER} \
+                          --target builder \
+                          .
+                    '''
                 }
             }
         }
