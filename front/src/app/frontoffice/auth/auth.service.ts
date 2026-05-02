@@ -1,0 +1,128 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, Subject } from 'rxjs';
+
+export interface AuthUser {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role?: string;
+  createdAt?: string;
+}
+
+export interface UpdateUserRequest {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  password?: string;
+}
+
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  phone?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  role: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private readonly apiUrl = 'http://localhost:8082/api/users';
+  private readonly storageKey = 'loggedUser';
+  private readonly backofficeRoles = new Set(['ADMIN', 'DOCTOR', 'CAREGIVER']);
+  
+  // Subject to emit login events - can be used to initialize sessions/WebSocket
+  loginCompleted$ = new Subject<AuthUser>();
+  logoutCompleted$ = new Subject<void>();
+
+  constructor(private readonly http: HttpClient) { }
+
+  register(payload: RegisterRequest): Observable<AuthUser> {
+    return this.http.post<AuthUser>(`${this.apiUrl}/register`, payload);
+  }
+
+  getAllUsers(): Observable<AuthUser[]> {
+    return this.http.get<AuthUser[]>(`${this.apiUrl}`);
+  }
+
+  getUserById(id: number): Observable<AuthUser> {
+    return this.http.get<AuthUser>(`${this.apiUrl}/${id}`);
+  }
+
+  login(payload: LoginRequest): Observable<AuthUser> {
+    return this.http
+      .post<AuthUser>(`${this.apiUrl}/login`, payload)
+      .pipe(tap((user) => {
+        localStorage.setItem(this.storageKey, JSON.stringify(user));
+        this.loginCompleted$.next(user);
+      }));
+  }
+
+  getLoggedUser(): AuthUser | null {
+    const rawUser = localStorage.getItem(this.storageKey);
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawUser) as AuthUser;
+    } catch {
+      localStorage.removeItem(this.storageKey);
+      return null;
+    }
+  }
+
+  getLoggedRole(): string {
+    const role = this.getLoggedUser()?.role ?? '';
+    return this.normalizeRole(role);
+  }
+
+  isAdmin(): boolean {
+    return this.getLoggedRole() === 'ADMIN';
+  }
+
+  isDoctor(): boolean {
+    return this.getLoggedRole() === 'DOCTOR';
+  }
+
+  isVolunteer(): boolean {
+    return this.getLoggedRole() === 'VOLUNTEER';
+  }
+
+  isBackofficeRole(role?: string | null): boolean {
+    const normalizedRole = this.normalizeRole(role ?? this.getLoggedRole());
+    return this.backofficeRoles.has(normalizedRole);
+  }
+
+  isPatient(): boolean {
+    return this.getLoggedRole() === 'PATIENT';
+  }
+
+  updateUser(id: number, payload: UpdateUserRequest): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.apiUrl}/${id}`, payload);
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.storageKey);
+    this.logoutCompleted$.next();
+  }
+
+  normalizeRole(role: string | undefined | null): string {
+    return (role ?? '').trim().toUpperCase().replace(/^ROLE_/, '');
+  }
+}

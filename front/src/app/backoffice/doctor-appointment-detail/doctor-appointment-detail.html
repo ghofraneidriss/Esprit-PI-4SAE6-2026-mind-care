@@ -1,0 +1,197 @@
+<div class="glass-dashboard-wrapper">
+    <!-- Header Action -->
+    <div class="mb-3">
+        <button class="btn-glass-action border-0 bg-transparent text-white shadow-none ps-0 hover-white"
+            (click)="goBack()">
+            <i class="bi bi-arrow-left fs-5"></i> <span class="fw-bold ms-1" style="font-size:1.1rem">Back</span>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row" *ngIf="appointment && patientUser; else loadingTpl">
+
+        <!-- Header Card -->
+        <div class="col-12 mb-4">
+            <div class="glass-detail-card d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="glass-avatar shadow-sm">
+                        <span class="fs-3 fw-bold">{{ patientUser!.firstName.charAt(0) | uppercase
+                            }}</span>
+                    </div>
+                    <div>
+                        <h3 class="mb-0 fw-bold text-dark">{{ patientUser!.firstName }} {{ patientUser!.lastName }}</h3>
+                        <p class="mb-0 text-muted"><i class="bi bi-envelope me-1"></i>{{ patientUser!.email || 'No
+                            Email' }}</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="glass-btn-warning" (click)="sendAlert()">
+                        <i class="bi bi-bell me-1"></i> Send Alert
+                    </button>
+                    <button class="glass-btn-primary" (click)="editMode = !editMode" [disabled]="isPastAppointment()"
+                        [title]="isPastAppointment() ? 'Cannot reschedule past appointments' : 'Reschedule appointment'">
+                        <i class="bi bi-calendar-event me-1"></i> Reschedule
+                    </button>
+                </div>
+            </div>
+
+            <div *ngIf="successMessage"
+                class="alert alert-success mt-3 glass-alert-success border-0 shadow-sm text-center fw-bold">
+                <i class="bi bi-check-circle me-2"></i> {{ successMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3 border-0 shadow-sm text-center fw-bold">
+                <i class="bi bi-exclamation-triangle me-2"></i> {{ errorMessage }}
+            </div>
+        </div>
+
+        <!-- Details Column 1 -->
+        <div class="col-lg-4 mb-4">
+            <div class="glass-detail-card h-100 p-0 overflow-hidden">
+                <div class="glass-card-header bg-white bg-opacity-50 border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-teal"><i class="bi bi-calendar3 me-2"></i>Appointment Track
+                    </h5>
+                </div>
+                <div class="p-3">
+                    <ul class="list-group list-group-flush glass-list">
+                        <li class="list-group-item d-flex justify-content-between px-2">
+                            <span class="text-muted fw-semibold">Status</span>
+                            <span class="pill status-pill status-{{ appointment.status.toLowerCase() }} fw-bold">{{
+                                appointment.status }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-2">
+                            <span class="text-muted fw-semibold">Urgency</span>
+                            <span *ngIf="appointment.isUrgent" class="pill urgent-pill">Urgent</span>
+                            <span *ngIf="!appointment.isUrgent" class="pill normal-pill">Normal</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-2">
+                            <span class="text-muted fw-semibold">Type</span>
+                            <span
+                                class="pill outline-pill {{ appointment.type === 'ONLINE' ? 'online' : 'inperson' }} fw-bold">{{
+                                appointment.type }}</span>
+                        </li>
+                        <li class="list-group-item px-2 border-0">
+                            <span class="text-muted fw-semibold d-block mb-2">Date & Time</span>
+                            <ng-container *ngIf="!editMode; else editDateTpl">
+                                <div class="glass-date-box p-3 rounded-3 text-center">
+                                    <div class="fw-bold fs-5 text-dark">{{ appointment.appointmentDate | date:'MMM dd,
+                                        yyyy' }}</div>
+                                    <div class="text-teal fw-semibold"><i class="bi bi-clock me-1"></i>{{
+                                        appointment.appointmentDate | date:'hh:mm a' }}</div>
+                                </div>
+                            </ng-container>
+                            <ng-template #editDateTpl>
+                                <div class="input-group glass-input-group mt-2">
+                                    <input type="datetime-local" class="form-control" [(ngModel)]="updatedDate"
+                                        [min]="minDateTime">
+                                    <button class="btn glass-btn-success" (click)="saveDateUpdate()"
+                                        [disabled]="isSaving">
+                                        <i class="bi bi-save" *ngIf="!isSaving"></i>
+                                        <span class="spinner-border spinner-border-sm" *ngIf="isSaving"></span>
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block mt-1" style="font-size:0.75rem;">
+                                    <i class="bi bi-info-circle me-1"></i>Choisissez une date dans le futur
+                                </small>
+                            </ng-template>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Health Profile -->
+        <div class="col-lg-8 mb-4">
+            <div class="glass-detail-card h-100 p-0 overflow-hidden">
+                <div class="glass-card-header bg-white bg-opacity-50 border-bottom p-3">
+                    <h5 class="mb-0 fw-bold text-teal"><i class="bi bi-file-earmark-medical me-2"></i>Patient Health
+                        Profile</h5>
+                </div>
+                <div class="p-4">
+                    <div *ngIf="patientProfile; else noProfile">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h6 class="text-teal fw-bold text-uppercase mb-3"><i
+                                        class="bi bi-heart-pulse me-2"></i>Physical Data</h6>
+                                <div class="glass-data-box p-3 rounded-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Blood Group</span>
+                                        <span class="fw-bold text-danger">{{ patientProfile.bloodGroup || 'N/A'
+                                            }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Height</span>
+                                        <span class="fw-bold">{{ patientProfile.heightCm ? patientProfile.heightCm + '
+                                            cm' : 'N/A' }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Weight</span>
+                                        <span class="fw-bold">{{ patientProfile.weightKg ? patientProfile.weightKg + '
+                                            kg' : 'N/A' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <h6 class="text-teal fw-bold text-uppercase mb-3"><i
+                                        class="bi bi-activity me-2"></i>Conditions</h6>
+                                <div class="glass-data-box p-3 rounded-3">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2 d-flex align-items-center">
+                                            <i class="bi me-2 fs-5"
+                                                [ngClass]="patientProfile.hypertension ? 'fi-rr-check-circle text-success' : 'fi-rr-cross-circle text-muted'"></i>
+                                            <span [class.fw-bold]="patientProfile.hypertension">Hypertension</span>
+                                        </li>
+                                        <li class="mb-2 d-flex align-items-center">
+                                            <i class="bi me-2 fs-5"
+                                                [ngClass]="patientProfile.type2Diabetes ? 'fi-rr-check-circle text-success' : 'fi-rr-cross-circle text-muted'"></i>
+                                            <span [class.fw-bold]="patientProfile.type2Diabetes">Type 2 Diabetes</span>
+                                        </li>
+                                        <li class="mb-2 d-flex align-items-center">
+                                            <i class="bi me-2 fs-5"
+                                                [ngClass]="patientProfile.hypercholesterolemia ? 'fi-rr-check-circle text-success' : 'fi-rr-cross-circle text-muted'"></i>
+                                            <span
+                                                [class.fw-bold]="patientProfile.hypercholesterolemia">Hypercholesterolemia</span>
+                                        </li>
+                                        <li class="d-flex align-items-center">
+                                            <i class="bi me-2 fs-5"
+                                                [ngClass]="patientProfile.familyHistoryAlzheimer ? 'fi-rr-check-circle text-danger' : 'fi-rr-cross-circle text-muted'"></i>
+                                            <span [class.fw-bold]="patientProfile.familyHistoryAlzheimer">Family
+                                                Alzheimer</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <h6 class="text-teal fw-bold text-uppercase mb-2"><i
+                                        class="bi bi-capsule me-2"></i>Medications</h6>
+                                <div class="glass-data-box p-3 rounded-3 text-dark fw-semibold">
+                                    {{ patientProfile.medications || 'No current medications specified.' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-template #noProfile>
+                        <div class="text-center py-5">
+                            <div class="glass-empty-icon mb-3"><i class="bi bi-file-earmark-medical"></i></div>
+                            <h5 class="fw-bold text-dark">No medical profile found</h5>
+                            <p class="text-muted">The patient has not completed their health profile yet.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Fallback -->
+    <ng-template #loadingTpl>
+        <div class="row align-items-center justify-content-center" style="height: 60vh;">
+            <div class="col-auto text-center text-white">
+                <div class="spinner-border" style="width: 3rem; height: 3rem; color: rgba(255,255,255,0.8);"
+                    role="status"></div>
+                <h5 class="mt-4 fw-bold">Retrieving Details...</h5>
+            </div>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,99 @@
+<div class="fm-page">
+  <header class="fm-hero">
+    <div class="fm-hero-inner">
+      <div>
+        <h1 class="fm-title">
+          <span class="hero-icon"><i class="fi fi-rr-folder-open"></i></span>
+          Files Management
+        </h1>
+        <p class="fm-subtitle">Browse, edit, and manage all files linked to medical care</p>
+      </div>
+
+      <div class="fm-hero-actions">
+        <div class="fm-stat-chip"><span class="chip-value">{{ totalCount }}</span><span class="chip-label">Total</span></div>
+        <div class="fm-stat-chip"><span class="chip-value">{{ mriCount }}</span><span class="chip-label">MRI</span></div>
+        <div class="fm-stat-chip"><span class="chip-value">{{ pdfCount }}</span><span class="chip-label">PDF</span></div>
+        <button type="button" class="btn-create" (click)="openCreateModal()"><i class="fi fi-rr-plus"></i>New File</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="fm-content">
+    <div *ngIf="formError" class="alert alert-danger mb-3">{{ formError }}</div>
+
+    <section class="stats-grid">
+      <article class="stat-card"><div class="stat-icon stat-blue"><i class="fi fi-rr-folder"></i></div><div class="stat-copy"><h2>{{ totalCount }}</h2><div class="stat-label">Total Files</div><small>All records</small></div></article>
+      <article class="stat-card"><div class="stat-icon stat-teal"><i class="fi fi-rr-scan"></i></div><div class="stat-copy"><h2>{{ mriCount }}</h2><div class="stat-label">MRI Scans</div><small>DICOM files</small></div></article>
+      <article class="stat-card"><div class="stat-icon stat-red"><i class="fi fi-rr-file-pdf"></i></div><div class="stat-copy"><h2>{{ pdfCount }}</h2><div class="stat-label">PDF Documents</div><small>Reports and results</small></div></article>
+      <article class="stat-card"><div class="stat-icon stat-amber"><i class="fi fi-rr-file"></i></div><div class="stat-copy"><h2>{{ otherCount }}</h2><div class="stat-label">Other Files</div><small>Images and documents</small></div></article>
+    </section>
+
+    <section class="fm-toolbar-card">
+      <div class="search-wrap">
+        <i class="fi fi-rr-search"></i>
+        <input class="form-control" type="text" placeholder="Search by file name, id, caregiver..." [(ngModel)]="filters.query" (ngModelChange)="applyFilters()" />
+      </div>
+      <select class="form-select type-filter" [(ngModel)]="filters.type" (ngModelChange)="applyFilters()">
+        <option value="">All Types</option>
+        <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
+      </select>
+    </section>
+
+    <p class="files-count">Showing <strong>{{ filteredFiles.length }}</strong> of {{ files.length }} files</p>
+
+    <section class="file-cards">
+      <article class="file-card" *ngFor="let row of filteredFiles" [ngClass]="toKindClass(row.fileType)">
+        <div class="card-top">
+          <div class="card-head-main">
+            <h3 class="file-title">{{ row.fileName }}</h3>
+            <p class="file-meta"><span class="file-id">#{{ row.fileid }}</span></p>
+          </div>
+          <span class="kind-chip" [ngClass]="toKindClass(row.fileType)">{{ toKindLabel(row.fileType) }}</span>
+        </div>
+
+        <div class="card-grid">
+          <div class="meta-item"><span class="meta-label">Caregiver ID</span><span class="meta-value">{{ row.caregiverid }}</span></div>
+          <div class="meta-item"><span class="meta-label">Created</span><span class="meta-value">{{ row.createdAt || '-' }}</span></div>
+          <div class="meta-item"><span class="meta-label">Updated</span><span class="meta-value">{{ row.updatedAt || '-' }}</span></div>
+        </div>
+
+        <div class="card-actions">
+          <button type="button" class="btn btn-sm btn-edit" (click)="openEditModal(row)"><i class="fi fi-rr-edit me-1"></i>Edit</button>
+          <button type="button" class="btn btn-sm btn-delete" (click)="deleteFile(row)"><i class="fi fi-rr-trash me-1"></i>Delete</button>
+        </div>
+      </article>
+
+      <div class="empty-state" *ngIf="filteredFiles.length === 0">
+        <i class="fi fi-rr-folder-open"></i>
+        <p>No files found</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="files-modal-backdrop" *ngIf="isFormOpen">
+  <section class="files-modal card">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0">{{ formMode === 'create' ? 'Create File' : 'Edit File' }}</h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="closeFormModal()">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="formError" class="alert alert-danger mb-3">{{ formError }}</div>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label">File Name</label><input type="text" class="form-control" [(ngModel)]="form.fileName" placeholder="Enter file name" /></div>
+        <div class="col-md-6"><label class="form-label">Caregiver ID</label><input type="number" class="form-control" [(ngModel)]="form.caregiverid" min="1" /></div>
+        <div class="col-md-6"><label class="form-label">File Type</label><select class="form-select" [(ngModel)]="form.fileType"><option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option></select></div>
+      </div>
+    </div>
+
+    <div class="card-footer bg-body d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-light" (click)="closeFormModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="saveFile()">
+        {{ isSaving ? 'Saving...' : (formMode === 'create' ? 'Create' : 'Save Changes') }}
+      </button>
+    </div>
+  </section>
+</div>
