@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'mind-care-monitoring'
+
+scrape_configs:
+  # Lost Item Service Metrics
+  - job_name: 'lost-item-service'
+    static_configs:
+      - targets: ['lost-item-service:8080']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+
+  # Followup Alert Service Metrics
+  - job_name: 'followup-alert-service'
+    static_configs:
+      - targets: ['followup-alert-service:8080']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+
+  # Prometheus Self-Monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Nexus Repository
+  - job_name: 'nexus'
+    static_configs:
+      - targets: ['nexus:8081']

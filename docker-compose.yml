@@ -85,6 +85,71 @@ services:
       retries: 3
       start_period: 40s
 
+  # Nexus Repository Manager
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: alzcare-nexus
+    ports:
+      - "8081:8081"
+    environment:
+      - NEXUS_CONTEXT=nexus
+    volumes:
+      - nexus_data:/nexus-data
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/service/rest/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Prometheus Metrics Collector
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: alzcare-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: alzcare-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   mindcare-network:
     driver: bridge
@@ -93,3 +158,9 @@ networks:
 volumes:
   mysql_data:
     name: alzcare-mysql-data
+  nexus_data:
+    name: alzcare-nexus-data
+  prometheus_data:
+    name: alzcare-prometheus-data
+  grafana_data:
+    name: alzcare-grafana-data
