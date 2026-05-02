@@ -9,6 +9,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
+# Cache invalidation arg - changes on each build to refresh source files
+ARG BUILD_DATE=unknown
+
 # Copy source code
 COPY . .
 
