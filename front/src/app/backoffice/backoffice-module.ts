@@ -48,6 +48,15 @@ import { SouvenirsPage } from './souvenirs/souvenirs';
 import { FollowUpPage } from './followup-page/followup-page';
 import { LostItemPage } from './lost-item/lost-item';
 import { MlRecommendationPage } from './ml-recommendation/ml-recommendation';
+import { AssignmentHistoryPageComponent } from './assignment-history/assignment-history';
+import { BackofficeShellComponent } from './backoffice-shell/backoffice-shell';
+import { DoctorAppointmentDetail } from './doctor-appointment-detail/doctor-appointment-detail';
+import { DoctorAppointments } from './doctor-appointments/doctor-appointments';
+import { DoctorConsultations } from './doctor-consultations/doctor-consultations';
+import { DoctorPrescriptionCreate } from './doctor-prescriptions/doctor-prescription-create.component';
+import { DoctorPrescriptionDetail } from './doctor-prescriptions/doctor-prescription-detail.component';
+import { DoctorPrescriptionHistory } from './doctor-prescriptions/doctor-prescription-history.component';
+import { FilesManagementPageComponent } from './files-management/files-management';
 
 @NgModule({
   declarations: [
@@ -79,7 +88,16 @@ import { MlRecommendationPage } from './ml-recommendation/ml-recommendation';
     SouvenirsPage,
     FollowUpPage,
     LostItemPage,
-    MlRecommendationPage
+    MlRecommendationPage,
+    AssignmentHistoryPageComponent,
+    BackofficeShellComponent,
+    DoctorAppointmentDetail,
+    DoctorAppointments,
+    DoctorConsultations,
+    DoctorPrescriptionCreate,
+    DoctorPrescriptionDetail,
+    DoctorPrescriptionHistory,
+    FilesManagementPageComponent
   ],
   imports: [
     CommonModule,
