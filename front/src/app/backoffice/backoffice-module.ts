@@ -58,6 +58,9 @@ import { DoctorPrescriptionDetail } from './doctor-prescriptions/doctor-prescrip
 import { DoctorPrescriptionHistory } from './doctor-prescriptions/doctor-prescription-history.component';
 import { FilesManagementPageComponent } from './files-management/files-management';
 import { VolunteeringPageComponent } from './volunteering/volunteering';
+import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { MedicationManagement } from './medication-management/medication-management.component';
+import { PatientFollowUpComponent } from './patient-follow-up/patient-follow-up';
 
 @NgModule({
   declarations: [
@@ -99,7 +102,10 @@ import { VolunteeringPageComponent } from './volunteering/volunteering';
     DoctorPrescriptionDetail,
     DoctorPrescriptionHistory,
     FilesManagementPageComponent,
-    VolunteeringPageComponent
+    VolunteeringPageComponent,
+    MedicalReportsPageComponent,
+    MedicationManagement,
+    PatientFollowUpComponent
   ],
   imports: [
     CommonModule,
