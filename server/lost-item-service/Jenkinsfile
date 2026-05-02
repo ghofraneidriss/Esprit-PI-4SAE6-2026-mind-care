@@ -6,6 +6,11 @@ pipeline {
         DOCKER_REGISTRY = 'ghofraneidriss'
         IMAGE_TAG = "${BUILD_NUMBER}"
         SONARQUBE_TOKEN = 'squ_b667673cd98e98f7ff253862e8dc39fc48ec9016'
+        GIT_SSL_NO_VERIFY = 'true'
+        GIT_TRACE = '1'
+        GIT_HTTP_LOW_SPEED_LIMIT = '0'
+        GIT_HTTP_LOW_SPEED_TIME = '0'
+        GIT_TERMINAL_PROMPT = 'false'
     }
 
     options {
