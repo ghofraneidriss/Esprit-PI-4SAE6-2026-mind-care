@@ -111,8 +111,11 @@ pipeline {
                 script {
                     sh '''
                         cd ${WORKSPACE}
-                        docker stop alzcare-mysql alzcare-lost-item-service 2>/dev/null || true
-                        docker rm -f alzcare-mysql alzcare-lost-item-service 2>/dev/null || true
+                        docker stop alzcare-mysql alzcare-lost-item-service alzcare-followup-alert-service 2>/dev/null || true
+                        docker rm -f alzcare-mysql alzcare-lost-item-service alzcare-followup-alert-service 2>/dev/null || true
+                        docker container prune -f 2>/dev/null || true
+                        docker volume prune -f 2>/dev/null || true
+                        docker network prune -f 2>/dev/null || true
                         sleep 2
                         docker-compose up -d
                         sleep 10
