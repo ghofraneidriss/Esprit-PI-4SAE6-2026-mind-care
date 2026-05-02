@@ -24,7 +24,9 @@ pipeline {
             steps {
                 echo '🔄 Checking out code...'
                 cleanWs()
-                checkout scm
+                retry(5) {
+                    checkout scm
+                }
             }
         }
 
