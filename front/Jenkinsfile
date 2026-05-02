@@ -25,6 +25,7 @@ pipeline {
                 dir('front') {
                     sh '''
                         docker build \
+                          --no-cache \
                           -t ${DOCKER_REGISTRY}/${SERVICE_NAME}:build-${BUILD_NUMBER} \
                           --target builder \
                           .
@@ -40,6 +41,7 @@ pipeline {
                     script {
                         sh '''
                             docker build \
+                              --no-cache \
                               -t ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} \
                               -t ${DOCKER_REGISTRY}/${SERVICE_NAME}:latest \
                               --label "build.number=${BUILD_NUMBER}" \
