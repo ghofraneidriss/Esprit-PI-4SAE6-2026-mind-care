@@ -1,7 +1,7 @@
 ﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FrontofficeRoutingModule } from './frontoffice-routing-module';
 import { Home1 } from './home1/home1';
 import { Page404FrontPage } from './404/404';
@@ -33,6 +33,10 @@ import { SharedModule } from '../shared/shared.module';
 import { GlobalOverlaysComponent } from '../shared/global-overlays/global-overlays.component';
 
 import { FrontofficeLayoutComponent } from './frontoffice-layout';
+import { PatientProfile } from './patient-profile/patient-profile';
+import { VolunteerMissionsComponent } from './volunteer-missions/volunteer-missions';
+import { PatientPrescriptions } from './patient-prescriptions/patient-prescriptions.component';
+import { PatientPrescriptionDetail } from './patient-prescription-detail/patient-prescription-detail.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +67,11 @@ import { FrontofficeLayoutComponent } from './frontoffice-layout';
     SouvenirsFrontPage,
     PuzzlePlayPage,
     SudokuPlayPage,
+    PatientProfile,
+    VolunteerMissionsComponent,
+    PatientPrescriptions,
+    PatientPrescriptionDetail,
   ],
-  imports: [CommonModule, FrontofficeRoutingModule, FormsModule, SharedModule, GlobalOverlaysComponent],
+  imports: [CommonModule, FrontofficeRoutingModule, FormsModule, ReactiveFormsModule, SharedModule, GlobalOverlaysComponent],
 })
 export class FrontofficeModule { }

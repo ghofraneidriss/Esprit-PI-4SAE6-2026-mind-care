@@ -57,6 +57,7 @@ import { DoctorPrescriptionCreate } from './doctor-prescriptions/doctor-prescrip
 import { DoctorPrescriptionDetail } from './doctor-prescriptions/doctor-prescription-detail.component';
 import { DoctorPrescriptionHistory } from './doctor-prescriptions/doctor-prescription-history.component';
 import { FilesManagementPageComponent } from './files-management/files-management';
+import { VolunteeringPageComponent } from './volunteering/volunteering';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { FilesManagementPageComponent } from './files-management/files-managemen
     DoctorPrescriptionCreate,
     DoctorPrescriptionDetail,
     DoctorPrescriptionHistory,
-    FilesManagementPageComponent
+    FilesManagementPageComponent,
+    VolunteeringPageComponent
   ],
   imports: [
     CommonModule,
