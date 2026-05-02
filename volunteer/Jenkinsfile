@@ -18,9 +18,6 @@ pipeline {
     SONAR_PROJECT_NAME = 'mindcare'
      SERVICE_NAME = 'volunteer'
     SERVICE_DIR = 'volunteer'
-        DOCKER_IMAGES_READY = 'false'
-        DEPLOY_READY = 'false'
-        MONITORING_READY = 'false'
     }
 
     options {
@@ -39,200 +36,161 @@ pipeline {
 
         stage('Build Backend') {
             steps {
-                echo 'Building services...'
-                sh '''
-                    cd medical_report_service
-                    mvn clean package -DskipTests
-                    cd ..
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Building services...'
+                    sh '''
+                        cd medical_report_service
+                        mvn clean package -DskipTests
+                        cd ..
 
-                    cd volunteer
-                    mvn clean package -DskipTests
-                    cd ..
-                '''
+                        cd volunteer
+                        mvn clean package -DskipTests
+                        cd ..
+                    '''
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo 'Running tests...'
-                sh '''
-                    cd medical_report_service
-                    mvn test
-                    cd ..
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Running tests...'
+                    sh '''
+                        cd medical_report_service
+                        mvn test
+                        cd ..
 
-                    cd volunteer
-                    mvn test
-                    cd ..
-                '''
+                        cd volunteer
+                        mvn test
+                        cd ..
+                    '''
+                }
             }
         }
 
        stage('SonarQube Analysis') {
       steps {
-        echo "[SONAR] $SERVICE_NAME"
-        sh '''
-          set -e
-          cd "$SERVICE_DIR"
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=mind_care \\
-            -Dsonar.projectName=mind_care \\
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=sqp_284d1b28932e43d15fb2f331cbc0d3e08cf3b787 \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-        '''
+        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+          echo "[SONAR] $SERVICE_NAME"
+          sh '''
+            set -e
+            cd "$SERVICE_DIR"
+            mvn clean verify sonar:sonar \
+              -Dsonar.projectKey=mind_care \\
+              -Dsonar.projectName=mind_care \\
+              -Dsonar.host.url=http://localhost:9000 \
+              -Dsonar.login=sqp_284d1b28932e43d15fb2f331cbc0d3e08cf3b787 \
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+          '''
+        }
       }
     }
 
         stage('Build Docker Images') {
             steps {
-                echo 'Building Docker images...'
-                script {
-                    if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
-                        def dockerBuildStatus = sh(
-                            script: '''
-                                export DOCKER_BUILDKIT=0
-                                docker build --pull=false -t $IMAGE_NAME_BACK:latest ./medical_report_service
-                                docker build --pull=false -t $IMAGE_NAME_VOL:latest ./volunteer
-                            ''',
-                            returnStatus: true
-                        )
-
-                        if (dockerBuildStatus == 0) {
-                            env.DOCKER_IMAGES_READY = 'true'
-                            echo 'Docker images built successfully.'
-                        } else {
-                            unstable('Docker image build failed, likely because the Jenkins agent cannot reach Docker Hub or does not have the base images cached locally. Downstream Docker stages will be skipped.')
-                            echo 'Skipping downstream Docker stages because images are not available.'
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Building Docker images...'
+                    script {
+                        if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) != 0) {
+                            error('Docker is not installed on this Jenkins agent.')
                         }
-                    } else {
-                        echo 'Skipping Docker image build: docker is not installed on this Jenkins agent.'
+
+                        sh '''
+                            export DOCKER_BUILDKIT=0
+                            docker build --pull=false -t $IMAGE_NAME_BACK:latest ./medical_report_service
+                            docker build --pull=false -t $IMAGE_NAME_VOL:latest ./volunteer
+                        '''
+
+                        echo 'Docker images built successfully.'
                     }
                 }
             }
         }
 
         stage('Push Images') {
-            when {
-                expression { env.DOCKER_IMAGES_READY == 'true' }
-            }
             steps {
-                echo 'Pushing images...'
-                script {
-                    if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
-                        try {
-                            withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                                sh '''
-                                    echo $PASS | docker login -u $USER --password-stdin
-                                    docker push $IMAGE_NAME_BACK:latest
-                                    docker push $IMAGE_NAME_VOL:latest
-                                    docker logout
-                                '''
-                            }
-                        } catch (Exception ex) {
-                            echo "Skipping Docker push: ${ex.getMessage()}"
-                        }
-                    } else {
-                        echo 'Skipping Docker push: docker is not installed on this Jenkins agent.'
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Pushing images...'
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        sh '''
+                            echo $PASS | docker login -u $USER --password-stdin
+                            docker push $IMAGE_NAME_BACK:latest
+                            docker push $IMAGE_NAME_VOL:latest
+                            docker logout
+                        '''
                     }
                 }
             }
         }
 
         stage('Deploy (Simulation)') {
-            when {
-                expression { env.DOCKER_IMAGES_READY == 'true' }
-            }
             steps {
-                echo 'Deploying...'
-                script {
-                    if (sh(script: 'command -v docker >/dev/null 2>&1', returnStatus: true) == 0) {
-                        def deployStatus = sh(
-                            script: '''
-                                docker rm -f medical-report-service volunteer-service || true
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Deploying...'
+                    script {
+                        sh '''
+                            docker rm -f medical-report-service volunteer-service || true
 
-                                docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
-                                docker run -d -p 8082:8085 --name volunteer-service \
-                                  -e SPRING_PROFILES_ACTIVE=test \
-                                  $IMAGE_NAME_VOL:latest
-                            ''',
-                            returnStatus: true
-                        )
+                            docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
+                            docker run -d -p 8082:8085 --name volunteer-service \
+                              -e SPRING_PROFILES_ACTIVE=test \
+                              $IMAGE_NAME_VOL:latest
+                        '''
 
-                        if (deployStatus == 0) {
-                            env.DEPLOY_READY = 'true'
-                            echo 'Deployment simulation started.'
-                        } else {
-                            unstable('Deployment simulation failed. Monitoring and health checks will be skipped.')
-                        }
-                    } else {
-                        echo 'Skipping deploy simulation: docker is not installed on this Jenkins agent.'
+                        echo 'Deployment simulation started.'
                     }
                 }
             }
         }
         stage('Start Monitoring Stack') {
-            when {
-                expression { env.DEPLOY_READY == 'true' }
-            }
             steps {
-                echo 'Starting Prometheus and Grafana...'
-                script {
-                    def monitoringStatus = sh(
-                        script: '''
-                            cd volunteer
-                            docker compose -f docker-compose-monitoring.yml up -d
-                            sleep 10
-                        ''',
-                        returnStatus: true
-                    )
-
-                    if (monitoringStatus == 0) {
-                        env.MONITORING_READY = 'true'
-                        echo 'Monitoring stack started.'
-                    } else {
-                        unstable('Monitoring stack failed to start. Health and metrics checks will be skipped.')
-                    }
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Starting Prometheus and Grafana...'
+                    sh '''
+                        cd volunteer
+                        docker compose -f docker-compose-monitoring.yml up -d
+                        sleep 10
+                    '''
+                    echo 'Monitoring stack started.'
                 }
             }
         }
 
         stage('Health Check') {
-            when {
-                expression { env.DEPLOY_READY == 'true' && env.MONITORING_READY == 'true' }
-            }
             steps {
-                echo 'Checking service health...'
-                sh '''
-                    cd volunteer
-                    
-                    # Wait for volunteer service to become healthy
-                    for i in $(seq 1 12); do
-                      curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' && break
-                      echo "Waiting for volunteer service on 8082... ($i/12)"
-                      sleep 5
-                    done
-                    curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' || exit 1
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Checking service health...'
+                    sh '''
+                        cd volunteer
+                        
+                        # Wait for volunteer service to become healthy
+                        for i in $(seq 1 12); do
+                          curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' && break
+                          echo "Waiting for volunteer service on 8082... ($i/12)"
+                          sleep 5
+                        done
+                        curl -s -f http://localhost:8082/actuator/health | grep -q 'UP' || exit 1
 
-                    # Wait for Prometheus target to be healthy
-                    for i in $(seq 1 12); do
-                      curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' && break
-                      echo "Waiting for Prometheus to scrape target... ($i/12)"
-                      sleep 5
-                    done
-                    curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' || exit 1
-                '''
+                        # Wait for Prometheus target to be healthy
+                        for i in $(seq 1 12); do
+                          curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' && break
+                          echo "Waiting for Prometheus to scrape target... ($i/12)"
+                          sleep 5
+                        done
+                        curl -s http://localhost:9090/api/v1/targets | grep -q '"health":"up"' || exit 1
+                    '''
+                }
             }
         }
 
         stage('Verify Metrics') {
-            when {
-                expression { env.MONITORING_READY == 'true' }
-            }
             steps {
-                echo 'Verifying Prometheus metrics...'
-                sh '''
-                    curl -s http://localhost:9090/api/v1/query?query=up | grep -q "value" && echo "Metrics collected successfully"
-                '''
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    echo 'Verifying Prometheus metrics...'
+                    sh '''
+                        curl -s http://localhost:9090/api/v1/query?query=up | grep -q "value" && echo "Metrics collected successfully"
+                    '''
+                }
             }
         }
     }
