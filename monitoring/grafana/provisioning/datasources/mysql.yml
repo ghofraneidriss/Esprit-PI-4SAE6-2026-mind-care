@@ -5,10 +5,12 @@ datasources:
     type: mysql
     access: proxy
     url: mysql:3306
-    database: information_schema
+    database: mysql
     user: root
     secureJsonData:
       password: ""
     jsonData:
       sslmode: disable
+      allowInsecureUiUpdate: true
     editable: true
+    isDefault: false
