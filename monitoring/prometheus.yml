@@ -23,8 +23,3 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-
-  # Nexus Repository
-  - job_name: 'nexus'
-    static_configs:
-      - targets: ['nexus:8081']
