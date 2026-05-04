@@ -32,10 +32,3 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-
-  # MySQL Metrics
-  - job_name: 'mysql'
-    static_configs:
-      - targets: ['mysql-exporter:9104']
-    metrics_path: '/metrics'
-    scrape_interval: 15s

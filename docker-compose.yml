@@ -23,30 +23,6 @@ services:
     networks:
       - mindcare-network
 
-  # MySQL Exporter for Prometheus
-  mysql-exporter:
-    image: prom/mysqld-exporter:latest
-    container_name: alzcare-mysql-exporter
-    ports:
-      - "9104:9104"
-    environment:
-      - DATA_SOURCE_NAME=root:@tcp(mysql:3306)/
-    command:
-      - '--collect.info_schema.innodb_metrics'
-      - '--collect.info_schema.innodb_tablespaces'
-      - '--collect.info_schema.innodb_cmp'
-    depends_on:
-      mysql:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - mindcare-network
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9104/metrics"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   # AlertManager for Alert Routing
   alertmanager:
     image: prom/alertmanager:latest
