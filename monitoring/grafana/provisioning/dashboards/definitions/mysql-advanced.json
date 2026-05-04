@@ -13,7 +13,11 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
           },
           "mappings": [],
           "thresholds": {
@@ -22,14 +26,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -37,39 +33,34 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
+        "h": 10,
+        "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "showHeader": true
       },
       "targets": [
         {
-          "rawSql": "SHOW PROCESSLIST",
+          "rawSql": "SELECT TABLE_SCHEMA as 'Database', TABLE_NAME as 'Table', ENGINE, TABLE_ROWS as 'Rows', ROUND(DATA_LENGTH / 1024 / 1024, 2) as 'Data_MB', ROUND(INDEX_LENGTH / 1024 / 1024, 2) as 'Index_MB' FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys') ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC LIMIT 50",
           "refId": "A"
         }
       ],
-      "title": "Active Connections",
-      "type": "stat"
+      "title": "Top 50 Tables by Size",
+      "type": "table"
     },
     {
       "datasource": "MySQL",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
           },
           "mappings": [],
           "thresholds": {
@@ -85,36 +76,34 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 0
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 10
       },
       "id": 2,
       "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
-        }
+        "showHeader": true
       },
       "targets": [
         {
-          "rawSql": "SELECT COUNT(*) as value FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema')",
+          "rawSql": "SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')",
           "refId": "A"
         }
       ],
-      "title": "Total Tables",
-      "type": "stat"
+      "title": "Databases",
+      "type": "table"
     },
     {
       "datasource": "MySQL",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
           },
           "mappings": [],
           "thresholds": {
@@ -130,258 +119,29 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 0
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 20
       },
       "id": 3,
       "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
-        }
-      },
-      "targets": [
-        {
-          "rawSql": "SELECT ROUND((SELECT COALESCE(SUM(DATA_LENGTH + INDEX_LENGTH), 0) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema')) / 1024 / 1024) as value",
-          "refId": "A"
-        }
-      ],
-      "title": "Database Size (MB)",
-      "type": "stat"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 4
-      },
-      "id": 5,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "right"
-        },
-        "pieType": "donut"
-      },
-      "targets": [
-        {
-          "rawSql": "SELECT TABLE_SCHEMA as 'Database', ROUND(SUM(DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) as 'Size (MB)' FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema') GROUP BY TABLE_SCHEMA",
-          "refId": "A"
-        }
-      ],
-      "title": "Database Size Distribution",
-      "type": "piechart"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 4
-      },
-      "id": 6,
-      "options": {
         "showHeader": true
       },
       "targets": [
         {
-          "rawSql": "SHOW PROCESSLIST",
+          "rawSql": "SHOW VARIABLES LIKE '%max_connections%' UNION ALL SHOW VARIABLES LIKE '%wait_timeout%' UNION ALL SHOW VARIABLES LIKE '%interactive_timeout%'",
           "refId": "A"
         }
       ],
-      "title": "Connected Sessions",
-      "type": "table"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 12
-      },
-      "id": 7,
-      "options": {
-        "showHeader": true
-      },
-      "targets": [
-        {
-          "rawSql": "SELECT TABLE_SCHEMA, TABLE_NAME, ENGINE, TABLE_ROWS, ROUND(DATA_LENGTH / 1024 / 1024, 2) as 'Data (MB)', ROUND(INDEX_LENGTH / 1024 / 1024, 2) as 'Indexes (MB)', ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) as 'Total (MB)', TABLE_COLLATION FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema') ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC LIMIT 50",
-          "refId": "A"
-        }
-      ],
-      "title": "Top 50 Largest Tables",
-      "type": "table"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 22
-      },
-      "id": 8,
-      "options": {
-        "showHeader": true
-      },
-      "targets": [
-        {
-          "rawSql": "SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME NOT IN ('information_schema', 'mysql', 'performance_schema')",
-          "refId": "A"
-        }
-      ],
-      "title": "Database Overview",
-      "type": "table"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 32
-      },
-      "id": 9,
-      "options": {
-        "showHeader": true
-      },
-      "targets": [
-        {
-          "rawSql": "SHOW VARIABLES LIKE '%max_connections%'",
-          "refId": "A"
-        }
-      ],
-      "title": "Connection Configuration",
+      "title": "Connection Settings",
       "type": "table"
     }
   ],
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["mysql", "database", "advanced"],
+  "tags": ["mysql", "database"],
   "templating": {
     "list": []
   },
@@ -393,5 +153,5 @@
   "timezone": "browser",
   "title": "MySQL Advanced Monitoring",
   "uid": "mysql-advanced-monitoring",
-  "version": 2
+  "version": 3
 }

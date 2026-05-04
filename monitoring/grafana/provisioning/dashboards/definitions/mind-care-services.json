@@ -136,7 +136,7 @@
       },
       "targets": [
         {
-          "expr": "count(ALERTS{alertstate=\"firing\"})",
+          "expr": "count(ALERTS) or vector(0)",
           "refId": "A"
         }
       ],
@@ -367,7 +367,7 @@
       },
       "targets": [
         {
-          "expr": "rate(http_server_requests_seconds_count{job=\"lost-item-service\",outcome=\"SERVER_ERROR\"}[5m])",
+          "expr": "rate(http_server_requests_seconds_count{job=\"lost-item-service\",status=~\"5..\"}[5m])",
           "refId": "A"
         }
       ],
@@ -400,7 +400,7 @@
       },
       "targets": [
         {
-          "expr": "rate(http_server_requests_seconds_count{job=\"followup-alert-service\",outcome=\"SERVER_ERROR\"}[5m])",
+          "expr": "rate(http_server_requests_seconds_count{job=\"followup-alert-service\",status=~\"5..\"}[5m])",
           "refId": "A"
         }
       ],
