@@ -1,152 +1,226 @@
 {
-  "dashboard": {
-    "title": "Mind Care Services Monitoring",
-    "description": "Monitoring dashboard for Lost Item and Followup Alert services",
-    "tags": ["mind-care", "services"],
-    "timezone": "browser",
-    "panels": [
-      {
-        "id": 1,
-        "title": "JVM Memory Usage - Lost Item Service",
-        "type": "graph",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 0,
-          "y": 0
-        },
-        "targets": [
-          {
-            "expr": "jvm_memory_used_bytes{instance=\"lost-item-service:8080\"}",
-            "legendFormat": "{{ area }}"
-          }
-        ],
-        "yaxes": [
-          {
-            "format": "bytes",
-            "label": "Memory Usage"
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "title": "JVM Memory Usage - Followup Alert Service",
-        "type": "graph",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 12,
-          "y": 0
-        },
-        "targets": [
-          {
-            "expr": "jvm_memory_used_bytes{instance=\"followup-alert-service:8080\"}",
-            "legendFormat": "{{ area }}"
-          }
-        ],
-        "yaxes": [
-          {
-            "format": "bytes",
-            "label": "Memory Usage"
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "title": "HTTP Requests - Lost Item Service",
-        "type": "graph",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 0,
-          "y": 8
-        },
-        "targets": [
-          {
-            "expr": "rate(http_server_requests_seconds_count{instance=\"lost-item-service:8080\"}[1m])",
-            "legendFormat": "{{ method }} {{ uri }}"
-          }
-        ],
-        "yaxes": [
-          {
-            "format": "reqps",
-            "label": "Requests/sec"
-          }
-        ]
-      },
-      {
-        "id": 4,
-        "title": "HTTP Requests - Followup Alert Service",
-        "type": "graph",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 12,
-          "y": 8
-        },
-        "targets": [
-          {
-            "expr": "rate(http_server_requests_seconds_count{instance=\"followup-alert-service:8080\"}[1m])",
-            "legendFormat": "{{ method }} {{ uri }}"
-          }
-        ],
-        "yaxes": [
-          {
-            "format": "reqps",
-            "label": "Requests/sec"
-          }
-        ]
-      },
-      {
-        "id": 5,
-        "title": "HTTP Request Duration - Lost Item Service",
-        "type": "graph",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 0,
-          "y": 16
-        },
-        "targets": [
-          {
-            "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{instance=\"lost-item-service:8080\"}[1m]))",
-            "legendFormat": "p95 {{ uri }}"
-          }
-        ],
-        "yaxes": [
-          {
-            "format": "s",
-            "label": "Duration (seconds)"
-          }
-        ]
-      },
-      {
-        "id": 6,
-        "title": "HTTP Request Duration - Followup Alert Service",
-        "type": "graph",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 12,
-          "y": 16
-        },
-        "targets": [
-          {
-            "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{instance=\"followup-alert-service:8080\"}[1m]))",
-            "legendFormat": "p95 {{ uri }}"
-          }
-        ],
-        "yaxes": [
-          {
-            "format": "s",
-            "label": "Duration (seconds)"
-          }
-        ]
-      }
-    ],
-    "refresh": "10s",
-    "schemaVersion": 27,
-    "version": 1
+  "annotations": {
+    "list": []
   },
-  "overwrite": true
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{job=\"lost-item-service\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "JVM Memory Usage - Lost Item Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{job=\"followup-alert-service\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "JVM Memory Usage - Followup Alert Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{job=\"lost-item-service\"}[1m])",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Requests/sec - Lost Item Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{job=\"followup-alert-service\"}[1m])",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Requests/sec - Followup Alert Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{job=\"lost-item-service\"}[1m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Request Latency p95 - Lost Item Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{job=\"followup-alert-service\"}[1m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Request Latency p95 - Followup Alert Service",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": ["mind-care", "services"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Mind Care Services Monitoring",
+  "uid": "mind-care-monitoring",
+  "version": 1
 }
