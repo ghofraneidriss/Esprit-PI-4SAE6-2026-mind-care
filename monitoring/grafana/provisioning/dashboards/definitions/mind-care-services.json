@@ -34,7 +34,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 0
       },
@@ -87,8 +87,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 6,
+        "w": 8,
+        "x": 8,
         "y": 0
       },
       "id": 11,
@@ -119,32 +119,18 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
+            "mode": "palette-classic"
           }
         },
         "overrides": []
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 12,
+        "w": 8,
+        "x": 16,
         "y": 0
       },
-      "id": 12,
+      "id": 13,
       "options": {
         "orientation": "auto",
         "reduceOptions": {
@@ -152,20 +138,16 @@
           "calcs": [
             "lastNotNull"
           ]
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        }
       },
-      "pluginVersion": "9.0.0",
       "targets": [
         {
-          "expr": "mysql_up",
+          "expr": "count(ALERTS{alertstate=\"firing\"})",
           "refId": "A"
         }
       ],
-      "title": "MySQL Database Status",
-      "type": "gauge"
+      "title": "Active Alerts",
+      "type": "stat"
     },
     {
       "datasource": "Prometheus",
@@ -364,159 +346,6 @@
       ],
       "title": "HTTP Request Latency p95 - Followup Alert Service",
       "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "Connections",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 28
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
-      },
-      "targets": [
-        {
-          "expr": "mysql_global_status_threads_connected",
-          "legendFormat": "Active Connections",
-          "refId": "A"
-        },
-        {
-          "expr": "mysql_global_variables_max_connections",
-          "legendFormat": "Max Connections",
-          "refId": "B"
-        }
-      ],
-      "title": "MySQL Connections",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 28
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
-      },
-      "targets": [
-        {
-          "expr": "mysql_global_status_slow_queries",
-          "legendFormat": "Slow Queries",
-          "refId": "A"
-        }
-      ],
-      "title": "MySQL Slow Queries",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 36
-      },
-      "id": 9,
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "right"
-        },
-        "pieType": "donut"
-      },
-      "targets": [
-        {
-          "expr": "count(ALERTS{alertstate=\"firing\"})",
-          "legendFormat": "Firing Alerts",
-          "refId": "A"
-        }
-      ],
-      "title": "Active Alerts Status",
-      "type": "piechart"
     }
   ],
   "refresh": "10s",
@@ -534,5 +363,5 @@
   "timezone": "browser",
   "title": "Mind Care Services Monitoring",
   "uid": "mind-care-monitoring",
-  "version": 2
+  "version": 3
 }
