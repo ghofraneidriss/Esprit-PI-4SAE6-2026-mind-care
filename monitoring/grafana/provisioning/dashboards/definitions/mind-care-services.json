@@ -43,9 +43,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
+          "calcs": ["lastNotNull"]
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
@@ -58,7 +56,7 @@
           "refId": "A"
         }
       ],
-      "title": "Lost Item Service Status",
+      "title": "Lost Item Service",
       "type": "gauge"
     },
     {
@@ -96,9 +94,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
+          "calcs": ["lastNotNull"]
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
@@ -111,7 +107,7 @@
           "refId": "A"
         }
       ],
-      "title": "Followup Alert Service Status",
+      "title": "Followup Alert Service",
       "type": "gauge"
     },
     {
@@ -135,9 +131,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
+          "calcs": ["lastNotNull"]
         }
       },
       "targets": [
@@ -146,7 +140,7 @@
           "refId": "A"
         }
       ],
-      "title": "Active Alerts",
+      "title": "🚨 Active Alerts",
       "type": "stat"
     },
     {
@@ -179,7 +173,7 @@
           "refId": "A"
         }
       ],
-      "title": "JVM Memory Usage - Lost Item Service",
+      "title": "JVM Memory - Lost Item Service",
       "type": "timeseries"
     },
     {
@@ -212,7 +206,7 @@
           "refId": "A"
         }
       ],
-      "title": "JVM Memory Usage - Followup Alert Service",
+      "title": "JVM Memory - Followup Alert Service",
       "type": "timeseries"
     },
     {
@@ -311,7 +305,7 @@
           "refId": "A"
         }
       ],
-      "title": "HTTP Request Latency p95 - Lost Item Service",
+      "title": "Request Latency p95 - Lost Item Service",
       "type": "timeseries"
     },
     {
@@ -344,7 +338,73 @@
           "refId": "A"
         }
       ],
-      "title": "HTTP Request Latency p95 - Followup Alert Service",
+      "title": "Request Latency p95 - Followup Alert Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{job=\"lost-item-service\",outcome=\"SERVER_ERROR\"}[5m])",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Rate - Lost Item Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{job=\"followup-alert-service\",outcome=\"SERVER_ERROR\"}[5m])",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Rate - Followup Alert Service",
       "type": "timeseries"
     }
   ],
@@ -363,5 +423,5 @@
   "timezone": "browser",
   "title": "Mind Care Services Monitoring",
   "uid": "mind-care-monitoring",
-  "version": 3
+  "version": 4
 }
