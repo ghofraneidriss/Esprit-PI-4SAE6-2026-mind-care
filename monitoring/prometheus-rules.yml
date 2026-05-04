@@ -1,0 +1,73 @@
+groups:
+  - name: mind_care_alerts
+    interval: 30s
+    rules:
+      # Service Availability
+      - alert: ServiceDown
+        expr: up{job=~"lost-item-service|followup-alert-service"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} on {{ $labels.instance }} has been down for more than 2 minutes"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.job }}"
+          description: "Heap memory usage is {{ $value | humanizePercentage }} on {{ $labels.job }}"
+
+      # High Request Latency
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, rate(http_server_requests_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High request latency on {{ $labels.job }}"
+          description: "95th percentile latency is {{ $value }}s on {{ $labels.job }}"
+
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: (rate(http_server_requests_seconds_count{outcome="SERVER_ERROR"}[5m]) / rate(http_server_requests_seconds_count[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on {{ $labels.job }}"
+          description: "Error rate is {{ $value | humanizePercentage }} on {{ $labels.job }}"
+
+      # Database Connection Issues
+      - alert: MySQLDown
+        expr: mysql_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL database is down"
+          description: "MySQL connection lost for more than 2 minutes"
+
+      # High Database Connections
+      - alert: HighDatabaseConnections
+        expr: (mysql_global_status_threads_connected / mysql_global_variables_max_connections) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High database connection usage"
+          description: "{{ $value | humanizePercentage }} of max connections in use"
+
+      # Slow Query Rate
+      - alert: SlowQueryRate
+        expr: rate(mysql_global_status_slow_queries[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow queries detected on MySQL"
+          description: "Slow query rate: {{ $value }} per second"

@@ -1,0 +1,23 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'instance']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+
+receivers:
+  - name: 'default'
+    # Webhook receiver - can be configured later for Slack, PagerDuty, email, etc
+    webhook_configs:
+      - url: 'http://localhost:5000/alerts'
+        send_resolved: true
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']

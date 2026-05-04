@@ -4,6 +4,15 @@ global:
   external_labels:
     monitor: 'mind-care-monitoring'
 
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+rule_files:
+  - '/etc/prometheus/prometheus-rules.yml'
+
 scrape_configs:
   # Lost Item Service Metrics
   - job_name: 'lost-item-service'
@@ -23,3 +32,10 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+
+  # MySQL Metrics
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql-exporter:9104']
+    metrics_path: '/metrics'
+    scrape_interval: 15s

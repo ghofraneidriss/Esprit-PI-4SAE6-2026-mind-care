@@ -7,12 +7,18 @@ Endpoints:
     POST /recommend           → patient data → recommendations
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from model.recommender import recommend, get_cluster_profiles
 
 app = Flask(__name__)
 CORS(app)
+
+
+# ── UI ─────────────────────────────────────────────────────────────────────────
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
 
 
 # ── Health check ───────────────────────────────────────────────────────────────

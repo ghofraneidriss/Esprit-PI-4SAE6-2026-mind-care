@@ -88,7 +88,28 @@
       "Bash(git commit -m 'Replace generic RuntimeException with custom ResourceNotFoundException *)",
       "Bash(git commit -m 'Refactor methods to reduce cognitive complexity *)",
       "PowerShell($ProgressPreference = 'SilentlyContinue'; try { $response = Invoke-WebRequest -Uri \"http://localhost:9000\" -TimeoutSec 3 -ErrorAction Stop; Write-Output \"SonarQube is running\"; Write-Output $response.StatusCode } catch { Write-Output \"SonarQube not running on localhost:9000\"; Write-Output $_.Exception.Message })",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Bash(docker-compose down *)",
+      "Bash(docker-compose up *)",
+      "Bash(docker-compose ps *)",
+      "Bash(git ls-tree *)",
+      "Bash(git commit *)",
+      "Bash(docker system *)",
+      "Bash(docker builder *)",
+      "Bash(docker volume *)",
+      "Read(//home/**)",
+      "Bash(ls -la /root/)",
+      "Bash(docker-compose restart *)",
+      "Bash(docker compose *)",
+      "Bash(docker rm *)",
+      "Bash(docker run *)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" add docker-compose.yml)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" commit -m \"Comment out frontend service - image not available\")",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" show HEAD:docker-compose.yml)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" push origin jaaferFinal)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" add server/lost-item-service/Jenkinsfile server/followupalert-service/Jenkinsfile)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" commit -m \"Update SonarQube tokens for fresh SonarQube 10 instance\")",
+      "mcp__Claude_in_Chrome__list_connected_browsers"
     ]
   }
 }

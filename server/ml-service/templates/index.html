@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alzheimer's Risk Assessment</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+
+    .ml-recommendation-container { padding: 20px; max-width: 1400px; margin: 0 auto; }
+
+    .page-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
+    .page-header h1 { margin: 0 0 10px 0; color: #333; font-size: 32px; font-weight: 600; }
+    .subtitle { margin: 0; color: #666; font-size: 16px; font-weight: 400; }
+
+    .content-wrapper { display: grid; grid-template-columns: 1fr; gap: 30px; }
+
+    /* ── Form ── */
+    .form-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .form-section.disabled { opacity: .6; pointer-events: none; }
+    .form-section h2 { margin: 0 0 25px; color: #333; font-size: 24px; border-bottom: 2px solid #007bff; padding-bottom: 15px; }
+
+    .form-group-section { margin-bottom: 30px; }
+    .form-group-section h3 { margin: 0 0 15px; color: #007bff; font-size: 18px; font-weight: 600; }
+
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    .checkbox-row { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 8px; font-weight: 500; color: #333; font-size: 14px; }
+    .form-control { padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; transition: border-color .3s; }
+    .form-control:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 3px rgba(0,123,255,.15); }
+
+    .form-group.checkbox { flex-direction: row; }
+    .form-group.checkbox label { display: flex; align-items: center; margin-bottom: 0; }
+    .form-group.checkbox input[type=checkbox] { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; }
+
+    .form-actions { display: flex; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0; }
+    .btn { padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 14px; transition: all .3s; }
+    .btn-primary { background-color: #007bff; color: white; }
+    .btn-primary:hover:not(:disabled) { background-color: #0056b3; box-shadow: 0 2px 8px rgba(0,123,255,.3); }
+    .btn-secondary { background-color: #6c757d; color: white; }
+    .btn-secondary:hover:not(:disabled) { background-color: #545b62; }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    .alert { padding: 15px 20px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; }
+    .alert-danger { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+
+    /* ── Results ── */
+    .results-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .results-section h2 { margin: 0 0 25px; color: #333; font-size: 24px; border-bottom: 2px solid #28a745; padding-bottom: 15px; }
+
+    .risk-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+    .risk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .risk-header h3 { margin: 0; font-size: 22px; }
+    .risk-badge { padding: 8px 16px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; text-transform: uppercase; }
+    .risk-total { margin: 10px 0; font-size: 16px; opacity: .95; }
+    .risk-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }
+    .stat { background: rgba(255,255,255,.2); padding: 15px; border-radius: 4px; display: flex; flex-direction: column; align-items: center; }
+    .stat .label { font-size: 12px; opacity: .9; }
+    .stat .value { font-size: 28px; font-weight: bold; margin-top: 5px; }
+
+    .category-section { margin-bottom: 30px; }
+    .category-section h3 { margin: 0 0 15px; color: #333; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+
+    .recommendations-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+
+    .recommendation-card { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; transition: all .3s; }
+    .recommendation-card:hover { border-color: #007bff; box-shadow: 0 4px 12px rgba(0,123,255,.15); }
+
+    .rec-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .rec-header h4 { margin: 0; color: #333; font-size: 14px; font-weight: 600; flex: 1; }
+
+    .priority-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; white-space: nowrap; text-transform: uppercase; }
+    .priority-high   { background-color: #f8d7da; color: #721c24; }
+    .priority-medium { background-color: #fff3cd; color: #856404; }
+    .priority-low    { background-color: #d4edda; color: #155724; }
+
+    .rec-detail { font-size: 13px; color: #555; margin-bottom: 10px; line-height: 1.4; }
+
+    .rec-contribution { display: flex; align-items: center; gap: 10px; }
+    .contribution-bar-container { flex: 1; height: 8px; background-color: #dee2e6; border-radius: 4px; overflow: hidden; }
+    .contribution-bar { height: 100%; background: linear-gradient(90deg, #007bff 0%, #0056b3 100%); transition: width .5s ease; }
+    .contribution-score { font-weight: 600; color: #333; font-size: 12px; min-width: 50px; text-align: right; }
+
+    .no-results { background: white; padding: 40px; border-radius: 8px; text-align: center; color: #666; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 768px) {
+      .form-row, .checkbox-row { grid-template-columns: 1fr; }
+      .risk-stats, .recommendations-list { grid-template-columns: 1fr; }
+      .form-actions { flex-direction: column; }
+      .btn { width: 100%; }
+      .page-header h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ml-recommendation-container">
+
+  <div class="page-header">
+    <h1>🧠 Alzheimer's Risk Assessment & ML Recommendations</h1>
+    <p class="subtitle">AI-powered patient risk analysis and personalized recommendations</p>
+  </div>
+
+  <div class="content-wrapper">
+
+    <!-- Form Section -->
+    <div class="form-section" id="formSection">
+      <h2>Patient Data Input</h2>
+      <form id="form">
+
+        <!-- Demographics -->
+        <div class="form-group-section">
+          <h3>Demographics</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age (60-90) *</label>
+              <input type="number" class="form-control" name="Age" value="70" min="60" max="90" required />
+            </div>
+            <div class="form-group">
+              <label>Gender</label>
+              <select class="form-control" name="Gender">
+                <option value="0">Female</option>
+                <option value="1" selected>Male</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ethnicity</label>
+              <select class="form-control" name="Ethnicity">
+                <option value="0" selected>Other</option>
+                <option value="1">Caucasian</option>
+                <option value="2">African American</option>
+                <option value="3">Hispanic</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Education Level</label>
+              <select class="form-control" name="EducationLevel">
+                <option value="0">Elementary</option>
+                <option value="1">High School</option>
+                <option value="2" selected>College</option>
+                <option value="3">Graduate</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lifestyle -->
+        <div class="form-group-section">
+          <h3>Lifestyle Factors</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>BMI *</label>
+              <input type="number" class="form-control" name="BMI" value="24.0" step="0.1" min="10" max="50" required />
+            </div>
+            <div class="form-group">
+              <label>Smoking</label>
+              <select class="form-control" name="Smoking">
+                <option value="0" selected>Never</option>
+                <option value="1">Former</option>
+                <option value="2">Current</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Alcohol Consumption *</label>
+              <input type="number" class="form-control" name="AlcoholConsumption" value="4" min="0" max="20" required />
+            </div>
+            <div class="form-group">
+              <label>Physical Activity *</label>
+              <input type="number" class="form-control" name="PhysicalActivity" value="4.0" step="0.5" min="0" max="10" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Diet Quality *</label>
+              <input type="number" class="form-control" name="DietQuality" value="7.0" step="0.5" min="0" max="10" required />
+            </div>
+            <div class="form-group">
+              <label>Sleep Quality *</label>
+              <input type="number" class="form-control" name="SleepQuality" value="8.0" step="0.5" min="0" max="10" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- Medical History -->
+        <div class="form-group-section">
+          <h3>Medical History</h3>
+          <div class="form-row checkbox-row">
+            <div class="form-group checkbox"><label><input type="checkbox" name="FamilyHistoryAlzheimers" /> Family History of Alzheimer's</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="CardiovascularDisease" /> Cardiovascular Disease</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="Diabetes" /> Diabetes</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="Depression" /> Depression</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="HeadInjury" /> Head Injury History</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="Hypertension" /> Hypertension</label></div>
+          </div>
+        </div>
+
+        <!-- Clinical -->
+        <div class="form-group-section">
+          <h3>Clinical Measurements</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Systolic BP *</label><input type="number" class="form-control" name="SystolicBP" value="118" min="80" max="200" required /></div>
+            <div class="form-group"><label>Diastolic BP *</label><input type="number" class="form-control" name="DiastolicBP" value="76" min="40" max="130" required /></div>
+            <div class="form-group"><label>Total Cholesterol *</label><input type="number" class="form-control" name="CholesterolTotal" value="185" min="100" max="400" required /></div>
+            <div class="form-group"><label>LDL Cholesterol *</label><input type="number" class="form-control" name="CholesterolLDL" value="95" min="0" max="300" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>HDL Cholesterol *</label><input type="number" class="form-control" name="CholesterolHDL" value="65" min="0" max="150" required /></div>
+            <div class="form-group"><label>Triglycerides *</label><input type="number" class="form-control" name="CholesterolTriglycerides" value="140" min="0" max="500" required /></div>
+          </div>
+        </div>
+
+        <!-- Cognitive -->
+        <div class="form-group-section">
+          <h3>Cognitive Assessment</h3>
+          <div class="form-row">
+            <div class="form-group"><label>MMSE Score (0-30) *</label><input type="number" class="form-control" name="MMSE" value="28" min="0" max="30" required /></div>
+            <div class="form-group"><label>Functional Assessment *</label><input type="number" class="form-control" name="FunctionalAssessment" value="8" step="0.1" min="0" max="10" required /></div>
+            <div class="form-group"><label>ADL Score *</label><input type="number" class="form-control" name="ADL" value="9" step="0.1" min="0" max="10" required /></div>
+          </div>
+          <div class="form-row checkbox-row">
+            <div class="form-group checkbox"><label><input type="checkbox" name="MemoryComplaints" /> Memory Complaints</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="BehavioralProblems" /> Behavioral Problems</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="Confusion" /> Confusion</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="Disorientation" /> Disorientation</label></div>
+          </div>
+          <div class="form-row checkbox-row">
+            <div class="form-group checkbox"><label><input type="checkbox" name="PersonalityChanges" /> Personality Changes</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="DifficultyCompletingTasks" /> Difficulty Completing Tasks</label></div>
+            <div class="form-group checkbox"><label><input type="checkbox" name="Forgetfulness" /> Forgetfulness</label></div>
+          </div>
+        </div>
+
+        <div id="errorAlert" class="alert alert-danger" style="display:none"></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submitBtn">🚀 Get AI Recommendations</button>
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection" style="display:none">
+      <h2>AI Analysis Results</h2>
+
+      <div class="risk-card" id="riskCard">
+        <div class="risk-header">
+          <h3 id="riskLabel"></h3>
+          <div class="risk-badge" id="riskBadge"></div>
+        </div>
+        <p class="risk-total" id="riskTotal"></p>
+        <div class="risk-stats">
+          <div class="stat"><span class="label">High Priority</span><span class="value" id="highCount">0</span></div>
+          <div class="stat"><span class="label">Medium Priority</span><span class="value" id="medCount">0</span></div>
+        </div>
+      </div>
+
+      <div id="recommendationsByCategory"></div>
+    </div>
+
+    <!-- No results yet -->
+    <div class="no-results" id="noResults" style="display:none">
+      <p>Click "Get AI Recommendations" to analyze the patient data and receive personalized recommendations.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const FIELDS = [
+    'Age','Gender','Ethnicity','EducationLevel','BMI','Smoking',
+    'AlcoholConsumption','PhysicalActivity','DietQuality','SleepQuality',
+    'FamilyHistoryAlzheimers','CardiovascularDisease','Diabetes','Depression',
+    'HeadInjury','Hypertension','SystolicBP','DiastolicBP','CholesterolTotal',
+    'CholesterolLDL','CholesterolHDL','CholesterolTriglycerides','MMSE',
+    'FunctionalAssessment','MemoryComplaints','BehavioralProblems','ADL',
+    'Confusion','Disorientation','PersonalityChanges','DifficultyCompletingTasks','Forgetfulness'
+  ];
+
+  const CATEGORY_ICONS = { Lifestyle: '❤️', Clinical: '🩺', Cognitive: '🧠', 'Mental Health': '😊', Preventive: '🛡️' };
+
+  function clusterColor(label) {
+    if (label.includes('Low'))    return '#28a745';
+    if (label.includes('Medium')) return '#fd7e14';
+    if (label.includes('High'))   return '#dc3545';
+    return '#007bff';
+  }
+
+  document.getElementById('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const err = document.getElementById('errorAlert');
+    err.style.display = 'none';
+    document.getElementById('formSection').classList.add('disabled');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Analyzing...';
+
+    const payload = {};
+    FIELDS.forEach(f => {
+      const el = document.querySelector(`[name="${f}"]`);
+      payload[f] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : Number(el.value);
+    });
+
+    try {
+      const res  = await fetch('/recommend', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!res.ok) { showError(data.error || 'Server error'); return; }
+      renderResults(data);
+    } catch(ex) {
+      showError('Could not reach the server: ' + ex.message);
+    } finally {
+      document.getElementById('formSection').classList.remove('disabled');
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Get AI Recommendations';
+    }
+  });
+
+  function showError(msg) {
+    const d = document.getElementById('errorAlert');
+    d.textContent = msg;
+    d.style.display = 'block';
+  }
+
+  function renderResults(r) {
+    const color = clusterColor(r.risk_label);
+
+    // Risk card
+    document.getElementById('riskLabel').textContent = r.cluster_label;
+    const badge = document.getElementById('riskBadge');
+    badge.textContent = r.risk_level;
+    badge.style.backgroundColor = color;
+    document.getElementById('riskTotal').innerHTML = `Total Recommendations: <strong>${r.total_recommendations}</strong>`;
+    document.getElementById('highCount').textContent = r.recommendations.filter(x => x.priority === 'High').length;
+    document.getElementById('medCount').textContent  = r.recommendations.filter(x => x.priority === 'Medium').length;
+
+    // Recommendations by category
+    const maxScore = Math.max(...r.recommendations.map(x => x.contribution_score)) || 1;
+    const cats = [...new Set(r.recommendations.map(x => x.category))];
+    const html = cats.map(cat => {
+      const items = r.recommendations.filter(x => x.category === cat).map(rec => {
+        const pct = Math.round((rec.contribution_score / maxScore) * 100);
+        const pClass = rec.priority.toLowerCase();
+        return `
+          <div class="recommendation-card">
+            <div class="rec-header">
+              <h4>${rec.description}</h4>
+              <span class="priority-badge priority-${pClass}">${rec.priority}</span>
+            </div>
+            <div class="rec-contribution">
+              <div class="contribution-bar-container">
+                <div class="contribution-bar" style="width:${pct}%"></div>
+              </div>
+              <span class="contribution-score">${(rec.contribution_score * 100).toFixed(1)}%</span>
+            </div>
+          </div>`;
+      }).join('');
+      const icon = CATEGORY_ICONS[cat] || '⭐';
+      return `<div class="category-section"><h3>${icon} ${cat}</h3><div class="recommendations-list">${items}</div></div>`;
+    }).join('');
+
+    document.getElementById('recommendationsByCategory').innerHTML = html;
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('noResults').style.display = 'none';
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    document.getElementById('form').reset();
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('errorAlert').style.display = 'none';
+    document.getElementById('noResults').style.display = 'none';
+  }
+</script>
+</body>
+</html>

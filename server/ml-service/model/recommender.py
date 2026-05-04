@@ -4,8 +4,9 @@ recommender.py — ML-driven recommendation engine.
 Pipeline:
   Patient data
     -> StandardScaler (fitted on training set)
-    -> Random Forest + Gradient Boosting (ensemble)
+    -> Winner model (RF optimised or GB — selected by CV AUC)
     -> Risk score 0-100
+    -> SHAP per-patient explanation
     -> Contribution score per feature (importance x deviation from healthy baseline)
     -> Recommendations ranked by contribution score
 """
@@ -20,20 +21,27 @@ BASE_DIR  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SAVED_DIR = os.path.join(BASE_DIR, "saved_models")
 
 # ── Lazy-loaded artifacts ──────────────────────────────────────────────────────
-_rf       = None
-_gb       = None
-_scaler   = None
-_artifacts = None   # dict: feature_cols, feature_importance, healthy_mean, healthy_std, metrics
+_model          = None   # winning model (RF or GB)
+_scaler         = None
+_artifacts      = None   # dict: feature_cols, feature_importance, healthy_mean, healthy_std, metrics
+_shap_explainer = None   # SHAP TreeExplainer (optional — loaded if available)
 
 
 def _load():
-    global _rf, _gb, _scaler, _artifacts
-    if _rf is None:
-        _rf     = joblib.load(os.path.join(SAVED_DIR, 'rf_model.pkl'))
-        _gb     = joblib.load(os.path.join(SAVED_DIR, 'gb_model.pkl'))
-        _scaler = joblib.load(os.path.join(SAVED_DIR, 'scaler.pkl'))
+    global _model, _scaler, _artifacts, _shap_explainer
+    if _model is None:
         with open(os.path.join(SAVED_DIR, 'model_artifacts.json')) as f:
             _artifacts = json.load(f)
+        best = _artifacts['metrics']['best_model']
+        model_file = 'rf_model.pkl' if best == 'rf' else 'gb_model.pkl'
+        _model  = joblib.load(os.path.join(SAVED_DIR, model_file))
+        _scaler = joblib.load(os.path.join(SAVED_DIR, 'scaler.pkl'))
+        shap_path = os.path.join(SAVED_DIR, 'shap_explainer.pkl')
+        if os.path.exists(shap_path):
+            try:
+                _shap_explainer = joblib.load(shap_path)
+            except Exception:
+                _shap_explainer = None
 
 
 # ── Feature direction: +1 means higher value = higher risk, -1 means lower = higher risk
@@ -293,6 +301,39 @@ TEMPLATES = {
 }
 
 
+# ── SHAP per-patient explanation ──────────────────────────────────────────────
+def _get_shap_explanation(X_scaled: np.ndarray, feature_cols: list) -> list:
+    """
+    Returns top-10 SHAP-driven feature contributions for the positive class.
+    Falls back to an empty list if the explainer is not available.
+    """
+    if _shap_explainer is None:
+        return []
+    try:
+        sv = _shap_explainer.shap_values(X_scaled)
+        # Handle all shap version layouts:
+        #   list [class0, class1] (n_samples, n_features)  — old shap
+        #   ndarray (n_samples, n_features, 2)              — new shap ≥0.46
+        #   ndarray (n_samples, n_features)                 — single output
+        if isinstance(sv, list):
+            row = sv[1][0]
+        elif isinstance(sv, np.ndarray) and sv.ndim == 3:
+            row = sv[0, :, 1]
+        else:
+            row = sv[0]
+        pairs = sorted(
+            zip(feature_cols, row.tolist()),
+            key=lambda x: abs(x[1]),
+            reverse=True,
+        )
+        return [
+            {'feature': feat, 'shap_value': round(val, 5)}
+            for feat, val in pairs[:10]
+        ]
+    except Exception:
+        return []
+
+
 # ── Core: compute contribution score per feature ───────────────────────────────
 def _compute_contributions(patient: dict) -> dict:
     """
@@ -367,11 +408,9 @@ def recommend(patient_data: dict) -> dict:
     X = np.array([[patient_data.get(f, 0) for f in feature_cols]], dtype=float)
     X_scaled = _scaler.transform(X)
 
-    # --- Step 2: Ensemble risk score (ML base) ---
-    prob_rf  = float(_rf.predict_proba(X_scaled)[0][1])
-    prob_gb  = float(_gb.predict_proba(X_scaled)[0][1])
-    prob_ens = (prob_rf + prob_gb) / 2
-    ml_score = prob_ens * 100
+    # --- Step 2: Risk score from the best model ---
+    prob     = float(_model.predict_proba(X_scaled)[0][1])
+    ml_score = prob * 100
 
     # --- Step 2b: Symptom burden boost ---
     # The ML model learned from data where symptoms AND cognitive decline
@@ -380,18 +419,21 @@ def recommend(patient_data: dict) -> dict:
     symptom_count = sum(int(patient_data.get(s, 0)) for s in CRITICAL_SYMPTOMS)
     history_count = sum(int(patient_data.get(h, 0)) for h in RISK_HISTORY)
 
-    # Each symptom: +5 pts (max 35), each risk history factor: +2 pts (max 12)
-    symptom_boost = symptom_count * 5
-    history_boost = history_count * 2
+    # Each symptom: +7 pts (max 49), each risk history factor: +3 pts (max 18)
+    symptom_boost = symptom_count * 7
+    history_boost = history_count * 3
     risk_score = round(min(100.0, ml_score + symptom_boost + history_boost), 1)
 
-    # --- Step 3: Risk label (hybrid: adjusted score + symptom hard override) ---
-    if risk_score >= 60 or symptom_count >= 6:
+    # --- Step 3: Risk label ---
+    if risk_score >= 55 or symptom_count >= 4:
         risk_label = 'High Risk'
-    elif risk_score >= 35 or symptom_count >= 3:
+    elif risk_score >= 30 or symptom_count >= 2:
         risk_label = 'Medium Risk'
     else:
         risk_label = 'Low Risk'
+
+    # --- Step 3b: SHAP per-patient explanation ---
+    shap_explanation = _get_shap_explanation(X_scaled, feature_cols)
 
     # --- Step 4: Feature contribution scores ---
     contributions = _compute_contributions(patient_data)
@@ -428,6 +470,7 @@ def recommend(patient_data: dict) -> dict:
             'category':           template['category'],
             'priority':           priority,
             'recommendation':     template['recommendation'],
+            'description':        detail,
             'detail':             detail,
             'contribution_score': score,
             'patient_value':      patient_data.get(feat),
@@ -452,19 +495,18 @@ def recommend(patient_data: dict) -> dict:
     return {
         'risk_score':            risk_score,
         'risk_label':            risk_label,
-        # cluster_* aliases — used by the frontend result panel
+        'risk_level':            risk_label,
         'cluster_id':            tier['id'],
         'cluster_label':         risk_label,
         'cluster_profile':       cluster_profile,
-        'prob_rf':               round(prob_rf * 100, 1),
-        'prob_gb':               round(prob_gb * 100, 1),
+        'model_prob':            round(prob * 100, 1),
         'total_recommendations': len(recommendations),
         'risk_drivers':          risk_drivers,
         'recommendations':       recommendations,
+        'shap_explanation':      shap_explanation,
         'model_info': {
-            'rf_cv_auc':  metrics['rf_cv_auc_mean'],
-            'gb_cv_auc':  metrics['gb_cv_auc_mean'],
-            'best_model': metrics['best_model'],
+            'model':   metrics['best_model'].upper(),
+            'cv_auc':  metrics[f"{metrics['best_model']}_cv_auc_mean"],
         },
     }
 

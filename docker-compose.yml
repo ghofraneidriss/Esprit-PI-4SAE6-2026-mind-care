@@ -23,6 +23,51 @@ services:
     networks:
       - mindcare-network
 
+  # MySQL Exporter for Prometheus
+  mysql-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: alzcare-mysql-exporter
+    ports:
+      - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=root@(mysql:3306)/
+    command:
+      - '--collect.info_schema.innodb_metrics'
+      - '--collect.info_schema.innodb_tablespaces'
+      - '--collect.info_schema.innodb_cmp'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9104/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # AlertManager for Alert Routing
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alzcare-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    networks:
+      - mindcare-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Lost Item Service
   lost-item-service:
     image: ghofraneidriss/lost-item-service:latest
@@ -113,6 +158,7 @@ services:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus-rules.yml:/etc/prometheus/prometheus-rules.yml:ro
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -182,3 +228,5 @@ volumes:
     name: alzcare-prometheus-data
   grafana_data:
     name: alzcare-grafana-data
+  alertmanager_data:
+    name: alzcare-alertmanager-data
