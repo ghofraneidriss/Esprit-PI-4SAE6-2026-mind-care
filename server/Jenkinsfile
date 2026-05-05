@@ -22,7 +22,7 @@ pipeline {
         stage('Build & Install Parent') {
             steps {
                 dir('server') {
-                //TEST POUR NGROK
+                // Test Webhook #177
                     sh 'mvn clean install -DskipTests'
                 }
             }
