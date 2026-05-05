@@ -24,9 +24,12 @@ pipeline {
             steps {
                 echo '🔄 Checking out code...'
                 cleanWs()
-                retry(5) {
-                    checkout scm
-                }
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/jaaferFinal']],
+                    userRemoteConfigs: [[url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git']],
+                    extensions: [[$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: true]]
+                ])
             }
         }
 
