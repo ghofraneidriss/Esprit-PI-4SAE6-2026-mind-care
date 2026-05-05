@@ -22,6 +22,7 @@ pipeline {
         stage('Build & Install Parent') {
             steps {
                 dir('server') {
+                //TEST POUR NGROK
                     sh 'mvn clean install -DskipTests'
                 }
             }
