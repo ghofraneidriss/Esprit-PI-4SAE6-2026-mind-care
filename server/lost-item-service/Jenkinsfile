@@ -87,7 +87,7 @@ pipeline {
                           -Dsonar.sources=src/main \
                           -Dsonar.tests=src/test \
                           -Dsonar.host.url=http://localhost:9000 \
-                          -Dsonar.login=${SONARQUBE_TOKEN} \
+                          -Dsonar.token=${SONARQUBE_TOKEN} \
                           || echo "SonarQube analysis skipped (server unavailable or auth failed)"
                     '''
                 }
