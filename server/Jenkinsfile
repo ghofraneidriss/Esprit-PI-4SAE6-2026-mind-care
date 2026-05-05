@@ -14,7 +14,6 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                // Utilisation de TON repo pour que le Webhook fonctionne à 100%
                 git branch: 'Amena-Farah-Finale',
                     url: 'https://github.com/zouaouifarahh/Esprit-PI-4SAE6-2026-mind-care.git'
             }
@@ -61,7 +60,6 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
-                    // On laisse abortPipeline: false pour que le build continue même si Sonar met du temps à répondre
                     waitForQualityGate abortPipeline: false
                 }
             }
@@ -72,7 +70,6 @@ pipeline {
                 script {
                     echo "🛡️ Analyse des vulnérabilités avec Snyk (DevSecOps)..."
                     dir('server/forums_service') {
-                        // Le || true évite de bloquer le pipeline en cas de vulnérabilités, permettant la démo
                         sh 'snyk test --severity-threshold=high || true'
                     }
                     dir('server/incident_service') {
