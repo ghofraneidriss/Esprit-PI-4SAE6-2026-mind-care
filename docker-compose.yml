@@ -202,7 +202,7 @@ services:
       SONAR_JDBC_USERNAME: sonarqube
       SONAR_JDBC_PASSWORD: sonarqube
     volumes:
-      - sonarqube_data:/opt/sonarqube/data
+      - alzcare-sonarqube-db-data:/opt/sonarqube/data
       - sonarqube_logs:/opt/sonarqube/logs
     restart: unless-stopped
     networks:
@@ -251,8 +251,9 @@ volumes:
     name: alzcare-grafana-data
   alertmanager_data:
     name: alzcare-alertmanager-data
-  sonarqube_data:
-    name: sonarqube-data
+  alzcare-sonarqube-db-data:
+    name: alzcare-sonarqube-db-data
+    external: true
   sonarqube_logs:
     name: sonarqube-logs
   sonarqube_postgres_data:
