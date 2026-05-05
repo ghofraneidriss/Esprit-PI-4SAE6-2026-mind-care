@@ -15,6 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'Amena-Farah-Finale',
+                //testurl farah
                     url: 'https://github.com/zouaouifarahh/Esprit-PI-4SAE6-2026-mind-care.git'
             }
         }
