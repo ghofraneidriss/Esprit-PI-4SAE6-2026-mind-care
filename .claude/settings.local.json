@@ -109,7 +109,12 @@
       "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" push origin jaaferFinal)",
       "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" add server/lost-item-service/Jenkinsfile server/followupalert-service/Jenkinsfile)",
       "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" commit -m \"Update SonarQube tokens for fresh SonarQube 10 instance\")",
-      "mcp__Claude_in_Chrome__list_connected_browsers"
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "Bash(wsl bash *)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" add server/lost-item-service/pom.xml server/followupalert-service/pom.xml)",
+      "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Fix: Configure separate snapshot repository for Maven artifact deployment *)",
+      "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" add .)",
+      "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Fix: SonarQube and Docker Compose configuration *)"
     ]
   }
 }

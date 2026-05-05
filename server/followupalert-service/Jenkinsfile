@@ -7,7 +7,7 @@ pipeline {
         SERVICE_NAME = 'followup-alert-service'
         DOCKER_REGISTRY = 'ghofraneidriss'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        SONARQUBE_TOKEN = 'squ_5fe41a5099ea0e91acf077376be48bd8238ef352'
+        SONARQUBE_TOKEN = 'squ_e0870cc0c2431c7ce7a9f781d2de7d8452f706ec'
         GIT_SSL_NO_VERIFY = 'true'
         GIT_TRACE = '1'
         GIT_HTTP_LOW_SPEED_LIMIT = '0'

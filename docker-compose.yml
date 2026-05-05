@@ -253,12 +253,7 @@ volumes:
     name: alzcare-alertmanager-data
   alzcare-sonarqube-db-data:
     name: alzcare-sonarqube-db-data
-    external: true
   sonarqube_logs:
     name: sonarqube-logs
   sonarqube_postgres_data:
     name: sonarqube-postgres-data
-  grafana_data:
-    name: alzcare-grafana-data
-  alertmanager_data:
-    name: alzcare-alertmanager-data
