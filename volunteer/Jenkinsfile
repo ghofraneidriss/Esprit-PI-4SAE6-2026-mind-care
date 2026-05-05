@@ -68,24 +68,18 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    script {
-                        try {
-                            withCredentials([string(credentialsId: 'sonar-token-mindcare', variable: 'SONAR_TOKEN')]) {
-                                echo "[SONAR] $SERVICE_NAME"
-                                sh '''
-                                    set -e
-                                    cd "$SERVICE_DIR"
-                                    mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
-                                    -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-                                    -Dsonar.projectName="$SONAR_PROJECT_NAME" \
-                                    -Dsonar.host.url="$SONAR_HOST_URL" \
-                                    -Dsonar.token="$SONAR_TOKEN" \
-                                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                                '''
-                            }
-                        } catch (err) {
-                            echo "Skipping SonarQube analysis: ${err.getMessage()}"
-                        }
+                    withCredentials([string(credentialsId: 'sonar-token-mindcare', variable: 'SONAR_TOKEN')]) {
+                        echo "[SONAR] $SERVICE_NAME"
+                        sh '''
+                            set -e
+                            cd "$SERVICE_DIR"
+                            mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+                            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+                            -Dsonar.projectName="$SONAR_PROJECT_NAME" \
+                            -Dsonar.host.url="$SONAR_HOST_URL" \
+                            -Dsonar.token="$SONAR_TOKEN" \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        '''
                     }
                 }
             }
