@@ -11,7 +11,6 @@ pipeline {
         IMAGE_NAME_BACK = 'ghofrane/medical-report-service'
         IMAGE_NAME_VOL = 'ghofrane/volunteer-service'
         SONAR_HOST_URL = 'http://172.21.32.1:9000'
-        SONAR_TOKEN = credentials('sonar-token-mindcare')
         SONAR_PROJECT_KEY = 'mind_care'
         SONAR_PROJECT_NAME = 'mind_care'
         SERVICE_NAME = 'volunteer'
@@ -69,17 +68,19 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    echo "[SONAR] $SERVICE_NAME"
-                    sh '''
-                        set -e
-                        cd "$SERVICE_DIR"
-                        mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
-                        -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-                        -Dsonar.projectName="$SONAR_PROJECT_NAME" \
-                        -Dsonar.host.url="$SONAR_HOST_URL" \
-                        -Dsonar.token="$SONAR_TOKEN" \
-                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                    '''
+                    withCredentials([string(credentialsId: 'sonar-token-mindcare', variable: 'SONAR_TOKEN')]) {
+                        echo "[SONAR] $SERVICE_NAME"
+                        sh '''
+                            set -e
+                            cd "$SERVICE_DIR"
+                            mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+                            -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
+                            -Dsonar.projectName="$SONAR_PROJECT_NAME" \
+                            -Dsonar.host.url="$SONAR_HOST_URL" \
+                            -Dsonar.token="$SONAR_TOKEN" \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        '''
+                    }
                 }
             }
         }
