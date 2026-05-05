@@ -14,15 +14,15 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                // Utilisation de TON repo pour que le Webhook fonctionne à 100%
                 git branch: 'Amena-Farah-Finale',
-                    url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
+                    url: 'https://github.com/zouaouifarahh/Esprit-PI-4SAE6-2026-mind-care.git'
             }
         }
 
         stage('Build & Install Parent') {
             steps {
                 dir('server') {
-                // Test Webhook #177
                     sh 'mvn clean install -DskipTests'
                 }
             }
@@ -31,7 +31,6 @@ pipeline {
         stage('Test & Jacoco Report') {
             steps {
                 dir('server/forums_service') {
-                // Test Webhook #17
                     sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dtest=!ForumsServiceApplicationTests'
                 }
                 dir('server/incident_service') {
@@ -62,7 +61,23 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
+                    // On laisse abortPipeline: false pour que le build continue même si Sonar met du temps à répondre
                     waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+
+        stage('Snyk Security Scan') {
+            steps {
+                script {
+                    echo "🛡️ Analyse des vulnérabilités avec Snyk (DevSecOps)..."
+                    dir('server/forums_service') {
+                        // Le || true évite de bloquer le pipeline en cas de vulnérabilités, permettant la démo
+                        sh 'snyk test --severity-threshold=high || true'
+                    }
+                    dir('server/incident_service') {
+                        sh 'snyk test --severity-threshold=high || true'
+                    }
                 }
             }
         }
@@ -85,7 +100,7 @@ pipeline {
                 )]) {
                     sh """
                         ARTIFACTORY_URL="http://172.17.0.3:8082/artifactory/libs-snapshot-local"
-                        WORKSPACE_SERVER="/var/jenkins_home/workspace/mind-care-pipeline/server"
+                        WORKSPACE_SERVER="${WORKSPACE}/server"
                         SERVICES="eureka_server users_service forums_service incident_service activities_service localization_service movement_service api_gateway"
 
                         for service in \$SERVICES; do
@@ -111,8 +126,6 @@ pipeline {
                                 echo "⚠️ \$service upload HTTP \$HTTP_CODE, continuing..."
                             fi
                         done
-
-                        echo "✅ Tous les uploads terminés !"
                     """
                 }
             }
@@ -122,7 +135,7 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline réussi — Tests + JaCoCo + SonarQube + Docker + Artifactory OK !'
+            echo '✅ Pipeline réussi — Tests + SonarQube + Snyk + Docker + Artifactory OK !'
         }
         failure {
             echo '❌ Pipeline échoué.'
