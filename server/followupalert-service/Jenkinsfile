@@ -70,12 +70,10 @@ pipeline {
                 dir('server/followupalert-service') {
                     sh '''
                         mvn deploy \
+                          -s ~/.m2/settings.xml \
                           -DskipTests \
                           -Dmaven.install.skip=true \
                           -Dorg.slf4j.simpleLogger.defaultLogLevel=info \
-                          -DrepositoryId=mind-care-releases \
-                          -Dusername=jenkins \
-                          -Dpassword=nexus-jenkins-pwd \
                           || echo "Nexus deployment skipped (server unavailable or auth failed)"
                     '''
                 }
