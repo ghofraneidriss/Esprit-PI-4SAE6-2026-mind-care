@@ -121,39 +121,6 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 8,
-        "x": 16,
-        "y": 0
-      },
-      "id": 13,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": ["lastNotNull"]
-        }
-      },
-      "targets": [
-        {
-          "expr": "count(ALERTS) or vector(0)",
-          "refId": "A"
-        }
-      ],
-      "title": "🚨 Active Alerts",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
@@ -340,72 +307,6 @@
       ],
       "title": "Request Latency p95 - Followup Alert Service",
       "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 28
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
-      },
-      "targets": [
-        {
-          "expr": "rate(http_server_requests_seconds_count{job=\"lost-item-service\",status=~\"5..\"}[5m])",
-          "refId": "A"
-        }
-      ],
-      "title": "Error Rate - Lost Item Service",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 28
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
-      },
-      "targets": [
-        {
-          "expr": "rate(http_server_requests_seconds_count{job=\"followup-alert-service\",status=~\"5..\"}[5m])",
-          "refId": "A"
-        }
-      ],
-      "title": "Error Rate - Followup Alert Service",
-      "type": "timeseries"
     }
   ],
   "refresh": "10s",
@@ -423,5 +324,5 @@
   "timezone": "browser",
   "title": "Mind Care Services Monitoring",
   "uid": "mind-care-monitoring",
-  "version": 4
+  "version": 5
 }
