@@ -105,9 +105,9 @@
 			<url>http://localhost:8081/nexus/repository/mind-care-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>mind-care-releases</id>
+			<id>mind-care-snapshots</id>
 			<name>Mind Care Snapshots</name>
-			<url>http://localhost:8081/nexus/repository/mind-care-releases/</url>
+			<url>http://localhost:8081/nexus/repository/mind-care-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
