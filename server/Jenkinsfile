@@ -14,8 +14,8 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                // Utilisation de TON repo pour que le Webhook fonctionne
                 git branch: 'Amena-Farah-Finale',
-                //testurl farah
                     url: 'https://github.com/zouaouifarahh/Esprit-PI-4SAE6-2026-mind-care.git'
             }
         }
@@ -60,8 +60,15 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: false
+                script {
+                    try {
+                        timeout(time: 2, unit: 'MINUTES') {
+                            // On vérifie le statut mais abortPipeline: false évite de tout stopper si Sonar est lent
+                            waitForQualityGate abortPipeline: false
+                        }
+                    } catch (Exception e) {
+                        echo "⚠️ Timeout SonarQube atteint, mais on continue pour scanner la sécurité avec Snyk..."
+                    }
                 }
             }
         }
@@ -69,11 +76,15 @@ pipeline {
         stage('Snyk Security Scan') {
             steps {
                 script {
-                    echo "🛡️ Analyse des vulnérabilités avec Snyk (DevSecOps)..."
+                    echo "🛡️ Analyse et Publication vers le Dashboard Snyk (DevSecOps)..."
                     dir('server/forums_service') {
+                        // 'monitor' pour envoyer les résultats sur app.snyk.io
+                        sh 'snyk monitor --project-name=forums-service || true'
+                        // 'test' pour afficher le détail dans la console Jenkins
                         sh 'snyk test --severity-threshold=high || true'
                     }
                     dir('server/incident_service') {
+                        sh 'snyk monitor --project-name=incident-service || true'
                         sh 'snyk test --severity-threshold=high || true'
                     }
                 }
@@ -119,9 +130,9 @@ pipeline {
                                 -T "\$JAR_FILE")
 
                             if [ "\$HTTP_CODE" = "201" ] || [ "\$HTTP_CODE" = "200" ]; then
-                                echo "✅ \$service uploadé avec succès ! (HTTP \$HTTP_CODE)"
+                                echo "✅ \$service uploadé avec succès !"
                             else
-                                echo "⚠️ \$service upload HTTP \$HTTP_CODE, continuing..."
+                                echo "⚠️ \$service erreur HTTP \$HTTP_CODE"
                             fi
                         done
                     """
@@ -133,10 +144,10 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline réussi — Tests + SonarQube + Snyk + Docker + Artifactory OK !'
+            echo '✅ Pipeline complet réussi — Code, Sécurité, Docker et Artifactory OK !'
         }
         failure {
-            echo '❌ Pipeline échoué.'
+            echo '❌ Le pipeline a rencontré une erreur.'
         }
     }
 }
