@@ -115,7 +115,8 @@
       "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Fix: Configure separate snapshot repository for Maven artifact deployment *)",
       "Bash(git -C \"C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah\" add .)",
       "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Fix: SonarQube and Docker Compose configuration *)",
-      "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Setup: SonarQube v10 with user tokens in PostgreSQL database *)"
+      "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Setup: SonarQube v10 with user tokens in PostgreSQL database *)",
+      "Bash(git -C 'C:\\\\Users\\\\jaafe\\\\Downloads\\\\Esprit-PI-4SAE6-2026-mind-care-amenaazizfarah' commit -m 'Setup: SonarQube admin user and Jenkins pipeline tokens *)"
     ]
   }
 }
