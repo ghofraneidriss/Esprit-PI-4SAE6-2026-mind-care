@@ -100,6 +100,19 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<distributionManagement>
+		<repository>
+			<id>mind-care-releases</id>
+			<name>Mind Care Releases</name>
+			<url>http://localhost:8081/nexus/repository/mind-care-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>mind-care-releases</id>
+			<name>Mind Care Snapshots</name>
+			<url>http://localhost:8081/nexus/repository/mind-care-releases/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>

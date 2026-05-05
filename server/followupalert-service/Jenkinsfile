@@ -58,6 +58,21 @@ pipeline {
             }
         }
 
+        stage('Deploy to Nexus') {
+            steps {
+                echo '📦 Deploying artifact to Nexus Repository...'
+                dir('server/followupalert-service') {
+                    sh '''
+                        mvn deploy \
+                          -DskipTests \
+                          -Dmaven.install.skip=true \
+                          -Dorg.slf4j.simpleLogger.defaultLogLevel=info \
+                          || echo "Nexus deployment skipped (server unavailable or auth failed)"
+                    '''
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 echo '📊 Running SonarQube analysis...'
