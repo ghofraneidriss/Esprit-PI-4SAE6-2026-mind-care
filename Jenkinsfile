@@ -45,19 +45,32 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    dir('server/forums_service') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=forums-service -Dsonar.projectName='Forums Service' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/forums_service/target/site/jacoco/jacoco.xml"
-                    }
-                    dir('server/incident_service') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=incident-service -Dsonar.projectName='Incident Service' -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/incident_service/target/site/jacoco/jacoco.xml"
-                    }
+      stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                dir('server/forums_service') {
+                    sh """
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=forums-service \
+                          -Dsonar.projectName='Forums Service' \
+                          -Dsonar.login=${SONAR_TOKEN} \
+                          -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/forums_service/target/site/jacoco/jacoco.xml
+                    """
+                }
+                dir('server/incident_service') {
+                    sh """
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=incident-service \
+                          -Dsonar.projectName='Incident Service' \
+                          -Dsonar.login=${SONAR_TOKEN} \
+                          -Dsonar.coverage.jacoco.xmlReportPaths=${WORKSPACE}/server/incident_service/target/site/jacoco/jacoco.xml
+                    """
                 }
             }
         }
-
+    }
+}
         stage('Quality Gate') {
             steps {
                 script {
