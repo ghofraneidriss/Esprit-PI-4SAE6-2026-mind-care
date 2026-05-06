@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_BUILD_RUNTIME_IMAGE = 'eclipse-temurin:17-jre'
+    }
+
     options {
         timeout(time: 30, unit: 'MINUTES')
         timestamps()
@@ -19,7 +23,10 @@ pipeline {
         stage('Build images') {
             steps {
                 sh '''
-                    docker build \
+                    docker image inspect "$DOCKER_BUILD_RUNTIME_IMAGE" >/dev/null 2>&1 || docker pull "$DOCKER_BUILD_RUNTIME_IMAGE"
+                '''
+                sh '''
+                    DOCKER_BUILDKIT=0 docker build --pull=false \
                       -f backoffice/ordonnance_et_medicaments/Dockerfile \
                       -t 121999121999/mindcare-ordonnance:${BUILD_NUMBER} \
                       -t 121999121999/mindcare-ordonnance:${GIT_SHORT_COMMIT} \
@@ -27,7 +34,7 @@ pipeline {
                       backoffice
                 '''
                 sh '''
-                    docker build \
+                    DOCKER_BUILDKIT=0 docker build --pull=false \
                       -f backoffice/traitement_et_consultation/Dockerfile \
                       -t 121999121999/mindcare-traitement:${BUILD_NUMBER} \
                       -t 121999121999/mindcare-traitement:${GIT_SHORT_COMMIT} \

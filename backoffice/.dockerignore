@@ -1,4 +1,8 @@
 **/target
+!ordonnance_et_medicaments/target/
+!ordonnance_et_medicaments/target/*.jar
+!traitement_et_consultation/target/
+!traitement_et_consultation/target/*.jar
 **/.idea
 **/.mvn/wrapper/maven-wrapper.jar
 **/HELP.md

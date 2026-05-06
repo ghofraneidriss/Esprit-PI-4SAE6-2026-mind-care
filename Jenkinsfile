@@ -6,6 +6,7 @@ pipeline {
         DOCKERHUB_NAMESPACE = '121999121999'
         DOCKER_IMAGE_ORDONNANCE = '121999121999/mindcare-ordonnance'
         DOCKER_IMAGE_TRAITEMENT = '121999121999/mindcare-traitement'
+        DOCKER_BUILD_RUNTIME_IMAGE = 'eclipse-temurin:17-jre'
     }
 
     options {
@@ -91,7 +92,10 @@ pipeline {
         stage('Build Docker images') {
             steps {
                 sh '''
-                    docker build \
+                    docker image inspect "$DOCKER_BUILD_RUNTIME_IMAGE" >/dev/null 2>&1 || docker pull "$DOCKER_BUILD_RUNTIME_IMAGE"
+                '''
+                sh '''
+                    DOCKER_BUILDKIT=0 docker build --pull=false \
                       -f backoffice/ordonnance_et_medicaments/Dockerfile \
                       -t "$DOCKER_IMAGE_ORDONNANCE:${BUILD_NUMBER}" \
                       -t "$DOCKER_IMAGE_ORDONNANCE:${GIT_SHORT_COMMIT}" \
@@ -99,7 +103,7 @@ pipeline {
                       backoffice
                 '''
                 sh '''
-                    docker build \
+                    DOCKER_BUILDKIT=0 docker build --pull=false \
                       -f backoffice/traitement_et_consultation/Dockerfile \
                       -t "$DOCKER_IMAGE_TRAITEMENT:${BUILD_NUMBER}" \
                       -t "$DOCKER_IMAGE_TRAITEMENT:${GIT_SHORT_COMMIT}" \

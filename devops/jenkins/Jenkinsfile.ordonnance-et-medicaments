@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = '121999121999/mindcare-ordonnance'
+        DOCKER_BUILD_RUNTIME_IMAGE = 'eclipse-temurin:17-jre'
     }
 
     stages {
@@ -49,7 +50,10 @@ pipeline {
         stage('Docker image') {
             steps {
                 sh '''
-                    docker build \
+                    docker image inspect "$DOCKER_BUILD_RUNTIME_IMAGE" >/dev/null 2>&1 || docker pull "$DOCKER_BUILD_RUNTIME_IMAGE"
+                '''
+                sh '''
+                    DOCKER_BUILDKIT=0 docker build --pull=false \
                       -f backoffice/ordonnance_et_medicaments/Dockerfile \
                       -t "$DOCKER_IMAGE:${BUILD_NUMBER}" \
                       -t "$DOCKER_IMAGE:${GIT_SHORT_COMMIT}" \
