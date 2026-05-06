@@ -52,7 +52,12 @@ networks:
 
 volumes:
   jenkins_home:
+    name: jenkins_home
   sonarqube_data:
+    name: sonarqube_data
   sonarqube_extensions:
+    name: sonarqube_extensions
   sonarqube_logs:
+    name: sonarqube_logs
   sonar_db:
+    name: sonar_db
