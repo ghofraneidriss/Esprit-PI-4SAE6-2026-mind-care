@@ -66,28 +66,31 @@ pipeline {
         }
 
         stage('SonarQube backend') {
-            parallel {
-                stage('Sonar ordonnance et medicaments') {
-                    steps {
-                        withSonarQubeEnv('SonarQube') {
-                            dir('backoffice/ordonnance_et_medicaments') {
-                                sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-ordonnance -Dsonar.projectName="MindCare Ordonnance Medicaments" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
-                            }
-                        }
-                    }
-                }
-
-                stage('Sonar traitement et consultation') {
-                    steps {
-                        withSonarQubeEnv('SonarQube') {
-                            dir('backoffice/traitement_et_consultation') {
-                                sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-traitement-consultation -Dsonar.projectName="MindCare Traitement Consultation" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
-                            }
+    parallel {
+        stage('Sonar ordonnance et medicaments') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    withCredentials([string(credentialsId: 'sonar-token-khaoula', variable: 'SONAR_TOKEN')]) {
+                        dir('backoffice/ordonnance_et_medicaments') {
+                            sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-ordonnance -Dsonar.projectName="MindCare Ordonnance Medicaments" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml -Dsonar.token=$SONAR_TOKEN'
                         }
                     }
                 }
             }
         }
+        stage('Sonar traitement et consultation') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    withCredentials([string(credentialsId: 'sonar-token-khaoula', variable: 'SONAR_TOKEN')]) {
+                        dir('backoffice/traitement_et_consultation') {
+                            sh './mvnw -B sonar:sonar -Dsonar.projectKey=mindcare-traitement-consultation -Dsonar.projectName="MindCare Traitement Consultation" -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml -Dsonar.token=$SONAR_TOKEN'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
         stage('Build Docker images') {
             steps {
