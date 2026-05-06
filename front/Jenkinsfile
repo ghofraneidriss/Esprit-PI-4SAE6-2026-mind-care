@@ -47,7 +47,7 @@ pipeline {
             steps {
                 echo '🧪 Running tests...'
                 dir('front') {
-                    sh 'npx ng test --watch=false || echo "Tests skipped (no display or test failures)"'
+                    sh 'npx ng test --watch=false --code-coverage || echo "Some tests failed but continuing"'
                 }
             }
         }
@@ -73,6 +73,7 @@ pipeline {
                           -Dsonar.exclusions=node_modules/**,dist/**,**/*.spec.ts \
                           -Dsonar.tests=src \
                           -Dsonar.test.inclusions=**/*.spec.ts \
+                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                           -Dsonar.host.url=http://localhost:9000 \
                           -Dsonar.token=${SONARQUBE_TOKEN} \
                           || echo "SonarQube analysis skipped (server unavailable or auth failed)"

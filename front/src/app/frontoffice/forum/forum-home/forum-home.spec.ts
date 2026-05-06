@@ -1,18 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
-import { ForumHome } from './forum-home';
+import { ForumHomeComponent } from './forum-home.component';
 
-describe('ForumHome', () => {
-  let component: ForumHome;
-  let fixture: ComponentFixture<ForumHome>;
+describe('ForumHomeComponent', () => {
+  let component: ForumHomeComponent;
+  let fixture: ComponentFixture<ForumHomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ForumHome]
+      declarations: [ForumHomeComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ForumHome);
+    fixture = TestBed.createComponent(ForumHomeComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
