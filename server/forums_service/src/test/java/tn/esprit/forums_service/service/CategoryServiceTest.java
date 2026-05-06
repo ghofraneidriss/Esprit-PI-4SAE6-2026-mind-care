@@ -40,6 +40,8 @@ public class CategoryServiceTest {
         category.setColor("#ff0000");
     }
 
+    // --- TESTS DE CRÉATION ---
+
     @Test
     public void testCreateCategory_withIconAndColor() {
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
@@ -58,6 +60,8 @@ public class CategoryServiceTest {
         assertNotNull(result);
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
+
+    // --- TESTS DE LECTURE (READ) ---
 
     @Test
     public void testGetAllCategories() {
@@ -89,25 +93,49 @@ public class CategoryServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> categoryService.getCategoryById(99L));
     }
 
+    // --- TESTS DE MISE À JOUR (UPDATE) ---
+
     @Test
-    public void testUpdateCategory() {
-        Category updated = new Category();
-        updated.setName("Updated");
-        updated.setDescription("Updated desc");
-        updated.setIcon("ri-folder-line");
-        updated.setColor("#000000");
+    public void testUpdateCategory_Success() {
+        Category updatedData = new Category();
+        updatedData.setName("Updated Health");
+        updatedData.setDescription("New description");
+
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
-        Category result = categoryService.updateCategory(1L, updated);
+
+        Category result = categoryService.updateCategory(1L, updatedData);
+
         assertNotNull(result);
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
 
     @Test
-    public void testDeleteCategory() {
+    public void testUpdateCategory_NotFound_ThrowsException() {
+        when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
+        Category updatedData = new Category();
+
+        assertThrows(ResourceNotFoundException.class, () -> categoryService.updateCategory(99L, updatedData));
+        verify(categoryRepository, never()).save(any(Category.class));
+    }
+
+    // --- TESTS DE SUPPRESSION (DELETE) ---
+
+    @Test
+    public void testDeleteCategory_Success() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         doNothing().when(categoryRepository).delete(any(Category.class));
+
         categoryService.deleteCategory(1L);
+
         verify(categoryRepository, times(1)).delete(any(Category.class));
+    }
+
+    @Test
+    public void testDeleteCategory_NotFound_ThrowsException() {
+        when(categoryRepository.findById(88L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> categoryService.deleteCategory(88L));
+        verify(categoryRepository, never()).delete(any(Category.class));
     }
 }
