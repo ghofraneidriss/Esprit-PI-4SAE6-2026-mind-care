@@ -22,7 +22,9 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
+            st
+
+            eps {
                 dir('server/recommendation_service/recommendation_service') {
                     sh 'mvn clean package -DskipTests'
                 }
@@ -34,6 +36,12 @@ pipeline {
                 dir('server/recommendation_service/recommendation_service') {
                     sh 'mvn test'
                 }
+
+
+
+
+
+
             }
             post {
                 always {
