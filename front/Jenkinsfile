@@ -123,7 +123,7 @@ pipeline {
                         docker container prune -f 2>/dev/null || true
                         docker network prune -f 2>/dev/null || true
                         sleep 2
-                        docker-compose up -d frontend
+                        docker-compose up -d --no-deps frontend
                         sleep 5
                         docker-compose logs frontend
                     '''
