@@ -121,7 +121,7 @@ pipeline {
                     passwordVariable: 'ARTIF_PASS'
                 )]) {
                     sh """
-                        ARTIFACTORY_URL="http://172.17.0.3:8082/artifactory/libs-snapshot-local"
+                        ARTIFACTORY_URL="http://localhost:8082/artifactory/libs-snapshot-local"
                         WORKSPACE_SERVER="${WORKSPACE}/server"
                         SERVICES="eureka_server users_service forums_service incident_service activities_service localization_service movement_service api_gateway"
 
