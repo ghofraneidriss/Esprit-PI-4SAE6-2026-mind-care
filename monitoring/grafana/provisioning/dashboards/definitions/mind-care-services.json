@@ -1,431 +1,407 @@
 {
-  "annotations": {
-    "list": []
-  },
+  "annotations": { "list": [] },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
   "links": [],
   "panels": [
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "red",   "index": 0, "text": "DOWN" },
+                           "1": { "color": "green", "index": 1, "text": "UP"   } },
+              "type": "value" }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
+              { "color": "red",   "value": null },
+              { "color": "green", "value": 1    }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 0
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "id": 10,
       "options": {
         "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"], "values": false },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
         "text": {}
       },
       "pluginVersion": "9.0.0",
-      "targets": [
-        {
-          "expr": "up{job=\"lost-item-service\"}",
-          "refId": "A"
-        }
-      ],
+      "targets": [{ "expr": "up{job=\"lost-item-service\"}", "refId": "A" }],
       "title": "Lost Item Service Status",
       "type": "gauge"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "red",   "index": 0, "text": "DOWN" },
+                           "1": { "color": "green", "index": 1, "text": "UP"   } },
+              "type": "value" }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
+              { "color": "red",   "value": null },
+              { "color": "green", "value": 1    }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "id": 11,
       "options": {
         "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"], "values": false },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
         "text": {}
       },
       "pluginVersion": "9.0.0",
-      "targets": [
-        {
-          "expr": "up{job=\"followup-alert-service\"}",
-          "refId": "A"
-        }
-      ],
+      "targets": [{ "expr": "up{job=\"followup-alert-service\"}", "refId": "A" }],
       "title": "Followup Alert Service Status",
       "type": "gauge"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "red",   "index": 0, "text": "DOWN" },
+                           "1": { "color": "green", "index": 1, "text": "UP"   } },
+              "type": "value" }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
+              { "color": "red",   "value": null },
+              { "color": "green", "value": 1    }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 0
-      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "id": 12,
       "options": {
         "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"], "values": false },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
         "text": {}
       },
       "pluginVersion": "9.0.0",
-      "targets": [
-        {
-          "expr": "mysql_up",
-          "refId": "A"
-        }
-      ],
+      "targets": [{ "expr": "mysql_up", "refId": "A" }],
       "title": "MySQL Database Status",
       "type": "gauge"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "green", "index": 0, "text": "All Clear ✅" } },
+              "type": "value" }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red",   "value": 1    }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 4
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "id": 13,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
       },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "expr": "count(ALERTS{alertstate=\"firing\"}) or vector(0)",
+          "legendFormat": "Firing Alerts",
+          "refId": "A"
+        }
+      ],
+      "title": "🚨 Active Alerts",
+      "type": "stat"
+    },
+
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisLabel": "Bytes",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "spanNulls": false
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "id": 1,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
-          "expr": "jvm_memory_used_bytes{job=\"lost-item-service\"}",
+          "expr": "jvm_memory_used_bytes{job=\"lost-item-service\", area=\"heap\"}",
+          "legendFormat": "Heap Used",
           "refId": "A"
+        },
+        {
+          "expr": "jvm_memory_max_bytes{job=\"lost-item-service\", area=\"heap\"}",
+          "legendFormat": "Heap Max",
+          "refId": "B"
+        },
+        {
+          "expr": "jvm_memory_used_bytes{job=\"lost-item-service\", area=\"nonheap\"}",
+          "legendFormat": "Non-Heap Used",
+          "refId": "C"
         }
       ],
       "title": "JVM Memory Usage - Lost Item Service",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisLabel": "Bytes",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "spanNulls": false
+          },
+          "unit": "bytes"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 4
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "id": 2,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
-          "expr": "jvm_memory_used_bytes{job=\"followup-alert-service\"}",
+          "expr": "jvm_memory_used_bytes{job=\"followup-alert-service\", area=\"heap\"}",
+          "legendFormat": "Heap Used",
           "refId": "A"
+        },
+        {
+          "expr": "jvm_memory_max_bytes{job=\"followup-alert-service\", area=\"heap\"}",
+          "legendFormat": "Heap Max",
+          "refId": "B"
+        },
+        {
+          "expr": "jvm_memory_used_bytes{job=\"followup-alert-service\", area=\"nonheap\"}",
+          "legendFormat": "Non-Heap Used",
+          "refId": "C"
         }
       ],
       "title": "JVM Memory Usage - Followup Alert Service",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "lineWidth": 2
+          },
+          "unit": "reqps"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 12
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "id": 3,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
           "expr": "rate(http_server_requests_seconds_count{job=\"lost-item-service\"}[1m])",
+          "legendFormat": "{{ method }} {{ uri }} ({{ status }})",
           "refId": "A"
         }
       ],
       "title": "HTTP Requests/sec - Lost Item Service",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "lineWidth": 2
+          },
+          "unit": "reqps"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 12
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "id": 4,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
           "expr": "rate(http_server_requests_seconds_count{job=\"followup-alert-service\"}[1m])",
+          "legendFormat": "{{ method }} {{ uri }} ({{ status }})",
           "refId": "A"
         }
       ],
       "title": "HTTP Requests/sec - Followup Alert Service",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 5, "lineWidth": 2 },
+          "unit": "s"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "p95 Latency" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+            ]
+          }
+        ]
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 20
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "id": 5,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
           "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{job=\"lost-item-service\"}[1m]))",
+          "legendFormat": "p95 Latency",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, rate(http_server_requests_seconds_bucket{job=\"lost-item-service\"}[1m]))",
+          "legendFormat": "p50 Latency",
+          "refId": "B"
         }
       ],
-      "title": "HTTP Request Latency p95 - Lost Item Service",
+      "title": "HTTP Latency p95/p50 - Lost Item Service",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 5, "lineWidth": 2 },
+          "unit": "s"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "p95 Latency" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+            ]
+          }
+        ]
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 20
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "id": 6,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
           "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{job=\"followup-alert-service\"}[1m]))",
+          "legendFormat": "p95 Latency",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, rate(http_server_requests_seconds_bucket{job=\"followup-alert-service\"}[1m]))",
+          "legendFormat": "p50 Latency",
+          "refId": "B"
         }
       ],
-      "title": "HTTP Request Latency p95 - Followup Alert Service",
+      "title": "HTTP Latency p95/p50 - Followup Alert Service",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
+          "color": { "mode": "palette-classic" },
           "custom": {
             "axisLabel": "Connections",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "spanNulls": false
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Max Connections" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } },
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } }
             ]
           }
-        },
-        "overrides": []
+        ]
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 28
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
       "id": 7,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["mean", "max", "last"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
@@ -437,102 +413,232 @@
           "expr": "mysql_global_variables_max_connections",
           "legendFormat": "Max Connections",
           "refId": "B"
+        },
+        {
+          "expr": "mysql_global_status_threads_running",
+          "legendFormat": "Running Threads",
+          "refId": "C"
         }
       ],
       "title": "MySQL Connections",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 28
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
       "id": 8,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "legend": { "calcs": ["sum", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
-          "expr": "mysql_global_status_slow_queries",
-          "legendFormat": "Slow Queries",
+          "expr": "increase(mysql_global_status_slow_queries[1m])",
+          "legendFormat": "Slow Queries / min",
           "refId": "A"
         }
       ],
       "title": "MySQL Slow Queries",
       "type": "timeseries"
     },
+
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
+          "color": { "mode": "palette-classic" },
           "custom": {
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            }
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2
           },
-          "mappings": []
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 36
-      },
-      "id": 9,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+      "id": 14,
       "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "right"
-        },
-        "pieType": "donut"
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
-          "expr": "count(ALERTS{alertstate=\"firing\"})",
-          "legendFormat": "Firing Alerts",
+          "expr": "rate(mysql_global_status_queries[1m])",
+          "legendFormat": "Total QPS",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(mysql_global_status_commands_total{command=\"select\"}[1m])",
+          "legendFormat": "SELECT/s",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(mysql_global_status_commands_total{command=\"insert\"}[1m])",
+          "legendFormat": "INSERT/s",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(mysql_global_status_commands_total{command=\"update\"}[1m])",
+          "legendFormat": "UPDATE/s",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(mysql_global_status_commands_total{command=\"delete\"}[1m])",
+          "legendFormat": "DELETE/s",
+          "refId": "E"
+        }
+      ],
+      "title": "MySQL Query Rate (QPS)",
+      "type": "timeseries"
+    },
+
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+      "id": 15,
+      "options": {
+        "legend": { "calcs": ["mean", "last"], "displayMode": "table", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "expr": "mysql_global_status_innodb_buffer_pool_bytes_data",
+          "legendFormat": "Data (clean)",
+          "refId": "A"
+        },
+        {
+          "expr": "mysql_global_status_innodb_buffer_pool_bytes_dirty",
+          "legendFormat": "Dirty Pages",
+          "refId": "B"
+        }
+      ],
+      "title": "MySQL InnoDB Buffer Pool",
+      "type": "timeseries"
+    },
+
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1   },
+              { "color": "red",    "value": 3   }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "alertstate" },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  { "options": { "firing":  { "color": "red",    "index": 0, "text": "🔴 FIRING"  },
+                                 "pending": { "color": "orange", "index": 1, "text": "🟡 PENDING" } },
+                    "type": "value" }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "severity" },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  { "options": { "critical": { "color": "red",    "index": 0, "text": "🚨 CRITICAL" },
+                                 "warning":  { "color": "orange", "index": 1, "text": "⚠️ WARNING"  } },
+                    "type": "value" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 44 },
+      "id": 9,
+      "options": {
+        "footer": { "show": false },
+        "showHeader": true,
+        "sortBy": [{ "desc": true, "displayName": "alertstate" }]
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "expr": "ALERTS",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Active Alerts Status",
-      "type": "piechart"
+      "title": "Active Alerts Detail",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "__name__": true,
+              "Value": false
+            },
+            "indexByName": {},
+            "renameByName": {
+              "alertname": "Alert Name",
+              "alertstate": "State",
+              "job":        "Service",
+              "severity":   "Severity",
+              "instance":   "Instance",
+              "Time":       "Triggered At"
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
+
   ],
   "refresh": "10s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": ["mind-care", "services", "monitoring"],
-  "templating": {
-    "list": []
-  },
-  "time": {
-    "from": "now-1h",
-    "to": "now"
-  },
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
   "title": "Mind Care Services Monitoring",
   "uid": "mind-care-monitoring",
-  "version": 5
+  "version": 6
 }
