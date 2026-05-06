@@ -15,8 +15,11 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'Amena-Farah-Finale',
-                        url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git'
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/Amena-Work']],
+                          extensions: [[$class: 'CloneOption', depth: 1, shallow: true]],
+                          userRemoteConfigs: [[url: 'https://github.com/ghofraneidriss/Esprit-PI-4SAE6-2026-mind-care.git']]
+                ])
             }
         }
 
