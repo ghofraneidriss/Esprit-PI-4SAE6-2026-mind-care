@@ -1,8 +1,10 @@
+name: devops
+
 services:
   jenkins:
     build:
       context: ./jenkins
-      dockerfile: Dockerfile
+    image: mindcare-jenkins-docker:lts-jdk17
     container_name: jenkins
     user: root
     ports:

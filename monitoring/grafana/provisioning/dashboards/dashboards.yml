@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: MindCare
+    orgId: 1
+    folder: MindCare
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards

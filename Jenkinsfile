@@ -125,10 +125,24 @@ pipeline {
             steps {
                 sh '''
                     if docker compose version >/dev/null 2>&1; then
-                      docker compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                      docker compose -f docker-compose.yml -f devops/docker-compose.devops.yml up -d --no-build mysql traitement-service ordonnance-service prometheus grafana
                     else
-                      docker-compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                      docker-compose -f docker-compose.yml -f devops/docker-compose.devops.yml up -d --no-build mysql traitement-service ordonnance-service prometheus grafana
                     fi
+                '''
+            }
+        }
+
+        stage('Smoke tests backend') {
+            when {
+                expression { params.RUN_DOCKER_CD }
+            }
+            steps {
+                sh '''
+                    curl -fsS http://traitement-service:8081/actuator/health
+                    curl -fsS http://ordonnance-service:8083/actuator/health
+                    curl -fsS http://prometheus:9090/-/ready
+                    curl -fsS http://grafana:3000/api/health
                 '''
             }
         }
