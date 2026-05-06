@@ -7,14 +7,6 @@ pipeline {
         disableConcurrentBuilds()
     }
 
-    parameters {
-        booleanParam(
-            name: 'RUN_DOCKER_BUILD',
-            defaultValue: false,
-            description: 'Cocher seulement quand Jenkins a acces a Docker.'
-        )
-    }
-
     environment {
         DOCKER_IMAGE = '121999121999/mindcare-traitement'
     }
@@ -23,6 +15,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    env.GIT_SHORT_COMMIT = sh(script: 'git rev-parse --short=8 HEAD', returnStdout: true).trim()
+                }
             }
         }
 
@@ -52,23 +47,25 @@ pipeline {
         }
 
         stage('Docker image') {
-            when {
-                expression { params.RUN_DOCKER_BUILD }
-            }
             steps {
-                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t $DOCKER_IMAGE:${BUILD_NUMBER} -t $DOCKER_IMAGE:latest backoffice'
+                sh '''
+                    docker build \
+                      -f backoffice/traitement_et_consultation/Dockerfile \
+                      -t "$DOCKER_IMAGE:${BUILD_NUMBER}" \
+                      -t "$DOCKER_IMAGE:${GIT_SHORT_COMMIT}" \
+                      -t "$DOCKER_IMAGE:latest" \
+                      backoffice
+                '''
             }
         }
 
         stage('Push Docker Hub') {
-            when {
-                expression { params.RUN_DOCKER_BUILD }
-            }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
                     sh '''
                         echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
                         docker push "$DOCKER_IMAGE:${BUILD_NUMBER}"
+                        docker push "$DOCKER_IMAGE:${GIT_SHORT_COMMIT}"
                         docker push "$DOCKER_IMAGE:latest"
                     '''
                 }

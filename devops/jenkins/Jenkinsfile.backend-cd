@@ -10,13 +10,30 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    env.GIT_SHORT_COMMIT = sh(script: 'git rev-parse --short=8 HEAD', returnStdout: true).trim()
+                }
             }
         }
 
         stage('Build images') {
             steps {
-                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t 121999121999/mindcare-ordonnance:latest backoffice'
-                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t 121999121999/mindcare-traitement:latest backoffice'
+                sh '''
+                    docker build \
+                      -f backoffice/ordonnance_et_medicaments/Dockerfile \
+                      -t 121999121999/mindcare-ordonnance:${BUILD_NUMBER} \
+                      -t 121999121999/mindcare-ordonnance:${GIT_SHORT_COMMIT} \
+                      -t 121999121999/mindcare-ordonnance:latest \
+                      backoffice
+                '''
+                sh '''
+                    docker build \
+                      -f backoffice/traitement_et_consultation/Dockerfile \
+                      -t 121999121999/mindcare-traitement:${BUILD_NUMBER} \
+                      -t 121999121999/mindcare-traitement:${GIT_SHORT_COMMIT} \
+                      -t 121999121999/mindcare-traitement:latest \
+                      backoffice
+                '''
             }
         }
 
@@ -25,7 +42,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
                     sh '''
                         echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                        docker push 121999121999/mindcare-ordonnance:${BUILD_NUMBER}
+                        docker push 121999121999/mindcare-ordonnance:${GIT_SHORT_COMMIT}
                         docker push 121999121999/mindcare-ordonnance:latest
+                        docker push 121999121999/mindcare-traitement:${BUILD_NUMBER}
+                        docker push 121999121999/mindcare-traitement:${GIT_SHORT_COMMIT}
                         docker push 121999121999/mindcare-traitement:latest
                     '''
                 }
@@ -35,10 +56,12 @@ pipeline {
         stage('Deploy backend global') {
             steps {
                 sh '''
+                    docker pull 121999121999/mindcare-ordonnance:latest
+                    docker pull 121999121999/mindcare-traitement:latest
                     if docker compose version >/dev/null 2>&1; then
-                      docker compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                      docker compose -f docker-compose.yml up -d --no-build mysql ordonnance-service traitement-service prometheus grafana
                     else
-                      docker-compose -f docker-compose.yml up -d --build mysql ordonnance-service traitement-service prometheus grafana
+                      docker-compose -f docker-compose.yml up -d --no-build mysql ordonnance-service traitement-service prometheus grafana
                     fi
                 '''
             }

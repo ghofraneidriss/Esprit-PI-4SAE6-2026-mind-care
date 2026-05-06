@@ -4,16 +4,8 @@ pipeline {
     environment {
         BRANCH_NAME_TARGET = 'khaoula-integration-globale'
         DOCKERHUB_NAMESPACE = '121999121999'
-        DOCKER_IMAGE_ORDONNANCE = '121999121999/mindcare-ordonnance:latest'
-        DOCKER_IMAGE_TRAITEMENT = '121999121999/mindcare-traitement:latest'
-    }
-
-    parameters {
-        booleanParam(
-            name: 'RUN_DOCKER_CD',
-            defaultValue: false,
-            description: 'Cocher seulement quand Jenkins a acces a Docker pour construire et deployer les conteneurs.'
-        )
+        DOCKER_IMAGE_ORDONNANCE = '121999121999/mindcare-ordonnance'
+        DOCKER_IMAGE_TRAITEMENT = '121999121999/mindcare-traitement'
     }
 
     options {
@@ -26,6 +18,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    env.GIT_SHORT_COMMIT = sh(script: 'git rev-parse --short=8 HEAD', returnStdout: true).trim()
+                }
             }
         }
 
@@ -94,36 +89,47 @@ pipeline {
         }
 
         stage('Build Docker images') {
-            when {
-                expression { params.RUN_DOCKER_CD }
-            }
             steps {
-                sh 'docker build -f backoffice/ordonnance_et_medicaments/Dockerfile -t $DOCKER_IMAGE_ORDONNANCE backoffice'
-                sh 'docker build -f backoffice/traitement_et_consultation/Dockerfile -t $DOCKER_IMAGE_TRAITEMENT backoffice'
+                sh '''
+                    docker build \
+                      -f backoffice/ordonnance_et_medicaments/Dockerfile \
+                      -t "$DOCKER_IMAGE_ORDONNANCE:${BUILD_NUMBER}" \
+                      -t "$DOCKER_IMAGE_ORDONNANCE:${GIT_SHORT_COMMIT}" \
+                      -t "$DOCKER_IMAGE_ORDONNANCE:latest" \
+                      backoffice
+                '''
+                sh '''
+                    docker build \
+                      -f backoffice/traitement_et_consultation/Dockerfile \
+                      -t "$DOCKER_IMAGE_TRAITEMENT:${BUILD_NUMBER}" \
+                      -t "$DOCKER_IMAGE_TRAITEMENT:${GIT_SHORT_COMMIT}" \
+                      -t "$DOCKER_IMAGE_TRAITEMENT:latest" \
+                      backoffice
+                '''
             }
         }
 
         stage('Push Docker Hub images') {
-            when {
-                expression { params.RUN_DOCKER_CD }
-            }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
                     sh '''
                         echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                        docker push "$DOCKER_IMAGE_ORDONNANCE"
-                        docker push "$DOCKER_IMAGE_TRAITEMENT"
+                        docker push "$DOCKER_IMAGE_ORDONNANCE:${BUILD_NUMBER}"
+                        docker push "$DOCKER_IMAGE_ORDONNANCE:${GIT_SHORT_COMMIT}"
+                        docker push "$DOCKER_IMAGE_ORDONNANCE:latest"
+                        docker push "$DOCKER_IMAGE_TRAITEMENT:${BUILD_NUMBER}"
+                        docker push "$DOCKER_IMAGE_TRAITEMENT:${GIT_SHORT_COMMIT}"
+                        docker push "$DOCKER_IMAGE_TRAITEMENT:latest"
                     '''
                 }
             }
         }
 
         stage('CD backend global') {
-            when {
-                expression { params.RUN_DOCKER_CD }
-            }
             steps {
                 sh '''
+                    docker pull "$DOCKER_IMAGE_ORDONNANCE:latest"
+                    docker pull "$DOCKER_IMAGE_TRAITEMENT:latest"
                     if docker compose version >/dev/null 2>&1; then
                       docker compose -f docker-compose.yml -f devops/docker-compose.devops.yml up -d --no-build mysql traitement-service ordonnance-service prometheus grafana
                     else
@@ -134,9 +140,6 @@ pipeline {
         }
 
         stage('Smoke tests backend') {
-            when {
-                expression { params.RUN_DOCKER_CD }
-            }
             steps {
                 sh '''
                     curl -fsS http://traitement-service:8081/actuator/health
