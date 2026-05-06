@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'M2_HOME'
+        maven 'Maven'
         jdk 'jdk17'
     }
 
@@ -15,6 +15,10 @@ pipeline {
         SONAR_PROJECT_NAME = 'Mindcare_project'
         SERVICE_NAME = 'volunteer'
         SERVICE_DIR = 'volunteer'
+        SENTRY_ORG = 'your-sentry-org'
+        SENTRY_PROJECT = 'volunteer-service'
+        SENTRY_ENVIRONMENT = 'test'
+
     }
 
     options {
@@ -126,6 +130,41 @@ pipeline {
                 }
             }
         }
+        stage('Sentry Release') {
+    steps {
+        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+            withCredentials([string(credentialsId: 'sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
+                script {
+                    env.SENTRY_RELEASE = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                }
+
+                sh '''
+                    docker run --rm \
+                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                      -e SENTRY_ORG="$SENTRY_ORG" \
+                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                      -v "$PWD:/work" -w /work \
+                      getsentry/sentry-cli:2 releases new "$SENTRY_RELEASE"
+
+                    docker run --rm \
+                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                      -e SENTRY_ORG="$SENTRY_ORG" \
+                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                      -v "$PWD:/work" -w /work \
+                      getsentry/sentry-cli:2 releases set-commits "$SENTRY_RELEASE" --auto
+
+                    docker run --rm \
+                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                      -e SENTRY_ORG="$SENTRY_ORG" \
+                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                      -v "$PWD:/work" -w /work \
+                      getsentry/sentry-cli:2 releases finalize "$SENTRY_RELEASE"
+                '''
+            }
+        }
+    }
+}
+
 
         stage('Deploy (Simulation)') {
             steps {
@@ -213,6 +252,23 @@ pipeline {
                 }
             }
         }
+        stage('Sentry Deploy Notify') {
+    steps {
+        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+            withCredentials([string(credentialsId: 'sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
+                sh '''
+                    docker run --rm \
+                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                      -e SENTRY_ORG="$SENTRY_ORG" \
+                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                      -v "$PWD:/work" -w /work \
+                      getsentry/sentry-cli:2 releases deploys "$SENTRY_RELEASE" new -e "$SENTRY_ENVIRONMENT"
+                '''
+            }
+        }
+    }
+}
+
     }
 
     post {
