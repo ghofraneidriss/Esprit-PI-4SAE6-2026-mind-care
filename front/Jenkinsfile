@@ -38,7 +38,10 @@ pipeline {
             steps {
                 echo '📦 Installing npm dependencies...'
                 dir('front') {
-                    sh 'npm ci'
+                    sh '''
+                        npm ci
+                        npm install --no-save @vitest/coverage-v8@^4.0.8
+                    '''
                 }
             }
         }
