@@ -47,7 +47,7 @@ pipeline {
             steps {
                 echo '🧪 Running tests...'
                 dir('front') {
-                    sh 'ng test --watch=false || echo "Tests skipped (no display or test failures)"'
+                    sh 'npx ng test --watch=false || echo "Tests skipped (no display or test failures)"'
                 }
             }
         }
@@ -56,7 +56,7 @@ pipeline {
             steps {
                 echo '🔨 Building Angular project...'
                 dir('front') {
-                    sh 'ng build'
+                    sh 'npx ng build'
                 }
             }
         }
