@@ -51,6 +51,7 @@ pipeline {
                                 -Dsonar.projectKey=recommendation_service \
                                 -Dsonar.projectName=recommendation_service \
                                 -Dsonar.token=$SONAR_TOKEN \
+                                -Dsonar.exclusions=pom.xml \
                                 -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                         '''
                     }
