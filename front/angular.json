@@ -83,11 +83,7 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test",
-          "options": {
-            "codeCoverage": true,
-            "coverageReporters": ["lcov", "text"]
-          }
+          "builder": "@angular/build:unit-test"
         }
       }
     }
