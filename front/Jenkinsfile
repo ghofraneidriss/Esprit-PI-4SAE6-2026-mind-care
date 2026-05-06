@@ -47,7 +47,12 @@ pipeline {
             steps {
                 echo '🧪 Running tests...'
                 dir('front') {
-                    sh 'npx ng test --no-watch || echo "Some tests failed but continuing"'
+                    sh '''
+                        npx ng test --no-watch || echo "Some tests failed but continuing"
+                        echo "=== Coverage files generated ==="
+                        find . -name "lcov.info" -not -path "*/node_modules/*" 2>/dev/null | sort || echo "No lcov.info found anywhere"
+                        ls -la coverage/ 2>/dev/null || echo "No coverage/ directory"
+                    '''
                 }
             }
         }
@@ -73,7 +78,7 @@ pipeline {
                           -Dsonar.exclusions=node_modules/**,dist/**,**/*.spec.ts \
                           -Dsonar.tests=src \
                           -Dsonar.test.inclusions=**/*.spec.ts \
-                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info,coverage/browser/lcov.info \
                           -Dsonar.host.url=http://localhost:9000 \
                           -Dsonar.token=${SONARQUBE_TOKEN} \
                           || echo "SonarQube analysis skipped (server unavailable or auth failed)"
