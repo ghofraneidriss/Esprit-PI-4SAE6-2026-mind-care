@@ -50,7 +50,7 @@ pipeline {
             steps {
                 echo '🧪 Running tests...'
                 dir('front') {
-                    sh 'npx ng test --watch=false --code-coverage || echo "Some tests failed but continuing"'
+                    sh 'npx vitest run --coverage || echo "Some tests failed but continuing"'
                 }
             }
         }
