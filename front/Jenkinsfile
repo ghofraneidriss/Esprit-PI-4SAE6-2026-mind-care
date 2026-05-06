@@ -40,9 +40,7 @@ pipeline {
                 dir('front') {
                     sh '''
                         npm ci
-                        npm install --no-save --legacy-peer-deps \
-                          @analogjs/vitest-angular@latest \
-                          @vitest/coverage-v8@latest
+                        npm install --no-save --legacy-peer-deps @vitest/coverage-v8@latest
                     '''
                 }
             }
@@ -53,7 +51,7 @@ pipeline {
                 echo '🧪 Running tests...'
                 dir('front') {
                     sh '''
-                        npx vitest run --coverage || echo "Some tests failed but continuing"
+                        npx ng test --no-watch || echo "Some tests failed but continuing"
                         echo "=== Coverage files ==="
                         find . -name "lcov.info" -not -path "*/node_modules/*" 2>/dev/null | sort || echo "No lcov.info found"
                         ls -la coverage/ 2>/dev/null || echo "No coverage/ directory"
