@@ -38,10 +38,7 @@ pipeline {
             steps {
                 echo '📦 Installing npm dependencies...'
                 dir('front') {
-                    sh '''
-                        npm ci
-                        npm install --no-save @vitest/coverage-v8@^4.0.8
-                    '''
+                    sh 'npm ci'
                 }
             }
         }
@@ -50,7 +47,7 @@ pipeline {
             steps {
                 echo '🧪 Running tests...'
                 dir('front') {
-                    sh 'npx vitest run --coverage || echo "Some tests failed but continuing"'
+                    sh 'npx ng test --no-watch || echo "Some tests failed but continuing"'
                 }
             }
         }
