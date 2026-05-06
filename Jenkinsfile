@@ -15,10 +15,9 @@ pipeline {
         SONAR_PROJECT_NAME = 'Mindcare_project'
         SERVICE_NAME = 'volunteer'
         SERVICE_DIR = 'volunteer'
-        SENTRY_ORG = 'your-sentry-org'
+        SENTRY_ORG = 'ghofrane-i6'
         SENTRY_PROJECT = 'volunteer-service'
         SENTRY_ENVIRONMENT = 'test'
-
     }
 
     options {
@@ -131,39 +130,39 @@ pipeline {
             }
         }
         stage('Sentry Release') {
-    steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-            withCredentials([string(credentialsId: 'sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
-                script {
-                    env.SENTRY_RELEASE = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    withCredentials([string(credentialsId: 'sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
+                        script {
+                            env.SENTRY_RELEASE = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                        }
+
+                        sh '''
+                            docker run --rm \
+                              -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                              -e SENTRY_ORG="$SENTRY_ORG" \
+                              -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                              -v "$PWD:/work" -w /work \
+                              getsentry/sentry-cli:2 releases new "$SENTRY_RELEASE"
+
+                            docker run --rm \
+                              -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                              -e SENTRY_ORG="$SENTRY_ORG" \
+                              -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                              -v "$PWD:/work" -w /work \
+                              getsentry/sentry-cli:2 releases set-commits "$SENTRY_RELEASE" --auto
+
+                            docker run --rm \
+                              -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                              -e SENTRY_ORG="$SENTRY_ORG" \
+                              -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                              -v "$PWD:/work" -w /work \
+                              getsentry/sentry-cli:2 releases finalize "$SENTRY_RELEASE"
+                        '''
+                    }
                 }
-
-                sh '''
-                    docker run --rm \
-                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
-                      -e SENTRY_ORG="$SENTRY_ORG" \
-                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
-                      -v "$PWD:/work" -w /work \
-                      getsentry/sentry-cli:2 releases new "$SENTRY_RELEASE"
-
-                    docker run --rm \
-                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
-                      -e SENTRY_ORG="$SENTRY_ORG" \
-                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
-                      -v "$PWD:/work" -w /work \
-                      getsentry/sentry-cli:2 releases set-commits "$SENTRY_RELEASE" --auto
-
-                    docker run --rm \
-                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
-                      -e SENTRY_ORG="$SENTRY_ORG" \
-                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
-                      -v "$PWD:/work" -w /work \
-                      getsentry/sentry-cli:2 releases finalize "$SENTRY_RELEASE"
-                '''
             }
         }
-    }
-}
 
 
         stage('Deploy (Simulation)') {
@@ -171,14 +170,19 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     echo 'Deploying...'
                     script {
-                        sh '''
-                            docker rm -f medical-report-service volunteer-service || true
+                        withCredentials([string(credentialsId: 'sentry-dsn', variable: 'SENTRY_DSN')]) {
+                            sh '''
+                                docker rm -f medical-report-service volunteer-service || true
 
-                            docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
-                            docker run -d -p 8082:8085 --name volunteer-service \
-                              -e SPRING_PROFILES_ACTIVE=test \
-                              $IMAGE_NAME_VOL:latest
-                        '''
+                                docker run -d -p 8081:8080 --name medical-report-service $IMAGE_NAME_BACK:latest
+                                docker run -d -p 8082:8085 --name volunteer-service \
+                                  -e SPRING_PROFILES_ACTIVE=test \
+                                  -e SENTRY_DSN="$SENTRY_DSN" \
+                                  -e SENTRY_ENVIRONMENT="$SENTRY_ENVIRONMENT" \
+                                  -e SENTRY_RELEASE="$SENTRY_RELEASE" \
+                                  $IMAGE_NAME_VOL:latest
+                            '''
+                        }
 
                         echo 'Deployment simulation started.'
                     }
@@ -253,21 +257,21 @@ pipeline {
             }
         }
         stage('Sentry Deploy Notify') {
-    steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-            withCredentials([string(credentialsId: 'sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
-                sh '''
-                    docker run --rm \
-                      -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
-                      -e SENTRY_ORG="$SENTRY_ORG" \
-                      -e SENTRY_PROJECT="$SENTRY_PROJECT" \
-                      -v "$PWD:/work" -w /work \
-                      getsentry/sentry-cli:2 releases deploys "$SENTRY_RELEASE" new -e "$SENTRY_ENVIRONMENT"
-                '''
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    withCredentials([string(credentialsId: 'sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
+                        sh '''
+                            docker run --rm \
+                              -e SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+                              -e SENTRY_ORG="$SENTRY_ORG" \
+                              -e SENTRY_PROJECT="$SENTRY_PROJECT" \
+                              -v "$PWD:/work" -w /work \
+                              getsentry/sentry-cli:2 releases deploys "$SENTRY_RELEASE" new -e "$SENTRY_ENVIRONMENT"
+                        '''
+                    }
+                }
             }
         }
-    }
-}
 
     }
 
