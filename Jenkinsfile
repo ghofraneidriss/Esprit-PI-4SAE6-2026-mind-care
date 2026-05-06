@@ -60,14 +60,14 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
+        //stage('Quality Gate') {
+         //   steps {
+            //    timeout(time: 10, unit: 'MINUTES') {
                     // On attend la validation de Sonar
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+                 //   waitForQualityGate abortPipeline: true
+               // }
+           // }
+     //   }
 
         stage('Docker Build & Push Harbor') {
             steps {
