@@ -56,7 +56,7 @@ pipeline {
             steps {
                 echo '🔨 Building Angular project...'
                 dir('front') {
-                    sh 'npx ng build'
+                    sh 'npx ng build --output-path=dist/mind-care'
                 }
             }
         }
