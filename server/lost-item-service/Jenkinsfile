@@ -131,11 +131,14 @@ pipeline {
                 script {
                     sh '''
                         cd ${WORKSPACE}
-                        # Ensure infrastructure is up (mysql, prometheus, grafana, etc.) without touching them if already running
+                        # Ensure infrastructure is up without touching already-running containers
                         docker-compose up -d mysql mysql-exporter prometheus grafana alertmanager nexus 2>/dev/null || true
                         sleep 3
-                        # Only recreate the lost-item-service container — leaves all other services untouched
-                        docker-compose up -d --no-deps --force-recreate lost-item-service
+                        # Manually stop+remove only this service to avoid docker-compose 1.29.2 --force-recreate bug
+                        docker stop alzcare-lost-item-service 2>/dev/null || true
+                        docker rm -f alzcare-lost-item-service 2>/dev/null || true
+                        # Bring up only this service with the fresh image
+                        docker-compose up -d --no-deps lost-item-service
                         sleep 10
                         docker-compose logs --tail=50 lost-item-service
                     '''
