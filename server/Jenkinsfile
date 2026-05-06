@@ -144,7 +144,7 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'server/**/*.jar', fingerprint: true
-            echo '✅ Pipeline complet réussi — Code, Sécurité, Docker et Artifactory OK !'
+            echo '✅ Pipeline complet réussi — Code, Sécurité,Sonar,Synk, Docker et Artifactory OK !'
         }
         failure {
             echo '❌ Le pipeline a rencontré une erreur.'
