@@ -130,19 +130,17 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo '🚀 Deploying service...'
+                echo '🚀 Deploying followup-alert-service only...'
                 script {
                     sh '''
                         cd ${WORKSPACE}
-                        docker-compose down --remove-orphans 2>/dev/null || true
-                        docker stop alzcare-mysql alzcare-mysql-exporter alzcare-lost-item-service alzcare-followup-alert-service alzcare-nexus alzcare-prometheus alzcare-grafana alzcare-alertmanager sonarqube alzcare-frontend 2>/dev/null || true
-                        docker rm -f alzcare-mysql alzcare-mysql-exporter alzcare-lost-item-service alzcare-followup-alert-service alzcare-nexus alzcare-prometheus alzcare-grafana alzcare-alertmanager sonarqube sonarqube-postgres alzcare-frontend 2>/dev/null || true
-                        docker container prune -f 2>/dev/null || true
-                        docker network prune -f 2>/dev/null || true
-                        sleep 2
-                        docker-compose up -d
+                        # Ensure infrastructure is up (mysql, prometheus, grafana, etc.) without touching them if already running
+                        docker-compose up -d mysql mysql-exporter prometheus grafana alertmanager nexus 2>/dev/null || true
+                        sleep 3
+                        # Only recreate the followup-alert-service container — leaves all other services untouched
+                        docker-compose up -d --no-deps --force-recreate followup-alert-service
                         sleep 10
-                        docker-compose logs followup-alert-service
+                        docker-compose logs --tail=50 followup-alert-service
                     '''
                 }
             }
