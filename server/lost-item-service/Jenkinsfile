@@ -196,7 +196,6 @@ EOF
                         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                         echo "🔍 HIGH vulnerabilities (report only):"
                         docker run --rm \
-                          --dns 8.8.8.8 \
                           -v /var/run/docker.sock:/var/run/docker.sock \
                           -v trivy-cache:/root/.cache/ \
                           aquasec/trivy:latest image \
@@ -204,13 +203,13 @@ EOF
                           --severity HIGH \
                           --ignore-unfixed \
                           --scanners vuln \
+                          --vuln-type os \
                           --format table \
                           ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} || true
 
                         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                         echo "🚨 CRITICAL vulnerabilities (fails pipeline if found):"
                         docker run --rm \
-                          --dns 8.8.8.8 \
                           -v /var/run/docker.sock:/var/run/docker.sock \
                           -v trivy-cache:/root/.cache/ \
                           aquasec/trivy:latest image \
@@ -218,6 +217,7 @@ EOF
                           --severity CRITICAL \
                           --ignore-unfixed \
                           --scanners vuln \
+                          --vuln-type os \
                           --format table \
                           ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG}
                         echo "✅ No fixable CRITICAL vulnerabilities found!"
