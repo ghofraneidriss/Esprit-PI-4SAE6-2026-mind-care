@@ -5,7 +5,7 @@ pipeline {
         MAVEN_HOME = '/usr/share/maven'
         JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
         SERVICE_NAME = 'followup-alert-service'
-        DOCKER_REGISTRY = 'ghofraneidriss'
+        DOCKER_REGISTRY = 'jvvfer'
         IMAGE_TAG = "${BUILD_NUMBER}"
         SONARQUBE_TOKEN = 'squ_e358dcb6408302ceff87a82c69c97e8361f2ec57'
         GIT_SSL_NO_VERIFY = 'true'

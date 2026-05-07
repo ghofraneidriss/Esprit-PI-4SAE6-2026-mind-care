@@ -76,7 +76,7 @@ services:
 
   # Lost Item Service
   lost-item-service:
-    image: ghofraneidriss/lost-item-service:latest
+    image: jvvfer/lost-item-service:latest
     container_name: alzcare-lost-item-service
     ports:
       - "8082:8080"
@@ -107,7 +107,7 @@ services:
 
   # Follow-up Alert Service
   followup-alert-service:
-    image: ghofraneidriss/followup-alert-service:latest
+    image: jvvfer/followup-alert-service:latest
     container_name: alzcare-followup-alert-service
     ports:
       - "8090:8080"
