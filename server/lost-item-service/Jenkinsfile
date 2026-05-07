@@ -203,6 +203,7 @@ EOF
                           --severity HIGH \
                           --ignore-unfixed \
                           --scanners vuln \
+                          --skip-java-db-update \
                           --format table \
                           ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} || true
 
@@ -216,6 +217,7 @@ EOF
                           --severity CRITICAL \
                           --ignore-unfixed \
                           --scanners vuln \
+                          --skip-java-db-update \
                           --format table \
                           ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG}
                         echo "✅ No fixable CRITICAL vulnerabilities found!"
