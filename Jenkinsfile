@@ -97,26 +97,24 @@ pipeline {
                 }
 
         stage('Docker Build & Push Harbor') {
-            steps {
-                withCredentials([usernamePassword(
-                        credentialsId: 'harbor-creds',
-                        usernameVariable: 'HARBOR_USER',
-                        passwordVariable: 'HARBOR_PASS'
-                )]) {
-                    sh """
-                        docker login localhost:8085 -u ${HARBOR_USER} -p ${HARBOR_PASS}
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'harbor-creds',
+            usernameVariable: 'HARBOR_USER',
+            passwordVariable: 'HARBOR_PASS'
+        )]) {
+            sh '''
+                echo "$HARBOR_PASS" | docker login 172.21.37.7:8085 -u "$HARBOR_USER" --password-stdin
 
-                        cd server/activities_service && docker build -t localhost:8085/mindcare/activities-service:1.0 .
-                        docker push localhost:8085/mindcare/activities-service:1.0
-                        cd ../..
+                docker build -t 172.21.37.7:8085/mindcare/activities-service:1.0 server/activities_service/
+                docker push 172.21.37.7:8085/mindcare/activities-service:1.0
 
-                        cd server/movement_service && docker build -t localhost:8085/mindcare/movement-service:1.0 .
-                        docker push localhost:8085/mindcare/movement-service:1.0
-                    """
-                }
-            }
+                docker build -t 172.21.37.7:8085/mindcare/movement-service:1.0 server/movement_service/
+                docker push 172.21.37.7:8085/mindcare/movement-service:1.0
+            '''
         }
     }
+}
 
     post {
         success {
