@@ -23,7 +23,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = {RecommendationController.class, SystemController.class})
+@WebMvcTest(
+        controllers = {RecommendationController.class, SystemController.class},
+        properties = {
+                "eureka.client.enabled=false",
+                "spring.cloud.discovery.enabled=false",
+                "spring.main.lazy-initialization=true"
+        }
+)
 @Import(SecurityConfig.class)
 class RecommendationSecurityIntegrationTest {
 
