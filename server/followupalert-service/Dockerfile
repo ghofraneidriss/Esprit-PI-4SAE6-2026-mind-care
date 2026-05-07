@@ -1,5 +1,5 @@
 # Runtime stage using pre-built JAR
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17.0.11_9-jre-alpine
 
 LABEL maintainer="MindCare Team"
 LABEL description="Follow-up Alert Microservice for MindCare - Patient monitoring and alerts"

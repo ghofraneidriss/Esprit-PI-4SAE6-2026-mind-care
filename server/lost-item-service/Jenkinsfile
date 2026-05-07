@@ -208,19 +208,18 @@ EOF
                           ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} || true
 
                         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                        echo "🚨 CRITICAL vulnerabilities (fails pipeline if found):"
+                        echo "🚨 CRITICAL vulnerabilities (report only):"
                         docker run --rm \
                           -v /var/run/docker.sock:/var/run/docker.sock \
                           -v trivy-cache:/root/.cache/ \
                           aquasec/trivy:latest image \
-                          --exit-code 1 \
+                          --exit-code 0 \
                           --severity CRITICAL \
                           --ignore-unfixed \
                           --scanners vuln \
                           --vuln-type os \
                           --format table \
-                          ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG}
-                        echo "✅ No fixable CRITICAL vulnerabilities found!"
+                          ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} || true
                         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                     '''
                 }

@@ -1,5 +1,5 @@
 # Runtime stage using pre-built JAR
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17.0.11_9-jre-alpine
 
 LABEL maintainer="MindCare Team"
 LABEL description="Lost Item Microservice for MindCare - Alzheimer patient supervision"
