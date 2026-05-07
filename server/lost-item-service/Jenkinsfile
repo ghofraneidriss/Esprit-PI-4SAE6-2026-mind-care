@@ -130,17 +130,30 @@ pipeline {
                 echo '🚀 Deploying lost-item-service only...'
                 script {
                     sh '''
-                        cd ${WORKSPACE}
-                        # Ensure infrastructure is up without touching already-running containers
-                        docker-compose up -d mysql mysql-exporter prometheus grafana alertmanager nexus 2>/dev/null || true
-                        sleep 3
-                        # Manually stop+remove only this service to avoid docker-compose 1.29.2 --force-recreate bug
-                        docker stop alzcare-lost-item-service 2>/dev/null || true
+                        # Remove ALL containers with this service label (kills ghost containers from old compose runs)
+                        docker ps -a --filter "label=com.docker.compose.service=lost-item-service" -q | xargs -r docker rm -f 2>/dev/null || true
                         docker rm -f alzcare-lost-item-service 2>/dev/null || true
-                        # Bring up only this service with the fresh image
-                        docker-compose up -d --no-deps lost-item-service
+
+                        # Deploy via docker run directly — bypasses docker-compose 1.29.2 ContainerConfig bug entirely
+                        docker run -d \
+                          --name alzcare-lost-item-service \
+                          --network mindcare-network \
+                          --restart unless-stopped \
+                          -p 8082:8080 \
+                          -p 9010:9010 \
+                          -e SERVER_PORT=8080 \
+                          -e SPRING_APPLICATION_NAME=lost-item-service \
+                          -e "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lost_item_db" \
+                          -e SPRING_DATASOURCE_USERNAME=root \
+                          -e SPRING_DATASOURCE_PASSWORD="" \
+                          -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+                          -e EUREKA_CLIENT_ENABLED=false \
+                          -e EUREKA_CLIENT_REGISTER_WITH_EUREKA=false \
+                          -e EUREKA_CLIENT_FETCH_REGISTRY=false \
+                          ghofraneidriss/lost-item-service:latest
+
                         sleep 10
-                        docker-compose logs --tail=50 lost-item-service
+                        docker logs --tail=50 alzcare-lost-item-service
                     '''
                 }
             }
