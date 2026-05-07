@@ -65,14 +65,36 @@ pipeline {
             steps {
                 echo '📦 Deploying artifact to Nexus Repository...'
                 dir('server/lost-item-service') {
-                    sh '''
-                        mvn deploy \
-                          -s ~/.m2/settings.xml \
-                          -DskipTests \
-                          -Dmaven.install.skip=true \
-                          -Dorg.slf4j.simpleLogger.defaultLogLevel=info \
-                          || echo "Nexus deployment skipped (server unavailable or auth failed)"
-                    '''
+                    withCredentials([usernamePassword(
+                        credentialsId: 'nexus-credentials',
+                        usernameVariable: 'NEXUS_USER',
+                        passwordVariable: 'NEXUS_PASS'
+                    )]) {
+                        sh '''
+                            cat > /tmp/nexus-settings.xml << EOF
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+  <servers>
+    <server>
+      <id>mind-care-releases</id>
+      <username>${NEXUS_USER}</username>
+      <password>${NEXUS_PASS}</password>
+    </server>
+    <server>
+      <id>mind-care-snapshots</id>
+      <username>${NEXUS_USER}</username>
+      <password>${NEXUS_PASS}</password>
+    </server>
+  </servers>
+</settings>
+EOF
+                            mvn deploy \
+                              -s /tmp/nexus-settings.xml \
+                              -DskipTests \
+                              -Dmaven.install.skip=true \
+                              -Dorg.slf4j.simpleLogger.defaultLogLevel=info
+                            echo "✅ Artifact deployed to Nexus"
+                        '''
+                    }
                 }
             }
         }
@@ -170,10 +192,19 @@ pipeline {
             steps {
                 echo '📤 Pushing Docker image to registry...'
                 script {
-                    sh '''
-                        docker push ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} || echo "Docker push skipped (no credentials configured)"
-                        docker push ${DOCKER_REGISTRY}/${SERVICE_NAME}:latest || echo "Docker push skipped (no credentials configured)"
-                    '''
+                    withCredentials([usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh '''
+                            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+                            docker push ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG}
+                            docker push ${DOCKER_REGISTRY}/${SERVICE_NAME}:latest
+                            docker logout
+                            echo "✅ Docker images pushed successfully"
+                        '''
+                    }
                 }
             }
         }
