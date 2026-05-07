@@ -188,6 +188,39 @@ EOF
             }
         }
 
+        stage('Trivy Security Scan') {
+            steps {
+                echo '🔒 Scanning Docker image for vulnerabilities...'
+                script {
+                    sh '''
+                        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                        echo "🔍 HIGH vulnerabilities (report only):"
+                        docker run --rm \
+                          -v /var/run/docker.sock:/var/run/docker.sock \
+                          aquasec/trivy:latest image \
+                          --exit-code 0 \
+                          --severity HIGH \
+                          --ignore-unfixed \
+                          --format table \
+                          ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG} || true
+
+                        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                        echo "🚨 CRITICAL vulnerabilities (fails pipeline if found):"
+                        docker run --rm \
+                          -v /var/run/docker.sock:/var/run/docker.sock \
+                          aquasec/trivy:latest image \
+                          --exit-code 1 \
+                          --severity CRITICAL \
+                          --ignore-unfixed \
+                          --format table \
+                          ${DOCKER_REGISTRY}/${SERVICE_NAME}:${IMAGE_TAG}
+                        echo "✅ No fixable CRITICAL vulnerabilities found!"
+                        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    '''
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 echo '📤 Pushing Docker image to registry...'
