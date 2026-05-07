@@ -2,7 +2,10 @@ services:
 
   # ─── Jenkins ────────────────────────────────────────────────
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: docker/jenkins/Dockerfile
+    image: mindcare-jenkins:lts-docker
     container_name: jenkins
     user: root
     ports:
