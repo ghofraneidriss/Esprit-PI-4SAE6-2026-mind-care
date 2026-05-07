@@ -4,6 +4,9 @@ FROM eclipse-temurin:17.0.11_9-jre-alpine
 LABEL maintainer="MindCare Team"
 LABEL description="Follow-up Alert Microservice for MindCare - Patient monitoring and alerts"
 
+# Upgrade OS packages to patch known CVEs (libexpat, musl, openssl)
+RUN apk upgrade --no-cache
+
 # Create app user for security
 RUN addgroup -g 1000 appuser && adduser -D -u 1000 -G appuser appuser
 
