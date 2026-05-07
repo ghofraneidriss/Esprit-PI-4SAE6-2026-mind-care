@@ -97,6 +97,59 @@ pipeline {
             }
         }
 
+        stage('SonarQube Quality Gate') {
+            steps {
+                echo '🔎 Checking SonarQube Quality Gate...'
+                dir('server/followupalert-service') {
+                    sh '''
+                        REPORT_FILE="target/sonar/report-task.txt"
+
+                        if [ ! -f "$REPORT_FILE" ]; then
+                            echo "⚠️  report-task.txt not found — SonarQube was skipped, Quality Gate bypassed"
+                            exit 0
+                        fi
+
+                        TASK_ID=$(grep ceTaskId= $REPORT_FILE | cut -d= -f2)
+                        echo "📋 CE Task ID: $TASK_ID"
+
+                        # Poll until SonarQube finishes processing the analysis (max 60s)
+                        MAX=12
+                        I=0
+                        STATUS="PENDING"
+                        while [ "$STATUS" = "PENDING" ] || [ "$STATUS" = "IN_QUEUE" ]; do
+                            if [ $I -ge $MAX ]; then
+                                echo "⚠️  Timeout waiting for SonarQube — Quality Gate bypassed"
+                                exit 0
+                            fi
+                            sleep 5
+                            I=$((I + 1))
+                            STATUS=$(curl -sf -u "${SONARQUBE_TOKEN}:" \
+                                "http://localhost:9000/api/ce/task?id=${TASK_ID}" \
+                                | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+                            echo "  ⏳ Analysis status: $STATUS (${I}/${MAX})"
+                        done
+
+                        # Fetch Quality Gate result
+                        GATE=$(curl -sf -u "${SONARQUBE_TOKEN}:" \
+                            "http://localhost:9000/api/qualitygates/project_status?projectKey=followup-alert-service" \
+                            | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+                        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                        if [ "$GATE" = "OK" ]; then
+                            echo "✅ Quality Gate PASSED"
+                        elif [ "$GATE" = "ERROR" ]; then
+                            echo "❌ Quality Gate FAILED — fix bugs/coverage before deploying"
+                            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                            exit 1
+                        else
+                            echo "⚠️  Quality Gate status: $GATE — continuing"
+                        fi
+                        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    '''
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building Docker image...'
