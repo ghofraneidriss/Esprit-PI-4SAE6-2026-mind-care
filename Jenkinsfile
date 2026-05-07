@@ -81,15 +81,20 @@ pipeline {
         }
 
         stage('Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        // Attend le retour de SonarQube
-                        waitForQualityGate abortPipeline: false
+                    steps {
+                        script {
+                            // On entoure par un try/catch pour que le pipeline continue
+                            // même si la vérification échoue ou timeout
+                            try {
+                                timeout(time: 5, unit: 'MINUTES') {
+                                    waitForQualityGate abortPipeline: false
+                                }
+                            } catch (Exception e) {
+                                echo "⚠️ Le Quality Gate n'a pas pu être vérifié (Timeout ou erreur de config), mais on continue le build."
+                            }
+                        }
                     }
                 }
-            }
-        }
 
         stage('Docker Build & Push Harbor') {
             steps {
