@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ordonnance-et-medicaments
+  namespace: mindcare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ordonnance-et-medicaments
+  template:
+    metadata:
+      labels:
+        app: ordonnance-et-medicaments
+    spec:
+      containers:
+        - name: ordonnance-et-medicaments
+          image: mindcare/ordonnance-et-medicaments:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://eureka:8761/eureka"
+            - name: SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING
+              value: "true"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "300m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ordonnance-et-medicaments
+  namespace: mindcare
+spec:
+  selector:
+    app: ordonnance-et-medicaments
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+  type: ClusterIP
