@@ -16,23 +16,18 @@ spec:
       containers:
         - name: incident-service
           image: mindcare/incident-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8083
           env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "docker"
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
               value: "http://eureka:8761/eureka"
-            - name: SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING
-              value: "true"
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
-              memory: "512Mi"
-              cpu: "300m"
+            - name: INCIDENT_DB_URL
+              value: "jdbc:mysql://mysql:3306/incident_db?createDatabaseIfNotExist=true"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: ""
 ---
 apiVersion: v1
 kind: Service
@@ -43,7 +38,6 @@ spec:
   selector:
     app: incident-service
   ports:
-    - protocol: TCP
-      port: 8083
+    - port: 8083
       targetPort: 8083
   type: ClusterIP

@@ -16,23 +16,18 @@ spec:
       containers:
         - name: movement-service
           image: mindcare/movement-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8086
           env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "docker"
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
               value: "http://eureka:8761/eureka"
-            - name: SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING
-              value: "true"
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
-              memory: "512Mi"
-              cpu: "300m"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql:3306/movement_db?createDatabaseIfNotExist=true"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: ""
 ---
 apiVersion: v1
 kind: Service
@@ -43,7 +38,6 @@ spec:
   selector:
     app: movement-service
   ports:
-    - protocol: TCP
-      port: 8086
+    - port: 8086
       targetPort: 8086
   type: ClusterIP
