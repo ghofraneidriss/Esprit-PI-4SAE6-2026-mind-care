@@ -1,11 +1,8 @@
 # Runtime stage using pre-built JAR
-FROM eclipse-temurin:17.0.11_9-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 LABEL maintainer="MindCare Team"
 LABEL description="Follow-up Alert Microservice for MindCare - Patient monitoring and alerts"
-
-# Patch specific CVEs: libexpat (CRITICAL), openssl, musl (HIGH)
-RUN apk add --no-cache --upgrade libexpat musl musl-utils libcrypto3 libssl3
 
 # Create app user for security
 RUN addgroup -g 1000 appuser && adduser -D -u 1000 -G appuser appuser
