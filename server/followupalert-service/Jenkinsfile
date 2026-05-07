@@ -133,11 +133,14 @@ pipeline {
                 echo '🚀 Deploying followup-alert-service only...'
                 script {
                     sh '''
-                        # Remove ALL containers with this service label (kills ghost containers from old compose runs)
+                        # Kill every container related to this service — by label AND by name
                         docker ps -a --filter "label=com.docker.compose.service=followup-alert-service" -q | xargs -r docker rm -f 2>/dev/null || true
                         docker rm -f alzcare-followup-alert-service 2>/dev/null || true
 
-                        # Deploy via docker run directly — bypasses docker-compose 1.29.2 ContainerConfig bug entirely
+                        # Ensure the network exists (created by docker-compose but may not exist on first run)
+                        docker network create mindcare-network 2>/dev/null || true
+
+                        # Pure docker run — zero docker-compose involvement
                         docker run -d \
                           --name alzcare-followup-alert-service \
                           --network mindcare-network \
@@ -148,7 +151,7 @@ pipeline {
                           -e SPRING_APPLICATION_NAME=followup-alert-service \
                           -e "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/followup_alert_db" \
                           -e SPRING_DATASOURCE_USERNAME=root \
-                          -e SPRING_DATASOURCE_PASSWORD="" \
+                          -e "SPRING_DATASOURCE_PASSWORD=" \
                           -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
                           -e EUREKA_CLIENT_ENABLED=false \
                           -e EUREKA_CLIENT_REGISTER_WITH_EUREKA=false \
