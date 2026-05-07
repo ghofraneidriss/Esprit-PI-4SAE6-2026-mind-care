@@ -9,12 +9,13 @@ pipeline {
         stage('Cleanup') {
             steps {
                 deleteDir()
+                sh 'find . -name "report-task.txt" -delete || true'
             }
         }
 
         stage('Checkout') {
             steps {
-                // Utilisation de la syntaxe avancée pour forcer le clone léger (Shallow Clone)
+                // Version optimisée d'Amena pour éviter les Timeouts sur les gros repos
                 checkout([$class: 'GitSCM',
                     branches: [[name: '*/Amena-Work']],
                     extensions: [
@@ -36,12 +37,12 @@ pipeline {
 
         stage('Test & Jacoco') {
             steps {
-                // Execution parallèle ou séquentielle des tests
+                // Préparation et exécution des tests avec génération de rapport
                 dir('server/activities_service') {
-                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dmaven.test.failure.ignore=true'
+                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dmaven.test.failure.ignore=true'
                 }
                 dir('server/movement_service') {
-                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dmaven.test.failure.ignore=true'
+                    sh 'mvn org.jacoco:jacoco-maven-plugin:0.8.11:prepare-agent test org.jacoco:jacoco-maven-plugin:0.8.11:report -Dmaven.test.failure.ignore=true'
                 }
             }
             post {
@@ -53,13 +54,38 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Vérifie que 'SonarQube' est le nom configuré dans Système -> SonarQube installations
+                // Utilisation de withSonarQubeEnv + Token pour la compatibilité Multibranche
                 withSonarQubeEnv('SonarQube') {
-                    dir('server/activities_service') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=activities-service -Dsonar.projectName='Activities Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                        dir('server/activities_service') {
+                            sh """
+                                mvn sonar:sonar \
+                                -Dsonar.projectKey=activities-service \
+                                -Dsonar.projectName='Activities Service' \
+                                -Dsonar.login=${SONAR_TOKEN} \
+                                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                            """
+                        }
+                        dir('server/movement_service') {
+                            sh """
+                                mvn sonar:sonar \
+                                -Dsonar.projectKey=movement-service \
+                                -Dsonar.projectName='Movement Service' \
+                                -Dsonar.login=${SONAR_TOKEN} \
+                                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                            """
+                        }
                     }
-                    dir('server/movement_service') {
-                        sh "mvn sonar:sonar -Dsonar.projectKey=movement-service -Dsonar.projectName='Movement Service' -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                script {
+                    timeout(time: 5, unit: 'MINUTES') {
+                        // Attend le retour de SonarQube
+                        waitForQualityGate abortPipeline: false
                     }
                 }
             }
@@ -73,15 +99,12 @@ pipeline {
                         passwordVariable: 'HARBOR_PASS'
                 )]) {
                     sh """
-                        # Connexion au registre local Harbor
                         docker login localhost:8085 -u ${HARBOR_USER} -p ${HARBOR_PASS}
 
-                        # Build et Push Service Activités
                         cd server/activities_service && docker build -t localhost:8085/mindcare/activities-service:1.0 .
                         docker push localhost:8085/mindcare/activities-service:1.0
                         cd ../..
 
-                        # Build et Push Service Mouvement
                         cd server/movement_service && docker build -t localhost:8085/mindcare/movement-service:1.0 .
                         docker push localhost:8085/mindcare/movement-service:1.0
                     """
@@ -92,10 +115,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ TOUT EST VERT : Code récupéré, compilé, testé et poussé sur Harbor !'
+            echo '✅ TOUT EST VERT : Clone, Build, Sonar, Snyk et Docker OK !'
         }
         failure {
-            echo '❌ ÉCHEC : Vérifie les logs de Checkout ou les rapports de tests.'
+            echo '❌ ÉCHEC : Le pipeline a planté. Vérifie les logs.'
         }
     }
 }
