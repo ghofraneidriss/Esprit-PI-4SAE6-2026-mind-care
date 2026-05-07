@@ -1,0 +1,53 @@
+Index: volunteer/Dockerfile
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>FROM eclipse-temurin:17-jre-alpine\r\n\r\nWORKDIR /app\r\n\r\nCOPY target/volunteer-0.0.1-SNAPSHOT.jar app.jar\r\n\r\nEXPOSE 8085\r\n\r\nCMD [\"java\", \"-jar\", \"app.jar\"]\r\n
+===================================================================
+diff --git a/volunteer/Dockerfile b/volunteer/Dockerfile
+--- a/volunteer/Dockerfile	(revision 50e0cd23ee55bfd1f41fb012f5f8a0827f58babd)
++++ b/volunteer/Dockerfile	(date 1778120505415)
+@@ -1,9 +1,11 @@
++FROM maven:3.9-eclipse-temurin-17 AS build
++WORKDIR /app
++COPY pom.xml .
++COPY src ./src
++RUN mvn clean package -DskipTests
++
+ FROM eclipse-temurin:17-jre-alpine
+-
+ WORKDIR /app
+-
+-COPY target/volunteer-0.0.1-SNAPSHOT.jar app.jar
+-
++COPY --from=build /app/target/*.jar app.jar
+ EXPOSE 8085
+-
+-CMD ["java", "-jar", "app.jar"]
++ENTRYPOINT ["java", "-jar", "app.jar"]
+Index: medical_report_service/Dockerfile
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>FROM eclipse-temurin:17-jre-alpine\r\n\r\nWORKDIR /app\r\n\r\nCOPY target/medical_report_service-0.0.1-SNAPSHOT.jar app.jar\r\n\r\nEXPOSE 8080\r\n\r\nCMD [\"java\", \"-jar\", \"app.jar\"]\r\n
+===================================================================
+diff --git a/medical_report_service/Dockerfile b/medical_report_service/Dockerfile
+--- a/medical_report_service/Dockerfile	(revision 50e0cd23ee55bfd1f41fb012f5f8a0827f58babd)
++++ b/medical_report_service/Dockerfile	(date 1778120505430)
+@@ -1,9 +1,11 @@
++FROM maven:3.9-eclipse-temurin-17 AS build
++WORKDIR /app
++COPY pom.xml .
++COPY src ./src
++RUN mvn clean package -DskipTests
++
+ FROM eclipse-temurin:17-jre-alpine
+-
+ WORKDIR /app
+-
+-COPY target/medical_report_service-0.0.1-SNAPSHOT.jar app.jar
+-
+-EXPOSE 8080
+-
+-CMD ["java", "-jar", "app.jar"]
++COPY --from=build /app/target/*.jar app.jar
++EXPOSE 8083
++ENTRYPOINT ["java", "-jar", "app.jar"]
