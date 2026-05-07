@@ -100,18 +100,18 @@ pipeline {
             }
         }
 
-        stage('Docker Build & Push Harbor') {
-    steps {
-        sh '''
-            # Build images locally
-            docker build -t mindcare/activities-service:1.0 server/activities_service/ || true
-            docker build -t mindcare/movement-service:1.0 server/movement_service/ || true
-            echo "✅ Docker images built successfully!"
-        '''
-    }
-}
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    docker build -t mindcare/activities-service:1.0 server/activities_service/ || true
+                    docker build -t mindcare/movement-service:1.0 server/movement_service/ || true
+                    echo "✅ Docker images built successfully!"
+                '''
+            }
+        }
 
-        
+    }  // ← closes stages
+
     post {
         success {
             echo '✅ Pipeline complet : Build, Test, Sonar, Docker OK!'
@@ -121,4 +121,4 @@ pipeline {
         }
     }
 
-}  // closes pipeline
+}  // ← closes pipeline
