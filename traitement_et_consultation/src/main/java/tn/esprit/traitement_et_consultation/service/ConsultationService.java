@@ -3,9 +3,18 @@ package tn.esprit.traitement_et_consultation.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.traitement_et_consultation.entity.AlzheimerStage;
+import tn.esprit.traitement_et_consultation.entity.Appointment;
 import tn.esprit.traitement_et_consultation.entity.Consultation;
+import tn.esprit.traitement_et_consultation.entity.PatientProfile;
+import tn.esprit.traitement_et_consultation.repository.AppointmentRepository;
 import tn.esprit.traitement_et_consultation.repository.ConsultationRepository;
+import tn.esprit.traitement_et_consultation.repository.PatientProfileRepository;
+import tn.esprit.traitement_et_consultation.client.MlPredictionClient;
+import tn.esprit.traitement_et_consultation.client.dto.PredictionRequestDTO;
+import tn.esprit.traitement_et_consultation.client.dto.PredictionResponseDTO;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +29,9 @@ import java.util.Optional;
 public class ConsultationService {
 
     private final ConsultationRepository consultationRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final PatientProfileRepository patientProfileRepository;
+    private final MlPredictionClient mlPredictionClient;
 
     /**
      * Crée une nouvelle consultation après avoir vérifié que le rendez-vous associé
@@ -43,7 +55,49 @@ public class ConsultationService {
 
         // Détermination automatique du stade Alzheimer selon le score MMSE
         consultation.setAlzheimerStage(suggestAlzheimerStage(consultation.getMmseScore()));
+
+        // Appel à l'API ML pour la prédiction d'Alzheimer
+        enrichWithMlPrediction(consultation);
+
         return consultationRepository.save(consultation);
+    }
+
+    /**
+     * Enrichit la consultation avec les résultats de prédiction de l'API ML (Python).
+     * @param consultation la consultation en cours d'enregistrement ou de modification
+     */
+    private void enrichWithMlPrediction(Consultation consultation) {
+        if (consultation.getMmseScore() == null || consultation.getAppointmentId() == null) {
+            return;
+        }
+
+        appointmentRepository.findById(consultation.getAppointmentId()).ifPresent(appointment -> {
+            patientProfileRepository.findByUserId(appointment.getPatientId()).ifPresent(profile -> {
+                int age = profile.getDateOfBirth() != null ? 
+                        Period.between(profile.getDateOfBirth(), LocalDate.now()).getYears() : 60;
+
+                PredictionRequestDTO requestDTO = PredictionRequestDTO.builder()
+                        .age(age)
+                        .mmse(consultation.getMmseScore())
+                        .isSmoker(Boolean.TRUE.equals(profile.getIsSmoker()) ? 1 : 0)
+                        .drinksAlcohol(Boolean.TRUE.equals(profile.getDrinksAlcohol()) ? 1 : 0)
+                        .physicalActivity(Boolean.TRUE.equals(profile.getPhysicalActivity()) ? 1 : 0)
+                        .familyHistory(Boolean.TRUE.equals(profile.getFamilyHistoryAlzheimer()) ? 1 : 0)
+                        .hypertension(Boolean.TRUE.equals(profile.getHypertension()) ? 1 : 0)
+                        .type2Diabetes(Boolean.TRUE.equals(profile.getType2Diabetes()) ? 1 : 0)
+                        .hypercholesterolemia(Boolean.TRUE.equals(profile.getHypercholesterolemia()) ? 1 : 0)
+                        .sleepDisorders(Boolean.TRUE.equals(profile.getSleepDisorders()) ? 1 : 0)
+                        .build();
+
+                PredictionResponseDTO response = mlPredictionClient.getAlzheimerPrediction(requestDTO);
+                
+                if (response != null) {
+                    consultation.setIsSick(response.getIsSick());
+                    consultation.setDiseaseProbability(response.getDiseasePercentage());
+                    consultation.setMlCluster(response.getCluster());
+                }
+            });
+        });
     }
 
     /**
@@ -149,6 +203,9 @@ public class ConsultationService {
         consultation.setMmseScore(details.getMmseScore());
         // Recalcul automatique du stade Alzheimer selon le nouveau score MMSE
         consultation.setAlzheimerStage(suggestAlzheimerStage(details.getMmseScore()));
+
+        // Appel à l'API ML pour mettre à jour la prédiction
+        enrichWithMlPrediction(consultation);
 
         return consultationRepository.save(consultation);
     }

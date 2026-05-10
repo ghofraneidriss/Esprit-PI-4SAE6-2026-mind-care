@@ -13,4 +13,7 @@ export interface Consultation {
     bloodPressure: string;
     mmseScore: number;
     alzheimerStage: AlzheimerStage;
+    diseaseProbability?: number;
+    isSick?: boolean;
+    mlCluster?: number;
 }

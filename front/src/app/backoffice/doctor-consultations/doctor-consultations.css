@@ -464,3 +464,43 @@
     border-color: #248182 !important;
     color: white !important;
 }
+
+/* ============================================================
+   CIRCULAR CHART (ML PREDICTION)
+   ============================================================ */
+.circular-chart {
+    display: block;
+    margin: 0 auto;
+    max-width: 80%;
+    max-height: 250px;
+}
+.circle-bg {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.05);
+    stroke-width: 3.8;
+}
+.circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    animation: progress 1s ease-out forwards;
+}
+@keyframes progress {
+    0% { stroke-dasharray: 0 100; }
+}
+.circular-chart.teal .circle {
+    stroke: #10b981;
+}
+.circular-chart.orange .circle {
+    stroke: #f59e0b;
+}
+.circular-chart.red .circle {
+    stroke: #ef4444;
+}
+.percentage {
+    fill: #475569;
+    font-family: sans-serif;
+    font-size: 0.5em;
+    font-weight: bold;
+    text-anchor: middle;
+}

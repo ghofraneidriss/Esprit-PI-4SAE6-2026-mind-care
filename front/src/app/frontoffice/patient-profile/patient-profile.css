@@ -238,3 +238,47 @@
   color: #1e293b;
   font-weight: 700;
 }
+
+/* ============================================================
+   CIRCULAR CHART (ML PREDICTION)
+   ============================================================ */
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 150px;
+}
+.circle-bg {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.05);
+  stroke-width: 3.8;
+}
+.circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1.5s ease-out forwards;
+}
+@keyframes progress {
+  0% { stroke-dasharray: 0 100; }
+}
+.circular-chart.teal .circle {
+  stroke: #10b981;
+}
+.circular-chart.orange .circle {
+  stroke: #f59e0b;
+}
+.circular-chart.red .circle {
+  stroke: #ef4444;
+}
+.percentage {
+  fill: #1e293b;
+  font-family: sans-serif;
+  font-size: 0.55em;
+  font-weight: bold;
+  text-anchor: middle;
+}
+.ml-card-bg {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+}

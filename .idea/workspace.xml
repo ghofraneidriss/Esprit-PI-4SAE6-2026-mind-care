@@ -5,408 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="620d2e8b-c8c8-48b1-b82b-07c5231939a5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Activities_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Activities_service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Activities_service/src/main/java/repository/PatientRepo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Activities_service/src/main/java/repository/UserRepo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Activities_service/src/main/java/tn/esprit/activities_service/ActivitiesServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Activities_service/src/main/java/tn/esprit/activities_service/ActivitiesServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Activities_service/src/test/java/tn/esprit/activities_service/ActivitiesServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/Activities_service/src/test/java/tn/esprit/activities_service/ActivitiesServiceApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/api_gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_gateway/src/test/java/tn/esprit/api_gateway/ApiGatewayApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/api_gateway/src/test/java/tn/esprit/api_gateway/ApiGatewayApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/assignment-history/assignment-history.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/assignment-history/assignment-history.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-shell/backoffice-shell.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/backoffice-shell/backoffice-shell.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-appointment-detail/doctor-appointment-detail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/doctor-appointment-detail/doctor-appointment-detail.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-appointments/doctor-appointments.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/doctor-appointments/doctor-appointments.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-consultations/doctor-consultations.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/doctor-consultations/doctor-consultations.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-prescriptions/doctor-prescription-create.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/doctor-prescriptions/doctor-prescription-create.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-prescriptions/doctor-prescription-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/doctor-prescriptions/doctor-prescription-detail.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/doctor-prescriptions/doctor-prescription-history.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/doctor-prescriptions/doctor-prescription-history.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/files-management/files-management.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/files-management/files-management.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/medical-reports-page/medical-reports-page.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/medical-reports-page/medical-reports-page.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/medication-management/medication-management.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/medication-management/medication-management.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/patient-follow-up/patient-follow-up.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/patient-follow-up/patient-follow-up.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/volunteering/volunteer.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/volunteering/volunteer.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/backoffice/volunteering/volunteering.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/backoffice/volunteering/volunteering.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/core/services/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/core/services/auth.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/firebase-config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/firebase-config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/activities/activities.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/activities/activities.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/auth/login-cover/login-cover.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/auth/login-cover/login-cover.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/auth/login-cover/login-cover.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/auth/login-cover/login-cover.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/auth/register-cover/register-cover.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/auth/register-cover/register-cover.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/auth/register-cover/register-cover.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/auth/register-cover/register-cover.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-routing-module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/frontoffice-routing-module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/header/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/header/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/header/header.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/header/header.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/patient-prescription-detail/patient-prescription-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/patient-prescription-detail/patient-prescription-detail.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/patient-prescriptions/patient-prescriptions.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/patient-prescriptions/patient-prescriptions.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/patient-profile/patient-profile.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/patient-profile/patient-profile.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/frontoffice/volunteer-missions/volunteer-missions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/frontoffice/volunteer-missions/volunteer-missions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/officiel/auth/login/login.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/officiel/auth/login/login.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/officiel/auth/login/login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/officiel/auth/login/login.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/officiel/auth/register/register.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/officiel/auth/register/register.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/officiel/auth/register/register.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/officiel/auth/register/register.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/officiel/layout/layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/officiel/layout/layout.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/shared/notification.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/shared/notification.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/medical_report_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/medical_report_service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/medical_report_service/src/test/java/tn/esprit/medical_report_service/MedicalReportServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/medical_report_service/src/test/java/tn/esprit/medical_report_service/MedicalReportServiceApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/movement_service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/movement_service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/movement_service/src/test/java/tn/esprit/movement_service/MovementServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/movement_service/src/test/java/tn/esprit/movement_service/MovementServiceApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ordonnance_et_medicaments/src/test/java/tn/esprit/ordonnance_et_medicaments/OrdonnanceEtMedicamentsApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/ordonnance_et_medicaments/src/test/java/tn/esprit/ordonnance_et_medicaments/OrdonnanceEtMedicamentsApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation_service/src/test/java/tn/esprit/recommendation_service/service/SouvenirPuzzleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/test/java/tn/esprit/recommendation_service/service/SouvenirPuzzleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation_service/src/test/java/tn/esprit/recommendation_service/service/SudokuServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation_service/src/test/java/tn/esprit/recommendation_service/service/SudokuServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/README.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/README_ACTIVITIES.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/create_database.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/frontend-sidebar-integration.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/setup_database.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/ActivitiesServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/config/CorsConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/config/DataInitializer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/config/OpenApiConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/config/WebConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/BasicController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/GameResultController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/HealthController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/PerformanceController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/PhotoActivityController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/QuizActivityController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/QuizController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/QuizLimitController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/ReportController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/SimpleQuizController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/controller/TestController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/dto/QuizActivityDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/dto/QuizPreviewDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/dto/QuizPreviewQuestionDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/entity/GameResult.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/entity/PhotoActivity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/entity/Question.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/entity/QuizActivity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/entity/QuizLimit.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/entity/StringListConverter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/repository/GameResultRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/repository/PhotoActivityRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/repository/QuizActivityRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/repository/QuizLimitRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/AlzheimerRiskService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/EmailAlertService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/GameResultService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/ImageProcessingService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/PerformanceAnalysisService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/PhotoActivityService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/QuizActivityService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/QuizLimitService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/ReportService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/java/tn/esprit/activities_service/service/ScoreCalculationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/main/resources/branding/alzcare-logo-3d.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/activities_service/src/test/java/tn/esprit/activities_service/ActivitiesServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/src/main/java/tn/esprit/api_gateway/ApiGatewayApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/src/main/java/tn/esprit/api_gateway/config/CorsConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/api_gateway/src/main/resources/application.properties.local" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/eureka_server/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/eureka_server/src/main/java/tn/esprit/eureka_server/EurekaServerApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/eureka_server/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/compose.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/scripts/publish-existing-drafts.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/ForumsServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/client/UserDisplayClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/config/DataInitializer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/config/RestClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/CategoryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/CommentController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/ForumBanController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/ForumHomeController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/ForumStatsController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/ModerationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/controller/PostController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/CategoryDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/CommentReportRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/CommentUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ForumBanStatusDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ForumHomeDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ForumStatsDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ForumTopCategoryDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ForumTopCommentDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/PostDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/PostListProjection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/PostMediaInfoDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/RatingRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ReactionRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ResolveReportRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/StaffDashboardDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/StaffDashboardTotals.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/dto/ViewRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/Category.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/Comment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/CommentDislike.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/CommentLike.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/ForumCommentReport.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/ForumUserBan.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/ModerationAction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/Post.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/PostFollow.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/PostMedia.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/PostRating.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/PostReaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/PostView.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/ReactionType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/entity/ReportStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/exception/GlobalExceptionHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/exception/ResourceNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/CategoryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/CommentDislikeRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/CommentLikeRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/CommentRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/ForumCommentReportRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/ForumUserBanRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/PostFollowRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/PostMediaRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/PostRatingRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/PostReactionRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/PostRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/repository/PostViewRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/CategoryService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/CommentLikeService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/CommentReportService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/CommentService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/CommentToxicityModerationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/ForumBackfillService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/ForumBanService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/ForumHomeService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/ForumMaintenanceService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/ForumNotificationPublisher.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/ForumStatsService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/PostEngagementService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/PostFollowService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/PostInteractionService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/PostService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/service/StaffDashboardService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/java/tn/esprit/forums_service/util/ForumImageBytes.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/forums_service/src/test/java/tn/esprit/forums_service/ForumsServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/IncidentServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/config/IncidentTypeSeederConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/config/RestTemplateConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/controller/IncidentController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/dto/IncidentStatsDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/dto/PatientStatsDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/entity/Incident.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/entity/IncidentComment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/entity/IncidentType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/enums/IncidentStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/enums/SeverityLevel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/repository/IncidentCommentRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/repository/IncidentRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/repository/IncidentTypeRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/service/EmailService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/java/tn/esprit/incident_service/service/IncidentService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/incident_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/java/tn/esprit/localization_service/LocalizationServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/java/tn/esprit/localization_service/config/CorsConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/java/tn/esprit/localization_service/controller/SafeZoneController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/java/tn/esprit/localization_service/entity/SafeZone.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/java/tn/esprit/localization_service/repository/SafeZoneRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/java/tn/esprit/localization_service/service/SafeZoneService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/localization_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/MovementServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/config/CorsConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/controller/LocationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/controller/MovementAlertController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/controller/PatientTrackingController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/dto/LocationReportRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/dto/NearestSafeZoneInfoDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/dto/PatientLocationStatusDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/dto/PatientTrackingDashboardDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/dto/SafeZoneDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/entity/AlertSeverity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/entity/AlertType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/entity/LocationPing.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/entity/MovementAlert.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/repository/LocationPingRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/repository/MovementAlertRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/service/LocalizationClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/service/MovementAlertNotifier.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/service/MovementMonitoringService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/service/PatientTrackingFacadeService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/service/UsersClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/java/tn/esprit/movement_service/util/GeoDistance.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/movement_service/src/test/java/tn/esprit/movement_service/MovementServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/ports.env.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/RecommendationServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/config/RestClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/controller/MedicalEventController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/controller/PatientStatsController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/controller/RecommendationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/controller/SouvenirPuzzleController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/controller/SudokuController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/controller/SystemController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/JoinMedicalEventRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/MedicalEventCreateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/MedicalEventParticipationResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/MedicalEventResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/MedicalEventUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/ParticipantRankingResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/ScoreResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/medicalevent/StreakResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleCreateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleLeaderboardEntry.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleSessionResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleSessionStartResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleSessionSubmitRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/PuzzleUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/puzzle/SouvenirSourceSummary.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/AutoRecommendationGenerateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/ClinicalEscalationAlertResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/RecommendationCreateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/RecommendationResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/RecommendationStatsResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/RecommendationStatusUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/recommendation/RecommendationUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/stats/PatientStatsResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/sudoku/SudokuCreateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/sudoku/SudokuResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/sudoku/SudokuSessionResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/sudoku/SudokuSessionStartResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/dto/sudoku/SudokuSessionSubmitRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/ClinicalEscalationAlert.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/MedicalEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/MedicalEventParticipation.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/PatientStats.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/PuzzleSession.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/Recommendation.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/SouvenirPuzzle.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/SudokuGame.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/entity/SudokuSession.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/AlertStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/DifficultyLevel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/MedicalEventStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/MedicalEventType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/ParticipantType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/PatientLevel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/PuzzleStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/RecommendationStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/enums/RecommendationType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/BusinessException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/GlobalExceptionHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/exception/ResourceNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/ClinicalEscalationAlertRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/MedicalEventParticipationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/MedicalEventRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/PatientStatsRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/PuzzleSessionRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/RecommendationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/SouvenirPuzzleRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/SudokuGameRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/SudokuSessionRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/projection/ParticipantRankingProjection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/repository/projection/RecommendationStatusCountProjection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/MedicalEventService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/PatientStatsService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/RecommendationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/SouvenirPuzzleService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/java/tn/esprit/recommendation_service/service/SudokuService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/test/java/tn/esprit/recommendation_service/service/SouvenirPuzzleServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/recommendation_service/recommendation_service/src/test/java/tn/esprit/recommendation_service/service/SudokuServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/SouvenirServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/controller/EntreeSouvenirController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/controller/LegacyReminiscenceCompatibilityController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/controller/SystemController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/dto/entree/EntreeCountResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/dto/entree/EntreeSouvenirCreateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/dto/entree/EntreeSouvenirResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/dto/entree/EntreeSouvenirUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/dto/entree/VoiceRecognitionUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/entity/EntreeSouvenir.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/enums/MediaType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/enums/ThemeCulturel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/exception/BusinessException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/exception/GlobalExceptionHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/exception/ResourceNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/repository/EntreeSouvenirRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/java/tn/esprit/souvenir_service/service/EntreeSouvenirService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/souvenir_service/souvenir_service/src/test/java/tn/esprit/souvenir_service/service/EntreeSouvenirServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/tn/esprit/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/UsersServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/AppConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/CorsConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/AppointmentController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/ChatbotController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/MoodController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/NotificationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/dto/LoginRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/dto/PatientSummaryDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Appointment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/MoodEntry.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Notification.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/Role.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/entity/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/AppointmentRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/MoodEntryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/NotificationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/CustomUserDetailsService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/NotificationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/java/tn/esprit/users_service/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/main/resources/db/fix-alzheimer-role-column.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/UsersServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/controller/UserControllerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/users_service/src/test/java/tn/esprit/users_service/service/UserServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/traitement_et_consultation/src/test/java/tn/esprit/traitement_et_consultation/TraitementEtConsultationApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/traitement_et_consultation/src/test/java/tn/esprit/traitement_et_consultation/TraitementEtConsultationApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users_service/src/main/java/tn/esprit/users_service/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/users_service/src/main/java/tn/esprit/users_service/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users_service/src/main/java/tn/esprit/users_service/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/users_service/src/main/java/tn/esprit/users_service/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users_service/src/test/java/tn/esprit/users_service/UsersServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/users_service/src/test/java/tn/esprit/users_service/UsersServiceApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -465,92 +64,97 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.users_service.keycloak: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [site].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api_gateway [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.forums_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.incident_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [site].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.medical_report_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.mind_care_server [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.movement_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.users_service [verify].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.volunteer_service [validate].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.ForumsServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.IncidentServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.MedicalReportServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.MovementServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.OrdonnanceEtMedicamentsApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.TraitementEtConsultationApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.UsersServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.VolunteerServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/IDRISS/Desktop/MindCare/mind-care&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.UsersServiceApplication.executor": "Run",
+    "Docker.users_service.keycloak: Compose Deployment.executor": "Run",
+    "Maven.api_gateway [clean].executor": "Run",
+    "Maven.api_gateway [compile].executor": "Run",
+    "Maven.api_gateway [install].executor": "Run",
+    "Maven.api_gateway [package].executor": "Run",
+    "Maven.api_gateway [site].executor": "Run",
+    "Maven.api_gateway [validate].executor": "Run",
+    "Maven.api_gateway [verify].executor": "Run",
+    "Maven.forums_service [clean].executor": "Run",
+    "Maven.forums_service [compile].executor": "Run",
+    "Maven.forums_service [install].executor": "Run",
+    "Maven.forums_service [package].executor": "Run",
+    "Maven.forums_service [validate].executor": "Run",
+    "Maven.forums_service [verify].executor": "Run",
+    "Maven.incident_service [clean].executor": "Run",
+    "Maven.incident_service [compile].executor": "Run",
+    "Maven.incident_service [install].executor": "Run",
+    "Maven.incident_service [package].executor": "Run",
+    "Maven.incident_service [validate].executor": "Run",
+    "Maven.incident_service [verify].executor": "Run",
+    "Maven.medical_report_service [clean].executor": "Run",
+    "Maven.medical_report_service [compile].executor": "Run",
+    "Maven.medical_report_service [install].executor": "Run",
+    "Maven.medical_report_service [package].executor": "Run",
+    "Maven.medical_report_service [site].executor": "Run",
+    "Maven.medical_report_service [validate].executor": "Run",
+    "Maven.medical_report_service [verify].executor": "Run",
+    "Maven.mind_care_server [clean].executor": "Run",
+    "Maven.mind_care_server [compile].executor": "Run",
+    "Maven.mind_care_server [install].executor": "Run",
+    "Maven.mind_care_server [package].executor": "Run",
+    "Maven.mind_care_server [validate].executor": "Run",
+    "Maven.mind_care_server [verify].executor": "Run",
+    "Maven.movement_service [clean].executor": "Run",
+    "Maven.movement_service [compile].executor": "Run",
+    "Maven.movement_service [install].executor": "Run",
+    "Maven.movement_service [package].executor": "Run",
+    "Maven.movement_service [validate].executor": "Run",
+    "Maven.movement_service [verify].executor": "Run",
+    "Maven.users_service [clean].executor": "Run",
+    "Maven.users_service [compile].executor": "Run",
+    "Maven.users_service [install].executor": "Run",
+    "Maven.users_service [package].executor": "Run",
+    "Maven.users_service [validate].executor": "Run",
+    "Maven.users_service [verify].executor": "Run",
+    "Maven.volunteer_service [clean].executor": "Run",
+    "Maven.volunteer_service [compile].executor": "Run",
+    "Maven.volunteer_service [package].executor": "Run",
+    "Maven.volunteer_service [validate].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.ApiGatewayApplication.executor": "Debug",
+    "Spring Boot.EurekaServerApplication.executor": "Run",
+    "Spring Boot.ForumsServiceApplication.executor": "Run",
+    "Spring Boot.IncidentServiceApplication.executor": "Run",
+    "Spring Boot.MedicalReportServiceApplication.executor": "Run",
+    "Spring Boot.MovementServiceApplication.executor": "Run",
+    "Spring Boot.OrdonnanceEtMedicamentsApplication.executor": "Run",
+    "Spring Boot.TraitementEtConsultationApplication.executor": "Run",
+    "Spring Boot.UsersServiceApplication.executor": "Run",
+    "Spring Boot.VolunteerServiceApplication.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/khaou/OneDrive/Bureau/PI/mind-care/Esprit-PI-4SAE6-2026-mind-care",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -747,8 +351,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
       </set>
     </attachedChunks>
   </component>
@@ -793,6 +397,7 @@
       <workItem from="1776871738571" duration="458000" />
       <workItem from="1776872246994" duration="5663000" />
       <workItem from="1776882502058" duration="4652000" />
+      <workItem from="1778372150679" duration="1227000" />
     </task>
     <servers />
   </component>

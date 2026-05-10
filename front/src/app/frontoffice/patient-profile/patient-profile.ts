@@ -42,6 +42,14 @@ export class PatientProfile implements OnInit {
   successMessage = '';
   accountUser: any = null;
 
+  // ML Prediction Simulation
+  latestPrediction: any = {
+    diseaseProbability: 75,
+    isSick: true,
+    mlCluster: 2,
+    date: new Date()
+  };
+
   constructor(
     private authService: AuthService,
     private profileService: PatientProfileService,

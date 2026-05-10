@@ -39,4 +39,9 @@ public class Consultation {
 
     @Enumerated(EnumType.STRING)
     private AlzheimerStage alzheimerStage;
+
+    // Champs pour stocker les résultats du modèle ML
+    private Double diseaseProbability;
+    private Boolean isSick;
+    private Integer mlCluster;
 }
