@@ -39,3 +39,10 @@ build/
 
 ### Node / npm ###
 node_modules/
+
+### Python / ML Service ###
+__pycache__/
+*.py[cod]
+venv/
+.env
+ml-service/models/
